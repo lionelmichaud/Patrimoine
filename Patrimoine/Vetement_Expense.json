@@ -1,0 +1,14 @@
+{
+    "items" : [
+        {
+            "id" : "29C6B93B-3A68-4963-AF77-775E65451189",
+            "value" : 1500,
+            "proportional" : true,
+            "name" : "Adultes",
+            "timeSpan" : {
+                "permanent" : true
+            }
+        }
+    ],
+    "fileNamePrefix" : "Vetement_"
+}

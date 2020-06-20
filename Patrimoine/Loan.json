@@ -1,0 +1,13 @@
+{
+    "items" : [
+        {
+            "firstYear" : 2005,
+            "id" : "343477E7-EF10-4332-980F-7C1EFC7A625D",
+            "lastYear" : 2021,
+            "loanedValue" : -95000,
+            "name" : "Emprunt immobilier 1",
+            "interestRate" : 5
+        }
+    ],
+    "fileNamePrefix" : ""
+}

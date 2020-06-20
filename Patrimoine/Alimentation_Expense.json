@@ -1,0 +1,48 @@
+{
+    "items" : [
+        {
+            "id"           : "6C98AC79-6F7E-4F75-8800-A2231A3DB39F",
+            "value"        : 5000,
+            "proportional" : true,
+            "name"         : "Alimentation adultes",
+            "timeSpan"     :
+            {
+                "spanning_from" :
+                {
+                    "year"     : 2020,
+                    "event"    : "Fin d'activité proffesionelle",
+                    "name"     : ""
+                },
+                "spanning_to"   :
+                {
+                    "year"     : 2024,
+                    "event"    : "Liquidation de pension",
+                    "name"     : ""
+                }
+            }
+        },
+        {
+            "id"           : "6C98AC79-6F7E-4F75-8800-A2231A3DB39G",
+            "value"        : 5000,
+            "proportional" : false,
+            "name"         : "Alimentation enfants",
+            "timeSpan"     :
+            {
+                "spanning_from" :
+                {
+                    "year"     : 2025,
+                    "event"    : "Début étude",
+                    "name"     : ""
+                },
+                "spanning_to"   :
+                {
+                    "year"     : 2030,
+                    "event"    : "Indépendance financière",
+                    "name"     : ""
+                }
+            }
+        }
+        
+    ],
+    "fileNamePrefix" : "Alimentation_"
+}

@@ -1,0 +1,83 @@
+{
+    "items" : [
+        {
+            "id" : "45325B0E-331D-481F-9C34-57C088289753",
+            "value" : 1000,
+            "proportional" : false,
+            "name" : "Depuis",
+            "timeSpan" : {
+                "starting_from" :
+                {
+                    "year"     : 2028,
+                    "event"    : null,
+                    "name"     : ""
+                }
+            }
+        },
+        {
+            "id" : "B4EFF395-7A51-47AB-AD29-E7461ECB9ADA",
+            "value" : 0,
+            "proportional" : false,
+            "name" : "Jusqu'à",
+            "timeSpan" : {
+                "ending_to" :
+                {
+                    "year"     : 2022,
+                    "event"    : "Fin d'activité proffesionelle",
+                    "name"     : ""
+                }
+            }
+        },
+        {
+            "id" : "562EE2A1-4FF5-450D-8BAE-3E8B803928DA",
+            "value" : 0,
+            "proportional" : false,
+            "name" : "De...à...",
+            "timeSpan" : {
+                "spanning_from" :
+                {
+                    "year"     : 2024,
+                    "event"    : "Liquidation de pension",
+                    "name"     : ""
+                },
+                "spanning_to" :
+                {
+                    "year"     : 2025,
+                    "event"    : "Dépendance",
+                    "name"     : ""
+                }
+            }
+        },
+        {
+            "id" : "562EE2A1-4FF5-450D-8BAE-3E8B803928DA",
+            "value" : 0,
+            "proportional" : false,
+            "name" : "Exceptionnelle",
+            "timeSpan" : {
+                "exceptional_in" : 2026
+            }
+        },
+        {
+            "id" : "680924FC-ABD5-4587-BA4B-4DDD6F7F04D5",
+            "value" : 45000,
+            "proportional" : false,
+            "name" : "Périodique",
+            "timeSpan" : {
+                "periodic_period" : 7,
+                "periodic_from" :
+                {
+                    "year"     : 2020,
+                    "event"    : null,
+                    "name"     : ""
+                },
+                "periodic_to" :
+                {
+                    "year"     : 2022,
+                    "event"    : null,
+                    "name"     : ""
+                }
+            }
+        }
+    ],
+    "fileNamePrefix" : "Autre_"
+}

@@ -1,0 +1,59 @@
+{
+    "fileNamePrefix" : "",
+    "items" : [
+        {
+            "id" : "21935F19-4FBD-4F3D-81D7-08B46D9293C2",
+            "monthlyRentAfterCharges" : 0,
+            "yearlyTaxeFonciere" : 600,
+            "willBeInhabited" : false,
+            "sellingDate" : "2120-01-01T00:00:00Z",
+            "inhabitedToDate" : "2120-01-01T00:00:00Z",
+            "willBeRented" : false,
+            "sellingNetPrice" : 0,
+            "yearlyTaxeHabitation" : 500,
+            "buyingPrice" : 135000,
+            "willBeSold" : false,
+            "rentalToDate" : "2120-01-01T00:00:00Z",
+            "buyingDate" : "2005-09-30T22:00:00Z",
+            "rentalFromDate" : "2120-01-01T00:00:00Z",
+            "inhabitedFromDate" : "2120-01-01T00:00:00Z",
+            "name" : "Maison Villards"
+        },
+        {
+            "id" : "232D1AB2-D9B3-4D0A-A857-4153B3DCD6DA",
+            "monthlyRentAfterCharges" : 610,
+            "yearlyTaxeFonciere" : 600,
+            "willBeInhabited" : false,
+            "sellingDate" : "2024-09-30T22:00:00Z",
+            "inhabitedToDate" : "2120-01-01T00:00:00Z",
+            "willBeRented" : true,
+            "sellingNetPrice" : 105000,
+            "yearlyTaxeHabitation" : 500,
+            "buyingPrice" : 135000,
+            "willBeSold" : true,
+            "rentalToDate" : "2021-09-30T22:00:00Z",
+            "buyingDate" : "2005-09-30T22:00:00Z",
+            "rentalFromDate" : "2005-09-30T22:00:00Z",
+            "inhabitedFromDate" : "2120-01-01T00:00:00Z",
+            "name" : "Maison Chatel"
+        },
+        {
+            "id" : "C200EDBE-5307-4D68-9312-7643871358D7",
+            "monthlyRentAfterCharges" : 0,
+            "yearlyTaxeFonciere" : 3000,
+            "willBeInhabited" : true,
+            "sellingDate" : "2120-01-01T00:00:00Z",
+            "inhabitedToDate" : "2022-09-30T22:00:00Z",
+            "willBeRented" : false,
+            "sellingNetPrice" : 0,
+            "yearlyTaxeHabitation" : 2000,
+            "buyingPrice" : 620000,
+            "willBeSold" : false,
+            "rentalToDate" : "2120-01-01T00:00:00Z",
+            "buyingDate" : "2011-06-30T22:00:00Z",
+            "rentalFromDate" : "2120-01-01T00:00:00Z",
+            "inhabitedFromDate" : "2011-06-30T22:00:00Z",
+            "name" : "Maison Toulouse"
+        }
+    ]
+}

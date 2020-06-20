@@ -1,0 +1,98 @@
+[
+    {
+        "ageOfDeath" : 81,
+        "nbOfChildBirth" : 0,
+        "sexe" : 0,
+        "dateOfRetirement" : "2020-03-29T14:18:52Z",
+        "__preserved_type" : "Patrimoine.Adult.Type",
+        "birthDate" : "1964-09-22T00:00:20Z",
+        "__type_preserving_strategy" : 0,
+        "initialPersonalIncome" : {
+            "salary_netSalary" : 100000,
+            "salary_healthInsurance" : 5000
+        },
+        "name" : {
+            "familyName" : "MICHAUD",
+            "namePrefix" : "M.",
+            "givenName" : "Lionel"
+        },
+        "ageOfPensionLiquid" : {
+            "day" : 0,
+            "year" : 62,
+            "calendar" : {
+                "locale" : {
+                    "identifier" : "fr_FR"
+                },
+                "timeZone" : {
+                    "identifier" : "Europe\/Paris"
+                },
+                "identifier" : "gregorian",
+                "minimumDaysInFirstWeek" : 4,
+                "firstWeekday" : 2
+            },
+            "month" : 0
+        }
+    },
+    {
+        "ageOfDeath" : 81,
+        "nbOfChildBirth" : 2,
+        "sexe" : 1,
+        "dateOfRetirement" : "2020-03-29T14:18:52Z",
+        "__preserved_type" : "Patrimoine.Adult.Type",
+        "birthDate" : "1968-12-16T23:00:00Z",
+        "__type_preserving_strategy" : 0,
+        "initialPersonalIncome" : {
+            "turnOver_BNC" : 50000,
+            "turnOver_incomeLossInsurance" : 5000
+        },
+        "name" : {
+            "familyName" : "MICHAUD",
+            "namePrefix" : "Mme.",
+            "givenName" : "Vanessa"
+        },
+        "ageOfPensionLiquid" : {
+            "day" : 0,
+            "year" : 62,
+            "calendar" : {
+                "locale" : {
+                    "identifier" : "fr_FR"
+                },
+                "timeZone" : {
+                    "identifier" : "Europe\/Paris"
+                },
+                "identifier" : "gregorian",
+                "minimumDaysInFirstWeek" : 4,
+                "firstWeekday" : 2
+            },
+            "month" : 0
+        }
+    },
+    {
+        "ageOfDeath" : 81,
+        "sexe" : 1,
+        "ageOfIndependence" : 24,
+        "__preserved_type" : "Patrimoine.Child.Type",
+        "birthDate" : "2004-02-04T23:00:00Z",
+        "ageOfUniversity" : 18,
+        "__type_preserving_strategy" : 0,
+        "name" : {
+            "familyName" : "MICHAUD",
+            "namePrefix" : "Mme",
+            "givenName" : "Lou-Ann"
+        }
+    },
+    {
+        "ageOfDeath" : 81,
+        "sexe" : 0,
+        "ageOfIndependence" : 24,
+        "__preserved_type" : "Patrimoine.Child.Type",
+        "birthDate" : "2005-09-30T22:00:00Z",
+        "ageOfUniversity" : 18,
+        "__type_preserving_strategy" : 0,
+        "name" : {
+            "familyName" : "MICHAUD",
+            "namePrefix" : "M.",
+            "givenName" : "Arthur"
+        }
+    }
+]

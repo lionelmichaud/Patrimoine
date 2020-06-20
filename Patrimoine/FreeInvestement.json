@@ -1,0 +1,23 @@
+{
+    "fileNamePrefix" : "",
+    "items" : [
+        {
+            "id" : "4A6940AE-3D5B-4F3E-BB23-CF076F9CA5B0",
+            "interestRate" : 3,
+            "initialState" : {
+                "year" : 2020,
+                "interest" : 10000,
+                "investment" : 400000
+            },
+            "name" : "PEA",
+            "type" : {
+                "PEA" : true
+            },
+            "currentState" : {
+                "year" : 2020,
+                "interest" : 10000,
+                "investment" : 400000
+            }
+        }
+    ]
+}

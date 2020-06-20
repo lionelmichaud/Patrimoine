@@ -1,0 +1,135 @@
+{
+    "irppOnEstateCapitalGain" :
+    {
+        "model" :
+        {
+            "irpp" : 19.0,
+            "exoGrid" : [
+                {
+                    "floor"        : 5,
+                    "discountRate" : 6.0,
+                    "prevDiscount" : 0.0
+                },
+                {
+                    "floor"        : 21,
+                    "discountRate" : 4.0,
+                    "prevDiscount" : 96.0
+                },
+                {
+                    "floor"        : 22,
+                    "discountRate" : 0.0,
+                    "prevDiscount" : 100.0
+                }
+            ]
+        }
+    },
+    
+    "socialTaxesOnEstateCapitalGain" :
+    {
+        "model" :
+        {
+            "CRDS"         : 0.5,
+            "CSG"          : 9.2,
+            "prelevSocial" : 7.5,
+            "exoGrid" : [
+                {
+                    "floor"        : 5,
+                    "discountRate" : 1.65,
+                    "prevDiscount" : 0.0
+                },
+                {
+                    "floor"        : 21,
+                    "discountRate" : 1.6,
+                    "prevDiscount" : 26.4
+                },
+                {
+                    "floor"        : 22,
+                    "discountRate" : 9.0,
+                    "prevDiscount" : 28.0
+                },
+                {
+                    "floor"        : 30,
+                    "discountRate" : 0.0,
+                    "prevDiscount" : 100.0
+                }
+            ]
+        }
+    },
+    
+    "socialTaxesOnPension" :
+    {
+        "model" :
+        {
+            "CRDS"              : 0.5,
+            "CSG"               : 8.6,
+            "additionalContrib" : 0.3,
+            "healthInsurance"   : 1.0
+        }
+    },
+    
+    "socialTaxesOnFinancialRevenu" :
+    {
+        "model":
+        {
+            "CRDS"         : 0.5,
+            "CSG"          : 9.2,
+            "prelevSocial" : 7.5
+        }
+    },
+    
+    "socialTaxesOnTurnover" :
+    {
+        "model" :
+        {
+            "URSSAF" : 24
+        }
+    },
+    
+    "lifeInsuranceTaxes" :
+    {
+        "model" :
+        {
+            "rebatePerPerson" : 4800.0
+        }
+    },
+    
+    "incomeTaxes" :
+    {
+        "model" :
+        {
+            "turnOverRebate" : 34.0,
+            "salaryRebate"   : 10.0,
+            "childRebate"    : 1512.0,
+            "irppGrid" : [
+                {
+                    "floor" : 9964.0,
+                    "rate"  : 0.15,
+                    "disc"  : 1395.0
+                },
+                {
+                    "floor" : 27519.0,
+                    "rate"  : 0.3,
+                    "disc"  : 5798.0
+                },
+                {
+                    "floor" : 73779.0,
+                    "rate"  : 0.41,
+                    "disc"  : 13914.0
+                },
+                {
+                    "floor"  : 156244.0,
+                    "rate"  : 0.45,
+                    "disc"  : 20163.0
+                }
+            ]
+        }
+    },
+    
+    "companyProfitTaxes" :
+    {
+        "model" :
+        {
+            "rate" : 15.0
+        }
+    }
+}
