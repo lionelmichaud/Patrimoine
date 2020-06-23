@@ -28,9 +28,10 @@ struct MemberAddView: View {
     // Adult
     @State private var dateRetirement = Date()
     @State private var agePension     = RetirmentCst.minAgepension
-    @State private var revIndex      = 0
-    @State private var revenue       = 0.0
-    @State private var insurance     = 0.0
+    @State private var nbYearOfDepend = 0
+    @State private var revIndex       = 0
+    @State private var revenue        = 0.0
+    @State private var insurance      = 0.0
 
     var body: some View {
         VStack() {
@@ -68,6 +69,7 @@ struct MemberAddView: View {
                                       deathAge       : $deathAge,
                                       dateRetirement : $dateRetirement,
                                       agePension     : $agePension,
+                                      nbYearOfDepend : $nbYearOfDepend,
                                       revIndex       : $revIndex,
                                       revenue        : $revenue,
                                       insurance      : $insurance)
@@ -92,7 +94,8 @@ struct MemberAddView: View {
             case .adult  :
                 // creation du nouveau membre
                 let newMember = Adult(sexe: sexe, givenName: givenName, familyName: familyName.uppercased(), birthDate: birthDate, ageOfDeath: deathAge)
-                newMember.dateOfRetirement = dateRetirement
+                newMember.dateOfRetirement     = dateRetirement
+                newMember.nbOfYearOfDependency = nbYearOfDepend
                 newMember.setAgeOfPensionLiquidComp(year: agePension)
                 if revIndex == PersonalIncomeType.salary(netSalary: 0, healthInsurance: 0).id {
                     newMember.initialPersonalIncome = PersonalIncomeType.salary(netSalary: revenue,
@@ -169,6 +172,7 @@ struct AdultEditView : View {
     @Binding var deathAge       : Int
     @Binding var dateRetirement : Date
     @Binding var agePension     : Int
+    @Binding var nbYearOfDepend : Int
     @Binding var revIndex       : Int
     @Binding var revenue        : Double
     @Binding var insurance      : Double
@@ -184,6 +188,7 @@ struct AdultEditView : View {
                     }
                 }
             }
+            // retraite
             Section(header:Text("Retraite")) {
                 DatePicker(selection: $dateRetirement,
                            in: Date()...100.years.fromNow! ,
@@ -194,6 +199,16 @@ struct AdultEditView : View {
                         Text("Liquidation de pension ")
                         Spacer()
                         Text("\(agePension) ans").foregroundColor(.secondary)
+                    }
+                }
+            }
+            // dépendance
+            Section(header:Text("Dépendance")) {
+                Stepper(value: $nbYearOfDepend, in: 0 ... 15) {
+                    HStack {
+                        Text("Nombre d'année de dépendance ")
+                        Spacer()
+                        Text("\(nbYearOfDepend) ans").foregroundColor(.secondary)
                     }
                 }
             }

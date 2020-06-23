@@ -240,7 +240,7 @@ final class Adult: Person {
     // nested types
     
     private enum CodingKeys : String, CodingKey {
-        case nbOfChildBirth, dateOfRetirement, ageOfPensionLiquid, initialPersonalIncome
+        case nbOfChildBirth, dateOfRetirement, ageOfPensionLiquid, nbOfYearOfDependency, initialPersonalIncome
     }
     
     // properties
@@ -272,6 +272,14 @@ final class Adult: Person {
     var displayDateOfPensionLiquid: String { // computed
         mediumDateFormatter.string(from: dateOfPensionLiquid)
     } // computed
+    
+    @Published var nbOfYearOfDependency: Int = 0
+    var ageOfDependency: Int {
+        return ageOfDeath - nbOfYearOfDependency
+    } // computed
+    var yearOfDependency: Int {
+        return yearOfDeath - nbOfYearOfDependency
+    }
     
     // revenus
     @Published var initialPersonalIncome: PersonalIncomeType? { // observed
@@ -309,11 +317,12 @@ final class Adult: Person {
     
     required init(from decoder: Decoder) throws {
         // Get our container for this subclass' coding keys
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        nbOfChildBirth = try container.decode(Int.self, forKey: .nbOfChildBirth)
-        dateOfRetirement = try container.decode(Date.self, forKey: .dateOfRetirement)
+        let container          = try decoder.container(keyedBy: CodingKeys.self)
+        nbOfChildBirth         = try container.decode(Int.self, forKey: .nbOfChildBirth)
+        dateOfRetirement       = try container.decode(Date.self, forKey: .dateOfRetirement)
         ageOfPensionLiquidComp = try container.decode(DateComponents.self, forKey: .ageOfPensionLiquid)
-        initialPersonalIncome = try container.decode(PersonalIncomeType.self, forKey: .initialPersonalIncome)
+        nbOfYearOfDependency   = try container.decode(Int.self, forKey: .nbOfYearOfDependency)
+        initialPersonalIncome  = try container.decode(PersonalIncomeType.self, forKey: .initialPersonalIncome)
         
         // Get superDecoder for superclass and call super.init(from:) with it
         //let superDecoder = try container.superDecoder()
@@ -343,6 +352,7 @@ final class Adult: Person {
         try container.encode(nbOfChildBirth, forKey: .nbOfChildBirth)
         try container.encode(dateOfRetirement, forKey: .dateOfRetirement)
         try container.encode(ageOfPensionLiquidComp, forKey: .ageOfPensionLiquid)
+        try container.encode(nbOfYearOfDependency, forKey: .nbOfYearOfDependency)
         try container.encode(initialPersonalIncome, forKey: .initialPersonalIncome)
     }
     

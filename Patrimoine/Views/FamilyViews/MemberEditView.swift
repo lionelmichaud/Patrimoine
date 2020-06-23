@@ -24,6 +24,7 @@ struct MemberEditView: View {
     // Adult
     @State private var dateRetirement = Date()
     @State private var agePension     = RetirmentCst.minAgepension
+    @State private var nbYearOfDepend = 0
     @State private var revIndex       = 0
     @State private var revenue        = 0.0
     @State private var insurance      = 0.0
@@ -60,6 +61,7 @@ struct MemberEditView: View {
                                   deathAge       : $deathAge,
                                   dateRetirement : $dateRetirement,
                                   agePension     : $agePension,
+                                  nbYearOfDepend : $nbYearOfDepend,
                                   revIndex       : $revIndex,
                                   revenue        : $revenue,
                                   insurance      : $insurance)
@@ -87,6 +89,7 @@ struct MemberEditView: View {
         // Adult
         if let adult = member as? Adult {
             _dateRetirement = State(initialValue: adult.dateOfRetirement)
+            _nbYearOfDepend = State(initialValue: adult.nbOfYearOfDependency)
             _agePension     = State(initialValue: adult.ageOfPensionLiquidComp.year!)
             switch adult.initialPersonalIncome {
                 case let .salary(netSalary, healthInsurance):
@@ -108,7 +111,8 @@ struct MemberEditView: View {
     func applyChanges() {
         member.ageOfDeath = deathAge
         if let adult = member as? Adult {
-            adult.dateOfRetirement = dateRetirement
+            adult.dateOfRetirement     = dateRetirement
+            adult.nbOfYearOfDependency = nbYearOfDepend
             adult.setAgeOfPensionLiquidComp(year: agePension)
             if revIndex == PersonalIncomeType.salary(netSalary: 0, healthInsurance: 0).id {
                 adult.initialPersonalIncome = PersonalIncomeType.salary(netSalary: revenue,

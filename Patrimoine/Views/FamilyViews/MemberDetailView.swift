@@ -93,10 +93,18 @@ struct AdultDetailView: View {
                     Spacer()
                     Text("\(adult.ageOfPensionLiquidComp.year!) ans en \(String(adult.dateOfPensionLiquid.year))")
                 }
+                HStack {
+                    Text("Dépendance")
+                    Spacer()
+                    if adult.nbOfYearOfDependency == 0 {
+                        Text("aucune")
+                    } else {
+                        Text("\(adult.nbOfYearOfDependency) ans à partir de \(String(adult.yearOfDependency))")
+                    }
+                }
             }
             // revenus
-            Section() {
-                Text("Revenus")
+            Section(header: Text("REVENUS").font(.subheadline)) {
                 HStack {
                     Text(income?.pickerString == "Salaire" ? "Salaire" : "BNC")
                     Spacer()

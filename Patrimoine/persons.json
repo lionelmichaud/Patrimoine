@@ -1,8 +1,9 @@
 [
     {
-        "ageOfDeath" : 81,
-        "nbOfChildBirth" : 0,
-        "sexe" : 0,
+        "ageOfDeath"           : 81,
+        "nbOfYearOfDependency" : 0,
+        "nbOfChildBirth"       : 0,
+        "sexe"                 : 0,
         "dateOfRetirement" : "2020-03-29T14:18:52Z",
         "__preserved_type" : "Patrimoine.Adult.Type",
         "birthDate" : "1964-09-22T00:00:20Z",
@@ -17,7 +18,7 @@
             "givenName" : "Lionel"
         },
         "ageOfPensionLiquid" : {
-            "day" : 0,
+            "day"  : 0,
             "year" : 62,
             "calendar" : {
                 "locale" : {
@@ -34,9 +35,10 @@
         }
     },
     {
-        "ageOfDeath" : 81,
-        "nbOfChildBirth" : 2,
-        "sexe" : 1,
+        "ageOfDeath"           : 81,
+        "nbOfYearOfDependency" : 0,
+        "nbOfChildBirth"       : 2,
+        "sexe"                 : 1,
         "dateOfRetirement" : "2020-03-29T14:18:52Z",
         "__preserved_type" : "Patrimoine.Adult.Type",
         "birthDate" : "1968-12-16T23:00:00Z",
@@ -51,7 +53,7 @@
             "givenName" : "Vanessa"
         },
         "ageOfPensionLiquid" : {
-            "day" : 0,
+            "day"  : 0,
             "year" : 62,
             "calendar" : {
                 "locale" : {
