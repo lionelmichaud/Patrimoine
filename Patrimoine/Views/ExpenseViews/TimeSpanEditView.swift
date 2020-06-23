@@ -213,15 +213,15 @@ struct TimeSpanEditView: View {
                 switch self.timeSpan {
                     case .periodic(let from, let period, let to):
                         var boundary  = from
-                        boundary.year = year // modifier l'année
+                        boundary.fixedYear = year // modifier l'année
                         self.timeSpan = .periodic(from: boundary, period: period, to: to)
                     case .starting(let from):
                         var boundary  = from
-                        boundary.year = year // modifier l'année
+                        boundary.fixedYear = year // modifier l'année
                         self.timeSpan = .starting(from: boundary)
                     case .spanning(let from, to: let to):
                         var boundary  = from
-                        boundary.year = year // modifier l'année
+                        boundary.fixedYear = year // modifier l'année
                         self.timeSpan = .spanning(from: boundary, to: to)
                     default:
                         fatalError("ExpenseTimeSpan : Case out of bound")
@@ -244,15 +244,15 @@ struct TimeSpanEditView: View {
             switch self.timeSpan {
                 case .ending (let to):
                     var boundary   = to
-                    boundary.year = year // modifier l'année
+                    boundary.fixedYear = year // modifier l'année
                     self.timeSpan = .ending(to: boundary)
                 case .periodic(let from, let period, let to):
                     var boundary   = to
-                    boundary.year = year // modifier l'année
+                    boundary.fixedYear = year // modifier l'année
                     self.timeSpan = .periodic(from: from, period: period, to: boundary)
                 case .spanning(let from, let to):
                     var boundary   = to
-                    boundary.year = year // modifier l'année
+                    boundary.fixedYear = year // modifier l'année
                     self.timeSpan = .spanning(from: from, to: boundary)
                 default:
                     fatalError("ExpenseTimeSpan : Case out of bound")

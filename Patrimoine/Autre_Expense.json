@@ -8,7 +8,7 @@
             "timeSpan" : {
                 "starting_from" :
                 {
-                    "year"     : 2028,
+                    "fixedYear": 2028,
                     "event"    : null,
                     "name"     : ""
                 }
@@ -16,13 +16,13 @@
         },
         {
             "id" : "B4EFF395-7A51-47AB-AD29-E7461ECB9ADA",
-            "value" : 0,
+            "value" : 1000,
             "proportional" : false,
             "name" : "Jusqu'à",
             "timeSpan" : {
                 "ending_to" :
                 {
-                    "year"     : 2022,
+                    "fixedYear": 2022,
                     "event"    : "Fin d'activité proffesionelle",
                     "name"     : ""
                 }
@@ -30,19 +30,19 @@
         },
         {
             "id" : "562EE2A1-4FF5-450D-8BAE-3E8B803928DA",
-            "value" : 0,
+            "value" : 2000,
             "proportional" : false,
             "name" : "De...à...",
             "timeSpan" : {
                 "spanning_from" :
                 {
-                    "year"     : 2024,
+                    "fixedYear": 2024,
                     "event"    : "Liquidation de pension",
                     "name"     : ""
                 },
                 "spanning_to" :
                 {
-                    "year"     : 2025,
+                    "fixedYear": 2025,
                     "event"    : "Dépendance",
                     "name"     : ""
                 }
@@ -50,7 +50,7 @@
         },
         {
             "id" : "562EE2A1-4FF5-450D-8BAE-3E8B803928DA",
-            "value" : 0,
+            "value" : 3000,
             "proportional" : false,
             "name" : "Exceptionnelle",
             "timeSpan" : {
@@ -66,13 +66,13 @@
                 "periodic_period" : 7,
                 "periodic_from" :
                 {
-                    "year"     : 2020,
+                    "fixedYear": 2020,
                     "event"    : null,
                     "name"     : ""
                 },
                 "periodic_to" :
                 {
-                    "year"     : 2022,
+                    "fixedYear": 2022,
                     "event"    : null,
                     "name"     : ""
                 }

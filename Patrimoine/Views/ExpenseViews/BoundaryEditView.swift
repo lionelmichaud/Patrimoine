@@ -15,6 +15,7 @@ struct BoundaryEditView: View {
     @Binding var isLinked : Bool
     @Binding var year     : Int
     @Binding var name     : String
+    @State private var variableYear: Int = 0 // pour affichage local
     
     // calculer la date de l'événement
     var choosenName: Binding<String> {
@@ -22,12 +23,7 @@ struct BoundaryEditView: View {
             get: { return self.name },
             set: { name in
                 self.name = name
-                // rechercher la personne
-                let person = self.family.member(withName: name)
-                // rechercher l'année de l'événement pour cette personne
-                self.year = person?.yearOf(event: self.event) ?? -1
-                // rechercher son identifiant
-                
+                self.variableYear = self.yearOfEventFor(name: self.name)
                 }
             )
     }
@@ -36,17 +32,36 @@ struct BoundaryEditView: View {
         Section(header: Text("\(label) de période")) {
             // la dete est-elle liée à un événement ?
             Toggle(isOn: $isLinked, label: { Text("Associé à un événement") })
-            if $isLinked.wrappedValue {
+            if isLinked {
                 // la dete est liée à un événement
                 CasePicker(pickedCase: $event, label: "Nature de l'événement")
                 // choisir la personne
                 PersonPickerView(name: choosenName, event: event)
                 // afficher la date résultante
-                IntegerView(label: "\(label) (année inclue)", integer: $year.wrappedValue).foregroundColor(.secondary)
+                if variableYear == 0 {
+                    Text("Choisir un événement et la personne associée")
+                } else {
+                    IntegerView(label: "\(label) (année inclue)", integer: variableYear).foregroundColor(.secondary)
+                }
             } else {
                 // choisir une date absolue
                 IntegerEditView(label: "\(label) (année inclue)", integer: $year)
             }
-        }
+        }.onAppear(perform: initializeLocalvariables)
+    }
+    
+    func initializeLocalvariables() {
+        self.variableYear = yearOfEventFor(name: self.name)
+    }
+    
+    /// Recherche la date d'un évenement pour une personne d'un Nom donné
+    /// - Parameter name: Nom de la personne
+    /// - Returns: Date
+    func yearOfEventFor(name: String) -> Int {
+        // rechercher la personne
+        let person = self.family.member(withName: name)
+        // rechercher l'année de l'événement pour cette personne
+        return person?.yearOf(event: self.event) ?? -1
+
     }
 }

@@ -9,13 +9,13 @@
             {
                 "spanning_from" :
                 {
-                    "year"     : 2020,
+                    "fixedYear": 2020,
                     "event"    : "Fin d'activité proffesionelle",
                     "name"     : ""
                 },
                 "spanning_to"   :
                 {
-                    "year"     : 2024,
+                    "fixedYear": 2024,
                     "event"    : "Liquidation de pension",
                     "name"     : ""
                 }
@@ -30,13 +30,13 @@
             {
                 "spanning_from" :
                 {
-                    "year"     : 2025,
+                    "fixedYear": 2025,
                     "event"    : "Début étude",
                     "name"     : ""
                 },
                 "spanning_to"   :
                 {
-                    "year"     : 2030,
+                    "fixedYear": 2030,
                     "event"    : "Indépendance financière",
                     "name"     : ""
                 }

@@ -16,8 +16,8 @@ enum ExpenseTimeSpan: PickableIdentifiableEnum, Hashable {
     /// Date fixe ou calculée à partir d'un éventuel événement de vie d'une personne
     struct Boundary: Hashable, Codable {
         // date fixe ou calculée à partir d'un éventuel événement de vie d'une personne
-        var year     : Int = 0
-        // non il si la date est liée à un événemenr de vie d'une personne
+        var fixedYear: Int = 0
+        // non nil si la date est liée à un événement de vie d'une personne
         var event    : LifeEvent?
         // personne associée à l'évenement
         var name     : String = ""
@@ -25,19 +25,33 @@ enum ExpenseTimeSpan: PickableIdentifiableEnum, Hashable {
         init() {
         }
         init(year: Int) {
-            self.year  = year
-            self.event = nil
-            self.name  = ""
+            self.fixedYear = year
+            self.event     = nil
+            self.name      = ""
         }
         init(event: LifeEvent?) {
             self.event = event
-            self.year  = 0
             self.name  = ""
         }
         init(name: String) {
             self.name  = name
-            self.year  = 0
             self.event = nil
+        }
+        // date fixe ou calculée à partir d'un éventuel événement de vie d'une personne
+        var year: Int {
+            if let lifeEvent = self.event {
+                // rechercher la personne
+                if let person = Expense.family?.member(withName: name) {
+                    // rechercher l'année de l'événement pour cette personne
+                    return person.yearOf(event: lifeEvent) ?? -1
+                } else {
+                    // on ne trouve pas le nom de la personne dans la famille
+                    return -1
+                }
+            } else {
+                // pas d'événement, la date est fixe
+                return fixedYear
+            }
         }
    }
     
