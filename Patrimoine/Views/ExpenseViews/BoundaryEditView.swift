@@ -38,8 +38,9 @@ struct BoundaryEditView: View {
                 // choisir la personne
                 PersonPickerView(name: choosenName, event: event)
                 // afficher la date résultante
-                if variableYear == 0 {
+                if (-1...0).contains(variableYear) {
                     Text("Choisir un événement et la personne associée")
+                    .foregroundColor(.red)
                 } else {
                     IntegerView(label: "\(label) (année inclue)", integer: variableYear).foregroundColor(.secondary)
                 }

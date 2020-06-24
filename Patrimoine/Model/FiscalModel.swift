@@ -49,22 +49,6 @@ struct IrppOnRealEstateCapitalGain: Codable {
     
     // barême de l'exoneration de charges sociale sur les plus-values immobilières
     var model: Model
-//        static let model: Model =
-//        Bundle.main.decode(Model.self,
-//                           from                 : "RealEstate_irpp.json",
-//                           dateDecodingStrategy : .iso8601,
-//                           keyDecodingStrategy  : .useDefaultKeys)
-    
-    //    static let exoGrid : [ExonerationSlice] =
-    //        Bundle.main.decode([ExonerationSlice].self,
-    //                           from                 : "RealEstate_irpp_exogrid.json",
-    //                           dateDecodingStrategy : .iso8601,
-    //                           keyDecodingStrategy  : .useDefaultKeys)
-    //    [ExonerationSlice(floor:  5, discountRate: 6.0, prevDiscount: 0.0),
-    //    ExonerationSlice(floor: 21, discountRate: 4.0, prevDiscount: (21-5)*6.0),
-    //    ExonerationSlice(floor: 22, discountRate: 0.0, prevDiscount: (21-5)*6.0 + (22-21)*4.0)]
-    
-    //static let irpp : Double = 19.0 // %
     
     // methods
     
