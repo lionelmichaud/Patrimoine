@@ -162,8 +162,10 @@ class Person : ObservableObject, Identifiable, CustomStringConvertible, Codable 
         self.name.namePrefix     = sexe.displayString
         self.name.givenName      = givenName
         self.name.familyName     = familyName.localizedUppercase
-        self.birthDateComponents = DateComponents(calendar: Date.calendar,
-                                                  year: yearOfBirth, month: monthOfBirth, day: dayOfBirth)
+        self.birthDateComponents = DateComponents(calendar : Date.calendar,
+                                                  year     : yearOfBirth,
+                                                  month    : monthOfBirth,
+                                                  day      : dayOfBirth)
         self.birthDate           = birthDateComponents.date!
         self.ageOfDeath          = ageOfDeath
     }

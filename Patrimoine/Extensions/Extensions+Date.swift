@@ -21,7 +21,7 @@ extension Int {
     var months  : DateComponents { .init(month  : self) }
     var years   : DateComponents { .init(year   : self) }
 }
-// MARK: - Relative Dates from Now
+// MARK: - Relative Dates from Now or from a another date
 // https://medium.com/@rserentill/dealing-with-relative-dates-in-swift-the-cool-way-5903a7af2461
 extension DateComponents {
     /// Usage:

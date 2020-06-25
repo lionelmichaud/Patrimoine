@@ -104,16 +104,16 @@ final class Adult: Person {
     }
     
     override init(sexe: Sexe,
-                         givenName: String, familyName: String,
-                         yearOfBirth: Int, monthOfBirth: Int, dayOfBirth: Int,
-                         ageOfDeath: Int = CalendarCst.forever) {
+                  givenName: String, familyName: String,
+                  yearOfBirth: Int, monthOfBirth: Int, dayOfBirth: Int,
+                  ageOfDeath: Int = CalendarCst.forever) {
         super.init(sexe: sexe, givenName: givenName, familyName: familyName, yearOfBirth: yearOfBirth, monthOfBirth: monthOfBirth, dayOfBirth: dayOfBirth, ageOfDeath: ageOfDeath)
     }
     
     override init(sexe: Sexe,
-                         givenName: String, familyName: String,
-                         birthDate : Date,
-                         ageOfDeath: Int = CalendarCst.forever) {
+                  givenName: String, familyName: String,
+                  birthDate : Date,
+                  ageOfDeath: Int = CalendarCst.forever) {
         super.init(sexe: sexe, givenName: givenName, familyName: familyName, birthDate: birthDate, ageOfDeath: ageOfDeath)
     }
     
