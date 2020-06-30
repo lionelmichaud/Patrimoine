@@ -11,7 +11,7 @@ import SwiftUI
 struct ExpenseDetailedView: View {
     @EnvironmentObject var family     : Family
     @EnvironmentObject var simulation : Simulation
-    @EnvironmentObject var patrimoine : Patrimoine
+    @EnvironmentObject var patrimoine : Patrimoin
     @EnvironmentObject var uiState    : UIState
     @Environment(\.presentationMode) var presentationMode
     private var item             : Expense?
@@ -110,7 +110,7 @@ struct ExpenseDetailedView: View {
 struct ExpenseDetailedView_Previews: PreviewProvider {
     static var family     = Family()
     static var simulation = Simulation()
-    static var patrimoine = Patrimoine()
+    static var patrimoine = Patrimoin()
     static var uiState    = UIState()
 
     static var previews: some View {

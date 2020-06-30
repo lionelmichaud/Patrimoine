@@ -14,7 +14,7 @@ struct DebtDetailedView: View {
 
     var item: Debt?
     // commun
-    @EnvironmentObject var patrimoine: Patrimoine
+    @EnvironmentObject var patrimoine: Patrimoin
     @Environment(\.presentationMode) var presentationMode
     @State private var alertData: AlertData? = nil
     @State private var index: Int?
@@ -52,7 +52,7 @@ struct DebtDetailedView: View {
         )
     }
 
-    init(item: Debt?, patrimoine: Patrimoine) {
+    init(item: Debt?, patrimoine: Patrimoin) {
         self.item = item
         if let initialItemValue = item {
             // modification d'un élément existant
@@ -100,7 +100,7 @@ struct DebtDetailedView: View {
 }
 
 struct DebtDetailedView_Previews: PreviewProvider {
-    static var patrimoine  = Patrimoine()
+    static var patrimoine  = Patrimoin()
 
     static var previews: some View {
         return

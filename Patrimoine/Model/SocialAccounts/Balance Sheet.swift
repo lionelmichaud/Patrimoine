@@ -32,7 +32,7 @@ struct BalanceSheetLine {
 	// initialization
 	
     init(withYear year             : Int,
-         withPatrimoine patrimoine : Patrimoine) {
+         withPatrimoine patrimoine : Patrimoin) {
 		self.year = year
 		
 		// actifs

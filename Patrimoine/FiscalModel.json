@@ -60,8 +60,9 @@
     {
         "model" :
         {
+            "CSGdeductible"     : 5.9,
             "CRDS"              : 0.5,
-            "CSG"               : 8.6,
+            "CSG"               : 8.3,
             "additionalContrib" : 0.3,
             "healthInsurance"   : 1.0
         }

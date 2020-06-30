@@ -21,7 +21,7 @@ struct FamilyHeaderView: View {
 
 struct FamilySummaryView: View {
     @EnvironmentObject var family    : Family
-    @EnvironmentObject var patrimoine: Patrimoine
+    @EnvironmentObject var patrimoine: Patrimoin
     @State private var cashFlow      : CashFlowLine? = nil
     
     var body: some View {
@@ -104,7 +104,7 @@ struct FamilySummaryView: View {
 
 struct FamilySummaryView_Previews: PreviewProvider {
     static var family     = Family()
-    static var patrimoine = Patrimoine()
+    static var patrimoine = Patrimoin()
 
     static var previews: some View {
         FamilySummaryView()

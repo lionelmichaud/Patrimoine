@@ -9,7 +9,7 @@
 import SwiftUI
 
 struct PatrimoineView: View {
-    @EnvironmentObject var patrimoine: Patrimoine
+    @EnvironmentObject var patrimoine: Patrimoin
 
     var body: some View {
         NavigationView {
@@ -41,7 +41,7 @@ struct PatrimoineView: View {
 }
 
 struct PatrimoineHeaderView: View {
-    @EnvironmentObject var patrimoine: Patrimoine
+    @EnvironmentObject var patrimoine: Patrimoin
     
     var body: some View {
         Group {
@@ -69,7 +69,7 @@ struct PatrimoineHeaderView: View {
 
 struct AssetListView_Previews: PreviewProvider {
     static var family     = Family()
-    static var patrimoine = Patrimoine()
+    static var patrimoine = Patrimoin()
     static var uiState    = UIState()
 
     static var previews: some View {

@@ -55,7 +55,7 @@ struct RegimeGeneral: Codable {
     ///   - birthDate: date de naissance
     ///   - lastKnownSituation: dernière situation connue (année, nombre de trimestres de cotisation acquis)
     ///   - dateOfRetirementComp: date de demande de liquidation de la pension de retraite
-    /// - Returns: taux de reversion en tenant compte d'une décote éventuelle
+    /// - Returns: taux de reversion en tenant compte d'une décote éventuelle en %
     func tauxDePension(birthDate            : Date,
                        lastKnownSituation   : (atEndOf: Int, nbTrimestreAcquis: Int),
                        dateOfRetirementComp : DateComponents) -> Double? {
@@ -81,20 +81,19 @@ struct RegimeGeneral: Codable {
     func nbTrimestreDecote(birthDate            : Date,
                            lastKnownSituation   : (atEndOf: Int, nbTrimestreAcquis: Int),
                            dateOfRetirementComp : DateComponents) -> Int? {
-        //var dateDuTauxPlein     : Date?
         var dateDuTauxPleinComp : DateComponents
         var duree               : DateComponents
         
         // nb de trimestre manquant pour atteindre l'age à taux plein
-        guard let dateDuTauxPlein = ageTauxPlein(birthYear: birthDate.year)?.years.from(birthDate) else {
+        guard let dateDuTauxPlein = ageTauxPleinLegal(birthYear: birthDate.year)?.years.from(birthDate) else {
             return nil
         }
         dateDuTauxPleinComp = Date.calendar.dateComponents([.year, .month, .day],
                                                            from: dateDuTauxPlein)
-        duree = Date.calendar.dateComponents([.year, .quarter, .day],
+        duree = Date.calendar.dateComponents([.year, .month, .day],
                                              from : dateOfRetirementComp,
                                              to   : dateDuTauxPleinComp)
-        let trimestresManquantAgeTauxPlein = max(0, (duree.year! * 4) + duree.quarter!)
+        let trimestresManquantAgeTauxPlein = max(0, (duree.year! * 4) + duree.month! % 3)
         
         // nb de trimestre manquant pour atteindre le nb de trimestres requis
         guard let dureeDeReference = dureeDeReference(birthYear: birthDate.year) else {
@@ -111,10 +110,10 @@ struct RegimeGeneral: Codable {
         }
         dateDuTauxPleinComp = Date.calendar.dateComponents([.year, .month, .day],
                                                            from: dateTousTrimestre)
-        duree               = Date.calendar.dateComponents([.year, .quarter, .day],
+        duree               = Date.calendar.dateComponents([.year, .month, .day],
                                                            from: dateOfRetirementComp,
                                                            to  : dateDuTauxPleinComp)
-        let trimestresManquantNbTrimestreTauxPlein = max(0, (duree.year! * 4) + duree.quarter!)
+        let trimestresManquantNbTrimestreTauxPlein = max(0, (duree.year! * 4) + duree.month! % 3)
         
         // retenir le plus favorable des deux et limiter à 20 max
         return min(trimestresManquantNbTrimestreTauxPlein,
@@ -123,6 +122,9 @@ struct RegimeGeneral: Codable {
     }
     
     /// Calcul la durée d'assurance à la date prévisionnelle de demande de liquidation de la pension de retraite
+    /// - Parameters:
+    ///   - lastKnownSituation: dernière situation connue (année, nombre de trimestres de cotisation acquis)
+    ///   - dateOfRetirementComp: date de demande de liquidation de la pension de retraite
     /// - Returns: durée d'assurance en nombre de trimestres
     func dureeAssurance(lastKnownSituation   : (atEndOf: Int, nbTrimestreAcquis: Int),
                         dateOfRetirementComp : DateComponents) -> Int {
@@ -130,10 +132,10 @@ struct RegimeGeneral: Codable {
                                          year     : lastKnownSituation.atEndOf,
                                          month    : 12,
                                          day      : 31)
-        let duree = Date.calendar.dateComponents([.year, .quarter, .day],
+        let duree = Date.calendar.dateComponents([.year, .month, .day],
                                                            from: dateRefComp,
                                                            to  : dateOfRetirementComp)
-        let nbTrimestreFutur = (duree.year! * 4) + duree.quarter!
+        let nbTrimestreFutur = (duree.year! * 4) + duree.month! % 3
         return lastKnownSituation.nbTrimestreAcquis + nbTrimestreFutur
     }
     
@@ -148,27 +150,62 @@ struct RegimeGeneral: Codable {
     /// Trouve l'age minimum pour bénéficer du taux plein sans avoir le nb de trimestres minimum
     /// - Parameter birthYear: Année de naissance
     /// - Returns: Age minimum pour bénéficer du taux plein sans avoir le nb de trimestres minimumou nil
-    func ageTauxPlein(birthYear : Int) -> Int? {
+    func ageTauxPleinLegal(birthYear : Int) -> Int? {
         guard let slice = model.dureeDeReferenceGrid.last(where: { $0.birthYear <= birthYear})  else { return nil }
         return slice.ageTauxPlein
     }
     
-    /// Calcul de la retraite du salarié du secteur privé
+    /// Calcule la date d'obtention du taux plein légal de retraite
+    /// - Parameters:
+    ///   - birthDate: date de naissance
+    ///   - lastKnownSituation: dernière situation connue (année, nombre de trimestres de cotisation acquis)
+    /// - Returns: date d'obtention du taux plein légal de retraite
+    func dateTauxPleinLegal(birthDate            : Date,
+                            lastKnownSituation   : (atEndOf: Int, nbTrimestreAcquis: Int)) -> Date? {
+        guard let dateDuTauxPlein = ageTauxPleinLegal(birthYear: birthDate.year)?.years.from(birthDate) else {
+            return nil
+        }
+        return dateDuTauxPlein
+    }
+    
+    /// Calcule la date d'obtention de tous les trimestres nécessaire pour obtenir le taux plein de retraite
+    /// - Parameters:
+    ///   - birthDate: date de naissance
+    ///   - lastKnownSituation: dernière situation connue (année, nombre de trimestres de cotisation acquis)
+    /// - Returns: date d'obtention de tous les trimestres nécessaire pour obtenir le taux plein de retraite
+    func dateTauxPlein(birthDate            : Date,
+                       lastKnownSituation   : (atEndOf: Int, nbTrimestreAcquis: Int)) -> Date? {
+        guard let dureeDeReference = dureeDeReference(birthYear: birthDate.year) else {
+            return nil
+        }
+        let trimestreRestant = max(0, dureeDeReference - lastKnownSituation.nbTrimestreAcquis)
+        let dateRefComp = DateComponents(calendar : Date.calendar,
+                                         year     : lastKnownSituation.atEndOf,
+                                         month    : 12,
+                                         day      : 31)
+        let dateRef = Date.calendar.date(from: dateRefComp)!
+        guard let dateTousTrimestre = (trimestreRestant * 3).months.from(dateRef) else {
+            return nil
+        }
+        return dateTousTrimestre
+    }
+    
+    /// Calcul de la retraite brutte du salarié du secteur privé
     /// - Parameters:
     ///   - sam: Salaire annuel moyen 
     ///   - tauxDePension: Taux de la pension
     ///   - dureeAssurance: Durée d'assurance du salarié au régime général
     ///   - dureeDeReference: Durée de référence pour obtenir une pension à taux plein
-    /// - Returns: Le montant de la pension de retraite
+    /// - Returns: Le montant brut de la pension de retraite
     func pension(sam              : Double,
                  tauxDePension    : Double,
                  dureeAssurance   : Int,
                  dureeDeReference : Int) -> Double {
         // Salaire annuel moyen x Taux de la pension x (Durée d'assurance du salarié au régime général / Durée de référence pour obtenir une pension à taux plein)
-        sam * tauxDePension * Double(dureeAssurance / dureeDeReference)
+        sam * tauxDePension/100 * dureeAssurance.double() / dureeDeReference.double()
     }
     
-    /// Calcul de la retraite du salarié du secteur privé
+    /// Calcul de la retraite brutte du salarié du secteur privé
     /// - Parameters:
     ///   - sam: Salaire annuel moyen:
     /// - Important: Votre salaire annuel moyen est déterminé en calculant la moyenne des salaires bruts ayant donné lieu à cotisation au régime général durant les 25 années les plus avantageuses de votre carrière.
@@ -177,14 +214,14 @@ struct RegimeGeneral: Codable {
     ///   - tauxDePension: Taux de la pension
     ///   - dureeAssurance: Durée d'assurance du salarié au régime général
     ///   - birthYear: Année de naissance
-    /// - Returns: Le montant de la pension de retraite ou nil
+    /// - Returns: Le montant brut de la pension de retraite ou nil
     func pension(sam                  : Double,
                  birthDate            : Date,
                  dateOfRetirementComp : DateComponents,
                  lastKnownSituation   : (atEndOf: Int, nbTrimestreAcquis: Int)) -> Double? {
         // Salaire annuel moyen x Taux de la pension x (Durée d'assurance du salarié au régime général / Durée de référence pour obtenir une pension à taux plein)
-        guard let tauxDePension = tauxDePension(birthDate: birthDate,
-                                                lastKnownSituation: lastKnownSituation,
+        guard let tauxDePension = tauxDePension(birthDate           : birthDate,
+                                                lastKnownSituation  : lastKnownSituation,
                                                 dateOfRetirementComp: dateOfRetirementComp) else { return nil }
         
         guard let dureeDeReference = dureeDeReference(birthYear: birthDate.year) else { return nil }
@@ -195,6 +232,34 @@ struct RegimeGeneral: Codable {
                        tauxDePension    : tauxDePension,
                        dureeAssurance   : _dureeAssurance,
                        dureeDeReference : dureeDeReference)
+    }
+    
+    /// version détaillée
+    func pensionWithDetail(sam                  : Double,
+                           birthDate            : Date,
+                           dateOfRetirementComp : DateComponents,
+                           lastKnownSituation   : (atEndOf: Int, nbTrimestreAcquis: Int))
+        -> (tauxDePension: Double, dureeDeReference: Int, dureeAssurance: Int, pensionBrute: Double, pensionNette: Double)? {
+            // Salaire annuel moyen x Taux de la pension x (Durée d'assurance du salarié au régime général / Durée de référence pour obtenir une pension à taux plein)
+            guard let tauxDePension = tauxDePension(birthDate: birthDate,
+                                                    lastKnownSituation: lastKnownSituation,
+                                                    dateOfRetirementComp: dateOfRetirementComp) else { return nil }
+            
+            guard let dureeDeReference = dureeDeReference(birthYear: birthDate.year) else { return nil }
+            
+            let _dureeAssurance = dureeAssurance(lastKnownSituation   : lastKnownSituation,
+                                                 dateOfRetirementComp : dateOfRetirementComp)
+            let pensionBrute = pension(sam              : sam,
+                                       tauxDePension    : tauxDePension,
+                                       dureeAssurance   : _dureeAssurance,
+                                       dureeDeReference : dureeDeReference)
+            let pensionNette = Fiscal.model.socialTaxesOnPension.net(pensionBrute)
+            
+            return (tauxDePension    : tauxDePension,
+                    dureeDeReference : dureeDeReference,
+                    dureeAssurance   : _dureeAssurance,
+                    pensionBrute     : pensionBrute,
+                    pensionNette     : pensionNette)
     }
 }
 

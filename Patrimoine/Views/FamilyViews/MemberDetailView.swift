@@ -9,10 +9,11 @@
 import SwiftUI
 
 // MARK: - Afficher les détails d'un membre de la famille
+
 struct MemberDetailView: View {
     @EnvironmentObject var family     : Family
     @EnvironmentObject var member     : Person
-    @EnvironmentObject var patrimoine : Patrimoine
+    @EnvironmentObject var patrimoine : Patrimoin
     @EnvironmentObject var simulation : Simulation
     @EnvironmentObject var uiState    : UIState
     @State var showingSheet = false
@@ -57,14 +58,18 @@ struct MemberDetailView: View {
     }
 }
 
+// MARK: - Adult View
+
 struct AdultDetailView: View {
     @EnvironmentObject var member: Person
-    
+
     var body: some View {
         let adult     = member as! Adult
         let income    = adult.initialPersonalIncome
         var revenue   = ""
         var insurance = ""
+        let sam: Double = 50_000
+        let lastKnownSituation = (atEndOf: 2018, nbTrimestreAcquis: 135)
         switch income {
             case let .salary(netSalary, healthInsurance):
                 revenue   = valueEuroFormatter.string(from: netSalary as NSNumber) ?? ""
@@ -76,7 +81,13 @@ struct AdultDetailView: View {
                 revenue   = "none"
                 insurance = "none"
         }
-        return Group() {
+        
+        let pension =
+            Pension.model.regimeGeneral.pension(sam: sam,
+                                                birthDate: member.birthDate,
+                                                dateOfRetirementComp: (member as! Adult).dateOfPensionLiquidComp,
+                                                lastKnownSituation: lastKnownSituation) ?? 0
+        return Group {
             Section(header: Text("SCENARIO").font(.subheadline)) {
                 HStack {
                     Text("Age de décès estimé")
@@ -110,18 +121,21 @@ struct AdultDetailView: View {
                     Spacer()
                     Text(revenue)
                 }
-                .padding(.leading)
                 HStack {
                     Text(income?.pickerString == "Salaire" ? "Coût de la mutuelle" : "Charges sociales")
                     Spacer()
                     Text(insurance)
                 }
-                .padding(.leading)
-                
+                // pension de retraite
+                NavigationLink(destination: RetirementDetailView()) {
+                    AmountView(label: "Pension de retraite annuelle brute", amount: pension)
+                }
             }
         }
     }
 }
+
+// MARK: - Child View
 
 struct ChildDetailView: View {
     @EnvironmentObject var member: Person
@@ -154,10 +168,9 @@ struct FamilyDetailView_Previews: PreviewProvider {
     static var previews: some View {
         let aMember = family.members.first!
         
-        return NavigationView {
-            MemberDetailView()
+        return MemberDetailView()
                 .environmentObject(family)
                 .environmentObject(aMember)
-        }
+        
     }
 }

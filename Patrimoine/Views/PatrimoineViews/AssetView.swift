@@ -9,7 +9,7 @@
 import SwiftUI
 
 struct AssetView: View {
-    @EnvironmentObject var patrimoine : Patrimoine
+    @EnvironmentObject var patrimoine : Patrimoin
     @EnvironmentObject var uiState    : UIState
 
     var body: some View {
@@ -60,7 +60,7 @@ struct AssetView: View {
     }
 }
 struct RealEstateView: View {
-    @EnvironmentObject var patrimoine : Patrimoine
+    @EnvironmentObject var patrimoine : Patrimoin
     @EnvironmentObject var uiState    : UIState
 
     func removeItems(at offsets: IndexSet) {
@@ -111,7 +111,7 @@ struct RealEstateView: View {
 }
 
 struct ScpiView: View {
-    @EnvironmentObject var patrimoine : Patrimoine
+    @EnvironmentObject var patrimoine : Patrimoin
     @EnvironmentObject var uiState    : UIState
 
     func removeItems(at offsets: IndexSet) {
@@ -175,7 +175,7 @@ struct ScpiView: View {
 }
 
 struct PeriodicInvestView: View {
-    @EnvironmentObject var patrimoine : Patrimoine
+    @EnvironmentObject var patrimoine : Patrimoin
     @EnvironmentObject var uiState    : UIState
 
     func removeItems(at offsets: IndexSet) {
@@ -227,7 +227,7 @@ struct PeriodicInvestView: View {
 }
 
 struct FreeInvestView: View {
-    @EnvironmentObject var patrimoine : Patrimoine
+    @EnvironmentObject var patrimoine : Patrimoin
     @EnvironmentObject var uiState    : UIState
 
     func removeItems(at offsets: IndexSet) {
@@ -280,7 +280,7 @@ struct FreeInvestView: View {
 }
 
 struct SciScpiView: View {
-    @EnvironmentObject var patrimoine : Patrimoine
+    @EnvironmentObject var patrimoine : Patrimoin
     @EnvironmentObject var uiState    : UIState
 
     func removeItems(at offsets: IndexSet) {
@@ -345,7 +345,7 @@ struct SciScpiView: View {
 
 
 struct AssetView_Previews: PreviewProvider {
-    static var patrimoine  = Patrimoine()
+    static var patrimoine  = Patrimoin()
 
     static var previews: some View {
         return

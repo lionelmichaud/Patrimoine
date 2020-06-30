@@ -8,7 +8,7 @@
 
 import Foundation
 
-final class Patrimoine: ObservableObject {
+final class Patrimoin: ObservableObject {
     @Published var assets      = Assets()
     @Published var liabilities = Liabilities()
     

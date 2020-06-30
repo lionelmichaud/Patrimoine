@@ -9,7 +9,7 @@
 import SwiftUI
 
 struct SCPIDetailedView: View {
-    @EnvironmentObject var patrimoine : Patrimoine
+    @EnvironmentObject var patrimoine : Patrimoin
     @EnvironmentObject var simulation : Simulation
     @EnvironmentObject var uiState    : UIState
 
@@ -144,7 +144,7 @@ struct SCPIDetailedView: View {
 }
 
 struct SCPIDetailedView_Previews: PreviewProvider {
-    static var patrimoine  = Patrimoine()
+    static var patrimoine  = Patrimoin()
 
     static var previews: some View {
         return

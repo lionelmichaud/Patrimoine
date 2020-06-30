@@ -134,21 +134,17 @@ struct SocialTaxesOnRealEstateCapitalGain: Codable {
 }
 
 // MARK: - Charges sociales sur pensions de retraite
+/// https://www.service-public.fr/particuliers/vosdroits/F2971
 /// Charges sociales sur pensions de retraite
 struct SocialTaxesOnPension: Codable {
     
     // properties
     
-    //    static let CRDS              : Double = 0.5 // %
-    //    static let CSG               : Double = 8.6 // %
-    //    static let additionalContrib : Double = 0.3 // %
-    //    static let healthInsurance   : Double = 1.0 // %
-    //    static let total = CRDS + CSG + additionalContrib + healthInsurance // %
-    
     struct Model: Codable {
+        let CSGdeductible     : Double = 5.9 // %
         let CRDS              : Double = 0.5 // %
-        let CSG               : Double = 8.6 // %
-        let additionalContrib : Double = 0.3  // %
+        let CSG               : Double = 8.3 // %
+        let additionalContrib : Double = 0.3 // %
         let healthInsurance   : Double = 1.0 // %
         var total             : Double {
             CRDS + CSG + additionalContrib + healthInsurance // %
@@ -164,10 +160,14 @@ struct SocialTaxesOnPension: Codable {
     func net(_ brut: Double) -> Double {
         brut * (1.0 - model.total / 100.0)
     }
-    /// cahrges socuiales sur une pension brute
+    /// charges sociales sur une pension brute
     /// - Parameter brut: pension brute
     func socialTaxes(_ brut: Double) -> Double {
         brut * model.total / 100.0
+    }
+    // TODO: - Taux CSG déductible de l'impôt sur le revenu 5.9%
+    func csgDeductibleDeIrpp(_ brut: Double) -> Double {
+        brut * model.CSGdeductible
     }
 }
 

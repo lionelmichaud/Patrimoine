@@ -250,7 +250,7 @@ struct CashFlowLine {
     
     init(withYear       year                   : Int,
          withFamily     family                 : Family,
-         withPatrimoine patrimoine             : Patrimoine,
+         withPatrimoine patrimoine             : Patrimoin,
          taxableIrppRevenueDelayedFromLastyear : Double) throws {
         self.year = year
         revenues.taxableIrppRevenueDelayedFromLastYear.setValue(to: taxableIrppRevenueDelayedFromLastyear)
@@ -322,7 +322,7 @@ struct CashFlowLine {
     
     /// Populate loyers, produit de la vente et impots locaux des biens immobiliers
     /// - Parameter patrimoine: du patrimoine
-    fileprivate mutating func populateRealEstateCashFlow(of patrimoine: Patrimoine) {
+    fileprivate mutating func populateRealEstateCashFlow(of patrimoine: Patrimoin) {
         for realEstate in patrimoine.assets.realEstates.items.sorted(by:<) {
             // populate real estate rent revenues and social taxes
             let yearlyRent = realEstate.yearlyRent(during: year)
@@ -346,7 +346,7 @@ struct CashFlowLine {
     
     /// Populate produit de vente, dividendes, taxes sociales des SCPI hors de la SCI
     /// - Parameter patrimoine: du patrimoine
-    fileprivate mutating func populateScpiCashFlow(of patrimoine: Patrimoine) {
+    fileprivate mutating func populateScpiCashFlow(of patrimoine: Patrimoin) {
         for scpi in patrimoine.assets.scpis.items.sorted(by:<) {
             // populate SCPI revenues and social taxes
             let yearlyRevenue = scpi.yearlyRevenue(atEndOf: year)
@@ -367,7 +367,7 @@ struct CashFlowLine {
     /// - Parameters:
     ///   - patrimoine: du patrimoine
     ///   - lifeInsuranceRebate: franchise d'imposition sur les plus values
-    fileprivate mutating func populatePeriodicInvestmentsCashFlow(of patrimoine: Patrimoine, lifeInsuranceRebate: inout Double) {
+    fileprivate mutating func populatePeriodicInvestmentsCashFlow(of patrimoine: Patrimoin, lifeInsuranceRebate: inout Double) {
         // pour chaque investissement financier periodique
         for periodicInvestement in patrimoine.assets.periodicInvests.items.sorted(by:<) {
             let liquidatedValue = periodicInvestement.liquidatedValue(atEndOf: year)
@@ -397,7 +397,7 @@ struct CashFlowLine {
     
     /// Populate remboursement d'emprunts
     /// - Parameter patrimoine: du patrimoine
-    fileprivate mutating func populateLoanCashFlow(of patrimoine: Patrimoine) {
+    fileprivate mutating func populateLoanCashFlow(of patrimoine: Patrimoin) {
         for loan in patrimoine.liabilities.loans.items.sorted(by:<) {
             let yearlyPayement = -loan.yearlyPayement(year)
             let name           = loan.name
@@ -411,7 +411,7 @@ struct CashFlowLine {
     ///   - year: en fin d'année
     ///   - lifeInsuranceRebate: franchise d'imposition sur les plus values
     /// - Throws: Si pas assez de capital -> CashFlowError.notEnoughCash(missingCash: amountRemainingToRemove)
-    fileprivate mutating func manageYearlyNetCashFlow(of patrimoine       : Patrimoine,
+    fileprivate mutating func manageYearlyNetCashFlow(of patrimoine       : Patrimoin,
                                                       lifeInsuranceRebate : inout Double,
                                                       atEndOf year        : Int) throws {
         if netCashFlow > 0.0 {

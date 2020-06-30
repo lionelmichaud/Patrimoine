@@ -111,22 +111,28 @@ struct AmountEditView: View {
 
 // MARK: - Affichage d'un montant en €
 struct AmountView: View {
-    let label  : String
-    let amount : Double
-    let weight : Font.Weight
+    let label   : String
+    let amount  : Double
+    let weight  : Font.Weight
+    let comment : String?
     
     var body: some View {
         HStack {
-            Text(label).fontWeight(weight)
+            Text(label)
+                .fontWeight(weight)
             Spacer()
-            Text(valueEuroFormatter.string(from: amount as NSNumber) ?? "").fontWeight(weight)
+            if comment != nil { Text(comment!).foregroundColor(.secondary) }
+            Text(valueEuroFormatter.string(from: amount as NSNumber) ?? "")
+                .fontWeight(weight)
+                .frame(maxWidth: 100, alignment: .trailing)
         }
     }
     
-    init(label: String, amount: Double, weight: Font.Weight = .regular) {
-        self.label  = label
-        self.amount = amount
-        self.weight = weight
+    init(label: String, amount: Double, weight: Font.Weight = .regular, comment: String? = nil) {
+        self.label   = label
+        self.amount  = amount
+        self.weight  = weight
+        self.comment = comment
     }
 }
 
@@ -179,19 +185,25 @@ struct IntegerView: View {
     let label   : String
     let integer : Int
     let weight  : Font.Weight
+    let comment : String?
 
     var body: some View {
         HStack {
-            Text(label).fontWeight(weight)
+            Text(label)
+                .fontWeight(weight)
             Spacer()
-            Text(String(integer)).fontWeight(weight)
+            if comment != nil { Text(comment!).foregroundColor(.secondary) }
+            Text(String(integer))
+                .fontWeight(weight)
+                .frame(maxWidth: 100, alignment: .trailing)
         }
     }
     
-    init(label: String, integer: Int, weight: Font.Weight = .regular) {
+    init(label: String, integer: Int, weight: Font.Weight = .regular, comment: String? = nil) {
         self.label   = label
         self.integer = integer
         self.weight  = weight
+        self.comment = comment
     }
 }
 
@@ -243,15 +255,24 @@ struct PercentEditView: View {
 
 // MARK: - Affichage d'un pourcentage %
 struct PercentView: View {
-    let label  : String
-    let percent: Double
-    
+    let label   : String
+    let percent : Double
+    let comment : String?
+
     var body: some View {
         HStack {
             Text(label)
             Spacer()
+            if comment != nil { Text(comment!).foregroundColor(.secondary) }
             Text(percentFormatter.string(from: percent as NSNumber) ?? "??")
+                .frame(maxWidth: 100, alignment: .trailing)
         }
+    }
+
+    init(label: String, percent : Double, comment: String? = nil) {
+        self.label   = label
+        self.percent = percent
+        self.comment = comment
     }
 }
 

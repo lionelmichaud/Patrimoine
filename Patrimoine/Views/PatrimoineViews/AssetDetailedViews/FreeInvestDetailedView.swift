@@ -15,7 +15,7 @@ struct FreeInvestDetailedView: View {
 
     var item: FreeInvestement?
     // commun
-    @EnvironmentObject var patrimoine: Patrimoine
+    @EnvironmentObject var patrimoine: Patrimoin
     @Environment(\.presentationMode) var presentationMode
     @State private var index: Int?
     // à adapter
@@ -66,7 +66,7 @@ struct FreeInvestDetailedView: View {
         )
     }
     
-    init(item: FreeInvestement?, patrimoine: Patrimoine) {
+    init(item: FreeInvestement?, patrimoine: Patrimoin) {
         self.item = item
         if let initialItemValue = item {
             // modification d'un élément existant
@@ -127,7 +127,7 @@ struct FreeInvestDetailedView: View {
 }
 
 struct FreeInvestDetailedView_Previews: PreviewProvider {
-    static var patrimoine  = Patrimoine()
+    static var patrimoine  = Patrimoin()
 
     static var previews: some View {
         return

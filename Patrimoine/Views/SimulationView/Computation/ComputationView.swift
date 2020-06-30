@@ -12,7 +12,7 @@ import ActivityIndicatorView
 struct ComputationView: View {
     @EnvironmentObject var uiState          : UIState
     @EnvironmentObject var family           : Family
-    @EnvironmentObject var patrimoine       : Patrimoine
+    @EnvironmentObject var patrimoine       : Patrimoin
     @EnvironmentObject var simulation       : Simulation
     @State private var busySaveWheelAnimate : Bool = false
     @State private var busyCompWheelAnimate : Bool = false
@@ -120,7 +120,7 @@ struct ComputationView: View {
 
 struct ComputationView_Previews: PreviewProvider {
     static var family     = Family()
-    static var patrimoine = Patrimoine()
+    static var patrimoine = Patrimoin()
     static var simulation = Simulation()
     
     static var previews: some View {

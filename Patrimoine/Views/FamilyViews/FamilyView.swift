@@ -48,7 +48,7 @@ struct FamilyView: View {
 
 struct FamilyView_Previews: PreviewProvider {
     static let family  = Family()
-    static let patrimoine = Patrimoine()
+    static let patrimoine = Patrimoin()
     static let uiState = UIState()
 
     static var previews: some View {

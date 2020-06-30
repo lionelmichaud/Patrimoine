@@ -14,7 +14,7 @@ struct PeriodicInvestDetailedView: View {
 
     var item: PeriodicInvestement?
     // commun
-    @EnvironmentObject var patrimoine: Patrimoine
+    @EnvironmentObject var patrimoine: Patrimoin
     @Environment(\.presentationMode) var presentationMode
     @State private var index: Int?
     // à adapter
@@ -71,7 +71,7 @@ struct PeriodicInvestDetailedView: View {
         )
     }
     
-    init(item: PeriodicInvestement?, patrimoine: Patrimoine) {
+    init(item: PeriodicInvestement?, patrimoine: Patrimoin) {
         self.item = item
         if let initialItemValue = item {
             // modification d'un élément existant
@@ -112,7 +112,7 @@ struct PeriodicInvestDetailedView: View {
 }
 
 struct PeriodicInvestDetailedView_Previews: PreviewProvider {
-    static var patrimoine  = Patrimoine()
+    static var patrimoine  = Patrimoin()
 
     static var previews: some View {
         return

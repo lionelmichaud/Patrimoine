@@ -12,17 +12,17 @@ struct FamilyListView : View {
     @EnvironmentObject var family: Family
 
     var body: some View {
-            Section {
-                ForEach(family.members) { member in
-                    NavigationLink(destination: MemberDetailView().environmentObject(member)) {
-                        MemberRowView(member: member)
-                    }
-                    .isDetailLink(true)
+        Section {
+            ForEach(family.members) { member in
+                NavigationLink(destination: MemberDetailView().environmentObject(member)) {
+                    MemberRowView(member: member)
                 }
-                .onDelete(perform: family.deleteMembers)
-                .onMove(perform: family.moveMembers)
+                .isDetailLink(true)
             }
+            .onDelete(perform: family.deleteMembers)
+            .onMove(perform: family.moveMembers)
         }
+    }
 }
 
 struct MemberRowView : View {
@@ -64,7 +64,6 @@ struct AgeDateView : View {
                 Text("\(age) ans")
                     .foregroundColor(.primary)
             }
-            //Spacer()
             HStack {
                 Text(dateLabel)
                 Spacer()

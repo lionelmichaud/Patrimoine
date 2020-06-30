@@ -31,7 +31,7 @@ struct SocialAccounts {
     /// - Parameters:
     ///   - family: la famille dont il faut faire le bilan
     ///   - patrimoine: le patrimoine
-    mutating func reset(withPatrimoine patrimoine : Patrimoine) {
+    mutating func reset(withPatrimoine patrimoine : Patrimoin) {
         cashFlowArray = CashFlowArray()
         balanceArray  = BalanceSheetArray()
         firstYear     = Date.now.year
@@ -49,7 +49,7 @@ struct SocialAccounts {
     ///   - reportProgress: closure pour indiquer l'avancement de la simulation
     mutating func build(nbOfYears                 : Int,
                         withFamily family         : Family,
-                        withPatrimoine patrimoine : Patrimoine) {
+                        withPatrimoine patrimoine : Patrimoin) {
         firstYear = Date.now.year
         lastYear  = firstYear + nbOfYears - 1
 

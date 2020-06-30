@@ -9,7 +9,7 @@
 import SwiftUI
 
 struct LiabilityView: View {
-    @EnvironmentObject var patrimoine : Patrimoine
+    @EnvironmentObject var patrimoine : Patrimoin
     @EnvironmentObject var uiState    : UIState
     
     var body: some View {
@@ -30,7 +30,7 @@ struct LiabilityView: View {
 }
 
 struct LoanView: View {
-    @EnvironmentObject var patrimoine : Patrimoine
+    @EnvironmentObject var patrimoine : Patrimoin
     @EnvironmentObject var uiState    : UIState
 
     func removeItems(at offsets: IndexSet) {
@@ -83,7 +83,7 @@ struct LoanView: View {
 }
 
 struct DebtView: View {
-    @EnvironmentObject var patrimoine : Patrimoine
+    @EnvironmentObject var patrimoine : Patrimoin
     @EnvironmentObject var uiState    : UIState
 
     func removeItems(at offsets: IndexSet) {
@@ -136,7 +136,7 @@ struct DebtView: View {
 }
 
 struct LiabilityView_Previews: PreviewProvider {
-    static var patrimoine = Patrimoine()
+    static var patrimoine = Patrimoin()
     static var uiState    = UIState()
 
     static var previews: some View {

@@ -11,7 +11,7 @@ import SwiftUI
 struct MemberEditView: View {
     @EnvironmentObject var family     : Family
     @EnvironmentObject var member     : Person
-    @EnvironmentObject var patrimoine : Patrimoine
+    @EnvironmentObject var patrimoine : Patrimoin
     @EnvironmentObject var simulation : Simulation
     @EnvironmentObject var uiState    : UIState
     @Environment(\.presentationMode) var presentationMode

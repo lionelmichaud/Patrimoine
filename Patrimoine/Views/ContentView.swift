@@ -26,7 +26,7 @@ struct ContentView: View {
     // MARK: - Properties
 
     var family     : Family
-    var patrimoine : Patrimoine
+    var patrimoine : Patrimoin
     var simulation : Simulation
     @EnvironmentObject private var uiState: UIState
     //@State private var selectedTab = UIState.Tab.family
@@ -67,7 +67,7 @@ struct ContentView: View {
     // MARK: - Initializer
 
     internal init(family     : Family     = Family(),
-                  patrimoine : Patrimoine = Patrimoine(),
+                  patrimoine : Patrimoin  = Patrimoin(),
                   simulation : Simulation = Simulation()) {
         // chargement des données en fichier
         self.family     = family

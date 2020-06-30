@@ -9,7 +9,7 @@
 import SwiftUI
 
 struct PatrimoineSummaryView: View {
-    @EnvironmentObject var patrimoine: Patrimoine
+    @EnvironmentObject var patrimoine: Patrimoin
     @EnvironmentObject var uiState   : UIState
     let minDate = Date.now.year
     let maxDate = Date.now.year + 40
@@ -165,7 +165,7 @@ struct PatrimoineSummaryView: View {
 
 struct PatrimoineSummaryView_Previews: PreviewProvider {
     static var family     = Family()
-    static var patrimoine = Patrimoine()
+    static var patrimoine = Patrimoin()
     static var uiState    = UIState()
     
     static var previews: some View {

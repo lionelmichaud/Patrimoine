@@ -72,7 +72,7 @@ struct SimulationHeaderView : View {
 
 struct SimulationView_Previews: PreviewProvider {
     static var family     = Family()
-    static var patrimoine = Patrimoine()
+    static var patrimoine = Patrimoin()
     static var simulation = Simulation()
     
     static var previews: some View {

@@ -129,7 +129,7 @@ struct ExpenseListInCategory: View {
 struct ExpenseView_Previews: PreviewProvider {
     static var family     = Family()
     static var simulation = Simulation()
-    static var patrimoine = Patrimoine()
+    static var patrimoine = Patrimoin()
     static var uiState    = UIState()
 
     static var previews: some View {

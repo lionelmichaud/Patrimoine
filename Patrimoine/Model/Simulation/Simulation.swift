@@ -21,7 +21,7 @@ final class Simulation: ObservableObject {
     /// - Parameters:
     ///   - family: la famille
     ///   - patrimoine: le patrimoine
-    func reset(withPatrimoine patrimoine : Patrimoine) {
+    func reset(withPatrimoine patrimoine : Patrimoin) {
         // réinitialiser les comptes sociaux du patrimoine de la famille
         socialAccounts.reset(withPatrimoine : patrimoine)
         firstYear  = nil
@@ -38,7 +38,7 @@ final class Simulation: ObservableObject {
     ///   - reportProgress: closure pour indiquer l'avancement de la simulation
     func compute(nbOfYears                 : Int,
                  withFamily family         : Family,
-                 withPatrimoine patrimoine : Patrimoine) {
+                 withPatrimoine patrimoine : Patrimoin) {
         // Réinitialiser la simulation
         self.reset(withPatrimoine : patrimoine)
         
