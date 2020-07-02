@@ -69,7 +69,8 @@ struct AdultDetailView: View {
         var revenue   = ""
         var insurance = ""
         let sam: Double = 50_000
-        let lastKnownSituation = (atEndOf: 2018, nbTrimestreAcquis: 135)
+        let lastKnownSituation = (atEndOf: 2019, nbTrimestreAcquis: 135)
+        let lastAgircKnownSituation = (atEndOf: 2018, nbPoints: 17908, pointsParAn: 788)
         switch income {
             case let .salary(netSalary, healthInsurance):
                 revenue   = valueEuroFormatter.string(from: netSalary as NSNumber) ?? ""
@@ -82,11 +83,18 @@ struct AdultDetailView: View {
                 insurance = "none"
         }
         
-        let pension =
-            Pension.model.regimeGeneral.pension(sam: sam,
-                                                birthDate: member.birthDate,
-                                                dateOfRetirementComp: (member as! Adult).dateOfPensionLiquidComp,
-                                                lastKnownSituation: lastKnownSituation) ?? 0
+        let pensionGeneral =
+            Pension.model.regimeGeneral.pensionWithDetail(sam                     : sam,
+                                                          birthDate               : member.birthDate,
+                                                          dateOfPensionLiquidComp : (member as! Adult).dateOfPensionLiquidComp,
+                                                          lastKnownSituation      : lastKnownSituation)?.pensionNette ?? 0
+        let pensionAgirc =
+                Pension.model.regimeAgirc.pension(lastAgircKnownSituation : lastAgircKnownSituation,
+                                                  birthDate               : member.birthDate,
+                                                  lastKnownSituation      : lastKnownSituation,
+                                                  dateOfPensionLiquidComp : (member as! Adult).dateOfPensionLiquidComp,
+                                                  ageOfPensionLiquidComp  : (member as! Adult).ageOfPensionLiquidComp)?.pensionNette ?? 0
+        
         return Group {
             Section(header: Text("SCENARIO").font(.subheadline)) {
                 HStack {
@@ -102,7 +110,7 @@ struct AdultDetailView: View {
                 HStack {
                     Text("Liquidation de pension")
                     Spacer()
-                    Text("\(adult.ageOfPensionLiquidComp.year!) ans en \(String(adult.dateOfPensionLiquid.year))")
+                    Text("\(adult.ageOfPensionLiquidComp.year!) ans fin  \(String(adult.dateOfPensionLiquid.month))/\(String(adult.dateOfPensionLiquid.year))")
                 }
                 HStack {
                     Text("Dépendance")
@@ -117,7 +125,7 @@ struct AdultDetailView: View {
             // revenus
             Section(header: Text("REVENUS").font(.subheadline)) {
                 HStack {
-                    Text(income?.pickerString == "Salaire" ? "Salaire" : "BNC")
+                    Text(income?.pickerString == "Salaire" ? "Salaire net avant impôts" : "BNC avant impôts")
                     Spacer()
                     Text(revenue)
                 }
@@ -128,7 +136,7 @@ struct AdultDetailView: View {
                 }
                 // pension de retraite
                 NavigationLink(destination: RetirementDetailView()) {
-                    AmountView(label: "Pension de retraite annuelle brute", amount: pension)
+                    AmountView(label: "Pension de retraite annuelle nette", amount: pensionGeneral + pensionAgirc)
                 }
             }
         }

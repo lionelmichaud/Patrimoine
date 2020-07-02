@@ -3,7 +3,11 @@
     {
         "model" :
         {
-            "irpp" : 19.0,
+            "ageMinimumLegal"      : 65,
+            "nbOfYearForSAM"       : 25,
+            "maxReversionRate"     : 50.0,
+            "decoteParTrimestre"   : 0.625,
+            "maxNbTrimestreDecote" : 20,
             "dureeDeReferenceGrid" : [
                 {
                     "birthYear"    : 1953,
@@ -56,6 +60,204 @@
     
     "regimeAgirc" :
     {
+        "model" :
+        {
+            "gridAvant62" : [
+                {
+                    "ndTrimAvantAgeLegal" : 0,
+                    "coef"                : 0.78
+                },
+                {
+                    "ndTrimAvantAgeLegal" : 1,
+                    "coef"                : 0.7625
+                },
+                {
+                    "ndTrimAvantAgeLegal" : 2,
+                    "coef"                : 0.745
+                },
+                {
+                    "ndTrimAvantAgeLegal" : 3,
+                    "coef"                : 0.7275
+                },
+                {
+                    "ndTrimAvantAgeLegal" : 4,
+                    "coef"                : 0.71
+                },
+                {
+                    "ndTrimAvantAgeLegal" : 5,
+                    "coef"                : 0.6925
+                },
+                {
+                    "ndTrimAvantAgeLegal" : 6,
+                    "coef"                : 0.675
+                },
+                {
+                    "ndTrimAvantAgeLegal" : 7,
+                    "coef"                : 0.6575
+                },
+                {
+                    "ndTrimAvantAgeLegal" : 8,
+                    "coef"                : 0.64
+                },
+                {
+                    "ndTrimAvantAgeLegal" : 9,
+                    "coef"                : 0.6225
+                },
+                {
+                    "ndTrimAvantAgeLegal" : 10,
+                    "coef"                : 0.605
+                },
+                {
+                    "ndTrimAvantAgeLegal" : 11,
+                    "coef"                : 0.5875
+                },
+                {
+                    "ndTrimAvantAgeLegal" : 12,
+                    "coef"                : 0.57
+                },
+                {
+                    "ndTrimAvantAgeLegal" : 13,
+                    "coef"                : 0.5525
+                },
+                {
+                    "ndTrimAvantAgeLegal" : 14,
+                    "coef"                : 0.535
+                },
+                {
+                    "ndTrimAvantAgeLegal" : 15,
+                    "coef"                : 0.5175
+                },
+                {
+                    "ndTrimAvantAgeLegal" : 16,
+                    "coef"                : 0.5
+                },
+                {
+                    "ndTrimAvantAgeLegal" : 17,
+                    "coef"                : 0.4825
+                },
+                {
+                    "ndTrimAvantAgeLegal" : 18,
+                    "coef"                : 0.465
+                },
+                {
+                    "ndTrimAvantAgeLegal" : 19,
+                    "coef"                : 0.4475
+                },
+                {
+                    "ndTrimAvantAgeLegal" : 20,
+                    "coef"                : 0.43
+                }
+            ],
+            "gridApres62" : [
+                {
+                    "nbTrimManquant"     : 0,
+                    "ndTrimPostAgeLegal" : 20,
+                    "coef"               : 1.0
+                },
+                {
+                    "nbTrimManquant"     : 1,
+                    "ndTrimPostAgeLegal" : 19,
+                    "coef"               : 0.99
+                },
+                {
+                    "nbTrimManquant"     : 2,
+                    "ndTrimPostAgeLegal" : 18,
+                    "coef"               : 0.98
+                },
+                {
+                    "nbTrimManquant"     : 3,
+                    "ndTrimPostAgeLegal" : 17,
+                    "coef"               : 0.97
+                },
+                {
+                    "nbTrimManquant"     : 4,
+                    "ndTrimPostAgeLegal" : 16,
+                    "coef"               : 0.96
+                },
+                {
+                    "nbTrimManquant"     : 5,
+                    "ndTrimPostAgeLegal" : 15,
+                    "coef"               : 0.95
+                },
+                {
+                    "nbTrimManquant"     : 6,
+                    "ndTrimPostAgeLegal" : 14,
+                    "coef"               : 0.94
+                },
+                {
+                    "nbTrimManquant"     : 7,
+                    "ndTrimPostAgeLegal" : 13,
+                    "coef"               : 0.93
+                },
+                {
+                    "nbTrimManquant"     : 8,
+                    "ndTrimPostAgeLegal" : 12,
+                    "coef"               : 0.92
+                },
+                {
+                    "nbTrimManquant"     : 9,
+                    "ndTrimPostAgeLegal" : 11,
+                    "coef"               : 0.91
+                },
+                {
+                    "nbTrimManquant"     : 10,
+                    "ndTrimPostAgeLegal" : 10,
+                    "coef"               : 0.90
+                },
+                {
+                    "nbTrimManquant"     : 11,
+                    "ndTrimPostAgeLegal" : 9,
+                    "coef"               : 0.89
+                },
+                {
+                    "nbTrimManquant"     : 12,
+                    "ndTrimPostAgeLegal" : 8,
+                    "coef"               : 0.88
+                },
+                {
+                    "nbTrimManquant"     : 13,
+                    "ndTrimPostAgeLegal" : 7,
+                    "coef"               : 0.8675
+                },
+                {
+                    "nbTrimManquant"     : 14,
+                    "ndTrimPostAgeLegal" : 6,
+                    "coef"               : 0.855
+                },
+                {
+                    "nbTrimManquant"     : 15,
+                    "ndTrimPostAgeLegal" : 5,
+                    "coef"               : 0.8425
+                },
+                {
+                    "nbTrimManquant"     : 16,
+                    "ndTrimPostAgeLegal" : 4,
+                    "coef"               : 0.83
+                },
+                {
+                    "nbTrimManquant"     : 17,
+                    "ndTrimPostAgeLegal" : 3,
+                    "coef"               : 0.8175
+                },
+                {
+                    "nbTrimManquant"     : 18,
+                    "ndTrimPostAgeLegal" : 2,
+                    "coef"               : 0.805
+                },
+                {
+                    "nbTrimManquant"     : 19,
+                    "ndTrimPostAgeLegal" : 1,
+                    "coef"               : 0.7925
+                },
+                {
+                    "nbTrimManquant"     : 20,
+                    "ndTrimPostAgeLegal" : 0,
+                    "coef"               : 0.78
+                }
+            ],
+            "valeurDuPoint" : 1.2714,
+            "ageMinimum"    : 57
+        }
     }
 }
 

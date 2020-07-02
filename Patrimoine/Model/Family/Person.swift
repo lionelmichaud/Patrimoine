@@ -115,10 +115,14 @@ class Person : ObservableObject, Identifiable, CustomStringConvertible, Codable 
         birthDateComponents.year! + ageOfDeath
     }
     var ageComponents: DateComponents { // computed
-        Date.calendar.dateComponents([.year, .month, .day], from: birthDateComponents, to: CalendarCst.nowComponents)
+        Date.calendar.dateComponents([.year, .month, .day],
+                                     from: birthDateComponents,
+                                     to: CalendarCst.nowComponents)
     }
     var ageAtEndOfCurrentYear: Int { // computed
-        Date.calendar.dateComponents([.year], from: birthDateComponents, to: CalendarCst.endOfYearComp).year!
+        Date.calendar.dateComponents([.year],
+                                     from: birthDateComponents,
+                                     to: CalendarCst.endOfYearComp).year!
     }
     var displayName: String {
         let formatter = PersonNameComponentsFormatter()
@@ -154,9 +158,9 @@ class Person : ObservableObject, Identifiable, CustomStringConvertible, Codable 
     }
     
     init(sexe: Sexe,
-                givenName: String, familyName: String,
-                yearOfBirth: Int, monthOfBirth: Int, dayOfBirth: Int,
-                ageOfDeath: Int = CalendarCst.forever) {
+         givenName: String, familyName: String,
+         yearOfBirth: Int, monthOfBirth: Int, dayOfBirth: Int,
+         ageOfDeath: Int = CalendarCst.forever) {
         self.sexe                = sexe
         self.name                = PersonNameComponents()
         self.name.namePrefix     = sexe.displayString
@@ -171,9 +175,9 @@ class Person : ObservableObject, Identifiable, CustomStringConvertible, Codable 
     }
     
     init(sexe: Sexe,
-                givenName: String, familyName: String,
-                birthDate : Date,
-                ageOfDeath : Int = CalendarCst.forever) {
+         givenName: String, familyName: String,
+         birthDate : Date,
+         ageOfDeath : Int = CalendarCst.forever) {
         self.sexe                = sexe
         self.name                = PersonNameComponents()
         self.name.namePrefix     = sexe.displayString
@@ -196,6 +200,13 @@ class Person : ObservableObject, Identifiable, CustomStringConvertible, Codable 
     
     func age(atEndOf year: Int) -> Int {
         ageAtEndOfCurrentYear + (year - CalendarCst.thisYear)
+    }
+    func age(atDate date: Date) -> DateComponents {
+        let dateComp = Date.calendar.dateComponents([.year, .month, .day],
+                                                    from: date)
+        return Date.calendar.dateComponents([.year, .month, .day],
+                                            from: birthDateComponents,
+                                            to: dateComp)
     }
     /// True si la personne est encore vivante à la fin de l'année donnée
     /// - Parameter year: année
