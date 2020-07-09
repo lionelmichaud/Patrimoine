@@ -68,9 +68,7 @@ struct AdultDetailView: View {
         let income    = adult.initialPersonalIncome
         var revenue   = ""
         var insurance = ""
-        let sam: Double = 50_000
-        let lastKnownSituation = (atEndOf: 2019, nbTrimestreAcquis: 135)
-        let lastAgircKnownSituation = (atEndOf: 2018, nbPoints: 17908, pointsParAn: 788)
+        
         switch income {
             case let .salary(netSalary, healthInsurance):
                 revenue   = valueEuroFormatter.string(from: netSalary as NSNumber) ?? ""
@@ -83,18 +81,6 @@ struct AdultDetailView: View {
                 insurance = "none"
         }
         
-        let pensionGeneral =
-            Pension.model.regimeGeneral.pensionWithDetail(sam                     : sam,
-                                                          birthDate               : member.birthDate,
-                                                          dateOfPensionLiquidComp : (member as! Adult).dateOfPensionLiquidComp,
-                                                          lastKnownSituation      : lastKnownSituation)?.pensionNette ?? 0
-        let pensionAgirc =
-                Pension.model.regimeAgirc.pension(lastAgircKnownSituation : lastAgircKnownSituation,
-                                                  birthDate               : member.birthDate,
-                                                  lastKnownSituation      : lastKnownSituation,
-                                                  dateOfPensionLiquidComp : (member as! Adult).dateOfPensionLiquidComp,
-                                                  ageOfPensionLiquidComp  : (member as! Adult).ageOfPensionLiquidComp)?.pensionNette ?? 0
-        
         return Group {
             Section(header: Text("SCENARIO").font(.subheadline)) {
                 HStack {
@@ -103,14 +89,19 @@ struct AdultDetailView: View {
                     Text("\(member.ageOfDeath) ans en \(String(member.yearOfDeath))")
                 }
                 HStack {
-                    Text("Date de cessation d'activité")
+                    Text("Cessation d'activité")
                     Spacer()
-                    Text(mediumDateFormatter.string(from: adult.dateOfRetirement))
+                    Text("\(adult.age(atDate: adult.dateOfRetirement).year!) ans \(adult.age(atDate: adult.dateOfRetirement).month!) mois au \(mediumDateFormatter.string(from: adult.dateOfRetirement))")
                 }
                 HStack {
-                    Text("Liquidation de pension")
+                    Text("Liquidation de pension - régime complém.")
                     Spacer()
-                    Text("\(adult.ageOfPensionLiquidComp.year!) ans fin  \(String(adult.dateOfPensionLiquid.month))/\(String(adult.dateOfPensionLiquid.year))")
+                    Text("\(adult.ageOfAgircPensionLiquidComp.year!) ans \(adult.ageOfAgircPensionLiquidComp.month!) mois fin \(monthMediumFormatter.string(from: adult.dateOfAgircPensionLiquid)) \(String(adult.dateOfAgircPensionLiquid.year))")
+                }
+                HStack {
+                    Text("Liquidation de pension - régime général")
+                    Spacer()
+                    Text("\(adult.ageOfPensionLiquidComp.year!) ans \(adult.ageOfPensionLiquidComp.month!) mois fin \(monthMediumFormatter.string(from: adult.dateOfPensionLiquid)) \(String(adult.dateOfPensionLiquid.year))")
                 }
                 HStack {
                     Text("Dépendance")
@@ -136,7 +127,8 @@ struct AdultDetailView: View {
                 }
                 // pension de retraite
                 NavigationLink(destination: RetirementDetailView()) {
-                    AmountView(label: "Pension de retraite annuelle nette", amount: pensionGeneral + pensionAgirc)
+                    AmountView(label  : "Pension de retraite annuelle nette",
+                               amount : adult.pension.net)
                 }
             }
         }

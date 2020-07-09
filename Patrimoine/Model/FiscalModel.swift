@@ -265,17 +265,6 @@ struct IncomeTaxes: Codable {
         var disc  : Double = 0.0 // euro
     }
     
-    // properties
-    
-    // barême de l'IRPP
-    //    static let irppGrid : [IrppSlice] = [IrppSlice(floor: 9_964.0,rate: 0.15,disc:1395.0),
-    //                                         IrppSlice(floor: 27_519.0, rate: 0.3,disc:5798.0),
-    //                                         IrppSlice(floor: 73_779.0, rate: 0.41,disc:13914.0),
-    //                                         IrppSlice(floor: 156_244.0, rate: 0.45,disc:20163.0)]
-    //    static let turnOverRebate : Double = 34.0 // %
-    //    static let salaryRebate   : Double = 10.0 // %
-    //    static let childRebate           : Double = 1_512.0 // euro
-    
     struct Model: Codable {
         let irppGrid       : [IrppSlice]
         let turnOverRebate : Double = 34.0 // %

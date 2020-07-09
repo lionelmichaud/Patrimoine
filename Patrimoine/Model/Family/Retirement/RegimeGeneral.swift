@@ -10,6 +10,12 @@ import Foundation
 
 // MARK: - Régime Général
 
+struct RegimeGeneralSituation: Codable {
+    var atEndOf           : Int    = Date.now.year
+    var nbTrimestreAcquis : Int    = 0
+    var sam               : Double = 0
+}
+
 struct RegimeGeneral: Codable {
     
     // nested types
@@ -42,7 +48,7 @@ struct RegimeGeneral: Codable {
     ///   - dateOfRetirementComp: date de demande de liquidation de la pension de retraite
     /// - Returns: taux de reversion en tenant compte d'une décote éventuelle en %
     func tauxDePension(birthDate               : Date,
-                       lastKnownSituation      : (atEndOf: Int, nbTrimestreAcquis: Int),
+                       lastKnownSituation      : RegimeGeneralSituation,
                        dateOfPensionLiquidComp : DateComponents) -> Double? {
         guard let nbTrimestreDecote = nbTrimestreDecote(birthDate               : birthDate,
                                                         lastKnownSituation      : lastKnownSituation,
@@ -64,7 +70,7 @@ struct RegimeGeneral: Codable {
     /// Le nombre de trimestres est arrondi au chiffre supérieur. Le nombre de trimestres manquants retenu est le plus avantageux pour vous.
     /// Le nombre de trimestres est plafonné à 20
     func nbTrimestreDecote(birthDate               : Date,
-                           lastKnownSituation      : (atEndOf: Int, nbTrimestreAcquis: Int),
+                           lastKnownSituation      : RegimeGeneralSituation,
                            dateOfPensionLiquidComp : DateComponents) -> Int? {
         var dateDuTauxPleinComp : DateComponents
         var duree               : DateComponents
@@ -111,7 +117,7 @@ struct RegimeGeneral: Codable {
     ///   - lastKnownSituation: dernière situation connue (année, nombre de trimestres de cotisation acquis)
     ///   - dateOfRetirementComp: date de demande de liquidation de la pension de retraite
     /// - Returns: durée d'assurance en nombre de trimestres
-    func dureeAssurance(lastKnownSituation      : (atEndOf: Int, nbTrimestreAcquis: Int),
+    func dureeAssurance(lastKnownSituation      : RegimeGeneralSituation,
                         dateOfPensionLiquidComp : DateComponents) -> Int {
         let dateRefComp = DateComponents(calendar : Date.calendar,
                                          year     : lastKnownSituation.atEndOf,
@@ -139,7 +145,7 @@ struct RegimeGeneral: Codable {
     ///   - dateOfRetirementComp: date de demande de liquidation de la pension de retraite
     /// - Returns: nb de trimestre manquantà la date prévisionnelle de demande de liquidation de la pension de retraite pour obtenir le taux plein
     func nbTrimManquantPourTauxPlein(birthYear               : Int,
-                                     lastKnownSituation      : (atEndOf: Int, nbTrimestreAcquis: Int),
+                                     lastKnownSituation      : RegimeGeneralSituation,
                                      dateOfPensionLiquidComp : DateComponents) -> Int? {
         dureeDeReference(birthYear: birthYear) - dureeAssurance(lastKnownSituation: lastKnownSituation,
                                                                 dateOfPensionLiquidComp: dateOfPensionLiquidComp)
@@ -176,7 +182,7 @@ struct RegimeGeneral: Codable {
     ///   - lastKnownSituation: dernière situation connue (année, nombre de trimestres de cotisation acquis)
     /// - Returns: date d'obtention de tous les trimestres nécessaire pour obtenir le taux plein de retraite
     func dateTauxPlein(birthDate            : Date,
-                       lastKnownSituation   : (atEndOf: Int, nbTrimestreAcquis: Int)) -> Date? {
+                       lastKnownSituation   : RegimeGeneralSituation) -> Date? {
         guard let dureeDeReference = dureeDeReference(birthYear: birthDate.year) else {
             return nil
         }
@@ -220,7 +226,7 @@ struct RegimeGeneral: Codable {
     func pension(sam                     : Double,
                  birthDate               : Date,
                  dateOfPensionLiquidComp : DateComponents,
-                 lastKnownSituation      : (atEndOf: Int, nbTrimestreAcquis: Int)) -> Double? {
+                 lastKnownSituation      : RegimeGeneralSituation) -> Double? {
         // Salaire annuel moyen x Taux de la pension x (Durée d'assurance du salarié au régime général / Durée de référence pour obtenir une pension à taux plein)
         guard let tauxDePension = tauxDePension(birthDate              : birthDate,
                                                 lastKnownSituation     : lastKnownSituation,
@@ -237,10 +243,9 @@ struct RegimeGeneral: Codable {
     }
     
     /// version détaillée
-    func pensionWithDetail(sam                     : Double,
-                           birthDate               : Date,
+    func pensionWithDetail(birthDate               : Date,
                            dateOfPensionLiquidComp : DateComponents,
-                           lastKnownSituation      : (atEndOf: Int, nbTrimestreAcquis: Int)) ->
+                           lastKnownSituation      : RegimeGeneralSituation) ->
         (tauxDePension   : Double,
         dureeDeReference : Int,
         dureeAssurance   : Int,
@@ -255,7 +260,7 @@ struct RegimeGeneral: Codable {
             
             let dureeAssurance = self.dureeAssurance(lastKnownSituation      : lastKnownSituation,
                                                      dateOfPensionLiquidComp : dateOfPensionLiquidComp)
-            let pensionBrute = pension(sam              : sam,
+            let pensionBrute = pension(sam              : lastKnownSituation.sam,
                                        tauxDePension    : tauxDePension,
                                        dureeAssurance   : dureeAssurance,
                                        dureeDeReference : dureeDeReference)

@@ -1,25 +1,25 @@
 [
     {
-        "ageOfDeath"           : 81,
-        "nbOfYearOfDependency" : 0,
-        "nbOfChildBirth"       : 0,
-        "sexe"                 : 0,
-        "dateOfRetirement" : "2022-12-31T14:18:52Z",
         "__preserved_type" : "Patrimoine.Adult.Type",
-        "birthDate" : "1964-09-22T00:00:20Z",
         "__type_preserving_strategy" : 0,
-        "initialPersonalIncome" : {
-            "salary_netSalary" : 100000,
-            "salary_healthInsurance" : 5000
-        },
         "name" : {
             "familyName" : "MICHAUD",
             "namePrefix" : "M.",
             "givenName" : "Lionel"
         },
-        "ageOfPensionLiquid" : {
+        "sexe"                 : 0,
+        "birthDate" : "1964-09-22T00:00:00+01:00",
+        "initialPersonalIncome" : {
+            "salary_netSalary" : 100000,
+            "salary_healthInsurance" : 5000
+        },
+        "nbOfYearOfDependency" : 0,
+        "ageOfDeath"           : 81,
+        "nbOfChildBirth"       : 0,
+        "dateOfRetirement" : "2021-12-31T23:59:59+01:00",
+        "ageOfAgircPensionLiquid" : {
+            "year" : 58,
             "day"  : 0,
-            "year" : 62,
             "calendar" : {
                 "locale" : {
                     "identifier" : "fr_FR"
@@ -32,26 +32,73 @@
                 "firstWeekday" : 2
             },
             "month" : 0
+        },
+        "regimeAgircSituation" : {
+            "atEndOf"     : 2018,
+            "nbPoints"    : 17908,
+            "pointsParAn" : 788
+        },
+        "ageOfPensionLiquid" : {
+            "year" : 62,
+            "month"  : 6,
+            "calendar" : {
+                "locale" : {
+                    "identifier" : "fr_FR"
+                },
+                "timeZone" : {
+                    "identifier" : "Europe\/Paris"
+                },
+                "identifier" : "gregorian",
+                "minimumDaysInFirstWeek" : 4,
+                "firstWeekday" : 2
+            },
+            "month" : 0
+        },
+        "regimeGeneralSituation" : {
+            "atEndOf"           : 2019,
+            "nbTrimestreAcquis" : 135,
+            "sam"               : 40000
         }
     },
     {
-        "ageOfDeath"           : 81,
-        "nbOfYearOfDependency" : 0,
-        "nbOfChildBirth"       : 2,
-        "sexe"                 : 1,
-        "dateOfRetirement" : "2020-03-29T14:18:52Z",
         "__preserved_type" : "Patrimoine.Adult.Type",
-        "birthDate" : "1968-12-16T23:00:00Z",
         "__type_preserving_strategy" : 0,
-        "initialPersonalIncome" : {
-            "turnOver_BNC" : 50000,
-            "turnOver_incomeLossInsurance" : 5000
-        },
         "name" : {
             "familyName" : "MICHAUD",
             "namePrefix" : "Mme.",
             "givenName" : "Vanessa"
         },
+        "sexe"                 : 1,
+        "birthDate" : "1968-12-16T00:00:01+01:00",
+        "initialPersonalIncome" : {
+            "turnOver_BNC" : 50000,
+            "turnOver_incomeLossInsurance" : 5000
+        },
+        "nbOfYearOfDependency" : 0,
+        "dateOfRetirement" : "2020-03-29T14:18:52Z",
+        "ageOfDeath"           : 81,
+        "nbOfChildBirth"       : 2,
+        "ageOfAgircPensionLiquid" : {
+            "year" : 58,
+            "month"  : 6,
+            "calendar" : {
+                "locale" : {
+                    "identifier" : "fr_FR"
+                },
+                "timeZone" : {
+                    "identifier" : "Europe\/Paris"
+                },
+                "identifier" : "gregorian",
+                "minimumDaysInFirstWeek" : 4,
+                "firstWeekday" : 2
+            },
+            "month" : 0
+        },
+        "regimeAgircSituation" : {
+            "atEndOf"     : 2018,
+            "nbPoints"    : 17908,
+            "pointsParAn" : 788
+        },
         "ageOfPensionLiquid" : {
             "day"  : 0,
             "year" : 62,
@@ -67,34 +114,39 @@
                 "firstWeekday" : 2
             },
             "month" : 0
+        },
+        "regimeGeneralSituation" : {
+            "atEndOf"           : 2019,
+            "nbTrimestreAcquis" : 135,
+            "sam"               : 25000
         }
     },
     {
-        "ageOfDeath" : 81,
-        "sexe" : 1,
-        "ageOfIndependence" : 24,
         "__preserved_type" : "Patrimoine.Child.Type",
-        "birthDate" : "2004-02-04T23:00:00Z",
-        "ageOfUniversity" : 18,
         "__type_preserving_strategy" : 0,
         "name" : {
             "familyName" : "MICHAUD",
             "namePrefix" : "Mme",
             "givenName" : "Lou-Ann"
-        }
+        },
+        "sexe" : 1,
+        "birthDate" : "2004-02-04T00:00:01Z",
+        "ageOfUniversity" : 18,
+        "ageOfIndependence" : 24,
+        "ageOfDeath" : 81,
     },
     {
-        "ageOfDeath" : 81,
-        "sexe" : 0,
-        "ageOfIndependence" : 24,
         "__preserved_type" : "Patrimoine.Child.Type",
-        "birthDate" : "2005-09-30T22:00:00Z",
-        "ageOfUniversity" : 18,
         "__type_preserving_strategy" : 0,
         "name" : {
             "familyName" : "MICHAUD",
             "namePrefix" : "M.",
             "givenName" : "Arthur"
-        }
+        },
+        "sexe" : 0,
+        "birthDate" : "2005-09-30T00:00:01Z",
+        "ageOfUniversity" : 18,
+        "ageOfIndependence" : 24,
+        "ageOfDeath" : 81,
     }
 ]

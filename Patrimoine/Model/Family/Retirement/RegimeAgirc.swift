@@ -10,6 +10,12 @@ import Foundation
 
 // MARK: - Régime Complémentaire AGIRC-ARCCO
 
+struct RegimeAgircSituation: Codable {
+    var atEndOf     : Int = Date.now.year
+    var nbPoints    : Int = 0
+    var pointsParAn : Int = 0
+}
+
 struct RegimeAgirc: Codable {
     
     // nested types
@@ -26,8 +32,8 @@ struct RegimeAgirc: Codable {
     }
     
     struct Model: Codable {
-        let gridAvant62 : [SliceAvantAgeLegal]
-        let gridApres62 : [SliceApresAgeLegal]
+        let gridAvant62   : [SliceAvantAgeLegal]
+        let gridApres62   : [SliceApresAgeLegal]
         let valeurDuPoint : Double = 1.2714
         let ageMinimum    : Int    = 57
     }
@@ -49,11 +55,20 @@ struct RegimeAgirc: Codable {
     }
     
     func coefDeMinorationApresAgeLegal(nbTrimManquantPourTauxPlein : Int,
-                                       nbTrimPostAgeLegalMin       : Int) -> Double {
-        return 1.0
+                                       nbTrimPostAgeLegalMin       : Int) -> Double? {
+        // coefficient de réduction basé sur le nb de trimestre manquants pour obtenir le taux plein
+        guard let slice1 = model.gridApres62.last(where: { $0.nbTrimManquant <= nbTrimManquantPourTauxPlein})  else { return nil }
+        let coef1 = slice1.coef
+        
+        // coefficient basé sur l'age
+        guard let slice2 = model.gridApres62.last(where: { $0.ndTrimPostAgeLegal >= nbTrimPostAgeLegalMin})  else { return nil }
+        let coef2 = slice2.coef
+
+        // le coefficient applicable est déterminé par génération en fonction de l'âge atteint ou de la durée d'assurance, en retenant la solution la plus avantageuse pour l'intéressé
+        return max(coef1, coef2)
     }
     
-    func projectedNumberOfPoints(lastAgircKnownSituation : (atEndOf: Int, nbPoints: Int, pointsParAn: Int),
+    func projectedNumberOfPoints(lastAgircKnownSituation : RegimeAgircSituation,
                                  dateOfPensionLiquidComp : DateComponents) -> Int? {
         let dateRefComp = DateComponents(calendar : Date.calendar,
                                          year     : lastAgircKnownSituation.atEndOf,
@@ -70,11 +85,15 @@ struct RegimeAgirc: Codable {
         return lastAgircKnownSituation.nbPoints + Int(nbPointsFutur)
     }
     
-    func pension(lastAgircKnownSituation : (atEndOf: Int, nbPoints: Int, pointsParAn: Int),
+    func pension(lastAgircKnownSituation : RegimeAgircSituation,
                  birthDate               : Date,
-                 lastKnownSituation      : (atEndOf: Int, nbTrimestreAcquis: Int),
+                 lastKnownSituation      : RegimeGeneralSituation,
                  dateOfPensionLiquidComp : DateComponents,
-                 ageOfPensionLiquidComp  : DateComponents) -> (coefMinoration: Double, projectedNbOfPoints: Int, pensionBrute: Double, pensionNette: Double)? {
+                 ageOfPensionLiquidComp  : DateComponents) ->
+        (coefMinoration     : Double,
+        projectedNbOfPoints : Int,
+        pensionBrute        : Double,
+        pensionNette        : Double)? {
         
         var coefMinoration: Double
         
@@ -112,10 +131,13 @@ struct RegimeAgirc: Codable {
                 (yearOfPensionLiquid - Pension.model.regimeGeneral.model.ageMinimumLegal) * 4
                     + monthOfPensionLiquid / 3
             // coefficient de minoration
-            coefMinoration = coefDeMinorationApresAgeLegal (nbTrimManquantPourTauxPlein: nbTrimManquantPourTauxPlein,
-                                                            nbTrimPostAgeLegalMin: nbTrimPostAgeLegalMin)
+            guard let coef = coefDeMinorationApresAgeLegal (nbTrimManquantPourTauxPlein : nbTrimManquantPourTauxPlein,
+                                                            nbTrimPostAgeLegalMin       : nbTrimPostAgeLegalMin) else {
+                return nil
+            }
+            coefMinoration = coef
             
-            // autre barême
+        // autre barême
         } else {
             // nombre de trimestre au-delà de l'age minimum AGIRC de demande de liquidation de la pension complémentaire
             guard let yearOfPensionLiquid = ageOfPensionLiquidComp.year,

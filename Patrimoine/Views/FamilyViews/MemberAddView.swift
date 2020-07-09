@@ -26,12 +26,15 @@ struct MemberAddView: View {
     @State private var ageUniversity   = ScenarioCst.minAgeUniversity
     @State private var ageIndependance = ScenarioCst.minAgeIndependance
     // Adult
-    @State private var dateRetirement = Date()
-    @State private var agePension     = RetirmentCst.minAgepension
-    @State private var nbYearOfDepend = 0
-    @State private var revIndex       = 0
-    @State private var revenue        = 0.0
-    @State private var insurance      = 0.0
+    @State private var dateRetirement  = Date()
+    @State private var ageAgircPension = Pension.model.regimeGeneral.model.ageMinimumLegal
+    @State private var trimAgircPension = 0
+    @State private var agePension      = Pension.model.regimeGeneral.model.ageMinimumLegal
+    @State private var trimPension     = 0
+    @State private var nbYearOfDepend  = 0
+    @State private var revIndex        = 0
+    @State private var revenue         = 0.0
+    @State private var insurance       = 0.0
 
     var body: some View {
         VStack() {
@@ -65,14 +68,17 @@ struct MemberAddView: View {
                 
                 if formIsValid() {
                     if seniority == .adult {
-                        AdultEditView(birthDate      : birthDate,
-                                      deathAge       : $deathAge,
-                                      dateRetirement : $dateRetirement,
-                                      agePension     : $agePension,
-                                      nbYearOfDepend : $nbYearOfDepend,
-                                      revIndex       : $revIndex,
-                                      revenue        : $revenue,
-                                      insurance      : $insurance)
+                        AdultEditView(birthDate        : birthDate,
+                                      deathAge         : $deathAge,
+                                      dateRetirement   : $dateRetirement,
+                                      ageAgircPension  : $ageAgircPension,
+                                      trimAgircPension : $trimAgircPension,
+                                      agePension       : $agePension,
+                                      trimPension      : $trimPension,
+                                      nbYearOfDepend   : $nbYearOfDepend,
+                                      revIndex         : $revIndex,
+                                      revenue          : $revenue,
+                                      insurance        : $insurance)
                         
                     } else {
                         ChildEditView(birthDate       : birthDate,
@@ -96,13 +102,19 @@ struct MemberAddView: View {
                 let newMember = Adult(sexe: sexe, givenName: givenName, familyName: familyName.uppercased(), birthDate: birthDate, ageOfDeath: deathAge)
                 newMember.dateOfRetirement     = dateRetirement
                 newMember.nbOfYearOfDependency = nbYearOfDepend
-                newMember.setAgeOfPensionLiquidComp(year: agePension)
-                if revIndex == PersonalIncomeType.salary(netSalary: 0, healthInsurance: 0).id {
-                    newMember.initialPersonalIncome = PersonalIncomeType.salary(netSalary: revenue,
-                                                                                healthInsurance: insurance)
+                newMember.setAgeOfPensionLiquidComp(year  : agePension,
+                                                    month : trimPension * 3)
+                newMember.setAgeOfAgircPensionLiquidComp(year  : ageAgircPension,
+                                                         month : trimAgircPension * 3)
+                if revIndex == PersonalIncomeType.salary(netSalary       : 0,
+                                                         healthInsurance : 0).id {
+                    newMember.initialPersonalIncome =
+                        PersonalIncomeType.salary(netSalary       : revenue,
+                                                  healthInsurance : insurance)
                 } else {
-                    newMember.initialPersonalIncome = PersonalIncomeType.turnOver(BNC: revenue,
-                                                                                  incomeLossInsurance: insurance)
+                    newMember.initialPersonalIncome =
+                        PersonalIncomeType.turnOver(BNC                 : revenue,
+                                                    incomeLossInsurance : insurance)
                 }
                 // ajout du nouveau membre à la famille
                 family.addMember(newMember)
@@ -168,14 +180,17 @@ struct CiviliteEditView : View {
 
 // MARK: - Saisie adulte
 struct AdultEditView : View {
-    let birthDate               : Date
-    @Binding var deathAge       : Int
-    @Binding var dateRetirement : Date
-    @Binding var agePension     : Int
-    @Binding var nbYearOfDepend : Int
-    @Binding var revIndex       : Int
-    @Binding var revenue        : Double
-    @Binding var insurance      : Double
+    let birthDate                 : Date
+    @Binding var deathAge         : Int
+    @Binding var dateRetirement   : Date
+    @Binding var ageAgircPension  : Int
+    @Binding var trimAgircPension : Int
+    @Binding var agePension       : Int
+    @Binding var trimPension      : Int
+    @Binding var nbYearOfDepend   : Int
+    @Binding var revIndex         : Int
+    @Binding var revenue          : Double
+    @Binding var insurance        : Double
     
     var body: some View {
         Group() {
@@ -194,12 +209,31 @@ struct AdultEditView : View {
                            in: Date()...100.years.fromNow! ,
                            displayedComponents: .date,
                            label: { Text("Date de cessation d'activité") })
-                Stepper(value: $agePension, in: RetirmentCst.minAgepension ... RetirmentCst.maxAgepension) {
-                    HStack {
-                        Text("Liquidation de pension ")
-                        Spacer()
-                        Text("\(agePension) ans").foregroundColor(.secondary)
+                HStack {
+                    Stepper(value: $ageAgircPension, in: Pension.model.regimeAgirc.model.ageMinimum ... Pension.model.regimeGeneral.ageTauxPleinLegal(birthYear: birthDate.year)!) {
+                        HStack {
+                            Text("Liquidation de pension - complém.")
+                            Spacer()
+                            Text("\(ageAgircPension) ans").foregroundColor(.secondary)
+                        }
                     }
+                    Stepper(value: $trimAgircPension, in: 0...4) {
+                        Text("\(trimAgircPension * 3) mois").foregroundColor(.secondary)
+                    }
+                        .frame(width: 160)
+                }
+                HStack {
+                    Stepper(value: $agePension, in: Pension.model.regimeGeneral.model.ageMinimumLegal ... Pension.model.regimeGeneral.ageTauxPleinLegal(birthYear: birthDate.year)!) {
+                        HStack {
+                            Text("Liquidation de pension - régime général")
+                            Spacer()
+                            Text("\(agePension) ans").foregroundColor(.secondary)
+                        }
+                    }
+                    Stepper(value: $trimPension, in: 0...4) {
+                        Text("\(trimPension * 3) mois").foregroundColor(.secondary)
+                    }
+                    .frame(width: 160)
                 }
             }
             // dépendance

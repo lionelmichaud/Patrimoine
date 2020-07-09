@@ -22,12 +22,15 @@ struct MemberEditView: View {
     @State private var ageUniversity   = ScenarioCst.minAgeUniversity
     @State private var ageIndependance = ScenarioCst.minAgeIndependance
     // Adult
-    @State private var dateRetirement = Date()
-    @State private var agePension     = RetirmentCst.minAgepension
-    @State private var nbYearOfDepend = 0
-    @State private var revIndex       = 0
-    @State private var revenue        = 0.0
-    @State private var insurance      = 0.0
+    @State private var dateRetirement   = Date()
+    @State private var agePension       = Pension.model.regimeGeneral.model.ageMinimumLegal
+    @State private var trimPension      = 0
+    @State private var ageAgircPension  = Pension.model.regimeGeneral.model.ageMinimumLegal
+    @State private var trimAgircPension = 0
+    @State private var nbYearOfDepend   = 0
+    @State private var revIndex         = 0
+    @State private var revenue          = 0.0
+    @State private var insurance        = 0.0
 
     var body: some View {
         VStack() {
@@ -57,14 +60,17 @@ struct MemberEditView: View {
                         Spacer()
                         Text("\((member as! Adult).nbOfChildBirth)")
                     }
-                    AdultEditView(birthDate      : member.birthDate,
-                                  deathAge       : $deathAge,
-                                  dateRetirement : $dateRetirement,
-                                  agePension     : $agePension,
-                                  nbYearOfDepend : $nbYearOfDepend,
-                                  revIndex       : $revIndex,
-                                  revenue        : $revenue,
-                                  insurance      : $insurance)
+                    AdultEditView(birthDate        : member.birthDate,
+                                  deathAge         : $deathAge,
+                                  dateRetirement   : $dateRetirement,
+                                  ageAgircPension  : $ageAgircPension,
+                                  trimAgircPension : $trimAgircPension,
+                                  agePension       : $agePension,
+                                  trimPension      : $trimPension,
+                                  nbYearOfDepend   : $nbYearOfDepend,
+                                  revIndex         : $revIndex,
+                                  revenue          : $revenue,
+                                  insurance        : $insurance)
                     
                 } else if member is Child {
                     ChildEditView(birthDate       : member.birthDate,
@@ -88,9 +94,12 @@ struct MemberEditView: View {
         }
         // Adult
         if let adult = member as? Adult {
-            _dateRetirement = State(initialValue: adult.dateOfRetirement)
-            _nbYearOfDepend = State(initialValue: adult.nbOfYearOfDependency)
-            _agePension     = State(initialValue: adult.ageOfPensionLiquidComp.year!)
+            _dateRetirement  = State(initialValue : adult.dateOfRetirement)
+            _nbYearOfDepend  = State(initialValue : adult.nbOfYearOfDependency)
+            _ageAgircPension = State(initialValue : adult.ageOfAgircPensionLiquidComp.year!)
+            _trimAgircPension = State(initialValue : adult.ageOfAgircPensionLiquidComp.month! / 3)
+            _agePension      = State(initialValue : adult.ageOfPensionLiquidComp.year!)
+            _trimPension      = State(initialValue : adult.ageOfPensionLiquidComp.month! / 3)
             switch adult.initialPersonalIncome {
                 case let .salary(netSalary, healthInsurance):
                     _revenue   = State(initialValue: netSalary)
@@ -113,7 +122,10 @@ struct MemberEditView: View {
         if let adult = member as? Adult {
             adult.dateOfRetirement     = dateRetirement
             adult.nbOfYearOfDependency = nbYearOfDepend
-            adult.setAgeOfPensionLiquidComp(year: agePension)
+            adult.setAgeOfPensionLiquidComp(year  : agePension,
+                                            month : trimPension * 3)
+            adult.setAgeOfAgircPensionLiquidComp(year  : ageAgircPension,
+                                                 month : trimAgircPension * 3)
             if revIndex == PersonalIncomeType.salary(netSalary: 0, healthInsurance: 0).id {
                 adult.initialPersonalIncome = PersonalIncomeType.salary(netSalary: revenue,
                                                                         healthInsurance: insurance)

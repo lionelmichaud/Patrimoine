@@ -33,3 +33,24 @@ var longDateFormatter : DateFormatter = {
     formatter.locale = Locale(identifier: "fr_FR") // French Locale (fr_FR)
     return formatter
 }()
+
+var monthLongFormatter : DateFormatter = {
+    let formatter = DateFormatter()
+    formatter.dateFormat = "MMMM" // format January, February, March
+    formatter.locale = Locale(identifier: "fr_FR") // French Locale (fr_FR)
+    return formatter
+}()
+
+var monthMediumFormatter : DateFormatter = {
+    let formatter = DateFormatter()
+    formatter.dateFormat = "MMM" // format January, February, March
+    formatter.locale = Locale(identifier: "fr_FR") // French Locale (fr_FR)
+    return formatter
+}()
+
+var monthShortFormatter : DateFormatter = {
+    let formatter = DateFormatter()
+    formatter.dateFormat = "MM" // format January, February, March
+    formatter.locale = Locale(identifier: "fr_FR") // French Locale (fr_FR)
+    return formatter
+}()
