@@ -56,10 +56,13 @@
         }
     },
     
-    "socialTaxesOnPension" :
+    "pensionTaxes" :
     {
         "model" :
         {
+            "rebate"            : 10.0,
+            "minRebate"         :  393.0,
+            "maxRebate"         : 3850.0,
             "CSGdeductible"     : 5.9,
             "CRDS"              : 0.5,
             "CSG"               : 8.3,
@@ -100,6 +103,8 @@
         {
             "turnOverRebate" : 34.0,
             "salaryRebate"   : 10.0,
+            "minSalaryRebate":   441.0,
+            "maxSalaryRebate": 12627.0,
             "childRebate"    : 1512.0,
             "irppGrid" : [
                 {

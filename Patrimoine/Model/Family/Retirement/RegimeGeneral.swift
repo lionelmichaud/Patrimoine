@@ -264,7 +264,7 @@ struct RegimeGeneral: Codable {
                                        tauxDePension    : tauxDePension,
                                        dureeAssurance   : dureeAssurance,
                                        dureeDeReference : dureeDeReference)
-            let pensionNette = Fiscal.model.socialTaxesOnPension.net(pensionBrute)
+            let pensionNette = Fiscal.model.pensionTaxes.net(pensionBrute)
             
             return (tauxDePension    : tauxDePension,
                     dureeDeReference : dureeDeReference,

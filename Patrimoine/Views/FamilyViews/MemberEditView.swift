@@ -17,20 +17,12 @@ struct MemberEditView: View {
     @Environment(\.presentationMode) var presentationMode
     @State var showingSheet = false
     // Person
-    @State private var deathAge : Int
+    @ObservedObject var personViewModel = PersonViewModel()
     // Child
     @State private var ageUniversity   = ScenarioCst.minAgeUniversity
     @State private var ageIndependance = ScenarioCst.minAgeIndependance
     // Adult
-    @State private var dateRetirement   = Date()
-    @State private var agePension       = Pension.model.regimeGeneral.model.ageMinimumLegal
-    @State private var trimPension      = 0
-    @State private var ageAgircPension  = Pension.model.regimeGeneral.model.ageMinimumLegal
-    @State private var trimAgircPension = 0
-    @State private var nbYearOfDepend   = 0
-    @State private var revIndex         = 0
-    @State private var revenue          = 0.0
-    @State private var insurance        = 0.0
+    @ObservedObject var adultViewModel = AdultViewModel()
 
     var body: some View {
         VStack() {
@@ -60,21 +52,12 @@ struct MemberEditView: View {
                         Spacer()
                         Text("\((member as! Adult).nbOfChildBirth)")
                     }
-                    AdultEditView(birthDate        : member.birthDate,
-                                  deathAge         : $deathAge,
-                                  dateRetirement   : $dateRetirement,
-                                  ageAgircPension  : $ageAgircPension,
-                                  trimAgircPension : $trimAgircPension,
-                                  agePension       : $agePension,
-                                  trimPension      : $trimPension,
-                                  nbYearOfDepend   : $nbYearOfDepend,
-                                  revIndex         : $revIndex,
-                                  revenue          : $revenue,
-                                  insurance        : $insurance)
-                    
+                    AdultEditView(personViewModel: personViewModel,
+                                  adultViewModel : adultViewModel)
+
                 } else if member is Child {
                     ChildEditView(birthDate       : member.birthDate,
-                                  deathAge        : $deathAge,
+                                  deathAge        : $personViewModel.deathAge,
                                   ageUniversity   : $ageUniversity,
                                   ageIndependance : $ageIndependance)
                 }
@@ -86,7 +69,7 @@ struct MemberEditView: View {
     
     init(withInitialValueFrom member: Person) {
         // Person
-        _deathAge = State(initialValue: member.ageOfDeath)
+        personViewModel.deathAge = member.ageOfDeath
         // Child
         if let child = member as? Child {
             _ageUniversity   = State(initialValue: child.ageOfUniversity)
@@ -94,51 +77,53 @@ struct MemberEditView: View {
         }
         // Adult
         if let adult = member as? Adult {
-            _dateRetirement  = State(initialValue : adult.dateOfRetirement)
-            _nbYearOfDepend  = State(initialValue : adult.nbOfYearOfDependency)
-            _ageAgircPension = State(initialValue : adult.ageOfAgircPensionLiquidComp.year!)
-            _trimAgircPension = State(initialValue : adult.ageOfAgircPensionLiquidComp.month! / 3)
-            _agePension      = State(initialValue : adult.ageOfPensionLiquidComp.year!)
-            _trimPension      = State(initialValue : adult.ageOfPensionLiquidComp.month! / 3)
+            adultViewModel.dateRetirement            = adult.dateOfRetirement
+            adultViewModel.nbYearOfDepend            = adult.nbOfYearOfDependency
+            adultViewModel.ageAgircPension           = adult.ageOfAgircPensionLiquidComp.year!
+            adultViewModel.trimAgircPension          = adult.ageOfAgircPensionLiquidComp.month! / 3
+            adultViewModel.agePension                = adult.ageOfPensionLiquidComp.year!
+            adultViewModel.trimPension               = adult.ageOfPensionLiquidComp.month! / 3
+            adultViewModel.lastKnownPensionSituation = adult.lastKnownPensionSituation
             switch adult.initialPersonalIncome {
                 case let .salary(netSalary, healthInsurance):
-                    _revenue   = State(initialValue: netSalary)
-                    _insurance = State(initialValue: healthInsurance)
-                    _revIndex = State(initialValue: PersonalIncomeType.salary(netSalary: 0, healthInsurance: 0).id)
+                    adultViewModel.revenue   = netSalary
+                    adultViewModel.insurance = healthInsurance
+                    adultViewModel.revIndex  = PersonalIncomeType.salary(netSalary: 0, healthInsurance: 0).id
                 case let .turnOver(BNC, incomeLossInsurance):
-                    _revenue   = State(initialValue: BNC)
-                    _insurance = State(initialValue: incomeLossInsurance)
-                    _revIndex = State(initialValue: PersonalIncomeType.turnOver(BNC: 0, incomeLossInsurance: 0).id)
+                    adultViewModel.revenue   = BNC
+                    adultViewModel.insurance = incomeLossInsurance
+                    adultViewModel.revIndex  = PersonalIncomeType.turnOver(BNC: 0, incomeLossInsurance: 0).id
                 case .none:
-                    _revenue   = State(initialValue: 0.0)
-                    _insurance = State(initialValue: 0.0)
-                    _revIndex  = State(initialValue: 0)
+                    adultViewModel.revenue   = 0.0
+                    adultViewModel.insurance = 0.0
+                    adultViewModel.revIndex  = 0
             }
         }
     }
 
     func applyChanges() {
-        member.ageOfDeath = deathAge
+        member.ageOfDeath = personViewModel.deathAge
         if let adult = member as? Adult {
-            adult.dateOfRetirement     = dateRetirement
-            adult.nbOfYearOfDependency = nbYearOfDepend
-            adult.setAgeOfPensionLiquidComp(year  : agePension,
-                                            month : trimPension * 3)
-            adult.setAgeOfAgircPensionLiquidComp(year  : ageAgircPension,
-                                                 month : trimAgircPension * 3)
-            if revIndex == PersonalIncomeType.salary(netSalary: 0, healthInsurance: 0).id {
-                adult.initialPersonalIncome = PersonalIncomeType.salary(netSalary: revenue,
-                                                                        healthInsurance: insurance)
+            adult.dateOfRetirement     = adultViewModel.dateRetirement
+            adult.nbOfYearOfDependency = adultViewModel.nbYearOfDepend
+            adult.setAgeOfPensionLiquidComp(year  : adultViewModel.agePension,
+                                            month : adultViewModel.trimPension * 3)
+            adult.setAgeOfAgircPensionLiquidComp(year  : adultViewModel.ageAgircPension,
+                                                 month : adultViewModel.trimAgircPension * 3)
+            adult.lastKnownPensionSituation = adultViewModel.lastKnownPensionSituation
+            if adultViewModel.revIndex == PersonalIncomeType.salary(netSalary       : 0,
+                                                                    healthInsurance : 0).id {
+                adult.initialPersonalIncome = PersonalIncomeType.salary(netSalary       : adultViewModel.revenue,
+                                                                        healthInsurance : adultViewModel.insurance)
             } else {
-                adult.initialPersonalIncome = PersonalIncomeType.turnOver(BNC: revenue,
-                                                                          incomeLossInsurance: insurance)
+                adult.initialPersonalIncome = PersonalIncomeType.turnOver(BNC                 : adultViewModel.revenue,
+                                                                          incomeLossInsurance : adultViewModel.insurance)
             }
 
         }
         if let child = member as? Child {
             child.ageOfUniversity = ageUniversity
             child.ageOfIndependence = ageIndependance
-
         }
         
         // mettre à jour le nombre d'enfant de chaque parent de la famille

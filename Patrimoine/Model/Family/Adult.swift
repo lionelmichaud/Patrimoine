@@ -100,31 +100,28 @@ final class Adult: Person {
     } // computed
     var yearOfDependency: Int {
         return yearOfDeath - nbOfYearOfDependency
-    }
+    } // computed
     
     // revenus
     @Published var initialPersonalIncome: PersonalIncomeType? { // observed
         willSet {
-            switch newValue! {
-                case .salary(let netSalary, let charge):
-                    initialPersonalNetIncome = netSalary - charge
-                    initialPersonalTaxableIncome = netSalary * (1 - Fiscal.model.incomeTaxes.model.salaryRebate / 100.0)
-                case .turnOver(let BNC, let charge):
-                    let net = Fiscal.model.socialTaxesOnTurnover.net(BNC)
-                    initialPersonalNetIncome = net - charge
-                    initialPersonalTaxableIncome = BNC * (1 - Fiscal.model.incomeTaxes.model.turnOverRebate / 100.0)
-            }
-            //Swift.print("net personalIncome =",netIncome," taxable personalIncome =",taxableIncome)
+            (initialPersonalNetIncome, initialPersonalTaxableIncome) =
+                Fiscal.model.incomeTaxes.netAndTaxableIncome(from: newValue!)
         }
-    }
+    } // observed
     @Published var initialPersonalNetIncome     : Double = 0 // net de dépenses de mutuelle ou d'assurance perte d'emploi
     @Published var initialPersonalTaxableIncome : Double = 0 // taxable à l'IRPP
-    var pension  : (brut: Double, net: Double) {
+    
+    // pension
+    var pension  : (brut: Double, net: Double, taxable: Double) { // computed
         let pensionGeneral = pensionRegimeGeneral
         let pensionAgirc   = pensionRegimeAgirc
-        return (pensionGeneral.brut + pensionAgirc.brut,
-                pensionGeneral.net  + pensionAgirc.net)
-    }
+        let brut           = pensionGeneral.brut + pensionAgirc.brut
+        let net            = pensionGeneral.net  + pensionAgirc.net
+        let taxable        = Fiscal.model.pensionTaxes.taxable(from: net)
+        return (brut, net, taxable)
+    } // computed
+    
     override var description: String {
         return super.description +
         """
@@ -216,7 +213,8 @@ final class Adult: Person {
             
             case .liquidationPension:
                 return dateOfPensionLiquid.year
-            // TODO: - ajouter la liquidation de la pension complémentaire
+            // TODO: ajouter la liquidation de la pension complémentaire
+            // TODO:ajouter le licenciement
         }
     }
     
@@ -246,19 +244,20 @@ final class Adult: Person {
         isAlive(atEndOf: year) && (dateOfRetirementComp.year! < year)
     }
     /// true si est vivant à la fin de l'année et année postérieur à l'année de liquidation de la pension du régime général
-    /// - Parameter year: année
+    /// - Parameter year: première année incluant des revenus
     func isPensioned(during year: Int) -> Bool {
-        isAlive(atEndOf: year) && (dateOfPensionLiquidComp.year! < year)
+        isAlive(atEndOf: year) && (dateOfPensionLiquidComp.year! <= year)
     }
     /// true si est vivant à la fin de l'année et année postérieur à l'année de liquidation de la pension du régime complémentaire
-    /// - Parameter year: année
+    /// - Parameter year: première année incluant des revenus
     func isAgircPensioned(during year: Int) -> Bool {
-        isAlive(atEndOf: year) && (dateOfAgircPensionLiquidComp.year! < year)
+        isAlive(atEndOf: year) && (dateOfAgircPensionLiquidComp.year! <= year)
     }
     /// Revenu net de charges et revenu taxable à l'IRPP
     /// - Parameter year: année
     /// - Returns: taxableIrpp: revenu taxable à l'IRPP
     func personalIncome(during year: Int) -> (net: Double, taxableIrpp: Double) {
+        // TODO: proratiser
         if isActive(during: year) {
             return (initialPersonalNetIncome, initialPersonalTaxableIncome)
         } else {
@@ -267,23 +266,26 @@ final class Adult: Person {
     }
     /// Calcul de la pension de retraite
     /// - Parameter year: année
-    /// - Returns: pension brute et nette de charges sociales
-    func pension(during year: Int) -> (brut: Double, net: Double) {
+    /// - Returns: pension brute, nette de charges sociales, taxable à l'IRPP
+    func pension(during year: Int) -> (brut: Double, net: Double, taxable: Double) {
         var brut = 0.0
         var net  = 0.0
         // pension du régime général
         if isPensioned(during: year) {
             let pension = pensionRegimeGeneral
-            brut += pension.brut
-            net  += pension.net
+            let nbMonths = (dateOfPensionLiquidComp.year == year ?  (12 - dateOfPensionLiquidComp.month!).double() : 12)
+            brut += pension.brut * nbMonths / 12.0
+            net  += pension.net  * nbMonths / 12.0
         }
         // pension du régime complémentaire
         if isAgircPensioned(during: year) {
             let pension = pensionRegimeAgirc
-            brut += pension.brut
-            net  += pension.net
+            let nbMonths = (dateOfAgircPensionLiquidComp.year == year ?  (12 - dateOfAgircPensionLiquidComp.month!).double() : 12)
+            brut += pension.brut * nbMonths / 12.0
+            net  += pension.net  * nbMonths / 12.0
         }
-        return (brut, net)
+        let taxable = Fiscal.model.pensionTaxes.taxable(from: net)
+        return (brut, net, taxable)
     }
     
     override func print() {

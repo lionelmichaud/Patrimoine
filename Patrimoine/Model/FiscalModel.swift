@@ -12,7 +12,7 @@ struct Fiscal: Codable {
     struct Model: Codable {
         var irppOnEstateCapitalGain        : IrppOnRealEstateCapitalGain
         var socialTaxesOnEstateCapitalGain : SocialTaxesOnRealEstateCapitalGain
-        var socialTaxesOnPension           : SocialTaxesOnPension
+        var pensionTaxes                   : PensionTaxes
         var socialTaxesOnFinancialRevenu   : SocialTaxesOnFinancialRevenu
         var socialTaxesOnTurnover          : SocialTaxesOnTurnover
         var lifeInsuranceTaxes             : LifeInsuranceTaxes
@@ -136,11 +136,14 @@ struct SocialTaxesOnRealEstateCapitalGain: Codable {
 // MARK: - Charges sociales sur pensions de retraite
 /// https://www.service-public.fr/particuliers/vosdroits/F2971
 /// Charges sociales sur pensions de retraite
-struct SocialTaxesOnPension: Codable {
+struct PensionTaxes: Codable {
     
     // properties
     
     struct Model: Codable {
+        let rebate            : Double = 10.0 // %
+        let minRebate         : Double = 393   // € par déclarant
+        let maxRebate         : Double = 3_850 // € par foyer fiscal
         let CSGdeductible     : Double = 5.9 // %
         let CRDS              : Double = 0.5 // %
         let CSG               : Double = 8.3 // %
@@ -164,6 +167,13 @@ struct SocialTaxesOnPension: Codable {
     /// - Parameter brut: pension brute
     func socialTaxes(_ brut: Double) -> Double {
         brut * model.total / 100.0
+    }
+    /// Calcule la pension taxable à l'IRPP en applicant un abattement plafonné
+    /// - Parameter net: pension nette de charges sociales
+    /// - Returns: pension taxable à l'IRPP
+    func taxable(from net: Double) -> Double {
+        let rebate = (net * model.rebate / 100.0).clamp(low: model.minRebate, high: model.maxRebate)
+        return net - rebate
     }
     // TODO: - Taux CSG déductible de l'impôt sur le revenu 5.9%
     func csgDeductibleDeIrpp(_ brut: Double) -> Double {
@@ -269,7 +279,9 @@ struct IncomeTaxes: Codable {
         let irppGrid       : [IrppSlice]
         let turnOverRebate : Double = 34.0 // %
         let salaryRebate   : Double = 10.0 // %
-        let childRebate    : Double = 1_512.0 // euro
+        let minSalaryRebate: Double = 441 // €
+        let maxSalaryRebate: Double = 12_627 // €
+        let childRebate    : Double = 1_512.0 // €
     }
     
     // properties
@@ -280,20 +292,35 @@ struct IncomeTaxes: Codable {
     // methods
     
     /// Quotion familial
-    /// - Parameter nbAdults: nombre d'adultes
-    /// - Parameter nbChildren: nombre d'enfants
+    /// - Parameters:
+    ///   - nbAdults: nombre d'adultes
+    ///   - nbChildren: nombre d'enfants
+    /// - Returns: Quotion familial
     func familyQuotient(nbAdults: Int, nbChildren: Int) -> Double {
         Double(nbAdults) + Double(nbChildren) / 2.0
     }
-    /**
-     Impôt sur le revenu
-     
-     - Parameter taxableIncome: revenu imposable
-     - Parameter nbAdults: nombre d'adulte dans la famille
-     - Parameter nbChildren: nombre d'enfant dans la famille
-     
-     - Returns: Impôt sur le revenu
-     **/
+    func netAndTaxableIncome(from personalIncome: PersonalIncomeType) -> (netIncome: Double, taxableIncome: Double) {
+        switch personalIncome {
+            case .salary(let netSalary, let charge):
+                let netIncome = netSalary - charge
+                let rebate = (netSalary * Fiscal.model.incomeTaxes.model.salaryRebate / 100.0).clamp(low : model.minSalaryRebate,
+                                                                                                     high: model.maxSalaryRebate)
+                let taxableIncome = netSalary - rebate
+                return (netIncome: netIncome, taxableIncome: taxableIncome)
+            
+            case .turnOver(let BNC, let charge):
+                let net = Fiscal.model.socialTaxesOnTurnover.net(BNC)
+                let netIncome = net - charge
+                let taxableIncome = BNC * (1 - Fiscal.model.incomeTaxes.model.turnOverRebate / 100.0)
+                return (netIncome: netIncome, taxableIncome: taxableIncome)
+        }
+    }
+    /// Impôt sur le revenu
+    /// - Parameters:
+    ///   - taxableIncome: revenu imposable
+    ///   - nbAdults: nombre d'adulte dans la famille
+    ///   - nbChildren: nombre d'enfant dans la famille
+    /// - Returns: Impôt sur le revenu
     func irpp (taxableIncome : Double,
                nbAdults      : Int,
                nbChildren    : Int) -> Double {

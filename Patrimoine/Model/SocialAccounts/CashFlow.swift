@@ -66,10 +66,14 @@ struct CashFlowLine {
         let name = "REVENUS HORS SCI"
         /// revenus du travail
         var workIncomes     = NetAndTaxable(name: "Revenu Travail")
+        /// pension de retraite
+        var pensions        = NetAndTaxable(name: "Revenu Pension")
+        /// alloc chomage
+        var unemployAlloc   = NetAndTaxable(name: "Revenu Alloc Chomage")
         /// revenus financiers
         var financials      = NetAndTaxable(name: "Revenu Financier")
         /// revenus des SCPI hors de la SCI
-        var scpis           = NetAndTaxable(name: "Revenu de SCPI")
+        var scpis           = NetAndTaxable(name: "Revenu SCPI")
         /// revenus de locations des biens immobiliers
         var realEstateRents = NetAndTaxable(name: "Revenu Location")
         /// total des ventes des SCPI hors de la SCI
@@ -82,6 +86,8 @@ struct CashFlowLine {
         /// total de tous les revenus nets de l'année versé en compte courant avant taxes et impots
         var totalCredited: Double {
             workIncomes.credits.total +
+                pensions.credits.total +
+                unemployAlloc.credits.total +
                 financials.credits.total +
                 scpis.credits.total +
                 realEstateRents.credits.total +
@@ -91,6 +97,8 @@ struct CashFlowLine {
         /// total de tous les revenus de l'année imposables à l'IRPP
         var totalTaxableIrpp: Double {
             workIncomes.taxablesIrpp.total +
+                pensions.taxablesIrpp.total +
+                unemployAlloc.taxablesIrpp.total +
                 financials.taxablesIrpp.total +
                 scpis.taxablesIrpp.total +
                 realEstateRents.taxablesIrpp.total +
@@ -105,6 +113,10 @@ struct CashFlowLine {
             var table = NamedValueTable(withName: "REVENUS")
             table.values.append((name  : workIncomes.name,
                                  value : workIncomes.credits.total))
+            table.values.append((name  : pensions.name,
+                                 value : pensions.credits.total))
+            table.values.append((name  : unemployAlloc.name,
+                                 value : unemployAlloc.credits.total))
             table.values.append((name  : financials.name,
                                  value : financials.credits.total))
             table.values.append((name  : scpis.name,
@@ -121,6 +133,8 @@ struct CashFlowLine {
         /// tableau détaillé des noms des revenus: concaténation des catégories
         var headersDetailedArray: [String] {
             workIncomes.credits.headersArray +
+                pensions.credits.headersArray +
+                unemployAlloc.credits.headersArray +
                 financials.credits.headersArray +
                 scpis.credits.headersArray +
                 realEstateRents.credits.headersArray +
@@ -130,6 +144,8 @@ struct CashFlowLine {
         /// tableau détaillé des valeurs des revenus: concaténation des catégories
         var valuesDetailedArray: [Double] {
             workIncomes.credits.valuesArray +
+                pensions.credits.valuesArray +
+                unemployAlloc.credits.valuesArray +
                 financials.credits.valuesArray +
                 scpis.credits.valuesArray +
                 realEstateRents.credits.valuesArray +
@@ -144,6 +160,10 @@ struct CashFlowLine {
             Swift.print(h + name + ":    ")
             // incomes
             workIncomes.print(level: level+1)
+            // pension de retraite
+            pensions.print(level: level+1)
+            // alloc chomage
+            unemployAlloc.print(level: level+1)
             // financial investements
             financials.print(level: level+1)
             // SCPIs
@@ -264,7 +284,7 @@ struct CashFlowLine {
                                           withSCI  : patrimoine.assets.sci)
         
         // INCOME: populate Ages and Work incomes
-        populateWorkIncome(of: family)
+        populateIncomes(of: family)
         
         // REAL ESTATE: populate produit de vente, loyers, taxes sociales et taxes locales des bien immobiliers
         populateRealEstateCashFlow(of: patrimoine)
@@ -303,19 +323,38 @@ struct CashFlowLine {
     
     /// Populate Ages and Work incomes
     /// - Parameter family: de la famille
-    fileprivate mutating func populateWorkIncome(of family: Family) {
+    fileprivate mutating func populateIncomes(of family: Family) {
+        var totalPensionDiscount = 0.0
+        
         // pour chaque membre de la famille
         for person in family.members.sorted(by:>) {
             // populate ages of family members
             let name = person.name.familyName! + " " + person.name.givenName!
             ages.persons.append((name: name, age: person.age(atEndOf: year)))
-            // populate work incomes of family members
+            // populate work, pension and unemployement incomes of family members
             if let adult = person as? Adult {
-                let income = adult.personalIncome(during: year)
-                // revenus inscrit en compte avant IRPP (net de dépenses de mutuelle ou d'assurance perte d'emploi)
-                revenues.workIncomes.credits.values.append((name: name, value: income.net.rounded()))
-                // part des revenus inscrit en compte imposable à l'IRPP
-                revenues.workIncomes.taxablesIrpp.values.append((name: name, value: income.taxableIrpp.rounded()))
+                /// revenus du travail
+                let workIncome = adult.personalIncome(during: year)
+                // revenus du travail inscrit en compte avant IRPP (net de dépenses de mutuelle ou d'assurance perte d'emploi)
+                revenues.workIncomes.credits.values.append((name: name, value: workIncome.net.rounded()))
+                // part des revenus du travail inscrite en compte qui est imposable à l'IRPP
+                revenues.workIncomes.taxablesIrpp.values.append((name: name, value: workIncome.taxableIrpp.rounded()))
+                
+                /// pension de retraite
+                let pension  = adult.pension(during: year)
+                // pension inscrit en compte avant IRPP (net de charges sociales)
+                revenues.pensions.credits.values.append((name: name, value: pension.net.rounded()))
+                // part de la pension inscrite en compte qui est imposable à l'IRPP
+                let relicat = Fiscal.model.pensionTaxes.model.maxRebate - totalPensionDiscount
+                var discount = pension.net - pension.taxable
+                if relicat >= discount {
+                    // l'abattement est suffisant pour cette personne
+                    revenues.pensions.taxablesIrpp.values.append((name: name, value: pension.taxable.rounded()))
+                } else {
+                    discount = relicat
+                    revenues.pensions.taxablesIrpp.values.append((name: name, value: (pension.net - discount).rounded()))
+                }
+                totalPensionDiscount += discount
             }
         }
     }

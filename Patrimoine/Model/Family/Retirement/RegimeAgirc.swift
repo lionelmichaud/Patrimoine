@@ -162,7 +162,7 @@ struct RegimeAgirc: Codable {
         
         // Pension = Nombre de points X Valeurs du point X Coefficient de minoration
         let pensionBrute = projectedNumberOfPoints.double() * model.valeurDuPoint * coefMinoration
-        let pensionNette = Fiscal.model.socialTaxesOnPension.net(pensionBrute)
+        let pensionNette = Fiscal.model.pensionTaxes.net(pensionBrute)
         
         return (coefMinoration      : coefMinoration,
                 projectedNbOfPoints : projectedNumberOfPoints,
