@@ -9,24 +9,26 @@
 import SwiftUI
 
 // MARK: - Saisie pension retraite
+
 struct RetirementEditView: View {
     @ObservedObject var personViewModel : PersonViewModel
     @ObservedObject var adultViewModel  : AdultViewModel
 
     var body : some View {
         Group {
-            // régime général
-            RegimeGeneralEditView(personViewModel : personViewModel,
-                                  adultViewModel  : adultViewModel)
             // régime complémentaire
             RegimeAgircEditView(personViewModel : personViewModel,
+                                  adultViewModel  : adultViewModel)
+            // régime général
+            RegimeGeneralEditView(personViewModel : personViewModel,
                                 adultViewModel  : adultViewModel)
         }
     }
 }
 
-// MARK: - Saisie de la situation - Régime général
-struct RegimeGeneralEditView: View {
+// MARK: - Saisie de la situation - Régime complémentaire
+
+struct RegimeAgircEditView: View {
     @ObservedObject var personViewModel : PersonViewModel
     @ObservedObject var adultViewModel  : AdultViewModel
 
@@ -45,27 +47,29 @@ struct RegimeGeneralEditView: View {
                 }
                 .frame(width: 160)
             }
+            RegimeAgircSituationEditView(lastKnownAgircSituation: $adultViewModel.lastKnownAgircSituation)
         }.padding(.leading)
     }
 }
 
-struct RegimeGeneralSituationEditView : View {
-    @Binding var lastKnownPensionSituation: RegimeGeneralSituation
+struct RegimeAgircSituationEditView : View {
+    @Binding var lastKnownAgircSituation: RegimeAgircSituation
     
     var body: some View {
         Group {
-            AmountEditView(label  : "Salaire annuel moyen",
-                           amount : $lastKnownPensionSituation.sam)
             IntegerEditView(label   : "Date de la dernière situation connue",
-                            integer : $lastKnownPensionSituation.atEndOf)
-            IntegerEditView(label   : "Nombre de trimestre acquis",
-                            integer : $lastKnownPensionSituation.nbTrimestreAcquis)
+                            integer : $lastKnownAgircSituation.atEndOf)
+            IntegerEditView(label   : "Nombre de points total acquis",
+                            integer : $lastKnownAgircSituation.nbPoints)
+            IntegerEditView(label   : "Nombre de points acquis par an",
+                            integer : $lastKnownAgircSituation.pointsParAn)
         }
     }
 }
 
-// MARK: - Saisie de la situation - Régime complémentaire
-struct RegimeAgircEditView: View {
+// MARK: - Saisie de la situation - Régime général
+
+struct RegimeGeneralEditView: View {
     @ObservedObject var personViewModel : PersonViewModel
     @ObservedObject var adultViewModel  : AdultViewModel
 
@@ -87,6 +91,21 @@ struct RegimeAgircEditView: View {
             }
             RegimeGeneralSituationEditView(lastKnownPensionSituation: $adultViewModel.lastKnownPensionSituation)
         }.padding(.leading)
+    }
+}
+
+struct RegimeGeneralSituationEditView : View {
+    @Binding var lastKnownPensionSituation: RegimeGeneralSituation
+    
+    var body: some View {
+        Group {
+            AmountEditView(label  : "Salaire annuel moyen",
+                           amount : $lastKnownPensionSituation.sam)
+            IntegerEditView(label   : "Date de la dernière situation connue",
+                            integer : $lastKnownPensionSituation.atEndOf)
+            IntegerEditView(label   : "Nombre de trimestre acquis",
+                            integer : $lastKnownPensionSituation.nbTrimestreAcquis)
+        }
     }
 }
 

@@ -15,6 +15,7 @@ struct Fiscal: Codable {
         var pensionTaxes                   : PensionTaxes
         var socialTaxesOnFinancialRevenu   : SocialTaxesOnFinancialRevenu
         var socialTaxesOnTurnover          : SocialTaxesOnTurnover
+        var socialTaxesOnAllocationChomage : SocialTaxesOnAllocationChomage
         var lifeInsuranceTaxes             : LifeInsuranceTaxes
         var incomeTaxes                    : IncomeTaxes
         var companyProfitTaxes             : CompanyProfitTaxes
@@ -163,11 +164,13 @@ struct PensionTaxes: Codable {
     func net(_ brut: Double) -> Double {
         brut * (1.0 - model.total / 100.0)
     }
+    
     /// charges sociales sur une pension brute
     /// - Parameter brut: pension brute
     func socialTaxes(_ brut: Double) -> Double {
         brut * model.total / 100.0
     }
+    
     /// Calcule la pension taxable à l'IRPP en applicant un abattement plafonné
     /// - Parameter net: pension nette de charges sociales
     /// - Returns: pension taxable à l'IRPP
@@ -175,6 +178,7 @@ struct PensionTaxes: Codable {
         let rebate = (net * model.rebate / 100.0).clamp(low: model.minRebate, high: model.maxRebate)
         return net - rebate
     }
+    
     // TODO: - Taux CSG déductible de l'impôt sur le revenu 5.9%
     func csgDeductibleDeIrpp(_ brut: Double) -> Double {
         brut * model.CSGdeductible
@@ -210,11 +214,13 @@ struct SocialTaxesOnFinancialRevenu: Codable {
     func net(_ brut: Double) -> Double {
         brut * (1.0 - model.total / 100.0)
     }
+    
     /// charges sociales sur les revenus financiers
     /// - Parameter brut: revenus financiers bruts
     func socialTaxes(_ brut: Double) -> Double {
         brut * model.total / 100.0
     }
+    
     /// revenus financiers bruts avant charges sociales
     /// - Parameter net: revenus financiers nets
     func brut(_ net: Double) -> Double {
@@ -244,10 +250,54 @@ struct SocialTaxesOnTurnover: Codable {
     func net(_ brut: Double) -> Double {
         brut * (1.0 - model.URSSAF / 100.0)
     }
+    
     /// charges sociales sur le chiffre d'affaire brut
     /// - Parameter brut: chiffre d'affaire brut
     func socialTaxes(_ brut: Double) -> Double {
         brut * model.URSSAF / 100.0
+    }
+}
+
+// MARK: - Charges sociales sur allocation chomage
+// charges sociales sur chiffre d'affaire
+struct SocialTaxesOnAllocationChomage: Codable {
+    
+    // properties
+    
+    struct Model: Codable {
+        let seuilCsgCrds : Double = 50.0 // €, pas cotisation en deça
+        let CRDS         : Double = 0.5 * 0.9825 // %
+        let CSG          : Double = 6.2 // %
+        let retraiteCompl: Double = 3.0 // % du salaire journalier de référence
+    }
+    
+    var model: Model
+    
+    // methods
+    
+    /// Allocation chomage journalière nette de charges sociales
+    /// - Parameters:
+    ///   - brut: allocation chomage journalière brute
+    ///   - SJR: Salaire Journilier de Référence
+    /// - Returns: allocation chomage journalière nette de charges sociales
+    func net(brut: Double, SJR: Double) -> Double {
+        brut - socialTaxes(brut: brut, SJR: SJR)
+    }
+    
+    /// Charges sociales dur l'allocation chomage journalière brute
+    /// - Parameters:
+    ///   - brut: allocation chomage journalière brute
+    ///   - SJR: Salaire Journilier de Référence
+    /// - Returns: montant des charges sociales
+    func socialTaxes(brut: Double, SJR: Double) -> Double {
+        var cotisation = 0.0
+        // CSG et CRDS
+        if brut >= model.seuilCsgCrds {
+            cotisation += brut * model.CRDS + brut * model.CSG
+        }
+        // cotisation au régime complémentaire de retraite
+        cotisation += SJR * model.retraiteCompl
+        return cotisation
     }
 }
 

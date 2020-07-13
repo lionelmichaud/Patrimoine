@@ -27,11 +27,10 @@ struct PersonLifeLineView: View {
                 .addSteps(viewModel.steps)
                 .indicators(viewModel.indicators)
                 .addPitStops(viewModel.pitStops)
-                //.spacing(100) // sets the spacingg to value specified.
                 .autoSpacing(true) // auto calculates spacing between steps based on the content.
+                //.spacing(100) // sets the spacingg to value specified.
         }
             .padding(.leading)
-            //}
             .navigationBarTitle("Ligne de vie de \(member.displayName)", displayMode: .inline)
         //}
     }

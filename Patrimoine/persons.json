@@ -5,39 +5,17 @@
         "name" : {
             "familyName" : "MICHAUD",
             "namePrefix" : "M.",
-            "givenName" : "Lionel"
+            "givenName"  : "Lionel"
         },
         "sexe"                 : 0,
         "birthDate" : "1964-09-22T00:00:00+01:00",
         "initialPersonalIncome" : {
-            "salary_netSalary" : 100000,
+            "salary_netSalary"       : 100000,
             "salary_healthInsurance" : 5000
         },
-        "nbOfYearOfDependency" : 0,
-        "ageOfDeath"           : 81,
         "nbOfChildBirth"       : 0,
-        "dateOfRetirement" : "2021-12-31T23:59:59+01:00",
-        "ageOfAgircPensionLiquid" : {
-            "year" : 58,
-            "day"  : 0,
-            "calendar" : {
-                "locale" : {
-                    "identifier" : "fr_FR"
-                },
-                "timeZone" : {
-                    "identifier" : "Europe\/Paris"
-                },
-                "identifier" : "gregorian",
-                "minimumDaysInFirstWeek" : 4,
-                "firstWeekday" : 2
-            },
-            "month" : 0
-        },
-        "regimeAgircSituation" : {
-            "atEndOf"     : 2018,
-            "nbPoints"    : 17908,
-            "pointsParAn" : 788
-        },
+        "ageOfDeath"           : 81,
+        "nbOfYearOfDependency" : 0,
         "ageOfPensionLiquid" : {
             "year" : 62,
             "month"  : 6,
@@ -58,7 +36,29 @@
             "atEndOf"           : 2019,
             "nbTrimestreAcquis" : 135,
             "sam"               : 40000
-        }
+        },
+        "ageOfAgircPensionLiquid" : {
+            "year" : 58,
+            "day"  : 0,
+            "calendar" : {
+                "locale" : {
+                    "identifier" : "fr_FR"
+                },
+                "timeZone" : {
+                    "identifier" : "Europe\/Paris"
+                },
+                "identifier" : "gregorian",
+                "minimumDaysInFirstWeek" : 4,
+                "firstWeekday" : 2
+            },
+            "month" : 0
+        },
+        "regimeAgircSituation" : {
+            "atEndOf"     : 2018,
+            "nbPoints"    : 17908,
+            "pointsParAn" : 788
+        },
+        "dateOfRetirement" : "2021-12-31T23:59:59+01:00"
     },
     {
         "__preserved_type" : "Patrimoine.Adult.Type",
@@ -74,10 +74,30 @@
             "turnOver_BNC" : 50000,
             "turnOver_incomeLossInsurance" : 5000
         },
-        "nbOfYearOfDependency" : 0,
-        "dateOfRetirement" : "2020-03-29T14:18:52Z",
-        "ageOfDeath"           : 81,
         "nbOfChildBirth"       : 2,
+        "ageOfDeath"           : 81,
+        "nbOfYearOfDependency" : 0,
+        "ageOfPensionLiquid" : {
+            "day"  : 0,
+            "year" : 62,
+            "calendar" : {
+                "locale" : {
+                    "identifier" : "fr_FR"
+                },
+                "timeZone" : {
+                    "identifier" : "Europe\/Paris"
+                },
+                "identifier" : "gregorian",
+                "minimumDaysInFirstWeek" : 4,
+                "firstWeekday" : 2
+            },
+            "month" : 0
+        },
+        "regimeGeneralSituation" : {
+            "atEndOf"           : 2019,
+            "nbTrimestreAcquis" : 135,
+            "sam"               : 25000
+        },
         "ageOfAgircPensionLiquid" : {
             "year" : 58,
             "month"  : 6,
@@ -99,27 +119,7 @@
             "nbPoints"    : 17908,
             "pointsParAn" : 788
         },
-        "ageOfPensionLiquid" : {
-            "day"  : 0,
-            "year" : 62,
-            "calendar" : {
-                "locale" : {
-                    "identifier" : "fr_FR"
-                },
-                "timeZone" : {
-                    "identifier" : "Europe\/Paris"
-                },
-                "identifier" : "gregorian",
-                "minimumDaysInFirstWeek" : 4,
-                "firstWeekday" : 2
-            },
-            "month" : 0
-        },
-        "regimeGeneralSituation" : {
-            "atEndOf"           : 2019,
-            "nbTrimestreAcquis" : 135,
-            "sam"               : 25000
-        }
+        "dateOfRetirement" : "2020-03-29T14:18:52Z"
     },
     {
         "__preserved_type" : "Patrimoine.Child.Type",

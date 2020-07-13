@@ -11,7 +11,7 @@ import Foundation
 // MARK: -
 final class Adult: Person {
     
-    // nested types
+    // MARK: - nested types
     
     private enum CodingKeys : String, CodingKey {
         case nbOfChildBirth,
@@ -24,8 +24,8 @@ final class Adult: Person {
         initialPersonalIncome
     }
     
-    // properties
-    
+    // MARK: - properties
+
     // nombre d'enfants
     @Published var nbOfChildBirth: Int = 0
     
@@ -138,8 +138,8 @@ final class Adult: Person {
         """
     }
     
-    // initialization
-    
+    // MARK: - initialization
+
     required init(from decoder: Decoder) throws {
         // Get our container for this subclass' coding keys
         let container                  = try decoder.container(keyedBy: CodingKeys.self)
@@ -175,8 +175,8 @@ final class Adult: Person {
         super.init(sexe: sexe, givenName: givenName, familyName: familyName, birthDate: birthDate, ageOfDeath: ageOfDeath)
     }
     
-    // methods
-    
+    // MARK: - methods
+
     override func encode(to encoder: Encoder) throws {
         try super.encode(to: encoder)
         

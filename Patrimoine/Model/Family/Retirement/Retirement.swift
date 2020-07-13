@@ -11,6 +11,7 @@ import Foundation
 // https://www.service-public.fr/particuliers/vosdroits/F21552
 
 struct Pension: Codable {
+    
     struct Model: Codable {
         var regimeGeneral: RegimeGeneral
         var regimeAgirc  : RegimeAgirc

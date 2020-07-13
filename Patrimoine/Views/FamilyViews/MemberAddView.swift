@@ -32,6 +32,7 @@ class AdultViewModel: ObservableObject {
     @Published var revenue                   = 0.0
     @Published var insurance                 = 0.0
     @Published var lastKnownPensionSituation = RegimeGeneralSituation()
+    @Published var lastKnownAgircSituation   = RegimeAgircSituation()
 }
 
 // MARK: - Saisie du nouveau membre de la famille
