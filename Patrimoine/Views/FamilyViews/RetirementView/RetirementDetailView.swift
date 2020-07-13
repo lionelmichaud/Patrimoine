@@ -64,7 +64,7 @@ struct RetirementDetailView: View {
                 AmountView(label: "Pension annuelle nette", amount: viewModel.agirc.pensionNette, weight: .bold, comment: "Net = Brut - Prélev sociaux")
             }
         }
-        .navigationBarTitle("Retraite", displayMode: .inline)
+        .navigationBarTitle("Retraite de \(member.displayName)", displayMode: .inline)
         .onAppear(perform: onAppear)
     }
     

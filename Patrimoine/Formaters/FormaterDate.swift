@@ -8,7 +8,13 @@
 
 import Foundation
 
-import Foundation
+var longDateFormatter : DateFormatter = {
+    let formatter = DateFormatter()
+    formatter.dateStyle = .long
+    formatter.timeStyle = .none
+    formatter.locale = Locale(identifier: "fr_FR") // French Locale (fr_FR)
+    return formatter
+}()
 
 var mediumDateFormatter : DateFormatter = {
     let formatter = DateFormatter()
@@ -26,10 +32,23 @@ var shortDateFormatter : DateFormatter = {
     return formatter
 }()
 
-var longDateFormatter : DateFormatter = {
+var dayMonthLongFormatter : DateFormatter = {
     let formatter = DateFormatter()
-    formatter.dateStyle = .long
-    formatter.timeStyle = .none
+    formatter.dateFormat = "ddMMMM" // format Janv., Fevr., Mars
+    formatter.locale = Locale(identifier: "fr_FR") // French Locale (fr_FR)
+    return formatter
+}()
+
+var dayMonthMediumFormatter : DateFormatter = {
+    let formatter = DateFormatter()
+    formatter.dateFormat = "dd/MMM" // format Janv., Fevr., Mars
+    formatter.locale = Locale(identifier: "fr_FR") // French Locale (fr_FR)
+    return formatter
+}()
+
+var dayMonthShortFormatter : DateFormatter = {
+    let formatter = DateFormatter()
+    formatter.dateFormat = "dd/MM" // format Janv., Fevr., Mars
     formatter.locale = Locale(identifier: "fr_FR") // French Locale (fr_FR)
     return formatter
 }()
@@ -43,14 +62,14 @@ var monthLongFormatter : DateFormatter = {
 
 var monthMediumFormatter : DateFormatter = {
     let formatter = DateFormatter()
-    formatter.dateFormat = "MMM" // format January, February, March
+    formatter.dateFormat = "MMM" // format Janv., Fevr., Mars
     formatter.locale = Locale(identifier: "fr_FR") // French Locale (fr_FR)
     return formatter
 }()
 
 var monthShortFormatter : DateFormatter = {
     let formatter = DateFormatter()
-    formatter.dateFormat = "MM" // format January, February, March
+    formatter.dateFormat = "MM" // format 01, 02, 03
     formatter.locale = Locale(identifier: "fr_FR") // French Locale (fr_FR)
     return formatter
 }()

@@ -112,6 +112,9 @@ struct AdultDetailView: View {
                         Text("\(adult.nbOfYearOfDependency) ans à partir de \(String(adult.yearOfDependency))")
                     }
                 }
+                NavigationLink(destination: PersonLifeLineView(withInitialValueFrom: self.member)) {
+                    Text("Ligne de vie")
+                }
             }
             // revenus
             Section(header: Text("REVENUS").font(.subheadline)) {
@@ -126,7 +129,8 @@ struct AdultDetailView: View {
                     Text(insurance)
                 }
                 // pension de retraite
-                NavigationLink(destination: RetirementDetailView()) {
+                NavigationLink(destination: RetirementDetailView()
+) {
                     AmountView(label  : "Pension de retraite annuelle nette",
                                amount : adult.pension.net)
                 }
@@ -157,6 +161,9 @@ struct ChildDetailView: View {
                 Text("Age d'indépendance financière")
                 Spacer()
                 Text("\(child.ageOfIndependence) ans en \(String(child.dateOfIndependence.year))")
+            }
+            NavigationLink(destination: PersonLifeLineView(withInitialValueFrom: self.member)) {
+                Text("Ligne de vie")
             }
         }
     }

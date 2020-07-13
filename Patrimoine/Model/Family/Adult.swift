@@ -238,20 +238,25 @@ final class Adult: Person {
     func isActive(during year: Int) -> Bool {
         isAlive(atEndOf: year) && year <= dateOfRetirementComp.year!
     }
-    /// true si est vivant à la fin de l'année et année postérieur à l'année de cessation d'activité
+    /// true si est vivant à la fin de l'année et année égale ou postérieur à l'année de cessation d'activité
     /// - Parameter year: année
     func isRetired(during year: Int) -> Bool {
-        isAlive(atEndOf: year) && (dateOfRetirementComp.year! < year)
+        isAlive(atEndOf: year) && (dateOfRetirementComp.year! <= year)
     }
-    /// true si est vivant à la fin de l'année et année postérieur à l'année de liquidation de la pension du régime général
+    /// true si est vivant à la fin de l'année et année égale ou postérieur à l'année de liquidation de la pension du régime général
     /// - Parameter year: première année incluant des revenus
     func isPensioned(during year: Int) -> Bool {
         isAlive(atEndOf: year) && (dateOfPensionLiquidComp.year! <= year)
     }
-    /// true si est vivant à la fin de l'année et année postérieur à l'année de liquidation de la pension du régime complémentaire
+    /// true si est vivant à la fin de l'année et année égale ou postérieur à l'année de liquidation de la pension du régime complémentaire
     /// - Parameter year: première année incluant des revenus
     func isAgircPensioned(during year: Int) -> Bool {
         isAlive(atEndOf: year) && (dateOfAgircPensionLiquidComp.year! <= year)
+    }
+    /// true si est vivant à la fin de l'année et année égale ou postérieur à l'année de liquidation de la pension du régime complémentaire
+    /// - Parameter year: première année incluant des revenus
+    func isDependent(during year: Int) -> Bool {
+        isAlive(atEndOf: year) && (yearOfDependency <= year)
     }
     /// Revenu net de charges et revenu taxable à l'IRPP
     /// - Parameter year: année
@@ -259,7 +264,9 @@ final class Adult: Person {
     func personalIncome(during year: Int) -> (net: Double, taxableIrpp: Double) {
         // TODO: proratiser
         if isActive(during: year) {
-            return (initialPersonalNetIncome, initialPersonalTaxableIncome)
+            let nbMonths = (dateOfRetirementComp.year == year ? dateOfRetirement.weekOfYear.double() : 52)
+            return (net         : initialPersonalNetIncome * nbMonths / 52,
+                    taxableIrpp : initialPersonalTaxableIncome * nbMonths / 52)
         } else {
             return (0.0, 0.0)
         }
@@ -273,16 +280,16 @@ final class Adult: Person {
         // pension du régime général
         if isPensioned(during: year) {
             let pension = pensionRegimeGeneral
-            let nbMonths = (dateOfPensionLiquidComp.year == year ?  (12 - dateOfPensionLiquidComp.month!).double() : 12)
-            brut += pension.brut * nbMonths / 12.0
-            net  += pension.net  * nbMonths / 12.0
+            let nbMonths = (dateOfPensionLiquidComp.year == year ? (52 - dateOfPensionLiquid.weekOfYear).double() : 52)
+            brut += pension.brut * nbMonths / 52
+            net  += pension.net  * nbMonths / 52
         }
         // pension du régime complémentaire
         if isAgircPensioned(during: year) {
             let pension = pensionRegimeAgirc
-            let nbMonths = (dateOfAgircPensionLiquidComp.year == year ?  (12 - dateOfAgircPensionLiquidComp.month!).double() : 12)
-            brut += pension.brut * nbMonths / 12.0
-            net  += pension.net  * nbMonths / 12.0
+            let nbMonths = (dateOfAgircPensionLiquidComp.year == year ? (52 - dateOfAgircPensionLiquid.weekOfYear).double() : 52)
+            brut += pension.brut * nbMonths / 52
+            net  += pension.net  * nbMonths / 52
         }
         let taxable = Fiscal.model.pensionTaxes.taxable(from: net)
         return (brut, net, taxable)

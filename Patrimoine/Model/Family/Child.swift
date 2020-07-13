@@ -24,7 +24,7 @@ final class Child: Person {
         dateOfUniversityComp.date!
     }
     var dateOfUniversityComp: DateComponents { // computed
-        DateComponents(calendar: Date.calendar, year: birthDate.year + ageOfUniversity, month: 12, day: 31)
+        DateComponents(calendar: Date.calendar, year: birthDate.year + ageOfUniversity, month: 09, day: 30)
     }
     
     @Published var ageOfIndependence: Int = 24
@@ -32,7 +32,7 @@ final class Child: Person {
         dateOfIndependenceComp.date!
     }
     var dateOfIndependenceComp: DateComponents { // computed
-        DateComponents(calendar: Date.calendar, year: birthDate.year + ageOfIndependence, month: 12, day: 31)
+        DateComponents(calendar: Date.calendar, year: birthDate.year + ageOfIndependence, month: 09, day: 30)
     }
     
     override var description: String {
@@ -59,16 +59,16 @@ final class Child: Person {
     }
     
     override init(sexe: Sexe,
-                         givenName: String, familyName: String,
-                         yearOfBirth: Int, monthOfBirth: Int, dayOfBirth: Int,
-                         ageOfDeath: Int = CalendarCst.forever) {
+                  givenName: String, familyName: String,
+                  yearOfBirth: Int, monthOfBirth: Int, dayOfBirth: Int,
+                  ageOfDeath: Int = CalendarCst.forever) {
         super.init(sexe: sexe, givenName: givenName, familyName: familyName, yearOfBirth: yearOfBirth, monthOfBirth: monthOfBirth, dayOfBirth: dayOfBirth, ageOfDeath: ageOfDeath)
     }
     
     override init(sexe: Sexe,
-                         givenName: String, familyName: String,
-                         birthDate : Date,
-                         ageOfDeath: Int = CalendarCst.forever) {
+                  givenName: String, familyName: String,
+                  birthDate : Date,
+                  ageOfDeath: Int = CalendarCst.forever) {
         super.init(sexe: sexe, givenName: givenName, familyName: familyName, birthDate: birthDate, ageOfDeath: ageOfDeath)
     }
     

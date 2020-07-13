@@ -123,6 +123,10 @@ extension Date {
         return Date.calendar.component(.weekOfYear, from: self)
     }
     
+    var dayOfYear: Int {
+        return weekOfYear * 7 + weekDay
+    }
+    
     var year: Int {
         return Date.calendar.component(.year, from: self)
     }
@@ -218,6 +222,21 @@ extension Date {
     /// 2 janvier 2001
     var stringLongDate: String {
         return longDateFormatter.string(from: self)
+    }
+
+    /// 02/01
+    var stringShortDayMonth: String {
+        return dayMonthShortFormatter.string(from: self)
+    }
+    
+    /// 2 janv.
+    var stringMediumDayMonth: String {
+        return dayMonthMediumFormatter.string(from: self)
+    }
+    
+    /// 2 janvier
+    var stringLongDayMonth: String {
+        return dayMonthLongFormatter.string(from: self)
     }
 }
 
