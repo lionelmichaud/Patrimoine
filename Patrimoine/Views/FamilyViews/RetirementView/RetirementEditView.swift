@@ -33,7 +33,7 @@ struct RegimeAgircEditView: View {
     @ObservedObject var adultViewModel  : AdultViewModel
 
     var body: some View {
-        Section(header: Text("Régime complémentaire").padding(.leading)) {
+        Section(header: Text("RETRAITE - Régime complémentaire")) {
             HStack {
                 Stepper(value: $adultViewModel.ageAgircPension, in: Pension.model.regimeAgirc.model.ageMinimum ... Pension.model.regimeGeneral.ageTauxPleinLegal(birthYear: personViewModel.birthDate.year)!) {
                     HStack {
@@ -48,7 +48,7 @@ struct RegimeAgircEditView: View {
                 .frame(width: 160)
             }
             RegimeAgircSituationEditView(lastKnownAgircSituation: $adultViewModel.lastKnownAgircSituation)
-        }.padding(.leading)
+        }
     }
 }
 
@@ -74,7 +74,7 @@ struct RegimeGeneralEditView: View {
     @ObservedObject var adultViewModel  : AdultViewModel
 
     var body: some View {
-        Section(header: Text("Régime général").padding(.leading)) {
+        Section(header: Text("RETRAITE - Régime général")) {
             // régime complémentaire
             HStack {
                 Stepper(value: $adultViewModel.agePension, in: Pension.model.regimeGeneral.model.ageMinimumLegal ... Pension.model.regimeGeneral.ageTauxPleinLegal(birthYear: personViewModel.birthDate.year)!) {
@@ -90,7 +90,7 @@ struct RegimeGeneralEditView: View {
                 .frame(width: 160)
             }
             RegimeGeneralSituationEditView(lastKnownPensionSituation: $adultViewModel.lastKnownPensionSituation)
-        }.padding(.leading)
+        }
     }
 }
 

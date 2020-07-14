@@ -41,7 +41,7 @@ final class Adult: Person {
         mediumDateFormatter.string(from: dateOfRetirement)
     } // computed
     
-    // date de demande de liquidation de pension
+    // date de demande de liquidation de pension régime général
     var dateOfPensionLiquid: Date { // computed
         Date.calendar.date(from: dateOfPensionLiquidComp)!
     } // computed
@@ -94,6 +94,7 @@ final class Adult: Person {
         }
     }
 
+    // dépendance
     @Published var nbOfYearOfDependency: Int = 0
     var ageOfDependency: Int {
         return ageOfDeath - nbOfYearOfDependency
@@ -113,7 +114,7 @@ final class Adult: Person {
     @Published var initialPersonalTaxableIncome : Double = 0 // taxable à l'IRPP
     
     // pension
-    var pension  : (brut: Double, net: Double, taxable: Double) { // computed
+    var pension: (brut: Double, net: Double, taxable: Double) { // computed
         let pensionGeneral = pensionRegimeGeneral
         let pensionAgirc   = pensionRegimeAgirc
         let brut           = pensionGeneral.brut + pensionAgirc.brut
@@ -233,31 +234,37 @@ final class Adult: Person {
     func setAgeOfAgircPensionLiquidComp(year: Int, month: Int = 0, day: Int = 0) {
         ageOfAgircPensionLiquidComp = DateComponents(calendar: Date.calendar, year: year, month: month, day: day)
     }
+    
     /// true si est vivant à la fin de l'année et encore en activité pendant une partie de l'année
     /// - Parameter year: année
     func isActive(during year: Int) -> Bool {
         isAlive(atEndOf: year) && year <= dateOfRetirementComp.year!
     }
+    
     /// true si est vivant à la fin de l'année et année égale ou postérieur à l'année de cessation d'activité
     /// - Parameter year: année
     func isRetired(during year: Int) -> Bool {
         isAlive(atEndOf: year) && (dateOfRetirementComp.year! <= year)
     }
+    
     /// true si est vivant à la fin de l'année et année égale ou postérieur à l'année de liquidation de la pension du régime général
     /// - Parameter year: première année incluant des revenus
     func isPensioned(during year: Int) -> Bool {
         isAlive(atEndOf: year) && (dateOfPensionLiquidComp.year! <= year)
     }
+    
     /// true si est vivant à la fin de l'année et année égale ou postérieur à l'année de liquidation de la pension du régime complémentaire
     /// - Parameter year: première année incluant des revenus
     func isAgircPensioned(during year: Int) -> Bool {
         isAlive(atEndOf: year) && (dateOfAgircPensionLiquidComp.year! <= year)
     }
+    
     /// true si est vivant à la fin de l'année et année égale ou postérieur à l'année de liquidation de la pension du régime complémentaire
     /// - Parameter year: première année incluant des revenus
     func isDependent(during year: Int) -> Bool {
         isAlive(atEndOf: year) && (yearOfDependency <= year)
     }
+    
     /// Revenu net de charges et revenu taxable à l'IRPP
     /// - Parameter year: année
     /// - Returns: taxableIrpp: revenu taxable à l'IRPP
@@ -271,6 +278,7 @@ final class Adult: Person {
             return (0.0, 0.0)
         }
     }
+    
     /// Calcul de la pension de retraite
     /// - Parameter year: année
     /// - Returns: pension brute, nette de charges sociales, taxable à l'IRPP

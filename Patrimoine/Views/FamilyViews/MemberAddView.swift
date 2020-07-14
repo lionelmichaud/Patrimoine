@@ -109,6 +109,8 @@ struct MemberAddView: View {
                                                     month : adultViewModel.trimPension * 3)
                 newMember.setAgeOfAgircPensionLiquidComp(year  : adultViewModel.ageAgircPension,
                                                          month : adultViewModel.trimAgircPension * 3)
+                newMember.lastKnownPensionSituation = adultViewModel.lastKnownPensionSituation
+                newMember.lastKnownAgircPensionSituation = adultViewModel.lastKnownAgircSituation
                 if adultViewModel.revIndex == PersonalIncomeType.salary(netSalary       : 0,
                                                          healthInsurance : 0).id {
                     newMember.initialPersonalIncome =
@@ -198,18 +200,18 @@ struct AdultEditView : View {
                 }
             }
             // revenus
-            Section(header: Text("REVENUS")) {
+            Section(header: Text("ACTIVITE")) {
                 RevenueEditView(revIndex: $adultViewModel.revIndex,
                                 revenue: $adultViewModel.revenue,
                                 insurance: $adultViewModel.insurance)
-            }
-            // retraite
-            Section(header: Text("RETRAITE")) {
                 DatePicker(selection: $adultViewModel.dateRetirement,
                            in: Date()...100.years.fromNow! ,
                            displayedComponents: .date,
                            label: { Text("Date de cessation d'activité") })
             }
+            // retraite
+            //Section(header: Text("RETRAITE")) {
+            //}
             RetirementEditView(personViewModel : personViewModel,
                                adultViewModel  : adultViewModel)
             // dépendance

@@ -84,6 +84,7 @@ struct MemberEditView: View {
             adultViewModel.agePension                = adult.ageOfPensionLiquidComp.year!
             adultViewModel.trimPension               = adult.ageOfPensionLiquidComp.month! / 3
             adultViewModel.lastKnownPensionSituation = adult.lastKnownPensionSituation
+            adultViewModel.lastKnownAgircSituation = adult.lastKnownAgircPensionSituation
             switch adult.initialPersonalIncome {
                 case let .salary(netSalary, healthInsurance):
                     adultViewModel.revenue   = netSalary
@@ -111,6 +112,7 @@ struct MemberEditView: View {
             adult.setAgeOfAgircPensionLiquidComp(year  : adultViewModel.ageAgircPension,
                                                  month : adultViewModel.trimAgircPension * 3)
             adult.lastKnownPensionSituation = adultViewModel.lastKnownPensionSituation
+            adult.lastKnownAgircPensionSituation = adultViewModel.lastKnownAgircSituation
             if adultViewModel.revIndex == PersonalIncomeType.salary(netSalary       : 0,
                                                                     healthInsurance : 0).id {
                 adult.initialPersonalIncome = PersonalIncomeType.salary(netSalary       : adultViewModel.revenue,
