@@ -23,6 +23,7 @@ class PersonViewModel: ObservableObject {
 // MARK: -  Adult View Model
 class AdultViewModel: ObservableObject {
     @Published var dateRetirement            = Date()
+    @Published var causeOfRetirement         = Unemployment.Cause.demission
     @Published var ageAgircPension           = Pension.model.regimeGeneral.model.ageMinimumLegal
     @Published var trimAgircPension          = 0
     @Published var agePension                = Pension.model.regimeGeneral.model.ageMinimumLegal
@@ -93,7 +94,7 @@ struct MemberAddView: View {
         }
     }
     
-    // création du nouveau membre et ajout à la famille
+    /// Création du nouveau membre et ajout à la famille
     func addMember() {
         switch personViewModel.seniority {
             case .adult  :
@@ -144,6 +145,8 @@ struct MemberAddView: View {
         self.presentationMode.wrappedValue.dismiss()
     }
     
+    /// Vérifie que la formulaire est valide
+    /// - Returns: vrai si le formulaire est valide
     func formIsValid() -> Bool {
         if personViewModel.familyName.allSatisfy({ $0 == " " }) ||
             personViewModel.givenName.allSatisfy({ $0 == " " })            // genre.allSatisfy({ $0 == " " })
@@ -179,106 +182,6 @@ struct CiviliteEditView : View {
                        in: 100.years.ago!...Date(),
                        displayedComponents: .date,
                        label: { Text("Date de naissance") })
-        }
-    }
-}
-
-// MARK: - Saisie adulte
-struct AdultEditView : View {
-    @ObservedObject var personViewModel : PersonViewModel
-    @ObservedObject var adultViewModel  : AdultViewModel
-    
-    var body: some View {
-        Group {
-            Section(header: Text("SCENARIO").font(.subheadline)) {
-                Stepper(value: $personViewModel.deathAge, in: Date().year - personViewModel.birthDate.year ... 100) {
-                    HStack {
-                        Text("Age de décès estimé ")
-                        Spacer()
-                        Text("\(personViewModel.deathAge) ans").foregroundColor(.secondary)
-                    }
-                }
-            }
-            // revenus
-            Section(header: Text("ACTIVITE")) {
-                RevenueEditView(revIndex: $adultViewModel.revIndex,
-                                revenue: $adultViewModel.revenue,
-                                insurance: $adultViewModel.insurance)
-                DatePicker(selection: $adultViewModel.dateRetirement,
-                           in: Date()...100.years.fromNow! ,
-                           displayedComponents: .date,
-                           label: { Text("Date de cessation d'activité") })
-            }
-            // retraite
-            //Section(header: Text("RETRAITE")) {
-            //}
-            RetirementEditView(personViewModel : personViewModel,
-                               adultViewModel  : adultViewModel)
-            // dépendance
-            Section(header:Text("DEPENDANCE")) {
-                Stepper(value: $adultViewModel.nbYearOfDepend, in: 0 ... 15) {
-                    HStack {
-                        Text("Nombre d'année de dépendance ")
-                        Spacer()
-                        Text("\(adultViewModel.nbYearOfDepend) ans").foregroundColor(.secondary)
-                    }
-                }
-            }
-        }
-    }
-}
-
-// MARK: - Saisie des revenus
-struct RevenueEditView : View {
-    @Binding var revIndex  : Int
-    @Binding var revenue   : Double
-    @Binding var insurance : Double
-    
-    var body: some View {
-        Group {
-            CaseWithAssociatedValuePicker<PersonalIncomeType>(caseIndex: $revIndex, label: "")
-                .pickerStyle(SegmentedPickerStyle())
-            
-            AmountEditView(label: revIndex == PersonalIncomeType.salary(netSalary: 0, healthInsurance: 0).id ? "Salaire" : "BNC",
-                           amount: $revenue)
-            AmountEditView(label: revIndex == PersonalIncomeType.salary(netSalary: 0, healthInsurance: 0).id ? "Coût de la mutuelle" : "Charges sociales",
-                           amount: $insurance)
-        }
-    }
-}
-
-// MARK: - Saisie enfant
-struct ChildEditView : View {
-    let birthDate                : Date
-    @Binding var deathAge        : Int
-    @Binding var ageUniversity   : Int
-    @Binding var ageIndependance : Int
-    
-    var body: some View {
-        Group() {
-            Section(header: Text("SCENARIO").font(.subheadline)) {
-                Stepper(value: $deathAge, in: Date().year - birthDate.year ... 100) {
-                    HStack {
-                        Text("Age de décès estimé")
-                        Spacer()
-                        Text("\(deathAge) ans").foregroundColor(.secondary)
-                    }
-                }
-                Stepper(value: $ageUniversity, in: ScenarioCst.minAgeUniversity ... ScenarioCst.minAgeIndependance) {
-                    HStack {
-                        Text("Age d'entrée à l'université")
-                        Spacer()
-                        Text("\(ageUniversity) ans").foregroundColor(.secondary)
-                    }
-                }
-                Stepper(value: $ageIndependance, in: ScenarioCst.minAgeIndependance ... 50) {
-                    HStack {
-                        Text("Age d'indépendance financière")
-                        Spacer()
-                        Text("\(ageIndependance) ans").foregroundColor(.secondary)
-                    }
-                }
-            }
         }
     }
 }

@@ -16,6 +16,7 @@ final class Adult: Person {
     private enum CodingKeys : String, CodingKey {
         case nbOfChildBirth,
         dateOfRetirement,
+        causeRetirement,
         ageOfPensionLiquid,
         regimeGeneralSituation,
         ageOfAgircPensionLiquid,
@@ -40,6 +41,7 @@ final class Adult: Person {
     var displayDateOfRetirement: String { // computed
         mediumDateFormatter.string(from: dateOfRetirement)
     } // computed
+    var causeOfRetirement: Unemployment.Cause = .demission
     
     // date de demande de liquidation de pension régime général
     var dateOfPensionLiquid: Date { // computed
@@ -143,15 +145,34 @@ final class Adult: Person {
 
     required init(from decoder: Decoder) throws {
         // Get our container for this subclass' coding keys
-        let container                  = try decoder.container(keyedBy: CodingKeys.self)
-        nbOfChildBirth                 = try container.decode(Int.self, forKey: .nbOfChildBirth)
-        dateOfRetirement               = try container.decode(Date.self, forKey: .dateOfRetirement)
-        ageOfPensionLiquidComp         = try container.decode(DateComponents.self, forKey: .ageOfPensionLiquid)
-        lastKnownPensionSituation      = try container.decode(RegimeGeneralSituation.self, forKey: .regimeGeneralSituation)
-        ageOfAgircPensionLiquidComp    = try container.decode(DateComponents.self, forKey: .ageOfAgircPensionLiquid)
-        lastKnownAgircPensionSituation = try container.decode(RegimeAgircSituation.self, forKey: .regimeAgircSituation)
-        nbOfYearOfDependency           = try container.decode(Int.self, forKey: .nbOfYearOfDependency)
-        initialPersonalIncome          = try container.decode(PersonalIncomeType.self, forKey: .initialPersonalIncome)
+        let container =
+            try decoder.container(keyedBy: CodingKeys.self)
+        nbOfChildBirth =
+            try container.decode(Int.self,
+                                 forKey : .nbOfChildBirth)
+        dateOfRetirement =
+            try container.decode(Date.self,
+                                 forKey: .dateOfRetirement)
+        causeOfRetirement =
+            try container.decode(Unemployment.Cause.self,
+                                 forKey: .causeRetirement)
+        ageOfPensionLiquidComp =
+            try container.decode(DateComponents.self,
+                                 forKey: .ageOfPensionLiquid)
+        lastKnownPensionSituation =
+            try container.decode(RegimeGeneralSituation.self,
+                                 forKey: .regimeGeneralSituation)
+        ageOfAgircPensionLiquidComp =
+            try container.decode(DateComponents.self, forKey: .ageOfAgircPensionLiquid)
+        lastKnownAgircPensionSituation =
+            try container.decode(RegimeAgircSituation.self,
+                                 forKey: .regimeAgircSituation)
+        nbOfYearOfDependency =
+            try container.decode(Int.self,
+                                 forKey: .nbOfYearOfDependency)
+        initialPersonalIncome =
+            try container.decode(PersonalIncomeType.self,
+                                 forKey: .initialPersonalIncome)
         
         // Get superDecoder for superclass and call super.init(from:) with it
         //let superDecoder = try container.superDecoder()
@@ -184,6 +205,7 @@ final class Adult: Person {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(nbOfChildBirth, forKey: .nbOfChildBirth)
         try container.encode(dateOfRetirement, forKey: .dateOfRetirement)
+        try container.encode(causeOfRetirement, forKey: .causeRetirement)
         try container.encode(ageOfPensionLiquidComp, forKey: .ageOfPensionLiquid)
         try container.encode(lastKnownPensionSituation, forKey: .regimeGeneralSituation)
         try container.encode(ageOfAgircPensionLiquidComp, forKey: .ageOfAgircPensionLiquid)

@@ -58,7 +58,8 @@
             "nbPoints"    : 17908,
             "pointsParAn" : 788
         },
-        "dateOfRetirement" : "2021-12-31T23:59:59+01:00"
+        "dateOfRetirement" : "2021-12-31T23:59:59+01:00",
+        "causeRetirement"  : "Licenciement"
     },
     {
         "__preserved_type" : "Patrimoine.Adult.Type",
@@ -119,7 +120,8 @@
             "nbPoints"    : 17908,
             "pointsParAn" : 788
         },
-        "dateOfRetirement" : "2020-03-29T14:18:52Z"
+        "dateOfRetirement" : "2020-03-29T14:18:52Z",
+        "causeRetirement"  : "Démission"
     },
     {
         "__preserved_type" : "Patrimoine.Child.Type",

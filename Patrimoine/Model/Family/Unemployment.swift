@@ -12,6 +12,18 @@ struct Unemployment: Codable {
     
     // nested types
     
+    enum Cause: String, PickableEnum, Codable, Hashable {
+        case demission                          = "Démission"
+        case licenciement                       = "Licenciement"
+        case ruptureConventionnelleIndividuelle = "Rupture individuelle"
+        case ruptureConventionnelleCollective   = "Rupture collective"
+        case planSauvegardeEmploi               = "PSE"
+
+        var pickerString: String {
+            return self.rawValue
+        }
+    }
+    
     struct Model: Codable {
         var indemniteLicenciement : IndemniteLicenciement
         var allocationChomage     : AllocationChomage
@@ -29,10 +41,6 @@ struct Unemployment: Codable {
 // https://www.service-public.fr/particuliers/vosdroits/F408
 struct IndemniteLicenciement: Codable {
     
-    enum CauseLicenciement {
-        case planSauvegardeEmploi, ruptureConventionnelleCollective, ruptureConventionnelleIndividuelle, licenciement
-    }
-
     // nested types
     
     struct SliceBase: Codable {
