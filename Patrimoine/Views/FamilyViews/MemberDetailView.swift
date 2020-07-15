@@ -99,6 +99,13 @@ struct AdultDetailView: View {
                     Text(adult.causeOfRetirement.displayString)
                 }.padding(.leading)
                 if adult.hasUnemployementAllocationPeriod {
+                    if adult.dateOfStartOfAllocationReduction != nil {
+                        HStack {
+                            Text("Début de la période de réducition d'allocation chômage")
+                            Spacer()
+                            Text("\(adult.age(atDate: adult.dateOfStartOfAllocationReduction!).year!) ans \(adult.age(atDate: adult.dateOfStartOfAllocationReduction!).month!) mois au \(mediumDateFormatter.string(from: adult.dateOfStartOfAllocationReduction!))")
+                        }.padding(.leading)
+                    }
                     HStack {
                         Text("Fin de la période d'allocation chômage")
                         Spacer()

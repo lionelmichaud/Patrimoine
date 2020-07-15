@@ -9,43 +9,6 @@
 import SwiftUI
 import StepperView
 
-struct ExampleView2:View {
-    
-    let cells = [ StepTextView(text: "Insert ATM Card"),
-                  StepTextView(text: "Enter 4-Digit ATM Pin"),
-                  StepTextView(text: "Select the type of Transaction"),
-                  StepTextView(text: "Select the Type of Account"),
-                  StepTextView(text: "Enter the withdrawal amount"),
-                  StepTextView(text: "Collect the Cash"),
-                  StepTextView(text: "Take a printed receipt")
-    ]
-    
-    let indicationTypes = [
-        StepperIndicationType.custom(NumberedCircleView(text: "1").eraseToAnyView()),
-        .custom(NumberedCircleView(text: "2").eraseToAnyView()),
-        .custom(NumberedCircleView(text: "3").eraseToAnyView()),
-        .custom(NumberedCircleView(text: "4").eraseToAnyView()),
-        .custom(NumberedCircleView(text: "5").eraseToAnyView()),
-        .custom(NumberedCircleView(text: "6").eraseToAnyView()),
-        .custom(NumberedCircleView(text: "7").eraseToAnyView())
-    ]
-    
-    var body: some View {
-            VStack(spacing: 5) {
-                ScrollView(Axis.Set.vertical, showsIndicators: false) {
-                    HStack {
-                        StepperView()
-                            .addSteps(self.cells)
-                            .indicators(indicationTypes)
-                            .lineOptions(StepperLineOptions.custom(1, Colors.blue(.teal).rawValue))
-                            .padding(.leading, 10)
-                    }
-                }
-            }.padding(.vertical, 50)
-                .navigationBarTitle("Stepper View")
-    }
-}
-
 struct PersonLifeLineView: View {
     @EnvironmentObject var member: Person
     
@@ -92,6 +55,11 @@ struct PersonLifeLineView: View {
                 viewModel.pitStops.append(PitStopStep(view: TextView(text:"Aucun revenu").eraseToAnyView(), lineOptions: PitStopLineOptions.custom(1, Colors.teal.rawValue)))
                 // période d'allocation chomage éventuelle
                 if adult.hasUnemployementAllocationPeriod {
+                    if adult.dateOfStartOfAllocationReduction != nil {
+                        viewModel.steps.append(TextView(text: adult.dateOfStartOfAllocationReduction!.stringShortDayMonth + ": Début de réduction de l'allocation chômage", font: .system(size: 14, weight: .semibold)).padding(.leading).eraseToAnyView())
+                        viewModel.indicators.append(StepperIndicationType.custom(NumberedCircleView(text: String(adult.dateOfStartOfAllocationReduction!.year), width: radius).eraseToAnyView()))
+                        viewModel.pitStops.append(PitStopStep(view: TextView(text:"Allocation chômage").eraseToAnyView(), lineOptions: PitStopLineOptions.custom(1, Colors.teal.rawValue)))
+                    }
                     viewModel.steps.append(TextView(text: adult.dateOfEndOfUnemployementAllocation!.stringShortDayMonth + ": Fin de période d'allocation chômage", font: .system(size: 14, weight: .semibold)).padding(.leading).eraseToAnyView())
                     viewModel.indicators.append(StepperIndicationType.custom(NumberedCircleView(text: String(adult.dateOfEndOfUnemployementAllocation!.year), width: radius).eraseToAnyView()))
                     viewModel.pitStops.append(PitStopStep(view: TextView(text:"Allocation chômage").eraseToAnyView(), lineOptions: PitStopLineOptions.custom(1, Colors.teal.rawValue)))

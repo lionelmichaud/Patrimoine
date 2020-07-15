@@ -24,7 +24,7 @@ class PersonViewModel: ObservableObject {
 class AdultViewModel: ObservableObject {
     @Published var dateRetirement            = Date()
     @Published var causeOfRetirement         = Unemployment.Cause.demission
-    @Published var dateOfEndOfUnemployAlloc  = Date()
+    //@Published var dateOfEndOfUnemployAlloc  = Date()
     @Published var ageAgircPension           = Pension.model.regimeGeneral.model.ageMinimumLegal
     @Published var trimAgircPension          = 0
     @Published var agePension                = Pension.model.regimeGeneral.model.ageMinimumLegal

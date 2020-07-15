@@ -153,6 +153,24 @@ struct AllocationChomage: Codable {
         return slice.maxDuration
     }
     
+    /// Période de carence avant réduction de l'allocation journalière
+    /// - Parameters:
+    ///   - age: age au moment du licenciement
+    ///   - SJR: Salaire Journalier de Référence
+    /// - Returns: Période de carence avant réduction de l'allocation journalière en mois
+    func reductionAfter(age: Int, SJR: Double) -> Int? {
+        guard let slice = model.durationGrid.last(where: { $0.fromAge <= age }) else {
+            fatalError()
+        }
+        // réduction application seulement au-dessus d'un certain seuil d'allocation
+        let daylyAlloc = daylyAllocBeforeReduction(SJR: SJR).brut
+        if daylyAlloc >= slice.reductionSeuilAlloc {
+            return slice.reductionAfter
+        } else {
+            return nil
+        }
+    }
+    
     /// Réduction de l'allocation journalière
     /// - Parameters:
     ///   - age: age au moment du licenciement
@@ -177,10 +195,10 @@ struct AllocationChomage: Codable {
     
     func daylyAllocBeforeReduction(SJR: Double) -> (brut: Double, net: Double) {
         // brute avant charges sociales
-        let alloc1  = SJR * model.amountModel.case1Rate + model.amountModel.case1Fix
-        let alloc2  = SJR * model.amountModel.case2Rate
+        let alloc1  = SJR * model.amountModel.case1Rate / 100.0 + model.amountModel.case1Fix
+        let alloc2  = SJR * model.amountModel.case2Rate / 100.0
         let alloc   = max(alloc1, alloc2)
-        let plafond = max(SJR * model.amountModel.maxAllocationPcent,
+        let plafond = max(SJR * model.amountModel.maxAllocationPcent / 100.0,
                           model.amountModel.maxAllocationEuro)
         let brut    = alloc.clamp(low  : model.amountModel.minAllocation,
                                   high : plafond)

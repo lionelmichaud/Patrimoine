@@ -84,13 +84,23 @@ final class Adult: Person {
         }
         return Unemployment.model.allocationChomage.durationInMonth(age: age(atDate: dateOfRetirement).year!)
     }
+    var dateOfStartOfAllocationReduction  : Date? { // computed
+        guard hasUnemployementAllocationPeriod else {
+            return nil
+        }
+        guard let reductionAfter = Unemployment.model.allocationChomage.reductionAfter(age: age(atDate: dateOfRetirement).year!,
+                                                                                       SJR: SJR) else {
+           return nil
+        }
+        return  reductionAfter.months.from(dateOfRetirement)!
+    }
     var dateOfEndOfUnemployementAllocation: Date? { // computed
         guard hasUnemployementAllocationPeriod else {
             return nil
         }
         return unemployementAllocationDuration!.months.from(dateOfRetirement)!
     }
-    
+
     /// RETRAITE: date de demande de liquidation de pension régime général
     var dateOfPensionLiquid              : Date { // computed
         Date.calendar.date(from: dateOfPensionLiquidComp)!
