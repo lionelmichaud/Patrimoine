@@ -65,7 +65,7 @@ struct AdultDetailView: View {
 
     var body: some View {
         let adult     = member as! Adult
-        let income    = adult.initialPersonalIncome
+        let income    = adult.workIncome
         var revenue   = ""
         var insurance = ""
         
@@ -92,6 +92,18 @@ struct AdultDetailView: View {
                     Text("Cessation d'activité")
                     Spacer()
                     Text("\(adult.age(atDate: adult.dateOfRetirement).year!) ans \(adult.age(atDate: adult.dateOfRetirement).month!) mois au \(mediumDateFormatter.string(from: adult.dateOfRetirement))")
+                }
+                HStack {
+                    Text("Cause")
+                    Spacer()
+                    Text(adult.causeOfRetirement.displayString)
+                }.padding(.leading)
+                if adult.hasUnemployementAllocationPeriod {
+                    HStack {
+                        Text("Fin de la période d'allocation chômage")
+                        Spacer()
+                        Text("\(adult.age(atDate: adult.dateOfEndOfUnemployementAllocation!).year!) ans \(adult.age(atDate: adult.dateOfEndOfUnemployementAllocation!).month!) mois au \(mediumDateFormatter.string(from: adult.dateOfEndOfUnemployementAllocation!))")
+                    }.padding(.leading)
                 }
                 HStack {
                     Text("Liquidation de pension - régime complém.")

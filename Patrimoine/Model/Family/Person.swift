@@ -10,7 +10,7 @@ import Foundation
 
 import TypePreservingCodingAdapter // https://github.com/IgorMuzyka/Type-Preserving-Coding-Adapter.git
 
-// MARK: -
+// MARK: - Sexe
 enum Sexe: Int, PickableEnum, Codable {
     case male
     case female
@@ -36,7 +36,7 @@ enum Sexe: Int, PickableEnum, Codable {
     }
 }
 
-// MARK: -
+// MARK: - Seniority
 enum Seniority: Int, PickableEnum {
     case adult
     case enfant
@@ -62,7 +62,7 @@ enum Seniority: Int, PickableEnum {
     }
 }
 
-// MARK: -
+// MARK: - Person
 class Person : ObservableObject, Identifiable, CustomStringConvertible, Codable {
     
     // MARK: - Nested types

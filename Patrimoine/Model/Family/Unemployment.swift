@@ -8,6 +8,7 @@
 
 import Foundation
 
+// MARK: - Modèle de Chomage
 struct Unemployment: Codable {
     
     // nested types
@@ -19,6 +20,8 @@ struct Unemployment: Codable {
         case ruptureConventionnelleCollective   = "Rupture collective"
         case planSauvegardeEmploi               = "PSE"
 
+        // methods
+        
         var pickerString: String {
             return self.rawValue
         }
@@ -29,11 +32,21 @@ struct Unemployment: Codable {
         var allocationChomage     : AllocationChomage
     }
     
+    // properties
+    
     static var model: Model =
         Bundle.main.decode(Model.self,
                            from                 : "AllocChomageModel.json",
                            dateDecodingStrategy : .iso8601,
                            keyDecodingStrategy  : .useDefaultKeys)
+    // methods
+    
+    /// Indique si la personne à droit à une allocation et une indemnité
+    /// - Parameter cause: cause de la cessation d'activité
+    /// - Returns: vrai si a droit
+    static func canReceiveAllocation(for cause: Cause) -> Bool {
+        cause != .demission
+    }
 }
 
 // MARK: - Indeminité de licenciement
@@ -57,7 +70,7 @@ struct IndemniteLicenciement: Codable {
     
     struct SliceCorrection: Codable {
         var age                      : Int
-        var correctionAncienneteGrid : [SliceCorrectionAnciennete] // nb d'année d'ancienneté dans l'entreprise
+        var correctionAncienneteGrid : [SliceCorrectionAnciennete]
     }
     
     struct IrppDiscount: Codable {
@@ -80,7 +93,19 @@ struct IndemniteLicenciement: Codable {
     
     // methods
     
-
+    func allocationMetallurgieDuration(nbYearsSeniority years: Int) -> Int {
+        0
+    }
+    
+    func allocationMLegaleDuration(nbYearsSeniority years: Int) -> Int {
+        0
+    }
+    
+    func allocationDuration(nbYearsSeniority years: Int) -> Int {
+        let allocMetallurgie = allocationMetallurgieDuration(nbYearsSeniority: years)
+        let allocLegale      = allocationMLegaleDuration(nbYearsSeniority: years)
+        return max(allocMetallurgie, allocLegale)
+    }
 }
 
 // MARK: - Allocation chomage
@@ -134,7 +159,7 @@ struct AllocationChomage: Codable {
     ///   - daylyAlloc: allocation journalière
     /// - Returns: Coefficient de réduction de l'allocation journalière et durée de carence avant réduction
     func reduction(age: Int, daylyAlloc: Double) ->
-        (percentReduc: Double, afterMonth: Int, reducedDailyAlloc: Double) {
+        (percentReduc: Double, afterMonth: Int?, reducedDailyAlloc: Double) {
         guard let slice = model.durationGrid.last(where: { $0.fromAge <= age }) else {
             fatalError()
         }
@@ -145,7 +170,7 @@ struct AllocationChomage: Codable {
                     reducedDailyAlloc : daylyAlloc * (1.0 - slice.reduction))
         } else {
             return (percentReduc      : 0.0,
-                    afterMonth        : slice.reductionAfter,
+                    afterMonth        : nil,
                     reducedDailyAlloc : daylyAlloc)
         }
     }
@@ -157,8 +182,8 @@ struct AllocationChomage: Codable {
         let alloc   = max(alloc1, alloc2)
         let plafond = max(SJR * model.amountModel.maxAllocationPcent,
                           model.amountModel.maxAllocationEuro)
-        let brut = alloc.clamp(low  : model.amountModel.minAllocation,
-                               high : plafond)
+        let brut    = alloc.clamp(low  : model.amountModel.minAllocation,
+                                  high : plafond)
 
         // nette de charges sociales
         let net = Fiscal.model.socialTaxesOnAllocationChomage.net(brut : brut,

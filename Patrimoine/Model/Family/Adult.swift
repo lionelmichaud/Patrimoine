@@ -30,29 +30,77 @@ final class Adult: Person {
     // nombre d'enfants
     @Published var nbOfChildBirth: Int = 0
     
-    // date de cessation d'activité
-    @Published var dateOfRetirement: Date = Date.distantFuture
-    var dateOfRetirementComp: DateComponents { // computed
+    /// ACTIVITE: revenus du travail<#code#>
+    @Published var workIncome        : PersonalIncomeType? { // observed
+        willSet {
+            (workNetIncome, workTaxableIncome) =
+                Fiscal.model.incomeTaxes.netAndTaxableIncome(from: newValue!)
+        }
+    } // observed
+    @Published var workNetIncome     : Double = 0 // net de dépenses de mutuelle ou d'assurance perte d'emploi
+    @Published var workTaxableIncome : Double = 0 // taxable à l'IRPP
+    
+    /// ACTIVITE: date et cause de cessation d'activité
+    @Published var causeOfRetirement: Unemployment.Cause = .demission
+    @Published var dateOfRetirement : Date = Date.distantFuture
+    var dateOfRetirementComp        : DateComponents { // computed
         Date.calendar.dateComponents([.year, .month, .day], from: dateOfRetirement)
     } // computed
-    var ageOfRetirementComp:  DateComponents { // computed
+    var ageOfRetirementComp         : DateComponents { // computed
         Date.calendar.dateComponents([.year, .month, .day], from: birthDateComponents, to: dateOfRetirementComp)
     } // computed
-    var displayDateOfRetirement: String { // computed
+    var displayDateOfRetirement     : String { // computed
         mediumDateFormatter.string(from: dateOfRetirement)
     } // computed
-    var causeOfRetirement: Unemployment.Cause = .demission
+
+    /// CHOMAGE: date de fin d'allocation et paramètres de calcul de l'allocation
+    var SJR: Double { // computed
+        guard let workIncome = workIncome else {
+            return 0.0
+        }
+        switch workIncome {
+            case .salary(netSalary: let netSalary, _):
+                return netSalary / 365.0
+            case .turnOver(_, _):
+                return 0.0
+        }
+    }
+    var hasUnemployementAllocationPeriod  : Bool { // computed
+        guard let workIncome = workIncome else {
+            return false
+        }
+        switch workIncome {
+            case .turnOver(_, _):
+                // pas d'allocation pour les non salariés
+                return false
+            case .salary(_, _):
+                // pour les salariés, allocation seulement pour certaines causes de départ
+                return Unemployment.canReceiveAllocation(for: causeOfRetirement)
+        }
+    }
+    var unemployementAllocationDuration   : Int? { // en mois
+        guard hasUnemployementAllocationPeriod else {
+            return nil
+        }
+        return Unemployment.model.allocationChomage.durationInMonth(age: age(atDate: dateOfRetirement).year!)
+    }
+    var dateOfEndOfUnemployementAllocation: Date? { // computed
+        guard hasUnemployementAllocationPeriod else {
+            return nil
+        }
+        return unemployementAllocationDuration!.months.from(dateOfRetirement)!
+    }
     
-    // date de demande de liquidation de pension régime général
-    var dateOfPensionLiquid: Date { // computed
+    /// RETRAITE: date de demande de liquidation de pension régime général
+    var dateOfPensionLiquid              : Date { // computed
         Date.calendar.date(from: dateOfPensionLiquidComp)!
     } // computed
-    var dateOfPensionLiquidComp: DateComponents { // computed
+    var dateOfPensionLiquidComp          : DateComponents { // computed
         let liquidDate = Date.calendar.date(byAdding: ageOfPensionLiquidComp, to: birthDate)
         return Date.calendar.dateComponents([.year, .month, .day], from: liquidDate!)
     } // computed
-    @Published var ageOfPensionLiquidComp:  DateComponents = DateComponents(calendar: Date.calendar, year: 62, month: 0, day: 1)
-    var displayDateOfPensionLiquid: String { // computed
+    @Published var ageOfPensionLiquidComp: DateComponents = DateComponents(calendar: Date.calendar, year: 62, month: 0, day: 1)
+    var displayDateOfPensionLiquid       : String { // computed
         mediumDateFormatter.string(from: dateOfPensionLiquid)
     } // computed
     var lastKnownPensionSituation = RegimeGeneralSituation()
@@ -69,15 +117,15 @@ final class Adult: Person {
         }
     }
     
-    // date de demande de liquidation de pension complémentaire
-    var dateOfAgircPensionLiquid: Date { // computed
+    /// RETRAITE: date de demande de liquidation de pension complémentaire
+    var dateOfAgircPensionLiquid              : Date { // computed
         Date.calendar.date(from: dateOfAgircPensionLiquidComp)!
     } // computed
-    var dateOfAgircPensionLiquidComp: DateComponents { // computed
+    var dateOfAgircPensionLiquidComp          : DateComponents { // computed
         let liquidDate = Date.calendar.date(byAdding: ageOfAgircPensionLiquidComp, to: birthDate)
         return Date.calendar.dateComponents([.year, .month, .day], from: liquidDate!)
     } // computed
-    @Published var ageOfAgircPensionLiquidComp:  DateComponents = DateComponents(calendar: Date.calendar, year: 62, month: 0, day: 1)
+    @Published var ageOfAgircPensionLiquidComp: DateComponents = DateComponents(calendar: Date.calendar, year: 62, month: 0, day: 1)
     var displayDateOfAgircPensionLiquid: String { // computed
         mediumDateFormatter.string(from: dateOfAgircPensionLiquid)
     } // computed
@@ -96,26 +144,7 @@ final class Adult: Person {
         }
     }
 
-    // dépendance
-    @Published var nbOfYearOfDependency: Int = 0
-    var ageOfDependency: Int {
-        return ageOfDeath - nbOfYearOfDependency
-    } // computed
-    var yearOfDependency: Int {
-        return yearOfDeath - nbOfYearOfDependency
-    } // computed
-    
-    // revenus
-    @Published var initialPersonalIncome: PersonalIncomeType? { // observed
-        willSet {
-            (initialPersonalNetIncome, initialPersonalTaxableIncome) =
-                Fiscal.model.incomeTaxes.netAndTaxableIncome(from: newValue!)
-        }
-    } // observed
-    @Published var initialPersonalNetIncome     : Double = 0 // net de dépenses de mutuelle ou d'assurance perte d'emploi
-    @Published var initialPersonalTaxableIncome : Double = 0 // taxable à l'IRPP
-    
-    // pension
+    /// RETRAITE: pension
     var pension: (brut: Double, net: Double, taxable: Double) { // computed
         let pensionGeneral = pensionRegimeGeneral
         let pensionAgirc   = pensionRegimeAgirc
@@ -123,6 +152,15 @@ final class Adult: Person {
         let net            = pensionGeneral.net  + pensionAgirc.net
         let taxable        = Fiscal.model.pensionTaxes.taxable(from: net)
         return (brut, net, taxable)
+    } // computed
+    
+    /// DEPENDANCE
+    @Published var nbOfYearOfDependency : Int = 0
+    var ageOfDependency                 : Int {
+        return ageOfDeath - nbOfYearOfDependency
+    } // computed
+    var yearOfDependency                : Int {
+        return yearOfDeath - nbOfYearOfDependency
     } // computed
     
     override var description: String {
@@ -135,9 +173,9 @@ final class Adult: Person {
         age of pension liquidation:  \(ageOfPensionLiquidComp)
         date of pension liquidation: \(dateOfPensionLiquid.stringMediumDate)
         number of children: \(nbOfChildBirth)
-        type de revenus: \(initialPersonalIncome?.displayString ?? "aucun")
-        net income:     \(initialPersonalNetIncome.euroString)
-        taxable income: \(initialPersonalTaxableIncome.euroString) \n
+        type de revenus: \(workIncome?.displayString ?? "aucun")
+        net income:     \(workNetIncome.euroString)
+        taxable income: \(workTaxableIncome.euroString) \n
         """
     }
     
@@ -170,7 +208,7 @@ final class Adult: Person {
         nbOfYearOfDependency =
             try container.decode(Int.self,
                                  forKey: .nbOfYearOfDependency)
-        initialPersonalIncome =
+        workIncome =
             try container.decode(PersonalIncomeType.self,
                                  forKey: .initialPersonalIncome)
         
@@ -211,7 +249,7 @@ final class Adult: Person {
         try container.encode(ageOfAgircPensionLiquidComp, forKey: .ageOfAgircPensionLiquid)
         try container.encode(lastKnownAgircPensionSituation, forKey: .regimeAgircSituation)
         try container.encode(nbOfYearOfDependency, forKey: .nbOfYearOfDependency)
-        try container.encode(initialPersonalIncome, forKey: .initialPersonalIncome)
+        try container.encode(workIncome, forKey: .initialPersonalIncome)
     }
     
     /// Année ou a lieu l'événement recherché
@@ -294,8 +332,8 @@ final class Adult: Person {
         // TODO: proratiser
         if isActive(during: year) {
             let nbMonths = (dateOfRetirementComp.year == year ? dateOfRetirement.weekOfYear.double() : 52)
-            return (net         : initialPersonalNetIncome * nbMonths / 52,
-                    taxableIrpp : initialPersonalTaxableIncome * nbMonths / 52)
+            return (net         : workNetIncome * nbMonths / 52,
+                    taxableIrpp : workTaxableIncome * nbMonths / 52)
         } else {
             return (0.0, 0.0)
         }
@@ -334,9 +372,9 @@ final class Adult: Person {
         Swift.print("       date of pension liquidation:", dateOfPensionLiquidComp)
         Swift.print("       age of pension liquidation:", ageOfPensionLiquidComp)
         Swift.print("       number of children:", nbOfChildBirth)
-        Swift.print("      ", initialPersonalIncome ?? "none","euro")
-        Swift.print("       net income:    ", initialPersonalNetIncome,"euro")
-        Swift.print("       taxable income:", initialPersonalTaxableIncome,"euro")
+        Swift.print("      ", workIncome ?? "none","euro")
+        Swift.print("       net income:    ", workNetIncome,"euro")
+        Swift.print("       taxable income:", workTaxableIncome,"euro")
     }
 }
 

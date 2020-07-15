@@ -16,14 +16,14 @@ final class Family: ObservableObject, CustomStringConvertible {
     var initialNetIncome: Double { // computed
         var netIcome : Double = 0.0
         for person in members {
-            if let adult = person as? Adult {netIcome += adult.initialPersonalNetIncome}
+            if let adult = person as? Adult {netIcome += adult.workNetIncome}
         }
         return netIcome
     }
     var initialTaxableIncome: Double { // computed
         var taxableIncome : Double = 0.0
         for person in members {
-            if let adult = person as? Adult {taxableIncome += adult.initialPersonalTaxableIncome}
+            if let adult = person as? Adult {taxableIncome += adult.workTaxableIncome}
         }
         return taxableIncome
     }

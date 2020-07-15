@@ -24,6 +24,7 @@ class PersonViewModel: ObservableObject {
 class AdultViewModel: ObservableObject {
     @Published var dateRetirement            = Date()
     @Published var causeOfRetirement         = Unemployment.Cause.demission
+    @Published var dateOfEndOfUnemployAlloc  = Date()
     @Published var ageAgircPension           = Pension.model.regimeGeneral.model.ageMinimumLegal
     @Published var trimAgircPension          = 0
     @Published var agePension                = Pension.model.regimeGeneral.model.ageMinimumLegal
@@ -114,11 +115,11 @@ struct MemberAddView: View {
                 newMember.lastKnownAgircPensionSituation = adultViewModel.lastKnownAgircSituation
                 if adultViewModel.revIndex == PersonalIncomeType.salary(netSalary       : 0,
                                                          healthInsurance : 0).id {
-                    newMember.initialPersonalIncome =
+                    newMember.workIncome =
                         PersonalIncomeType.salary(netSalary       : adultViewModel.revenue,
                                                   healthInsurance : adultViewModel.insurance)
                 } else {
-                    newMember.initialPersonalIncome =
+                    newMember.workIncome =
                         PersonalIncomeType.turnOver(BNC                 : adultViewModel.revenue,
                                                     incomeLossInsurance : adultViewModel.insurance)
                 }

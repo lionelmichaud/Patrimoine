@@ -77,7 +77,7 @@
                     "reduction"           : 30.0,
                     "reductionAfter"      : 6,
                     "reductionSeuilAlloc" : 84.33
-                },                {
+                },
                 {
                     "fromAge"             : 53,
                     "maxDuration"         : 30,
