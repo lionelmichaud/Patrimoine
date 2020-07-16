@@ -93,18 +93,69 @@ struct IndemniteLicenciement: Codable {
     
     // methods
     
-    func allocationMetallurgieDuration(nbYearsSeniority years: Int) -> Int {
-        0
+    /// Calcul du nombre de mois de salaire de l'indemnité de licenciement pour une grille donnée
+    /// - Parameters:
+    ///   - nbYearsSeniority: nombre d'année d'ancienneté au moment du licenciement
+    ///   - grid: grille à utiliser
+    /// - Returns: nombre de mois de salaire de l'indemnité de licenciement selon la grille
+    func compensationDuration(nbYearsSeniority years : Int,
+                              grid                   : [SliceBase]) -> Double {
+        var decompte = years
+        let nbMonth: Double = grid.reduce(0.0) { m, slice in
+            guard decompte > 0 else { return m }
+            // nombre de mois dans la tranche
+            let nbMonth = min(decompte, slice.nbYears)
+            decompte -= nbMonth
+            // application du facteur
+            let increment = nbMonth.double() * slice.coef
+            // ajout de l'incrément
+            return m + increment
+        }
+        return nbMonth
     }
     
-    func allocationMLegaleDuration(nbYearsSeniority years: Int) -> Int {
-        0
-    }
-    
-    func allocationDuration(nbYearsSeniority years: Int) -> Int {
-        let allocMetallurgie = allocationMetallurgieDuration(nbYearsSeniority: years)
-        let allocLegale      = allocationMLegaleDuration(nbYearsSeniority: years)
+    /// Calcul du nombre de mois de salaire de l'indemnité de licenciement
+    /// - Parameters:
+    ///   - age: age au moment du licenciement
+    ///   - nbYearsSeniority: nombre d'année d'ancienneté au moment du licenciement
+    /// - Returns: nombre de mois de salaire de l'indemnité de licenciement
+    func compensationDuration(age                    : Int,
+                              nbYearsSeniority years : Int) -> Double {
+        let allocLegale      = compensationDuration(nbYearsSeniority: years,
+                                                    grid: model.legalGrid)
+        var allocMetallurgie = compensationDuration(nbYearsSeniority: years,
+                                                    grid: model.metallurgieGrid)
+        // majoration fonction de l'age
+        guard let slice1 = model.correctionAgeGrid.last(where: { $0.age <= age }) else {
+            fatalError()
+        }
+        // majoration fonction de l'ancienneté
+        guard let slice2 = slice1.correctionAncienneteGrid.last(where: { $0.anciennete <= years }) else {
+            fatalError()
+        }
+        // application de la majoration
+        allocMetallurgie *= (1 + slice2.majoration)
+        
+        // seuillage
+        allocMetallurgie = allocMetallurgie.clamp(low  : slice2.min.double(),
+                                                  high : slice2.max.double())
+        
         return max(allocMetallurgie, allocLegale)
+    }
+    
+    /// Calcul de l'indemnité de licenciement
+    /// - Parameters:
+    ///   - yearlyWorkIncome: dernier salaire annuel
+    ///   - age: age au moment du licenciement
+    ///   - nbYearsSeniority: nombre d'année d'ancienneté au moment du licenciement
+    /// - Returns: montant de l'indemnité de licenciement
+    func compensation(yearlyWorkIncome       : Double,
+                      age                    : Int,
+                      nbYearsSeniority years : Int) -> (nbMonth: Double, amount: Double) {
+        let nbMonth = compensationDuration(age              : age,
+                                           nbYearsSeniority : years)
+        return (nbMonth: nbMonth,
+                amount : nbMonth / 12.0 * yearlyWorkIncome)
     }
 }
 

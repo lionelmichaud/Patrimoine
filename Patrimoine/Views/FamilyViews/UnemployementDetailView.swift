@@ -20,15 +20,20 @@ struct UnemployementDetailView: View {
         @Published var durationInMonth       : Int    = 0
         @Published var percentReduc          : Double = 0
         @Published var afterMonth            : Int?
+        @Published var revenue               : Double = 0
+        @Published var compensationAmount    : Double = 0
+        @Published var compensationNbMonth   : Double = 0
     }
     
     // MARK: - Properties
     
-    @EnvironmentObject var member: Person
+    @EnvironmentObject var member : Person
     @ObservedObject var viewModel = ViewModel()
 
     var body: some View {
         Form {
+            IntegerView(label: "Indemnité de licenciement en nb de mois", integer: Int(viewModel.compensationNbMonth.rounded()))
+            AmountView(label: "Indemnité de licenciement", amount: viewModel.compensationAmount)
             IntegerView(label: "Durée d'allocation en trimestres", integer: viewModel.durationInMonth)
             AmountView(label: "Allocation annuelle brute", amount: viewModel.allocationBrut)
             AmountView(label: "Allocation annuelle nette", amount: viewModel.allocationNet, weight: .bold)
@@ -50,9 +55,22 @@ struct UnemployementDetailView: View {
         viewModel.durationInMonth = adult.unemployementAllocationDuration!
         (viewModel.allocationBrut, viewModel.allocationNet) = adult.unemployementAllocation!
         (viewModel.percentReduc, viewModel.afterMonth) =
-            Unemployment.model.allocationChomage.reduction(age: adult.age(atDate: adult.dateOfRetirement).year!, daylyAlloc: viewModel.allocationBrut)
+            Unemployment.model.allocationChomage.reduction(age        : adult.age(atDate        : adult.dateOfRetirement).year!,
+                                                           daylyAlloc : viewModel.allocationBrut)
         viewModel.allocationReducedBrut = viewModel.allocationBrut * (1 - viewModel.percentReduc / 100)
         viewModel.allocationReducedNet  = viewModel.allocationNet  * (1 - viewModel.percentReduc / 100)
+        let income = adult.workIncome
+        switch income {
+            case let .salary(netSalary, _):
+                viewModel.revenue = netSalary
+            default:
+                fatalError()
+        }
+        (viewModel.compensationNbMonth, viewModel.compensationAmount) =
+            Unemployment.model.indemniteLicenciement.compensation(
+                yearlyWorkIncome : viewModel.revenue,
+                age              : adult.age(atDate: adult.dateOfRetirement).year!,
+                nbYearsSeniority : 20)
     }
 }
 
