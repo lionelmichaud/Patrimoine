@@ -293,10 +293,10 @@ struct SocialTaxesOnAllocationChomage: Codable {
         var cotisation = 0.0
         // CSG et CRDS
         if brut >= model.seuilCsgCrds {
-            cotisation += brut * model.CRDS + brut * model.CSG
+            cotisation += brut * model.CRDS / 100 + brut * model.CSG / 100
         }
         // cotisation au régime complémentaire de retraite
-        cotisation += SJR * model.retraiteCompl
+        cotisation += SJR * model.retraiteCompl / 100
         return cotisation
     }
 }

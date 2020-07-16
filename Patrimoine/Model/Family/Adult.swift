@@ -100,6 +100,13 @@ final class Adult: Person {
         }
         return unemployementAllocationDuration!.months.from(dateOfRetirement)!
     }
+    var unemployementAllocation           : (brut: Double, net: Double)? {
+        guard hasUnemployementAllocationPeriod else {
+            return nil
+        }
+        let dayly = Unemployment.model.allocationChomage.daylyAllocBeforeReduction(SJR: SJR)
+        return (brut: dayly.brut * 365, net: dayly.net * 365)
+    }
 
     /// RETRAITE: date de demande de liquidation de pension régime général
     var dateOfPensionLiquid              : Date { // computed

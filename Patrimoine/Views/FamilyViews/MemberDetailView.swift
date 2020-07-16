@@ -147,9 +147,15 @@ struct AdultDetailView: View {
                     Spacer()
                     Text(insurance)
                 }
+                // allocation chomage
+                if adult.hasUnemployementAllocationPeriod {
+                    NavigationLink(destination: UnemployementDetailView()) {
+                        AmountView(label  : "Allocation chômage annuelle nette",
+                                   amount : adult.unemployementAllocation!.net)
+                    }
+                }
                 // pension de retraite
-                NavigationLink(destination: RetirementDetailView()
-) {
+                NavigationLink(destination: RetirementDetailView()) {
                     AmountView(label  : "Pension de retraite annuelle nette",
                                amount : adult.pension.net)
                 }

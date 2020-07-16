@@ -177,19 +177,17 @@ struct AllocationChomage: Codable {
     ///   - daylyAlloc: allocation journalière
     /// - Returns: Coefficient de réduction de l'allocation journalière et durée de carence avant réduction
     func reduction(age: Int, daylyAlloc: Double) ->
-        (percentReduc: Double, afterMonth: Int?, reducedDailyAlloc: Double) {
+        (percentReduc: Double, afterMonth: Int?) {
         guard let slice = model.durationGrid.last(where: { $0.fromAge <= age }) else {
             fatalError()
         }
         // réduction application seulement au-dessus d'un certain seuil d'allocation
-        if daylyAlloc >= slice.reductionSeuilAlloc {
-            return (percentReduc      : slice.reduction,
-                    afterMonth        : slice.reductionAfter,
-                    reducedDailyAlloc : daylyAlloc * (1.0 - slice.reduction))
+        if daylyAlloc >= slice.reductionSeuilAlloc && slice.reduction != 0 {
+            return (percentReduc : slice.reduction,
+                    afterMonth   : slice.reductionAfter)
         } else {
-            return (percentReduc      : 0.0,
-                    afterMonth        : nil,
-                    reducedDailyAlloc : daylyAlloc)
+            return (percentReduc : 0.0,
+                    afterMonth   : nil)
         }
     }
     
