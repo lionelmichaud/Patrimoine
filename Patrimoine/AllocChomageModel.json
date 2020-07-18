@@ -58,10 +58,10 @@
             ],
             
             "irppDiscount" : {
-                "multipleOfLegalIndemnite" : 1.0,
-                "multipleOfLastSalaryBrut" : 2.0,
-                "multipleOfIndemnite"      : 0.5,
-                "maxDiscount"              : 246816.0
+                "multipleOfConventionalCompensation" : 1.0,
+                "multipleOfLastSalaryBrut"           : 2.0,
+                "multipleOfActualCompensation"       : 0.5,
+                "maxDiscount"                        : 246816.0
             }
         }
     },

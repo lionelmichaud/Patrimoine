@@ -52,6 +52,7 @@ struct Unemployment: Codable {
 // MARK: - Indeminité de licenciement
 // https://www.juritravail.com/Actualite/respecter-salaire-minimum/Id/221441
 // https://www.service-public.fr/particuliers/vosdroits/F408
+// https://www.service-public.fr/particuliers/vosdroits/F987
 struct IndemniteLicenciement: Codable {
     
     // nested types
@@ -74,12 +75,12 @@ struct IndemniteLicenciement: Codable {
     }
     
     struct IrppDiscount: Codable {
-        var multipleOfLegalIndemnite: Double = 1.0 // multiple de l'indemnité légale ou conventionnelle
-        var multipleOfLastSalaryBrut: Double = 2.0 // multiple du derneir salaire annuel brut
-        var multipleOfIndemnite: Double = 0.5// multiple du montant de l'indemnité perçue
-        var maxDiscount : Double = 246_816 // €
-        
+        var multipleOfConventionalCompensation : Double = 1.0 // multiple de l'indemnité légale ou conventionnelle
+        var multipleOfLastSalaryBrut           : Double = 2.0 // multiple du derneir salaire annuel brut
+        var multipleOfActualCompensation       : Double = 0.5// multiple du montant de l'indemnité perçue
+        var maxDiscount                        : Double = 246_816 // €
     }
+    
     struct Model: Codable {
         let legalGrid         : [SliceBase]
         let metallurgieGrid   : [SliceBase]
@@ -98,7 +99,7 @@ struct IndemniteLicenciement: Codable {
     ///   - nbYearsSeniority: nombre d'année d'ancienneté au moment du licenciement
     ///   - grid: grille à utiliser
     /// - Returns: nombre de mois de salaire de l'indemnité de licenciement selon la grille
-    func compensationDuration(nbYearsSeniority years : Int,
+    func compensationInMonth(nbYearsSeniority years : Int,
                               grid                   : [SliceBase]) -> Double {
         var decompte = years
         let nbMonth: Double = grid.reduce(0.0) { m, slice in
@@ -119,12 +120,12 @@ struct IndemniteLicenciement: Codable {
     ///   - age: age au moment du licenciement
     ///   - nbYearsSeniority: nombre d'année d'ancienneté au moment du licenciement
     /// - Returns: nombre de mois de salaire de l'indemnité de licenciement
-    func compensationDuration(age                    : Int,
+    func compensationInMonth(age                    : Int,
                               nbYearsSeniority years : Int) -> Double {
-        let allocLegale      = compensationDuration(nbYearsSeniority: years,
-                                                    grid: model.legalGrid)
-        var allocMetallurgie = compensationDuration(nbYearsSeniority: years,
-                                                    grid: model.metallurgieGrid)
+        let allocLegale      = compensationInMonth(nbYearsSeniority: years,
+                                                   grid: model.legalGrid)
+        var allocMetallurgie = compensationInMonth(nbYearsSeniority: years,
+                                                   grid: model.metallurgieGrid)
         // majoration fonction de l'age
         guard let slice1 = model.correctionAgeGrid.last(where: { $0.age <= age }) else {
             fatalError()
@@ -134,7 +135,7 @@ struct IndemniteLicenciement: Codable {
             fatalError()
         }
         // application de la majoration
-        allocMetallurgie *= (1 + slice2.majoration)
+        allocMetallurgie *= (1 + slice2.majoration / 100)
         
         // seuillage
         allocMetallurgie = allocMetallurgie.clamp(low  : slice2.min.double(),
@@ -149,13 +150,57 @@ struct IndemniteLicenciement: Codable {
     ///   - age: age au moment du licenciement
     ///   - nbYearsSeniority: nombre d'année d'ancienneté au moment du licenciement
     /// - Returns: montant de l'indemnité de licenciement
-    func compensation(yearlyWorkIncome       : Double,
+    func compensation(actualCompensationBrut : Double? = nil,
+                      causeOfRetirement      : Unemployment.Cause,
+                      yearlyWorkIncomeBrut   : Double,
                       age                    : Int,
-                      nbYearsSeniority years : Int) -> (nbMonth: Double, amount: Double) {
-        let nbMonth = compensationDuration(age              : age,
-                                           nbYearsSeniority : years)
-        return (nbMonth: nbMonth,
-                amount : nbMonth / 12.0 * yearlyWorkIncome)
+                      nbYearsSeniority years : Int) -> (nbMonth: Double, brut: Double, net: Double, taxable: Double) {
+        var taxable      : Double
+        var irppDiscount : Double
+        let nbMonth = compensationInMonth(age              : age,
+                                          nbYearsSeniority : years)
+        // indemnité brute conventionnelle basée sur le dernier salaire brut
+        let brutConventionnel = nbMonth / 12.0 * yearlyWorkIncomeBrut
+        // indemnité réelle perçue (peut être plus élevée)
+        let brutReel          = actualCompensationBrut ?? brutConventionnel
+
+        // fraction de l'indemnité taxable à l'IRPP
+        switch causeOfRetirement {
+            case .planSauvegardeEmploi, .ruptureConventionnelleCollective :
+                // exonération totale de l'IRPP
+                irppDiscount = brutReel
+            
+            case .licenciement, .ruptureConventionnelleIndividuelle :
+                // Exonération partielle de l'IRPP :
+                // 1 x le montant de l'indemnité légale ou conventionnelle
+                let discount1 = model.irppDiscount.multipleOfConventionalCompensation * brutConventionnel
+                // 2 x le montant de la rémunération brute annuelle que vous avez perçue l'année précédant votre licenciement
+                var discount2 = model.irppDiscount.multipleOfLastSalaryBrut * yearlyWorkIncomeBrut
+                discount2 = min(discount2, model.irppDiscount.maxDiscount)
+                // 0,5 x le montant de l'indemnité perçue
+                // TODO: - prendre en compte le fait que l'indemnité réelle peut être supérieure à l'indemnité conventionnelle
+                var discount3 = model.irppDiscount.multipleOfActualCompensation * brutReel
+                discount3 = min(discount3, model.irppDiscount.maxDiscount)
+                // maximum des 3
+                irppDiscount = max(discount1, discount2, discount3)
+                irppDiscount = min(irppDiscount, brutReel)
+            
+            case .demission :
+                // pas d'exonération de l'IRPP
+                irppDiscount = 0
+        }
+        taxable = brutReel - irppDiscount
+
+        // indemnité nette de charges sociales
+        let net = Fiscal.model.layOffTaxes.net(compensationConventional : brutConventionnel,
+                                               compensationBrut         : brutReel,
+                                               compensationTaxable      : &taxable,
+                                               irppDiscount             : irppDiscount)
+        
+        return (nbMonth : nbMonth,
+                brut    : brutReel,
+                net     : net,
+                taxable : taxable)
     }
 }
 

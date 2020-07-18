@@ -123,8 +123,8 @@ extension Date {
         return Date.calendar.component(.weekOfYear, from: self)
     }
     
-    var dayOfYear: Int {
-        return weekOfYear * 7 + weekDay
+    var dayOfYear: Int? {
+        return Date.calendar.ordinality(of: .day, in: .year, for: self)
     }
     
     var year: Int {
@@ -273,10 +273,22 @@ extension Optional where Wrapped == Date {
     }
 }
 
-func min(date1: Date, date2: Date) -> Date {
+func min(_ date1: Date, _ date2: Date) -> Date {
     if date1 <= date2 { return date1 } else { return date2 }
 }
 
-func max(date1: Date, date2: Date) -> Date {
+func max(_ date1: Date, _ date2: Date) -> Date {
     if date1 <= date2 { return date2 } else { return date1 }
+}
+
+func firstDayOf(year: Int) -> Date {
+    Date.calendar.date(from: DateComponents(year: year))!
+}
+
+func lastDayOf(year: Int) -> Date {
+    Date.calendar.date(from: DateComponents(year: year, month: 12, day: 31))!
+}
+
+func numberOfDays(from: Date, to: Date) -> DateComponents {
+    Date.calendar.dateComponents([.day], from: from, to: to)
 }

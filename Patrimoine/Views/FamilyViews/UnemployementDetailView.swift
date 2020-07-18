@@ -17,11 +17,13 @@ struct UnemployementDetailView: View {
         @Published var allocationReducedNet  : Double = 0
         @Published var allocationBrut        : Double = 0
         @Published var allocationNet         : Double = 0
+        @Published var totalAllocationNet    : Double = 0
         @Published var durationInMonth       : Int    = 0
         @Published var percentReduc          : Double = 0
         @Published var afterMonth            : Int?
-        @Published var revenue               : Double = 0
-        @Published var compensationAmount    : Double = 0
+        @Published var compensationBrut      : Double = 0
+        @Published var compensationNet       : Double = 0
+        @Published var compensationTaxable   : Double = 0
         @Published var compensationNbMonth   : Double = 0
     }
     
@@ -29,19 +31,39 @@ struct UnemployementDetailView: View {
     
     @EnvironmentObject var member : Person
     @ObservedObject var viewModel = ViewModel()
-
+    
     var body: some View {
         Form {
-            IntegerView(label: "Indemnité de licenciement en nb de mois", integer: Int(viewModel.compensationNbMonth.rounded()))
-            AmountView(label: "Indemnité de licenciement", amount: viewModel.compensationAmount)
-            IntegerView(label: "Durée d'allocation en trimestres", integer: viewModel.durationInMonth)
-            AmountView(label: "Allocation annuelle brute", amount: viewModel.allocationBrut)
-            AmountView(label: "Allocation annuelle nette", amount: viewModel.allocationNet, weight: .bold)
+            Section(header: Text("Indemnité de licenciement").font(.subheadline)) {
+                HStack {
+                    IntegerView(label: "Equivalent à", integer: Int(viewModel.compensationNbMonth.rounded()))
+                    Text("mois")
+                }
+                AmountView(label: "Montant brut", amount: viewModel.compensationBrut)
+                AmountView(label: "Montant net", amount: viewModel.compensationNet)
+                AmountView(label: "Montant imposable", amount: viewModel.compensationTaxable)
+            }
+            Section(header: Text("Allocation chômage").font(.subheadline)) {
+                HStack {
+                    IntegerView(label: "Durée d'allocation", integer: viewModel.durationInMonth)
+                    Text("mois")
+                }
+                AmountView(label: "Montant total perçu net", amount: viewModel.totalAllocationNet)
+            }
+            Section(header: Text("Allocation chômage non réduite").font(.subheadline)) {
+                AmountView(label: "Montant annuel brut", amount: viewModel.allocationBrut)
+                AmountView(label: "Montant annuel net", amount: viewModel.allocationNet, weight: .bold)
+            }
             if viewModel.afterMonth != nil {
-                IntegerView(label: "Réduction de l'allocation après trimestres", integer: viewModel.afterMonth!)
-                PercentView(label: "Coefficient de réduction", percent: viewModel.percentReduc / 100)
-                AmountView(label: "Allocation annuelle réduite brute", amount: viewModel.allocationReducedBrut)
-                AmountView(label: "Allocation annuelle réduite nette", amount: viewModel.allocationReducedNet, weight: .bold)
+                Section(header: Text("Allocation chômage réduite").font(.subheadline)) {
+                    HStack {
+                        IntegerView(label: "Réduction de l'allocation après", integer: viewModel.afterMonth!)
+                        Text("mois")
+                    }
+                    PercentView(label: "Coefficient de réduction", percent: viewModel.percentReduc / 100)
+                    AmountView(label: "Montant annuel réduit brut", amount: viewModel.allocationReducedBrut)
+                    AmountView(label: "Montant annuel réduit net", amount: viewModel.allocationReducedNet, weight: .bold)
+                }
             }
         }
         .navigationBarTitle("Allocation chômage de \(member.displayName)", displayMode: .inline)
@@ -52,30 +74,22 @@ struct UnemployementDetailView: View {
     
     func onAppear() {
         let adult = member as! Adult
-        viewModel.durationInMonth = adult.unemployementAllocationDuration!
-        (viewModel.allocationBrut, viewModel.allocationNet) = adult.unemployementAllocation!
-        (viewModel.percentReduc, viewModel.afterMonth) =
-            Unemployment.model.allocationChomage.reduction(age        : adult.age(atDate        : adult.dateOfRetirement).year!,
-                                                           daylyAlloc : viewModel.allocationBrut)
-        viewModel.allocationReducedBrut = viewModel.allocationBrut * (1 - viewModel.percentReduc / 100)
-        viewModel.allocationReducedNet  = viewModel.allocationNet  * (1 - viewModel.percentReduc / 100)
-        let income = adult.workIncome
-        switch income {
-            case let .salary(netSalary, _):
-                viewModel.revenue = netSalary
-            default:
-                fatalError()
-        }
-        (viewModel.compensationNbMonth, viewModel.compensationAmount) =
-            Unemployment.model.indemniteLicenciement.compensation(
-                yearlyWorkIncome : viewModel.revenue,
-                age              : adult.age(atDate: adult.dateOfRetirement).year!,
-                nbYearsSeniority : 20)
+        viewModel.durationInMonth                                         = adult.unemployementAllocationDuration!
+        (viewModel.allocationBrut, viewModel.allocationNet)               = adult.unemployementAllocation!
+        (viewModel.percentReduc, viewModel.afterMonth)                    = adult.unemployementAllocationReduction!
+        (viewModel.compensationNbMonth, viewModel.compensationBrut,
+         viewModel.compensationNet, viewModel.compensationTaxable)        = adult.layoffCompensation!
+        (viewModel.allocationReducedBrut, viewModel.allocationReducedNet) = adult.unemployementReducedAllocation!
+        viewModel.totalAllocationNet = adult.unemployementTotalAllocation!.net
     }
 }
 
 struct UnemployementDetailView_Previews: PreviewProvider {
+    static var family  = Family()
+    
     static var previews: some View {
-        UnemployementDetailView()
+        let aMember = family.members.first!
+        
+        return UnemployementDetailView().environmentObject(aMember)
     }
 }

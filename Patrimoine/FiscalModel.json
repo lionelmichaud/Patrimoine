@@ -1,4 +1,5 @@
 {
+    "PASS" : 41136,
     "irppOnEstateCapitalGain" :
     {
         "model" :
@@ -86,6 +87,23 @@
         "model" :
         {
             "URSSAF" : 24
+        }
+    },
+    
+    "layOffTaxes" :
+    {
+        "model":
+        {
+            "socialTaxes" :
+            {
+                "maxRebateCoef" : 2.0,
+                "rate"          : 13.0
+            },
+            "csgCrds" :
+            {
+                "rateDeductible" : 6.8,
+                "rateNonDeductible" : 2.9
+            }
         }
     },
     

@@ -30,7 +30,7 @@ final class Adult: Person {
     // nombre d'enfants
     @Published var nbOfChildBirth: Int = 0
     
-    /// ACTIVITE: revenus du travail<#code#>
+    /// ACTIVITE: revenus du travail
     @Published var workIncome        : PersonalIncomeType? { // observed
         willSet {
             (workNetIncome, workTaxableIncome) =
@@ -77,13 +77,32 @@ final class Adult: Person {
                 // pour les salariés, allocation seulement pour certaines causes de départ
                 return Unemployment.canReceiveAllocation(for: causeOfRetirement)
         }
-    }
+    } // computed
+    var layoffCompensation                : (nbMonth: Double, brut: Double, net: Double, taxable: Double)? { // computed
+        guard hasUnemployementAllocationPeriod else {
+            return nil
+        }
+        guard let workIncome = workIncome else {
+            return nil
+        }
+        switch workIncome {
+            case .salary(let netSalary, _):
+                return Unemployment.model.indemniteLicenciement.compensation(
+                    actualCompensationBrut : nil,
+                    causeOfRetirement      : causeOfRetirement,
+                    yearlyWorkIncomeBrut   : netSalary,
+                    age                    : age(atDate: dateOfRetirement).year!,
+                    nbYearsSeniority       : 20)
+            default:
+                fatalError()
+        }
+    } // computed
     var unemployementAllocationDuration   : Int? { // en mois
         guard hasUnemployementAllocationPeriod else {
             return nil
         }
         return Unemployment.model.allocationChomage.durationInMonth(age: age(atDate: dateOfRetirement).year!)
-    }
+    } // computed
     var dateOfStartOfAllocationReduction  : Date? { // computed
         guard hasUnemployementAllocationPeriod else {
             return nil
@@ -93,20 +112,50 @@ final class Adult: Person {
            return nil
         }
         return  reductionAfter.months.from(dateOfRetirement)!
-    }
+    } // computed
     var dateOfEndOfUnemployementAllocation: Date? { // computed
         guard hasUnemployementAllocationPeriod else {
             return nil
         }
         return unemployementAllocationDuration!.months.from(dateOfRetirement)!
-    }
-    var unemployementAllocation           : (brut: Double, net: Double)? {
+    } // computed
+    var unemployementAllocation           : (brut: Double, net: Double)? { // computed
         guard hasUnemployementAllocationPeriod else {
             return nil
         }
         let dayly = Unemployment.model.allocationChomage.daylyAllocBeforeReduction(SJR: SJR)
         return (brut: dayly.brut * 365, net: dayly.net * 365)
-    }
+    } // computed
+    var unemployementReducedAllocation    : (brut: Double, net: Double)? { // computed
+        guard let alloc = unemployementAllocation else {
+            return nil
+        }
+        let reduc = unemployementAllocationReduction!
+        return (brut: alloc.brut * (1 - reduc.percentReduc / 100),
+                net : alloc.net  * (1 - reduc.percentReduc / 100))
+    } // computed
+    var unemployementTotalAllocation      : (brut: Double, net: Double)? { // computed
+        guard hasUnemployementAllocationPeriod else {
+            return nil
+        }
+        let totalDuration = unemployementAllocationDuration!
+        let alloc         = unemployementAllocation!
+        let allocReduite  = unemployementReducedAllocation!
+        if let afterMonth = unemployementAllocationReduction!.afterMonth {
+            return (brut: alloc.brut / 12 * afterMonth.double() + allocReduite.brut / 12 * (totalDuration - afterMonth).double(),
+                    net : alloc.net  / 12 * afterMonth.double() + allocReduite.net  / 12 * (totalDuration - afterMonth).double())
+        } else {
+            return (brut: alloc.brut / 12 * totalDuration.double(),
+                    net : alloc.net  / 12 * totalDuration.double())
+        }
+    } // computed
+    var unemployementAllocationReduction  : (percentReduc: Double, afterMonth: Int?)? { // computed
+        guard hasUnemployementAllocationPeriod else {
+            return nil
+        }
+        return Unemployment.model.allocationChomage.reduction(age        : age(atDate: dateOfRetirement).year!,
+                                                              daylyAlloc : unemployementAllocation!.brut / 365)
+    } // computed
 
     /// RETRAITE: date de demande de liquidation de pension régime général
     var dateOfPensionLiquid              : Date { // computed
@@ -132,7 +181,7 @@ final class Adult: Person {
         } else {
             return (0, 0)
         }
-    }
+    } // computed
     
     /// RETRAITE: date de demande de liquidation de pension complémentaire
     var dateOfAgircPensionLiquid              : Date { // computed
@@ -159,7 +208,7 @@ final class Adult: Person {
         } else {
             return (0, 0)
         }
-    }
+    } // computed
 
     /// RETRAITE: pension
     var pension: (brut: Double, net: Double, taxable: Double) { // computed
@@ -315,25 +364,37 @@ final class Adult: Person {
     /// true si est vivant à la fin de l'année et encore en activité pendant une partie de l'année
     /// - Parameter year: année
     func isActive(during year: Int) -> Bool {
-        isAlive(atEndOf: year) && year <= dateOfRetirementComp.year!
+        isAlive(atEndOf: year) && (year <= dateOfRetirement.year)
     }
     
     /// true si est vivant à la fin de l'année et année égale ou postérieur à l'année de cessation d'activité
     /// - Parameter year: année
     func isRetired(during year: Int) -> Bool {
-        isAlive(atEndOf: year) && (dateOfRetirementComp.year! <= year)
+        isAlive(atEndOf: year) && (dateOfRetirement.year <= year)
+    }
+    
+    /// true si est vivant à la fin de l'année et année égale ou postérieur à l'année de cessation d'activité et égale ou inférieure à l'année de fin de droit d'allocation chomage
+    /// - Parameter year: année
+    func isReceivingUnemployementAllocation(during year: Int) -> Bool {
+        guard isRetired(during: year) else {
+            return false
+        }
+        guard let endDate = dateOfEndOfUnemployementAllocation else {
+            return false
+        }
+        return year <= endDate.year
     }
     
     /// true si est vivant à la fin de l'année et année égale ou postérieur à l'année de liquidation de la pension du régime général
     /// - Parameter year: première année incluant des revenus
     func isPensioned(during year: Int) -> Bool {
-        isAlive(atEndOf: year) && (dateOfPensionLiquidComp.year! <= year)
+        isAlive(atEndOf: year) && (dateOfPensionLiquid.year <= year)
     }
     
     /// true si est vivant à la fin de l'année et année égale ou postérieur à l'année de liquidation de la pension du régime complémentaire
     /// - Parameter year: première année incluant des revenus
     func isAgircPensioned(during year: Int) -> Bool {
-        isAlive(atEndOf: year) && (dateOfAgircPensionLiquidComp.year! <= year)
+        isAlive(atEndOf: year) && (dateOfAgircPensionLiquid.year <= year)
     }
     
     /// true si est vivant à la fin de l'année et année égale ou postérieur à l'année de liquidation de la pension du régime complémentaire
@@ -344,7 +405,6 @@ final class Adult: Person {
     
     /// Revenu net de charges et revenu taxable à l'IRPP
     /// - Parameter year: année
-    /// - Returns: taxableIrpp: revenu taxable à l'IRPP
     func personalIncome(during year: Int) -> (net: Double, taxableIrpp: Double) {
         // TODO: proratiser
         if isActive(during: year) {
@@ -365,19 +425,89 @@ final class Adult: Person {
         // pension du régime général
         if isPensioned(during: year) {
             let pension = pensionRegimeGeneral
-            let nbMonths = (dateOfPensionLiquidComp.year == year ? (52 - dateOfPensionLiquid.weekOfYear).double() : 52)
-            brut += pension.brut * nbMonths / 52
-            net  += pension.net  * nbMonths / 52
+            let nbWeeks = (dateOfPensionLiquidComp.year == year ? (52 - dateOfPensionLiquid.weekOfYear).double() : 52)
+            brut += pension.brut * nbWeeks / 52
+            net  += pension.net  * nbWeeks / 52
         }
         // pension du régime complémentaire
         if isAgircPensioned(during: year) {
             let pension = pensionRegimeAgirc
-            let nbMonths = (dateOfAgircPensionLiquidComp.year == year ? (52 - dateOfAgircPensionLiquid.weekOfYear).double() : 52)
-            brut += pension.brut * nbMonths / 52
-            net  += pension.net  * nbMonths / 52
+            let nbWeeks = (dateOfAgircPensionLiquidComp.year == year ? (52 - dateOfAgircPensionLiquid.weekOfYear).double() : 52)
+            brut += pension.brut * nbWeeks / 52
+            net  += pension.net  * nbWeeks / 52
         }
         let taxable = Fiscal.model.pensionTaxes.taxable(from: net)
         return (brut, net, taxable)
+    }
+    
+    /// Allocation chômage perçue dans l'année
+    /// - Parameter year: année
+    /// - Returns: Allocation chômage perçue dans l'année brute, nette de charges sociales, taxable à l'IRPP
+    func unemployementAllocation(during year: Int) -> (brut: Double, net: Double, taxable: Double) {
+        guard isReceivingUnemployementAllocation(during: year) else {
+            return (0,0,0)
+        }
+        let firstYearDay = firstDayOf(year : year)
+        let lastYearDay  = lastDayOf(year  : year)
+        let alloc        = unemployementAllocation!
+        let dateDebAlloc = dateOfRetirement
+        let dateFinAlloc = dateOfEndOfUnemployementAllocation!
+        if let dateReducAlloc = dateOfStartOfAllocationReduction {
+            // reduction d'allocation après un certaine date
+            let allocReduite  = unemployementReducedAllocation!
+            // intersection de l'année avec la péiode taux plein
+            var debut   = max(dateDebAlloc, firstYearDay)
+            var fin     = min(dateReducAlloc, lastYearDay)
+            let nbDays1 = numberOfDays(from : debut, to : fin).day
+            // intersection de l'année avec la péiode taux réduit
+            debut       = max(dateReducAlloc, firstYearDay)
+            fin         = min(dateFinAlloc, lastYearDay)
+            let nbDays2 = numberOfDays(from : debut, to : fin).day
+            // somme des deux parties
+            let brut = alloc.brut/365 * nbDays1!.double() +
+                allocReduite.brut/365 * nbDays2!.double()
+            let net = alloc.net/365  * nbDays1!.double() +
+                allocReduite.net/365 * nbDays2!.double()
+            return (brut    : brut,
+                    net     : net,
+                    taxable : net)
+            
+        } else {
+            // pas de réduction d'allocation
+            var nbDays: Int
+            // nombre de jours d'allocation dans l'année
+            if year == dateOfRetirement.year {
+                // première année d'allocation
+                nbDays = 365 - dateOfRetirement.dayOfYear!
+            } else if year == dateFinAlloc.year {
+                // dernière année d'allocation
+                nbDays = dateFinAlloc.dayOfYear!
+            } else {
+                // année pleine
+                nbDays = 365
+            }
+            let brut = alloc.brut/365 * nbDays.double()
+            let net  = alloc.net/365  * nbDays.double()
+            return (brut    : brut,
+                    net     : net,
+                    taxable : net)
+        }
+    }
+    
+    /// Indemnité de licenciement perçue dans l'année
+    /// - Parameter year: année
+    /// - Returns: Indemnité de licenciement perçue dans l'année brute, nette de charges sociales, taxable à l'IRPP
+    func layoffCompensation(during year: Int) -> (brut: Double, net: Double, taxable: Double) {
+        guard year == dateOfRetirement.year else {
+            return (0,0,0)
+        }
+        // on est bien dans l'année de cessation d'activité
+        if let layoffCompensation = layoffCompensation {
+            return (layoffCompensation.brut, layoffCompensation.net, layoffCompensation.taxable)
+        } else {
+            // pas droit à une indemnité
+            return (0,0,0)
+        }
     }
     
     override func print() {

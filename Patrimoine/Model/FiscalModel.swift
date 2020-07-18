@@ -9,6 +9,9 @@
 import Foundation
 
 struct Fiscal: Codable {
+    
+    // nested types
+    
     struct Model: Codable {
         var irppOnEstateCapitalGain        : IrppOnRealEstateCapitalGain
         var socialTaxesOnEstateCapitalGain : SocialTaxesOnRealEstateCapitalGain
@@ -16,10 +19,14 @@ struct Fiscal: Codable {
         var socialTaxesOnFinancialRevenu   : SocialTaxesOnFinancialRevenu
         var socialTaxesOnTurnover          : SocialTaxesOnTurnover
         var socialTaxesOnAllocationChomage : SocialTaxesOnAllocationChomage
+        var layOffTaxes                    : LayOffTaxes
         var lifeInsuranceTaxes             : LifeInsuranceTaxes
         var incomeTaxes                    : IncomeTaxes
         var companyProfitTaxes             : CompanyProfitTaxes
+        var PASS                           : Double // Plafond Annuel de la Sécurité Sociale
     }
+    
+    // properties
     
     static var model: Model  =
             Bundle.main.decode(Model.self,
@@ -36,9 +43,9 @@ struct IrppOnRealEstateCapitalGain: Codable {
     
     // tranche de barême de l'IRPP
     struct ExonerationSlice: Codable {
-        var floor        : Int    = 0 // year
-        var discountRate : Double = 0.0 // % par année de détention au-delà de floor
-        var prevDiscount : Double = 0.0 // % cumul des tranches précédentes
+        let floor        : Int    = 0 // year
+        let discountRate : Double = 0.0 // % par année de détention au-delà de floor
+        let prevDiscount : Double = 0.0 // % cumul des tranches précédentes
     }
     
     struct Model: Codable {
@@ -83,12 +90,10 @@ struct SocialTaxesOnRealEstateCapitalGain: Codable {
     
     // tranche de barême de l'IRPP
     struct ExonerationSlice: Codable {
-        var floor        : Int    = 0 // year
-        var discountRate : Double = 0.0 // % par année de détention au-delà de floor
-        var prevDiscount : Double = 0.0 // % cumul des tranches précédentes
+        let floor        : Int    = 0 // year
+        let discountRate : Double = 0.0 // % par année de détention au-delà de floor
+        let prevDiscount : Double = 0.0 // % cumul des tranches précédentes
     }
-    
-    // properties
     
     // barême de l'exoneration de charges sociale sur les plus-values immobilières
     //    static let exoGrid : [ExonerationSlice] =
@@ -107,6 +112,8 @@ struct SocialTaxesOnRealEstateCapitalGain: Codable {
             CRDS + CSG + prelevSocial // %
         }
     }
+    
+    // properties
     
     var model: Model
     
@@ -139,7 +146,7 @@ struct SocialTaxesOnRealEstateCapitalGain: Codable {
 /// Charges sociales sur pensions de retraite
 struct PensionTaxes: Codable {
     
-    // properties
+    // nested types
     
     struct Model: Codable {
         let rebate            : Double = 10.0 // %
@@ -154,6 +161,8 @@ struct PensionTaxes: Codable {
             CRDS + CSG + additionalContrib + healthInsurance // %
         }
     }
+    
+    // properties
     
     var model: Model
     
@@ -189,12 +198,12 @@ struct PensionTaxes: Codable {
 // charges sociales sur revenus financiers (dividendes, plus values, loyers...)
 struct SocialTaxesOnFinancialRevenu: Codable {
     
-    // properties
-    
     //    static let CRDS         : Double = 0.5 // %
     //    static let CSG          : Double = 9.2 // %
     //    static let prelevSocial : Double = 7.5 // %
     //    static let total = CRDS + CSG + prelevSocial // %
+    
+    // nested types
     
     struct Model: Codable {
         let CRDS         : Double = 0.5 // %
@@ -204,6 +213,8 @@ struct SocialTaxesOnFinancialRevenu: Codable {
             CRDS + CSG + prelevSocial // %
         }
     }
+    
+    // properties
     
     var model: Model
     
@@ -231,8 +242,8 @@ struct SocialTaxesOnFinancialRevenu: Codable {
 // MARK: - Charges sociales sur chiffre d'affaire
 // charges sociales sur chiffre d'affaire
 struct SocialTaxesOnTurnover: Codable {
-    
-    // properties
+
+    // nested types
     
     struct Model: Codable {
         let URSSAF : Double = 24 // %
@@ -240,6 +251,8 @@ struct SocialTaxesOnTurnover: Codable {
             URSSAF // %
         }
     }
+    
+    // properties
     
     var model: Model
     
@@ -258,11 +271,78 @@ struct SocialTaxesOnTurnover: Codable {
     }
 }
 
+// MARK: - Charges sociales sur l'indemnité de licenciement
+// https://www.service-public.fr/particuliers/vosdroits/F987
+struct LayOffTaxes: Codable {
+
+    // nested types
+    
+    struct SocialTaxes: Codable {
+        let maxRebateCoef : Double = 2.0 // x PASS
+        var maxRebate     : Double {
+            maxRebateCoef * Fiscal.model.PASS
+        }
+        let rate          : Double = 13.0 // % (le même que sur le salaire)
+    }
+    struct CsgCrds: Codable {
+        let rateDeductible    : Double = 6.8 // %
+        let rateNonDeductible : Double = 2.9 // %
+        var rateTotal         : Double {
+            rateDeductible + rateNonDeductible
+        }
+    }
+    struct Model: Codable {
+        let socialTaxes : SocialTaxes
+        let csgCrds     : CsgCrds
+    }
+    
+    // properties
+    
+    var model: Model
+    
+    // methods
+    
+    func net(compensationConventional  : Double,
+             compensationBrut          : Double,
+             compensationTaxable : inout Double,
+             irppDiscount              : Double) -> Double {
+        var net = compensationBrut
+        
+        // La fraction de l'indemnité de licenciement exonérée d'impôt sur le revenu est également exonérée de cotisations sociales, dans la limite de 82 272 €.
+        // base de calcul des charges sociales
+        let discountSocialtaxes = min(model.socialTaxes.maxRebate, irppDiscount)
+        let baseSocialtaxes = max(compensationBrut - discountSocialtaxes, 0.0)
+        // montant des charges sociaes à payer
+        let socialTaxes = baseSocialtaxes * model.socialTaxes.rate / 100
+        
+        net -= socialTaxes
+        
+        // L'indemnité de licenciement est exonérée de CSG et CRDS à hauteur de la plus petite des 2 limites suivantes:
+        //  - Montant de l'indemnité légale ou conventionnelle de licenciement dû au salarié licencié
+        let discount1 = compensationConventional
+        //  - Montant de l'indemnité exonéré de cotisations sociales
+        let discount2 = discountSocialtaxes
+        // plus petite des 2 limites
+        let discountCsgCrds = min(discount1, discount2)
+        // base de calcul de la CSG et du CRDS
+        let baseCsgCrds = max(compensationBrut - discountCsgCrds, 0.0)
+        // montant de la CSG et du CRDS à payer
+        let csgCrds = baseCsgCrds * model.csgCrds.rateTotal / 100
+        
+        net -= csgCrds
+        
+        // retirer du montant de l'indemnité taxable à l'IRPP la part déductibe de la CSG
+        let csgDeductible = max(baseCsgCrds * model.csgCrds.rateDeductible / 100, 0)
+        compensationTaxable = max(compensationTaxable - csgDeductible, 0)
+        
+        return net
+    }
+}
 // MARK: - Charges sociales sur allocation chomage
 // charges sociales sur chiffre d'affaire
 struct SocialTaxesOnAllocationChomage: Codable {
     
-    // properties
+    // nested types
     
     struct Model: Codable {
         let seuilCsgCrds : Double = 50.0 // €, pas cotisation en deça
@@ -270,6 +350,8 @@ struct SocialTaxesOnAllocationChomage: Codable {
         let CSG          : Double = 6.2 // %
         let retraiteCompl: Double = 3.0 // % du salaire journalier de référence
     }
+    
+    // properties
     
     var model: Model
     
@@ -305,9 +387,13 @@ struct SocialTaxesOnAllocationChomage: Codable {
 // Assurance vies
 struct LifeInsuranceTaxes: Codable {
     
+    // nested types
+    
     struct Model: Codable {
         let rebatePerPerson: Double = 4800.0 // euros
     }
+    
+    // properties
     
     var model: Model
 }
@@ -320,9 +406,9 @@ struct IncomeTaxes: Codable {
     
     // tranche de barême de l'IRPP
     struct IrppSlice: Codable {
-        var floor : Double = 0.0 // euro
-        var rate  : Double = 0.0 // %
-        var disc  : Double = 0.0 // euro
+        let floor : Double = 0.0 // euro
+        let rate  : Double = 0.0 // %
+        let disc  : Double = 0.0 // euro
     }
     
     struct Model: Codable {
@@ -405,11 +491,13 @@ struct IncomeTaxes: Codable {
 // impots sur les sociétés (SCI)
 struct CompanyProfitTaxes: Codable {
     
-    // properties
+    // nested types
     
     struct Model: Codable {
         let rate: Double = 15.0 // %
     }
+    
+    // properties
     
     var model: Model
     
