@@ -31,7 +31,10 @@ class AdultViewModel: ObservableObject {
     @Published var trimPension               = 0
     @Published var nbYearOfDepend            = 0
     @Published var revIndex                  = 0
-    @Published var revenue                   = 0.0
+    @Published var revenueBrut               = 0.0
+    @Published var revenueTaxable            = 0.0
+    @Published var revenueNet                = 0.0
+    @Published var fromDate                  = Date.now
     @Published var insurance                 = 0.0
     @Published var lastKnownPensionSituation = RegimeGeneralSituation()
     @Published var lastKnownAgircSituation   = RegimeAgircSituation()
@@ -113,14 +116,16 @@ struct MemberAddView: View {
                                                          month : adultViewModel.trimAgircPension * 3)
                 newMember.lastKnownPensionSituation = adultViewModel.lastKnownPensionSituation
                 newMember.lastKnownAgircPensionSituation = adultViewModel.lastKnownAgircSituation
-                if adultViewModel.revIndex == PersonalIncomeType.salary(netSalary       : 0,
-                                                         healthInsurance : 0).id {
+                if adultViewModel.revIndex == PersonalIncomeType.salaryId {
                     newMember.workIncome =
-                        PersonalIncomeType.salary(netSalary       : adultViewModel.revenue,
+                        PersonalIncomeType.salary(brutSalary      : adultViewModel.revenueBrut,
+                                                  taxableSalary   : adultViewModel.revenueTaxable,
+                                                  netSalary       : adultViewModel.revenueNet,
+                                                  fromDate        : adultViewModel.fromDate,
                                                   healthInsurance : adultViewModel.insurance)
                 } else {
                     newMember.workIncome =
-                        PersonalIncomeType.turnOver(BNC                 : adultViewModel.revenue,
+                        PersonalIncomeType.turnOver(BNC                 : adultViewModel.revenueBrut,
                                                     incomeLossInsurance : adultViewModel.insurance)
                 }
                 // ajout du nouveau membre à la famille
@@ -191,13 +196,8 @@ struct MemberAddView_Previews: PreviewProvider {
     static var family  = Family()
 
     static var previews: some View {
-        Group {
             MemberAddView()
                 .environmentObject(family)
-            Form {
-                RevenueEditView(revIndex: .constant(1), revenue: .constant(1234.0), insurance: .constant(5678.2))
-            }
-        }
     }
 }
 

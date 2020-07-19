@@ -435,20 +435,28 @@ struct IncomeTaxes: Codable {
     func familyQuotient(nbAdults: Int, nbChildren: Int) -> Double {
         Double(nbAdults) + Double(nbChildren) / 2.0
     }
-    func netAndTaxableIncome(from personalIncome: PersonalIncomeType) -> (netIncome: Double, taxableIncome: Double) {
+    func netAndTaxableIncome(from personalIncome: PersonalIncomeType) -> (brutIncome: Double, netIncome: Double, livingIncome: Double, taxableIncome: Double) {
         switch personalIncome {
-            case .salary(let netSalary, let charge):
-                let netIncome = netSalary - charge
-                let rebate = (netSalary * Fiscal.model.incomeTaxes.model.salaryRebate / 100.0).clamp(low : model.minSalaryRebate,
-                                                                                                     high: model.maxSalaryRebate)
-                let taxableIncome = netSalary - rebate
-                return (netIncome: netIncome, taxableIncome: taxableIncome)
+            case .salary(let brutSalary, let taxableSalary, let netSalary, _, let charge):
+                // revenu perçu en compte (pour vivre)
+                let livingIncome = netSalary - charge
+                // application du rabais sur le salaire imposable
+                let rebate = (taxableSalary * Fiscal.model.incomeTaxes.model.salaryRebate / 100.0).clamp(low : model.minSalaryRebate,
+                                                                                                         high: model.maxSalaryRebate)
+                let taxableIncome = taxableSalary - rebate
+                return (brutIncome    : brutSalary,
+                        netIncome     : netSalary,
+                        livingIncome  : livingIncome,
+                        taxableIncome : taxableIncome)
             
             case .turnOver(let BNC, let charge):
-                let net = Fiscal.model.socialTaxesOnTurnover.net(BNC)
-                let netIncome = net - charge
+                let netIncome     = Fiscal.model.socialTaxesOnTurnover.net(BNC)
+                let livingIncome  = netIncome - charge
                 let taxableIncome = BNC * (1 - Fiscal.model.incomeTaxes.model.turnOverRebate / 100.0)
-                return (netIncome: netIncome, taxableIncome: taxableIncome)
+                return (brutIncome    : BNC,
+                        netIncome     : netIncome,
+                        livingIncome  : livingIncome,
+                        taxableIncome : taxableIncome)
         }
     }
     /// Impôt sur le revenu

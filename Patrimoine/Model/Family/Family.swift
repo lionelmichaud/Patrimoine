@@ -97,7 +97,7 @@ final class Family: ObservableObject, CustomStringConvertible {
         var totalTaxableIncome: Double = 0.0
         for person in members {
             if let adult = person as? Adult {
-                let income = adult.personalIncome(during: year)
+                let income = adult.workIncome(during: year)
                 totalNetIncome += income.net
                 totalTaxableIncome += income.taxableIrpp
             }

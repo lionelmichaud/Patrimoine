@@ -9,8 +9,11 @@
         },
         "sexe"                 : 0,
         "birthDate" : "1964-09-22T00:00:00+01:00",
-        "initialPersonalIncome" : {
-            "salary_netSalary"       : 100000,
+        "workIncome" : {
+            "salary_brutSalary"      : 100427,
+            "salary_taxableSalary"   : 85821,
+            "salary_netSalary"       : 80000,
+            "salary_fromDate"        : "2001-11-15T23:59:59+01:00",
             "salary_healthInsurance" : 5000
         },
         "nbOfChildBirth"       : 0,
@@ -35,7 +38,7 @@
         "regimeGeneralSituation" : {
             "atEndOf"           : 2019,
             "nbTrimestreAcquis" : 135,
-            "sam"               : 40000
+            "sam"               : 41136
         },
         "ageOfAgircPensionLiquid" : {
             "year" : 58,
@@ -71,7 +74,7 @@
         },
         "sexe"                 : 1,
         "birthDate" : "1968-12-16T00:00:01+01:00",
-        "initialPersonalIncome" : {
+        "workIncome" : {
             "turnOver_BNC" : 50000,
             "turnOver_incomeLossInsurance" : 5000
         },

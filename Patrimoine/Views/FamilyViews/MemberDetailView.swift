@@ -64,24 +64,39 @@ struct AdultDetailView: View {
     @EnvironmentObject var member: Person
 
     var body: some View {
-        let adult     = member as! Adult
-        let income    = adult.workIncome
-        var revenue   = ""
-        var insurance = ""
+        let adult          = member as! Adult
+        let income         = adult.workIncome
+        var revenueBrut    = 0.0
+        var revenueNet     = 0.0
+        var revenueTaxable = 0.0
+        var revenueLiving  = 0.0
+        var fromDate       = ""
+        var insurance      = 0.0
         
         switch income {
-            case let .salary(netSalary, healthInsurance):
-                revenue   = valueEuroFormatter.string(from: netSalary as NSNumber) ?? ""
-                insurance = valueEuroFormatter.string(from: healthInsurance as NSNumber) ?? ""
-            case let .turnOver(BNC, incomeLossInsurance):
-                revenue   = valueEuroFormatter.string(from: BNC as NSNumber) ?? ""
-                insurance = valueEuroFormatter.string(from: incomeLossInsurance as NSNumber) ?? ""
+            case let .salary(_, _, _, fromDate1, healthInsurance):
+                revenueBrut    = adult.workBrutIncome
+                revenueTaxable = adult.workTaxableIncome
+                revenueLiving  = adult.workLivingIncome
+                revenueNet     = adult.workNetIncome
+                fromDate       = fromDate1.stringMediumDate
+                insurance      = healthInsurance
+            case let .turnOver(_, incomeLossInsurance):
+                revenueBrut    = adult.workBrutIncome
+                revenueTaxable = adult.workTaxableIncome
+                revenueLiving  = adult.workLivingIncome
+                revenueNet     = adult.workNetIncome
+                insurance      = incomeLossInsurance
             case .none:
-                revenue   = "none"
-                insurance = "none"
+                revenueBrut    = 0
+                revenueTaxable = 0
+                revenueLiving  = 0
+                revenueNet     = 0
+                insurance      = 0
         }
         
         return Group {
+            /// Section: scénario
             Section(header: Text("SCENARIO").font(.subheadline)) {
                 HStack {
                     Text("Age de décès estimé")
@@ -135,17 +150,27 @@ struct AdultDetailView: View {
                     Text("Ligne de vie")
                 }
             }
-            // revenus
+            
+            /// Section: revenus
             Section(header: Text("REVENUS").font(.subheadline)) {
-                HStack {
-                    Text(income?.pickerString == "Salaire" ? "Salaire net avant impôts" : "BNC avant impôts")
-                    Spacer()
-                    Text(revenue)
-                }
-                HStack {
-                    Text(income?.pickerString == "Salaire" ? "Coût de la mutuelle" : "Charges sociales")
-                    Spacer()
-                    Text(insurance)
+                if income?.pickerString == "Salaire" {
+                    AmountView(label  : "Salaire brut", amount : revenueBrut)
+                    AmountView(label  : "Salaire net de feuille de paye", amount : revenueNet)
+                    AmountView(label  : "Salaire net moins mutuelle facultative", amount : revenueLiving)
+                    AmountView(label  : "Salaire imposable", amount : revenueTaxable)
+                    AmountView(label  : "Coût de la mutuelle (protec. sup.)", amount : insurance)
+                    HStack {
+                        Text("Date d'embauche")
+                        Spacer()
+                        Text(fromDate)
+                    }
+                } else {
+                    AmountView(label  : "BNC", amount : revenueBrut)
+                    AmountView(label  : "BNC net de charges sociales", amount : revenueNet)
+                    AmountView(label  : "BNC net de charges sociales et d'assurances", amount : revenueLiving)
+                    AmountView(label  : "BNC imposable", amount : revenueTaxable)
+                    AmountView(label  : "Coût des assurances", amount : insurance)
+
                 }
                 // allocation chomage
                 if adult.hasUnemployementAllocationPeriod {

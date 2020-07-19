@@ -89,23 +89,29 @@ struct MemberEditView: View {
             adultViewModel.lastKnownPensionSituation = adult.lastKnownPensionSituation
             adultViewModel.lastKnownAgircSituation = adult.lastKnownAgircPensionSituation
             switch adult.workIncome {
-                case let .salary(netSalary, healthInsurance):
-                    adultViewModel.revenue   = netSalary
-                    adultViewModel.insurance = healthInsurance
-                    adultViewModel.revIndex  = PersonalIncomeType.salary(netSalary: 0, healthInsurance: 0).id
+                case let .salary(brutSalary, taxableSalary, netSalary, fromDate, healthInsurance):
+                    adultViewModel.revenueBrut    = brutSalary
+                    adultViewModel.revenueTaxable = taxableSalary
+                    adultViewModel.revenueNet     = netSalary
+                    adultViewModel.fromDate       = fromDate
+                    adultViewModel.insurance      = healthInsurance
+                    adultViewModel.revIndex = PersonalIncomeType.salaryId
                 case let .turnOver(BNC, incomeLossInsurance):
-                    adultViewModel.revenue   = BNC
+                    adultViewModel.revenueBrut = BNC
+                    adultViewModel.revenueNet  = BNC
                     adultViewModel.insurance = incomeLossInsurance
-                    adultViewModel.revIndex  = PersonalIncomeType.turnOver(BNC: 0, incomeLossInsurance: 0).id
+                    adultViewModel.revIndex  = PersonalIncomeType.turnOverId
                 case .none:
-                    adultViewModel.revenue   = 0.0
-                    adultViewModel.insurance = 0.0
-                    adultViewModel.revIndex  = 0
+                    adultViewModel.revenueBrut    = 0
+                    adultViewModel.revenueTaxable = 0
+                    adultViewModel.revenueNet     = 0
+                    adultViewModel.insurance      = 0
+                    adultViewModel.revIndex       = 0
             }
         }
     }
     
-    /// Recopie le ViewModel dans les propriété d'un membre existant
+    /// Applique les modifications: recopie le ViewModel dans les propriétés d'un membre existant
     func applyChanges() {
         member.ageOfDeath = personViewModel.deathAge
         if let adult = member as? Adult {
@@ -118,13 +124,15 @@ struct MemberEditView: View {
                                                  month : adultViewModel.trimAgircPension * 3)
             adult.lastKnownPensionSituation = adultViewModel.lastKnownPensionSituation
             adult.lastKnownAgircPensionSituation = adultViewModel.lastKnownAgircSituation
-            if adultViewModel.revIndex == PersonalIncomeType.salary(netSalary       : 0,
-                                                                    healthInsurance : 0).id {
-                adult.workIncome = PersonalIncomeType.salary(netSalary       : adultViewModel.revenue,
-                                                                        healthInsurance : adultViewModel.insurance)
+            if adultViewModel.revIndex == PersonalIncomeType.salaryId {
+                adult.workIncome = PersonalIncomeType.salary(brutSalary      : adultViewModel.revenueBrut,
+                                                             taxableSalary   : adultViewModel.revenueTaxable,
+                                                             netSalary       : adultViewModel.revenueNet,
+                                                             fromDate        : adultViewModel.fromDate,
+                                                             healthInsurance : adultViewModel.insurance)
             } else {
-                adult.workIncome = PersonalIncomeType.turnOver(BNC                 : adultViewModel.revenue,
-                                                                          incomeLossInsurance : adultViewModel.insurance)
+                adult.workIncome = PersonalIncomeType.turnOver(BNC                 : adultViewModel.revenueBrut,
+                                                               incomeLossInsurance : adultViewModel.insurance)
             }
 
         }
@@ -162,9 +170,12 @@ struct AdultEditView : View {
             }
             // activité
             Section(header: Text("ACTIVITE")) {
-                RevenueEditView(revIndex: $adultViewModel.revIndex,
-                                revenue: $adultViewModel.revenue,
-                                insurance: $adultViewModel.insurance)
+                RevenueEditView(revIndex       : $adultViewModel.revIndex,
+                                revenueBrut    : $adultViewModel.revenueBrut,
+                                revenueNet     : $adultViewModel.revenueNet,
+                                revenueTaxable : $adultViewModel.revenueTaxable,
+                                fromDate       : $adultViewModel.fromDate,
+                                insurance      : $adultViewModel.insurance)
                 DatePicker(selection: $adultViewModel.dateRetirement,
                            in: Date()...100.years.fromNow! ,
                            displayedComponents: .date,
@@ -190,19 +201,35 @@ struct AdultEditView : View {
 
 // MARK: - Saisie des revenus
 struct RevenueEditView : View {
-    @Binding var revIndex  : Int
-    @Binding var revenue   : Double
-    @Binding var insurance : Double
+    @Binding var revIndex       : Int
+    @Binding var revenueBrut    : Double
+    @Binding var revenueNet     : Double
+    @Binding var revenueTaxable : Double
+    @Binding var fromDate       : Date
+    @Binding var insurance      : Double
     
     var body: some View {
-        Group {
+        let salary = revIndex == PersonalIncomeType.salaryId
+
+        return Group {
             CaseWithAssociatedValuePicker<PersonalIncomeType>(caseIndex: $revIndex, label: "")
                 .pickerStyle(SegmentedPickerStyle())
-            
-            AmountEditView(label: revIndex == PersonalIncomeType.salary(netSalary: 0, healthInsurance: 0).id ? "Salaire" : "BNC",
-                           amount: $revenue)
-            AmountEditView(label: revIndex == PersonalIncomeType.salary(netSalary: 0, healthInsurance: 0).id ? "Coût de la mutuelle" : "Charges sociales",
-                           amount: $insurance)
+            if salary {
+                AmountEditView(label: "Salaire brut", amount: $revenueBrut)
+                AmountEditView(label: "Salaire net de feuille de paye", amount: $revenueNet)
+                AmountEditView(label: "Salaire imposable", amount: $revenueTaxable)
+                AmountEditView(label: "Coût de la mutuelle (protec. sup.)", amount: $insurance)
+                DatePicker(selection           : $fromDate,
+                           in                  : 50.years.ago!...Date.now,
+                           displayedComponents : .date,
+                           label               : { Text("Date d'embauche") })
+            } else {
+                AmountEditView(label: "BNC", amount: $revenueBrut)
+                AmountEditView(label: "Charges sociales", amount: $insurance)
+            }
+            if salary {
+
+            }
         }
     }
 }
@@ -249,9 +276,19 @@ struct MemberEditView_Previews: PreviewProvider {
     static var aMember = family.members.first!
     
     static var previews: some View {
+        Group {
         //EmptyView()
         MemberEditView(withInitialValueFrom: aMember)
             .environmentObject(family)
             .environmentObject(aMember)
+            Form {
+                RevenueEditView(revIndex       : .constant(1),
+                                revenueBrut    : .constant(100000.0),
+                                revenueNet     : .constant(85000.0),
+                                revenueTaxable : .constant(90000.0),
+                                fromDate       : .constant(Date.now),
+                                insurance      : .constant(5678.2))
+            }
+        }
     }
 }

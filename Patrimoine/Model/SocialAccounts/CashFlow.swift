@@ -334,8 +334,8 @@ struct CashFlowLine {
             // populate work, pension and unemployement incomes of family members
             if let adult = person as? Adult {
                 /// revenus du travail
-                let workIncome = adult.personalIncome(during: year)
-                // revenus du travail inscrit en compte avant IRPP (net de dépenses de mutuelle ou d'assurance perte d'emploi)
+                let workIncome = adult.workIncome(during: year)
+                // revenus du travail inscrit en compte avant IRPP (net charges sociales, de dépenses de mutuelle ou d'assurance perte d'emploi)
                 revenues.workIncomes.credits.values.append((name: name, value: workIncome.net.rounded()))
                 // part des revenus du travail inscrite en compte qui est imposable à l'IRPP
                 revenues.workIncomes.taxablesIrpp.values.append((name: name, value: workIncome.taxableIrpp.rounded()))
