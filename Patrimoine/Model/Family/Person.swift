@@ -68,7 +68,7 @@ class Person : ObservableObject, Identifiable, CustomStringConvertible, Codable 
     // MARK: - Nested types
 
     private enum CodingKeys : String, CodingKey {
-        case sexe, name, birthDate, ageOfDeath
+        case sexe, name, birth_Date, age_Of_Death
     }
     
     struct CoderPreservingType {
@@ -152,8 +152,8 @@ class Person : ObservableObject, Identifiable, CustomStringConvertible, Codable 
         let container            = try decoder.container(keyedBy: CodingKeys.self)
         self.name                = try container.decode(PersonNameComponents.self, forKey: .name)
         self.sexe                = try container.decode(Sexe.self, forKey: .sexe)
-        self.birthDate           = try container.decode(Date.self, forKey: .birthDate)
-        self.ageOfDeath          = try container.decode(Int.self, forKey: .ageOfDeath)
+        self.birthDate           = try container.decode(Date.self, forKey: .birth_Date)
+        self.ageOfDeath          = try container.decode(Int.self, forKey: .age_Of_Death)
         self.birthDateComponents = Date.calendar.dateComponents([.year, .month, .day], from : birthDate)
     }
     
@@ -194,8 +194,8 @@ class Person : ObservableObject, Identifiable, CustomStringConvertible, Codable 
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(name, forKey: .name)
         try container.encode(sexe, forKey: .sexe)
-        try container.encode(birthDate, forKey: .birthDate)
-        try container.encode(ageOfDeath, forKey: .ageOfDeath)
+        try container.encode(birthDate, forKey: .birth_Date)
+        try container.encode(ageOfDeath, forKey: .age_Of_Death)
     }
     
     func age(atEndOf year: Int) -> Int {

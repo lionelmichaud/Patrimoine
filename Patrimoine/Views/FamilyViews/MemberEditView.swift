@@ -81,6 +81,8 @@ struct MemberEditView: View {
         if let adult = member as? Adult {
             adultViewModel.dateRetirement            = adult.dateOfRetirement
             adultViewModel.causeOfRetirement         = adult.causeOfRetirement
+            adultViewModel.hasAllocationSupraLegale  = adult.layoffCompensationBonified != nil
+            adultViewModel.allocationSupraLegale     = adult.layoffCompensationBonified ?? 0.0
             adultViewModel.nbYearOfDepend            = adult.nbOfYearOfDependency
             adultViewModel.ageAgircPension           = adult.ageOfAgircPensionLiquidComp.year!
             adultViewModel.trimAgircPension          = adult.ageOfAgircPensionLiquidComp.month! / 3
@@ -117,23 +119,40 @@ struct MemberEditView: View {
         if let adult = member as? Adult {
             adult.dateOfRetirement     = adultViewModel.dateRetirement
             adult.causeOfRetirement    = adultViewModel.causeOfRetirement
-            adult.nbOfYearOfDependency = adultViewModel.nbYearOfDepend
+            if (adultViewModel.causeOfRetirement == Unemployment.Cause.demission) {
+                // pas d'indemnité de licenciement en cas de démission
+                adult.layoffCompensationBonified = nil
+            } else {
+                if adultViewModel.hasAllocationSupraLegale {
+                    // indemnité supra-légale de licenciement accordée par l'employeur
+                    adult.layoffCompensationBonified = adultViewModel.allocationSupraLegale
+                } else {
+                    // pas d'indemnité supra-légale de licenciement
+                    adult.layoffCompensationBonified = nil
+                }
+            }
+            
             adult.setAgeOfPensionLiquidComp(year  : adultViewModel.agePension,
                                             month : adultViewModel.trimPension * 3)
             adult.setAgeOfAgircPensionLiquidComp(year  : adultViewModel.ageAgircPension,
                                                  month : adultViewModel.trimAgircPension * 3)
             adult.lastKnownPensionSituation = adultViewModel.lastKnownPensionSituation
             adult.lastKnownAgircPensionSituation = adultViewModel.lastKnownAgircSituation
+            
             if adultViewModel.revIndex == PersonalIncomeType.salaryId {
-                adult.workIncome = PersonalIncomeType.salary(brutSalary      : adultViewModel.revenueBrut,
-                                                             taxableSalary   : adultViewModel.revenueTaxable,
-                                                             netSalary       : adultViewModel.revenueNet,
-                                                             fromDate        : adultViewModel.fromDate,
-                                                             healthInsurance : adultViewModel.insurance)
+                adult.workIncome =
+                    PersonalIncomeType.salary(brutSalary      : adultViewModel.revenueBrut,
+                                              taxableSalary   : adultViewModel.revenueTaxable,
+                                              netSalary       : adultViewModel.revenueNet,
+                                              fromDate        : adultViewModel.fromDate,
+                                              healthInsurance : adultViewModel.insurance)
             } else {
-                adult.workIncome = PersonalIncomeType.turnOver(BNC                 : adultViewModel.revenueBrut,
-                                                               incomeLossInsurance : adultViewModel.insurance)
+                adult.workIncome =
+                    PersonalIncomeType.turnOver(BNC                 : adultViewModel.revenueBrut,
+                                                incomeLossInsurance : adultViewModel.insurance)
             }
+            
+            adult.nbOfYearOfDependency = adultViewModel.nbYearOfDepend
 
         }
         if let child = member as? Child {
@@ -147,7 +166,7 @@ struct MemberEditView: View {
         // remettre à zéro la simulation et sa vue
         simulation.reset(withPatrimoine: patrimoine)
         uiState.simulationViewState.selectedItem = nil
-
+        
         self.presentationMode.wrappedValue.dismiss()
     }
 }
@@ -156,6 +175,7 @@ struct MemberEditView: View {
 struct AdultEditView : View {
     @ObservedObject var personViewModel : PersonViewModel
     @ObservedObject var adultViewModel  : AdultViewModel
+    @State private var compenstationSupraLegal : Bool = false
     
     var body: some View {
         Group {
@@ -181,6 +201,12 @@ struct AdultEditView : View {
                            displayedComponents: .date,
                            label: { Text("Date de cessation d'activité") })
                 CasePicker(pickedCase: $adultViewModel.causeOfRetirement, label: "Cause").pickerStyle(SegmentedPickerStyle())
+                if (adultViewModel.causeOfRetirement != Unemployment.Cause.demission) {
+                    Toggle(isOn: $adultViewModel.hasAllocationSupraLegale, label: { Text("Indemnité de licenciement supra-légale") })
+                    if adultViewModel.hasAllocationSupraLegale {
+                        AmountEditView(label: "Montant brut", amount: $adultViewModel.allocationSupraLegale).padding(.leading)
+                    }
+                }
             }
             // retraite
             RetirementEditView(personViewModel : personViewModel,

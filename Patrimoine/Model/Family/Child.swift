@@ -14,7 +14,7 @@ final class Child: Person {
     // nested types
     
     private enum CodingKeys : String, CodingKey {
-        case ageOfUniversity, ageOfIndependence
+        case age_Of_University, age_Of_Independence
     }
     
     // properties
@@ -50,8 +50,8 @@ final class Child: Person {
     required init(from decoder: Decoder) throws {
         // Get our container for this subclass' coding keys
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        ageOfUniversity = try container.decode(Int.self, forKey: .ageOfUniversity)
-        ageOfIndependence = try container.decode(Int.self, forKey: .ageOfIndependence)
+        ageOfUniversity = try container.decode(Int.self, forKey: .age_Of_University)
+        ageOfIndependence = try container.decode(Int.self, forKey: .age_Of_Independence)
         
         // Get superDecoder for superclass and call super.init(from:) with it
         //let superDecoder = try container.superDecoder()
@@ -78,8 +78,8 @@ final class Child: Person {
         try super.encode(to: encoder)
         
         var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(ageOfUniversity, forKey: .ageOfUniversity)
-        try container.encode(ageOfIndependence, forKey: .ageOfIndependence)
+        try container.encode(ageOfUniversity, forKey: .age_Of_University)
+        try container.encode(ageOfIndependence, forKey: .age_Of_Independence)
     }
     
     /// true si l'année est postérieure à l'année d'entrée à l'université et avant indépendance financière

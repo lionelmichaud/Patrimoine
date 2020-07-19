@@ -39,7 +39,7 @@ struct FamilySummaryView: View {
             }
             if cashFlow == nil {
                 Section(header: header("REVENUS DU TRAVAIL")) {
-                    AmountView(label : "Revenu net de charges sociales",
+                    AmountView(label : "Revenu net de charges sociales et d'assurance (à vivre)",
                                amount: family.income(during: Date.now.year).netIncome)
                     AmountView(label : "Revenu imposable à l'IRPP",
                                amount: family.income(during: Date.now.year).taxableIncome)
@@ -52,7 +52,7 @@ struct FamilySummaryView: View {
                 }
             } else {
                 Section(header: header("REVENUS")) {
-                    AmountView(label : "Revenu familliale net de charges sociales",
+                    AmountView(label : "Revenu familliale net de charges sociales et d'assurance (à vivre)",
                                amount: cashFlow!.revenues.totalCredited)
                     AmountView(label : "Revenu de la SCI net de taxes et d'IS ",
                                amount: cashFlow!.sciCashFlowLine.netCashFlow)
@@ -65,6 +65,7 @@ struct FamilySummaryView: View {
                 Section(header: header("FISCALITE FAMILLE")) {
                     IntegerView(label   : "Quotient familial",
                                 integer : Int(cashFlow!.taxes.familyQuotient))
+                    // FIXME: donne un impot nul !
                     AmountView(label : "Montant de l'IRPP",
                                amount: cashFlow!.taxes.irpp)
                     AmountView(label : "Taxes locales",

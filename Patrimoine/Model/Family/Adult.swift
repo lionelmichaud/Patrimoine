@@ -14,15 +14,16 @@ final class Adult: Person {
     // MARK: - nested types
     
     private enum CodingKeys : String, CodingKey {
-        case nbOfChildBirth,
-        dateOfRetirement,
-        causeRetirement,
-        ageOfPensionLiquid,
-        regimeGeneralSituation,
-        ageOfAgircPensionLiquid,
-        regimeAgircSituation,
-        nbOfYearOfDependency,
-        workIncome
+        case nb_Of_Child_Birth,
+        date_Of_Retirement,
+        cause_Retirement,
+        layoff_Compensation_Bonified,
+        age_Of_Pension_Liquid,
+        regime_General_Situation,
+        age_Of_Agirc_Pension_Liquid,
+        regime_Agirc_Situation,
+        nb_Of_Year_Of_Dependency,
+        work_Income
     }
     
     // MARK: - properties
@@ -68,7 +69,7 @@ final class Adult: Person {
                 return 0.0
         }
     }
-    var hasUnemployementAllocationPeriod  : Bool { // computed
+    var hasUnemployementAllocationPeriod      : Bool { // computed
         guard let workIncome = workIncome else {
             return false
         }
@@ -81,7 +82,8 @@ final class Adult: Person {
                 return Unemployment.canReceiveAllocation(for: causeOfRetirement)
         }
     } // computed
-    var layoffCompensation                : (nbMonth: Double, brut: Double, net: Double, taxable: Double)? { // computed
+    @Published var layoffCompensationBonified : Double? // indemnité supra-légale accordée par l'entreprise
+    var layoffCompensation                    : (nbMonth: Double, brut: Double, net: Double, taxable: Double)? { // computed
         guard hasUnemployementAllocationPeriod else {
             return nil
         }
@@ -95,7 +97,7 @@ final class Adult: Person {
                                                 to        : dateOfRetirement).year!
                 // base: salaire brut
                 return Unemployment.model.indemniteLicenciement.compensation(
-                    actualCompensationBrut : nil,
+                    actualCompensationBrut : layoffCompensationBonified,
                     causeOfRetirement      : causeOfRetirement,
                     yearlyWorkIncomeBrut   : workBrutIncome,
                     age                    : age(atDate: dateOfRetirement).year!,
@@ -104,13 +106,13 @@ final class Adult: Person {
                 fatalError()
         }
     } // computed
-    var unemployementAllocationDuration   : Int? { // en mois
+    var unemployementAllocationDuration       : Int? { // en mois
         guard hasUnemployementAllocationPeriod else {
             return nil
         }
         return Unemployment.model.allocationChomage.durationInMonth(age: age(atDate: dateOfRetirement).year!)
     } // computed
-    var dateOfStartOfAllocationReduction  : Date? { // computed
+    var dateOfStartOfAllocationReduction      : Date? { // computed
         guard hasUnemployementAllocationPeriod else {
             return nil
         }
@@ -120,20 +122,20 @@ final class Adult: Person {
         }
         return  reductionAfter.months.from(dateOfRetirement)!
     } // computed
-    var dateOfEndOfUnemployementAllocation: Date? { // computed
+    var dateOfEndOfUnemployementAllocation    : Date? { // computed
         guard hasUnemployementAllocationPeriod else {
             return nil
         }
         return unemployementAllocationDuration!.months.from(dateOfRetirement)!
     } // computed
-    var unemployementAllocation           : (brut: Double, net: Double)? { // computed
+    var unemployementAllocation               : (brut: Double, net: Double)? { // computed
         guard hasUnemployementAllocationPeriod else {
             return nil
         }
         let dayly = Unemployment.model.allocationChomage.daylyAllocBeforeReduction(SJR: SJR)
         return (brut: dayly.brut * 365, net: dayly.net * 365)
     } // computed
-    var unemployementReducedAllocation    : (brut: Double, net: Double)? { // computed
+    var unemployementReducedAllocation        : (brut: Double, net: Double)? { // computed
         guard let alloc = unemployementAllocation else {
             return nil
         }
@@ -141,7 +143,7 @@ final class Adult: Person {
         return (brut: alloc.brut * (1 - reduc.percentReduc / 100),
                 net : alloc.net  * (1 - reduc.percentReduc / 100))
     } // computed
-    var unemployementTotalAllocation      : (brut: Double, net: Double)? { // computed
+    var unemployementTotalAllocation          : (brut: Double, net: Double)? { // computed
         guard hasUnemployementAllocationPeriod else {
             return nil
         }
@@ -156,7 +158,7 @@ final class Adult: Person {
                     net : alloc.net  / 12 * totalDuration.double())
         }
     } // computed
-    var unemployementAllocationReduction  : (percentReduc: Double, afterMonth: Int?)? { // computed
+    var unemployementAllocationReduction      : (percentReduc: Double, afterMonth: Int?)? { // computed
         guard hasUnemployementAllocationPeriod else {
             return nil
         }
@@ -260,30 +262,33 @@ final class Adult: Person {
             try decoder.container(keyedBy: CodingKeys.self)
         nbOfChildBirth =
             try container.decode(Int.self,
-                                 forKey : .nbOfChildBirth)
+                                 forKey : .nb_Of_Child_Birth)
         dateOfRetirement =
             try container.decode(Date.self,
-                                 forKey: .dateOfRetirement)
+                                 forKey: .date_Of_Retirement)
         causeOfRetirement =
             try container.decode(Unemployment.Cause.self,
-                                 forKey: .causeRetirement)
+                                 forKey: .cause_Retirement)
+        layoffCompensationBonified =
+            try container.decode(Double?.self,
+                                 forKey: .layoff_Compensation_Bonified)
         ageOfPensionLiquidComp =
             try container.decode(DateComponents.self,
-                                 forKey: .ageOfPensionLiquid)
+                                 forKey: .age_Of_Pension_Liquid)
         lastKnownPensionSituation =
             try container.decode(RegimeGeneralSituation.self,
-                                 forKey: .regimeGeneralSituation)
+                                 forKey: .regime_General_Situation)
         ageOfAgircPensionLiquidComp =
-            try container.decode(DateComponents.self, forKey: .ageOfAgircPensionLiquid)
+            try container.decode(DateComponents.self, forKey: .age_Of_Agirc_Pension_Liquid)
         lastKnownAgircPensionSituation =
             try container.decode(RegimeAgircSituation.self,
-                                 forKey: .regimeAgircSituation)
+                                 forKey: .regime_Agirc_Situation)
         nbOfYearOfDependency =
             try container.decode(Int.self,
-                                 forKey: .nbOfYearOfDependency)
+                                 forKey: .nb_Of_Year_Of_Dependency)
         workIncome =
             try container.decode(PersonalIncomeType.self,
-                                 forKey: .workIncome)
+                                 forKey: .work_Income)
         
         // Get superDecoder for superclass and call super.init(from:) with it
         //let superDecoder = try container.superDecoder()
@@ -314,15 +319,16 @@ final class Adult: Person {
         try super.encode(to: encoder)
         
         var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(nbOfChildBirth, forKey: .nbOfChildBirth)
-        try container.encode(dateOfRetirement, forKey: .dateOfRetirement)
-        try container.encode(causeOfRetirement, forKey: .causeRetirement)
-        try container.encode(ageOfPensionLiquidComp, forKey: .ageOfPensionLiquid)
-        try container.encode(lastKnownPensionSituation, forKey: .regimeGeneralSituation)
-        try container.encode(ageOfAgircPensionLiquidComp, forKey: .ageOfAgircPensionLiquid)
-        try container.encode(lastKnownAgircPensionSituation, forKey: .regimeAgircSituation)
-        try container.encode(nbOfYearOfDependency, forKey: .nbOfYearOfDependency)
-        try container.encode(workIncome, forKey: .workIncome)
+        try container.encode(nbOfChildBirth, forKey: .nb_Of_Child_Birth)
+        try container.encode(dateOfRetirement, forKey: .date_Of_Retirement)
+        try container.encode(causeOfRetirement, forKey: .cause_Retirement)
+        try container.encode(layoffCompensationBonified, forKey: .layoff_Compensation_Bonified)
+        try container.encode(ageOfPensionLiquidComp, forKey: .age_Of_Pension_Liquid)
+        try container.encode(lastKnownPensionSituation, forKey: .regime_General_Situation)
+        try container.encode(ageOfAgircPensionLiquidComp, forKey: .age_Of_Agirc_Pension_Liquid)
+        try container.encode(lastKnownAgircPensionSituation, forKey: .regime_Agirc_Situation)
+        try container.encode(nbOfYearOfDependency, forKey: .nb_Of_Year_Of_Dependency)
+        try container.encode(workIncome, forKey: .work_Income)
     }
     
     /// Année ou a lieu l'événement recherché

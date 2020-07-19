@@ -24,6 +24,8 @@ class PersonViewModel: ObservableObject {
 class AdultViewModel: ObservableObject {
     @Published var dateRetirement            = Date()
     @Published var causeOfRetirement         = Unemployment.Cause.demission
+    @Published var hasAllocationSupraLegale  = false
+    @Published var allocationSupraLegale     = 0.0
     //@Published var dateOfEndOfUnemployAlloc  = Date()
     @Published var ageAgircPension           = Pension.model.regimeGeneral.model.ageMinimumLegal
     @Published var trimAgircPension          = 0
@@ -109,13 +111,27 @@ struct MemberAddView: View {
                                       birthDate  : personViewModel.birthDate,
                                       ageOfDeath : personViewModel.deathAge)
                 newMember.dateOfRetirement     = adultViewModel.dateRetirement
-                newMember.nbOfYearOfDependency = adultViewModel.nbYearOfDepend
+                newMember.causeOfRetirement    = adultViewModel.causeOfRetirement
+                if (adultViewModel.causeOfRetirement == Unemployment.Cause.demission) {
+                    // pas d'indemnité de licenciement en cas de démission
+                    newMember.layoffCompensationBonified = nil
+                } else {
+                    if adultViewModel.hasAllocationSupraLegale {
+                        // indemnité supra-légale de licenciement accordée par l'employeur
+                        newMember.layoffCompensationBonified = adultViewModel.allocationSupraLegale
+                    } else {
+                        // pas d'indemnité supra-légale de licenciement
+                        newMember.layoffCompensationBonified = nil
+                    }
+                }
+
                 newMember.setAgeOfPensionLiquidComp(year  : adultViewModel.agePension,
                                                     month : adultViewModel.trimPension * 3)
                 newMember.setAgeOfAgircPensionLiquidComp(year  : adultViewModel.ageAgircPension,
                                                          month : adultViewModel.trimAgircPension * 3)
                 newMember.lastKnownPensionSituation = adultViewModel.lastKnownPensionSituation
                 newMember.lastKnownAgircPensionSituation = adultViewModel.lastKnownAgircSituation
+                
                 if adultViewModel.revIndex == PersonalIncomeType.salaryId {
                     newMember.workIncome =
                         PersonalIncomeType.salary(brutSalary      : adultViewModel.revenueBrut,
@@ -128,10 +144,14 @@ struct MemberAddView: View {
                         PersonalIncomeType.turnOver(BNC                 : adultViewModel.revenueBrut,
                                                     incomeLossInsurance : adultViewModel.insurance)
                 }
+                
+                newMember.nbOfYearOfDependency = adultViewModel.nbYearOfDepend
+
                 // ajout du nouveau membre à la famille
                 family.addMember(newMember)
                 // debug
                 //print(family)
+            
             case .enfant :
                 // creation du nouveau membre
                 let newMember = Child(sexe       : personViewModel.sexe,

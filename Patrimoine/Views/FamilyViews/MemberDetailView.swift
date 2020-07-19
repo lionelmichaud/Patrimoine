@@ -147,7 +147,7 @@ struct AdultDetailView: View {
                     }
                 }
                 NavigationLink(destination: PersonLifeLineView(withInitialValueFrom: self.member)) {
-                    Text("Ligne de vie")
+                    Text("Ligne de vie").foregroundColor(.blue)
                 }
             }
             
@@ -156,9 +156,9 @@ struct AdultDetailView: View {
                 if income?.pickerString == "Salaire" {
                     AmountView(label  : "Salaire brut", amount : revenueBrut)
                     AmountView(label  : "Salaire net de feuille de paye", amount : revenueNet)
-                    AmountView(label  : "Salaire net moins mutuelle facultative", amount : revenueLiving)
-                    AmountView(label  : "Salaire imposable", amount : revenueTaxable)
                     AmountView(label  : "Coût de la mutuelle (protec. sup.)", amount : insurance)
+                    AmountView(label  : "Salaire net moins mutuelle facultative (à vivre)", amount : revenueLiving)
+                    AmountView(label  : "Salaire imposable", amount : revenueTaxable)
                     HStack {
                         Text("Date d'embauche")
                         Spacer()
@@ -167,22 +167,22 @@ struct AdultDetailView: View {
                 } else {
                     AmountView(label  : "BNC", amount : revenueBrut)
                     AmountView(label  : "BNC net de charges sociales", amount : revenueNet)
-                    AmountView(label  : "BNC net de charges sociales et d'assurances", amount : revenueLiving)
-                    AmountView(label  : "BNC imposable", amount : revenueTaxable)
                     AmountView(label  : "Coût des assurances", amount : insurance)
+                    AmountView(label  : "BNC net de charges sociales et d'assurances (à vivre)", amount : revenueLiving)
+                    AmountView(label  : "BNC imposable", amount : revenueTaxable)
 
                 }
                 // allocation chomage
                 if adult.hasUnemployementAllocationPeriod {
                     NavigationLink(destination: UnemployementDetailView()) {
                         AmountView(label  : "Allocation chômage annuelle nette",
-                                   amount : adult.unemployementAllocation!.net)
+                                   amount : adult.unemployementAllocation!.net).foregroundColor(.blue)
                     }
                 }
                 // pension de retraite
                 NavigationLink(destination: RetirementDetailView()) {
                     AmountView(label  : "Pension de retraite annuelle nette",
-                               amount : adult.pension.net)
+                               amount : adult.pension.net).foregroundColor(.blue)
                 }
             }
         }

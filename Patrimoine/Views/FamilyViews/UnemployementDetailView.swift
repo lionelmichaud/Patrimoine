@@ -15,6 +15,7 @@ struct UnemployementDetailView: View {
     class ViewModel: ObservableObject {
         @Published var allocationReducedBrut : Double = 0
         @Published var allocationReducedNet  : Double = 0
+        @Published var allocationSupraLegale : Bool   = false
         @Published var allocationBrut        : Double = 0
         @Published var allocationNet         : Double = 0
         @Published var totalAllocationNet    : Double = 0
@@ -35,11 +36,15 @@ struct UnemployementDetailView: View {
     var body: some View {
         Form {
             Section(header: Text("Indemnité de licenciement").font(.subheadline)) {
-                HStack {
-                    IntegerView(label: "Equivalent à", integer: Int(viewModel.compensationNbMonth.rounded()))
-                    Text("mois")
+                if viewModel.allocationSupraLegale {
+                    AmountView(label: "Montant brut supra-légal", amount: viewModel.compensationBrut)
+                } else {
+                    HStack {
+                        IntegerView(label: "Equivalent à", integer: Int(viewModel.compensationNbMonth.rounded()))
+                        Text("mois")
+                    }
+                    AmountView(label: "Montant brut légal ou conventionnel", amount: viewModel.compensationBrut)
                 }
-                AmountView(label: "Montant brut", amount: viewModel.compensationBrut)
                 AmountView(label: "Montant net", amount: viewModel.compensationNet)
                 AmountView(label: "Montant imposable", amount: viewModel.compensationTaxable)
             }
@@ -79,8 +84,9 @@ struct UnemployementDetailView: View {
         (viewModel.percentReduc, viewModel.afterMonth)                    = adult.unemployementAllocationReduction!
         (viewModel.compensationNbMonth, viewModel.compensationBrut,
          viewModel.compensationNet, viewModel.compensationTaxable)        = adult.layoffCompensation!
+        viewModel.allocationSupraLegale                                   = (adult.layoffCompensationBonified != nil)
         (viewModel.allocationReducedBrut, viewModel.allocationReducedNet) = adult.unemployementReducedAllocation!
-        viewModel.totalAllocationNet = adult.unemployementTotalAllocation!.net
+        viewModel.totalAllocationNet                                      = adult.unemployementTotalAllocation!.net
     }
 }
 

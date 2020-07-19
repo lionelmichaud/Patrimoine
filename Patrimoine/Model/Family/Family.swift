@@ -90,15 +90,15 @@ final class Family: ObservableObject, CustomStringConvertible {
     
     /// Revenus de la famille durant l'année
     /// - Parameter year: année
-    /// - Parameter netIncome: revenu net de charges
-    /// - Parameter taxableIncome: revenu taxable à l'IRPP
+    /// - Parameter netIncome: revenu net de charges et d'assurance (à vivre)
+    /// - Parameter taxableIncome: revenu imposable à l'IRPP
     func income(during year: Int) -> (netIncome: Double, taxableIncome: Double) {
-        var totalNetIncome: Double = 0.0
-        var totalTaxableIncome: Double = 0.0
+        var totalNetIncome     : Double = 0.0
+        var totalTaxableIncome : Double = 0.0
         for person in members {
             if let adult = person as? Adult {
                 let income = adult.workIncome(during: year)
-                totalNetIncome += income.net
+                totalNetIncome     += income.net
                 totalTaxableIncome += income.taxableIrpp
             }
         }
@@ -111,11 +111,11 @@ final class Family: ObservableObject, CustomStringConvertible {
         Fiscal.model.incomeTaxes.familyQuotient(nbAdults: nbOfAdultAlive(atEndOf: year), nbChildren: nbOfFiscalChildren(during: year))
     }
     
-    /// IRPP sur les revenus de la famille
+    /// IRPP sur les revenus du travail de la famille
     /// - Parameter year: année
     func irpp (for year: Int) -> Double {
         Fiscal.model.incomeTaxes.irpp(
-            // FIXME: A CORRIGER
+            // FIXME: A CORRIGER pour prendre en compte tous les revenus imposable
             taxableIncome : income(during : year).taxableIncome, // A CORRIGER
             nbAdults      : nbOfAdultAlive(atEndOf    : year),
             nbChildren    : nbOfFiscalChildren(during : year))
