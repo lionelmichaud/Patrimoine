@@ -34,7 +34,7 @@ struct ChartsView: View {
                         NavigationLink(destination: BalanceSheetGlobalChartView(),
                                        tag         : .bilanSynthese,
                                        selection   : $uiState.chartsViewState.selectedItem) {
-                                        Text("Résumé")
+                                        Text("Synthèse")
                                         
                         }
                         .isDetailLink(true)
@@ -43,7 +43,7 @@ struct ChartsView: View {
                         NavigationLink(destination: BalanceSheetDetailedChartView(),
                                        tag         : .bilanDetail,
                                        selection   : $uiState.chartsViewState.selectedItem) {
-                                        Text("Détail")
+                                        Text("Détail par catégorie")
                         }
                         .isDetailLink(true)
                         .padding(.leading)
@@ -53,7 +53,7 @@ struct ChartsView: View {
                         NavigationLink(destination: CashFlowGlobalChartView(),
                                        tag         : .cfSynthese,
                                        selection   : $uiState.chartsViewState.selectedItem) {
-                                        Text("Résumé")
+                                        Text("Synthèse")
                         }
                         .isDetailLink(true)
                         .padding(.leading)
@@ -61,7 +61,7 @@ struct ChartsView: View {
                         NavigationLink(destination: CashFlowDetailedChartView(),
                                        tag         : .cfDetail,
                                        selection   : $uiState.chartsViewState.selectedItem) {
-                                        Text("Détail")
+                                        Text("Détail par catégorie")
                         }
                         .isDetailLink(true)
                         .padding(.leading)

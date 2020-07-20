@@ -13,7 +13,7 @@
             "salary_brutSalary"      : 100427,
             "salary_taxableSalary"   : 85821,
             "salary_netSalary"       : 80000,
-            "salary_fromDate"        : "2001-11-15T23:59:59+01:00",
+            "salary_fromDate"        : "2001-11-15T12:00:00+01:00",
             "salary_healthInsurance" : 700
         },
         "nb_Of_Child_Birth"       : 0,
@@ -41,7 +41,8 @@
             "sam"               : 41136
         },
         "age_Of_Agirc_Pension_Liquid" : {
-            "year" : 58,
+            "year" : 60,
+            "month": 0,
             "day"  : 0,
             "calendar" : {
                 "locale" : {
@@ -61,9 +62,9 @@
             "nbPoints"    : 17908,
             "pointsParAn" : 788
         },
-        "date_Of_Retirement"           : "2021-12-31T23:59:59+01:00",
+        "date_Of_Retirement"           : "2021-08-31T12:00:00+01:00",
         "cause_Retirement"             : "Licenciement",
-        "layoff_Compensation_Bonified" : 120000.0
+        "layoff_Compensation_Bonified" : null
     },
     
     {
@@ -75,7 +76,7 @@
             "givenName" : "Vanessa"
         },
         "sexe"                 : 1,
-        "birth_Date" : "1968-12-16T00:00:01+01:00",
+        "birth_Date" : "1968-12-16T12:00:00+01:00",
         "work_Income" : {
             "turnOver_BNC" : 50000,
             "turnOver_incomeLossInsurance" : 5000
@@ -125,7 +126,7 @@
             "nbPoints"    : 17908,
             "pointsParAn" : 788
         },
-        "date_Of_Retirement"           : "2020-03-29T14:18:52Z",
+        "date_Of_Retirement"           : "2020-03-29T12:00:00+01:00",
         "cause_Retirement"             : "Démission",
         "layoff_Compensation_Bonified" : null
     },
@@ -139,7 +140,7 @@
             "givenName" : "Lou-Ann"
         },
         "sexe" : 1,
-        "birth_Date" : "2004-02-04T00:00:01Z",
+        "birth_Date" : "2004-02-04T12:00:00+01:00",
         "age_Of_University"   : 18,
         "age_Of_Independence" : 24,
         "age_Of_Death"        : 81,
@@ -154,7 +155,7 @@
             "givenName" : "Arthur"
         },
         "sexe" : 0,
-        "birth_Date" : "2005-09-30T00:00:01Z",
+        "birth_Date" : "2005-09-30T12:00:00+01:00",
         "age_Of_University"   : 18,
         "age_Of_Independence" : 24,
         "age_Of_Death"        : 81,

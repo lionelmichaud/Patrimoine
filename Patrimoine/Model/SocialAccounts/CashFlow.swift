@@ -355,6 +355,14 @@ struct CashFlowLine {
                     revenues.pensions.taxablesIrpp.values.append((name: name, value: (pension.net - discount).rounded()))
                 }
                 totalPensionDiscount += discount
+                
+                /// allocation chomage
+                let alocation = adult.unemployementAllocation(during: year)
+                revenues.unemployAlloc.credits.values.append((name: name, value: alocation.net.rounded()))
+                revenues.unemployAlloc.taxablesIrpp.values.append((name: name, value: alocation.taxable.rounded()))
+
+                /// indemnité de licenciement
+                
             }
         }
     }

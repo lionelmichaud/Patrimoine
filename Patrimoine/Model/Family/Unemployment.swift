@@ -260,7 +260,7 @@ struct AllocationChomage: Codable {
         }
         // réduction application seulement au-dessus d'un certain seuil d'allocation
         let daylyAlloc = daylyAllocBeforeReduction(SJR: SJR).brut
-        if daylyAlloc >= slice.reductionSeuilAlloc {
+        if daylyAlloc >= slice.reductionSeuilAlloc && slice.reduction != 0 {
             return slice.reductionAfter
         } else {
             return nil

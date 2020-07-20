@@ -185,7 +185,7 @@ struct PensionTaxes: Codable {
     /// - Returns: pension taxable à l'IRPP
     func taxable(from net: Double) -> Double {
         let rebate = (net * model.rebate / 100.0).clamp(low: model.minRebate, high: model.maxRebate)
-        return net - rebate
+        return max (0, net - rebate)
     }
     
     // TODO: - Taux CSG déductible de l'impôt sur le revenu 5.9%

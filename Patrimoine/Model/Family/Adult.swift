@@ -469,19 +469,19 @@ final class Adult: Person {
         if let dateReducAlloc = dateOfStartOfAllocationReduction {
             // reduction d'allocation après un certaine date
             let allocReduite  = unemployementReducedAllocation!
-            // intersection de l'année avec la péiode taux plein
+            // intersection de l'année avec la période taux plein
             var debut   = max(dateDebAlloc, firstYearDay)
             var fin     = min(dateReducAlloc, lastYearDay)
-            let nbDays1 = numberOfDays(from : debut, to : fin).day
-            // intersection de l'année avec la péiode taux réduit
+            let nbDays1 = max(0, numberOfDays(from : debut, to : fin).day!)
+            // intersection de l'année avec la période taux réduit
             debut       = max(dateReducAlloc, firstYearDay)
             fin         = min(dateFinAlloc, lastYearDay)
-            let nbDays2 = numberOfDays(from : debut, to : fin).day
+            let nbDays2 = max(0, numberOfDays(from : debut, to : fin).day!)
             // somme des deux parties
-            let brut = alloc.brut/365 * nbDays1!.double() +
-                allocReduite.brut/365 * nbDays2!.double()
-            let net = alloc.net/365  * nbDays1!.double() +
-                allocReduite.net/365 * nbDays2!.double()
+            let brut = alloc.brut/365 * nbDays1.double() +
+                allocReduite.brut/365 * nbDays2.double()
+            let net = alloc.net/365  * nbDays1.double() +
+                allocReduite.net/365 * nbDays2.double()
             return (brut    : brut,
                     net     : net,
                     taxable : net)

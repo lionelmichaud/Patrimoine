@@ -50,32 +50,40 @@ struct PersonLifeLineView: View {
             case is Adult:
                 let adult = member as! Adult
                 // cessation d'activité
-                viewModel.steps.append(TextView(text: adult.dateOfRetirement.stringShortDayMonth + ": Cessation d'activité", font: .system(size: 14, weight: .semibold)).padding(.leading).eraseToAnyView())
+                viewModel.steps.append(TextView(text: adult.dateOfRetirement.stringShortDayMonth + ": Cessation d'activité à l'age de \(adult.age(atDate: adult.dateOfRetirement).year!) ans \(adult.age(atDate: adult.dateOfRetirement).month!) mois",
+                                                font: .system(size: 14, weight: .semibold)).padding(.leading).eraseToAnyView())
                 viewModel.indicators.append(StepperIndicationType.custom(NumberedCircleView(text: String(adult.dateOfRetirement.year), width: radius).eraseToAnyView()))
                 viewModel.pitStops.append(PitStopStep(view: TextView(text:"Aucun revenu").eraseToAnyView(), lineOptions: PitStopLineOptions.custom(1, Colors.teal.rawValue)))
                 // période d'allocation chomage éventuelle
                 if adult.hasUnemployementAllocationPeriod {
                     if adult.dateOfStartOfAllocationReduction != nil {
-                        viewModel.steps.append(TextView(text: adult.dateOfStartOfAllocationReduction!.stringShortDayMonth + ": Début de réduction de l'allocation chômage", font: .system(size: 14, weight: .semibold)).padding(.leading).eraseToAnyView())
+                        viewModel.steps.append(TextView(text: adult.dateOfStartOfAllocationReduction!.stringShortDayMonth + ": Début de réduction de l'allocation chômage à l'age de \(adult.age(atDate: adult.dateOfStartOfAllocationReduction!).year!) ans \(adult.age(atDate: adult.dateOfStartOfAllocationReduction!).month!) mois",
+                                                        font: .system(size: 14, weight: .semibold)).padding(.leading).eraseToAnyView())
                         viewModel.indicators.append(StepperIndicationType.custom(NumberedCircleView(text: String(adult.dateOfStartOfAllocationReduction!.year), width: radius).eraseToAnyView()))
                         viewModel.pitStops.append(PitStopStep(view: TextView(text:"Allocation chômage").eraseToAnyView(), lineOptions: PitStopLineOptions.custom(1, Colors.teal.rawValue)))
                     }
-                    viewModel.steps.append(TextView(text: adult.dateOfEndOfUnemployementAllocation!.stringShortDayMonth + ": Fin de période d'allocation chômage", font: .system(size: 14, weight: .semibold)).padding(.leading).eraseToAnyView())
+                    viewModel.steps.append(TextView(text: adult.dateOfEndOfUnemployementAllocation!.stringShortDayMonth + ": Fin de période d'allocation chômage à l'age de \(adult.age(atDate: adult.dateOfEndOfUnemployementAllocation!).year!) ans \(adult.age(atDate: adult.dateOfEndOfUnemployementAllocation!).month!) mois",
+                                                    font: .system(size: 14, weight: .semibold)).padding(.leading).eraseToAnyView())
                     viewModel.indicators.append(StepperIndicationType.custom(NumberedCircleView(text: String(adult.dateOfEndOfUnemployementAllocation!.year), width: radius).eraseToAnyView()))
                     viewModel.pitStops.append(PitStopStep(view: TextView(text:"Allocation chômage").eraseToAnyView(), lineOptions: PitStopLineOptions.custom(1, Colors.teal.rawValue)))
                 }
                 // liquidation de pension complémentaire
-                viewModel.steps.append(TextView(text: adult.dateOfAgircPensionLiquid.stringShortDayMonth + ": Liquidation de la pension complémentaire", font: .system(size: 14, weight: .semibold)).padding(.leading).eraseToAnyView())
+                viewModel.steps.append(TextView(text: adult.dateOfAgircPensionLiquid.stringShortDayMonth + ": Liquidation de la pension complémentaire à l'age de \(adult.ageOfAgircPensionLiquidComp.year!) ans \(adult.ageOfAgircPensionLiquidComp.month!) mois",
+                                                font: .system(size: 14, weight: .semibold)).padding(.leading).eraseToAnyView())
                 viewModel.indicators.append(StepperIndicationType.custom(NumberedCircleView(text: String(adult.dateOfAgircPensionLiquid.year), width: radius).eraseToAnyView()))
                 viewModel.pitStops.append(PitStopStep(view: TextView(text:"Pension complémentaire").eraseToAnyView(), lineOptions: PitStopLineOptions.custom(1, Colors.teal.rawValue)))
                 // liquidation de pension de base
-                viewModel.steps.append(TextView(text: adult.dateOfPensionLiquid.stringShortDayMonth + ": Liquidation de la pension de base", font: .system(size: 14, weight: .semibold)).padding(.leading).eraseToAnyView())
+                viewModel.steps.append(TextView(text: adult.dateOfPensionLiquid.stringShortDayMonth + ": Liquidation de la pension de base à l'age de \(adult.ageOfPensionLiquidComp.year!) ans \(adult.ageOfPensionLiquidComp.month!) mois",
+                                                font: .system(size: 14, weight: .semibold)).padding(.leading).eraseToAnyView())
                 viewModel.indicators.append(StepperIndicationType.custom(NumberedCircleView(text: String(adult.dateOfPensionLiquid.year), width: radius).eraseToAnyView()))
                 viewModel.pitStops.append(PitStopStep(view: TextView(text:"Pension du régime général et complémentaire").eraseToAnyView(), lineOptions: PitStopLineOptions.custom(1, Colors.teal.rawValue)))
-                // liquidation de pension de base
-                viewModel.steps.append(TextView(text: "Entrée dans la dépendance", font: .system(size: 14, weight: .semibold)).padding(.leading).eraseToAnyView())
+                // début de la dépendance
+                if adult.nbOfYearOfDependency != 0 {
+                viewModel.steps.append(TextView(text: "Entrée dans la dépendance pour une période de \(adult.nbOfYearOfDependency) ans à l'age de \(adult.ageOfDependency) ans",
+                                                font: .system(size: 14, weight: .semibold)).padding(.leading).eraseToAnyView())
                 viewModel.indicators.append(StepperIndicationType.custom(NumberedCircleView(text: String(adult.yearOfDependency), width: radius).eraseToAnyView()))
                 viewModel.pitStops.append(PitStopStep(view: TextView(text:"Pension du régime général et complémentaire").eraseToAnyView(), lineOptions: PitStopLineOptions.custom(1, Colors.teal.rawValue)))
+                }
             
             case is Child:
                 let child = member as! Child
@@ -91,7 +99,8 @@ struct PersonLifeLineView: View {
             default:
                 ()
         }
-        viewModel.steps.append(TextView(text:"Décès", font: .system(size: 14, weight: .semibold)).padding(.leading).eraseToAnyView())
+        viewModel.steps.append(TextView(text:"Décès à l'age de \(member.ageOfDeath) ans",
+                                        font: .system(size: 14, weight: .semibold)).padding(.leading).eraseToAnyView())
         viewModel.indicators.append(StepperIndicationType.custom(NumberedCircleView(text: String(member.yearOfDeath), width: radius).eraseToAnyView()))
         //viewModel.pitStops.append(PitStopStep(view: TextView(text:"Pension du régime général").eraseToAnyView(), lineOptions: PitStopLineOptions.custom(1, Colors.teal.rawValue)))
     }
