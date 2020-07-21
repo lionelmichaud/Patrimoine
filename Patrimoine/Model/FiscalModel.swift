@@ -406,9 +406,9 @@ struct IncomeTaxes: Codable {
     
     // tranche de barême de l'IRPP
     struct IrppSlice: Codable {
-        let floor : Double = 0.0 // euro
-        let rate  : Double = 0.0 // %
-        let disc  : Double = 0.0 // euro
+        let floor : Double // euro
+        let rate  : Double // %
+        let disc  : Double // euro
     }
     
     struct Model: Codable {
@@ -469,8 +469,8 @@ struct IncomeTaxes: Codable {
                nbAdults      : Int,
                nbChildren    : Int) -> Double {
         // FIXME: Vérifier calcul
-        let familyQuotient = self.familyQuotient(nbAdults: nbAdults,
-                                                        nbChildren: nbChildren)
+        let familyQuotient = self.familyQuotient(nbAdults  : nbAdults,
+                                                 nbChildren: nbChildren)
         if let irppSlice = model.irppGrid.last(where: { $0.floor < taxableIncome / familyQuotient}) {
             // calcul de l'impot avec les parts des enfants
             let taxWithChildren = taxableIncome * irppSlice.rate - familyQuotient * irppSlice.disc

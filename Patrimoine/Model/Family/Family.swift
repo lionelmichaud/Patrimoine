@@ -13,14 +13,14 @@ final class Family: ObservableObject, CustomStringConvertible {
     // dépenses
     @Published var expenses: Expenses
     // revenus
-    var initialNetIncome: Double { // computed
+    var workNetIncome    : Double { // computed
         var netIcome : Double = 0.0
         for person in members {
             if let adult = person as? Adult {netIcome += adult.workNetIncome}
         }
         return netIcome
     }
-    var initialTaxableIncome: Double { // computed
+    var workTaxableIncome: Double { // computed
         var taxableIncome : Double = 0.0
         for person in members {
             if let adult = person as? Adult {taxableIncome += adult.workTaxableIncome}
@@ -28,25 +28,25 @@ final class Family: ObservableObject, CustomStringConvertible {
         return taxableIncome
     }
     // coefficient familial
-    var familyQuotient: Double { // computed
+    var familyQuotient   : Double { // computed
         Fiscal.model.incomeTaxes.familyQuotient(nbAdults: nbOfAdults, nbChildren: nbOfChildren)
     }
     // impots
-    var irpp: Double { // computed
-        Fiscal.model.incomeTaxes.irpp(taxableIncome: initialTaxableIncome, nbAdults: nbOfAdults, nbChildren: nbOfChildren)
+    var irpp             : Double { // computed
+        Fiscal.model.incomeTaxes.irpp(taxableIncome: workTaxableIncome, nbAdults: nbOfAdults, nbChildren: nbOfChildren)
     }
-    var description: String {
+    var description      : String {
         return members.debugDescription + "\n"
     }
     
-    var nbOfChildren: Int { // computed
+    var nbOfChildren     : Int { // computed
         var nb = 0
         for person in members {
             if person is Child {nb += 1}
         }
         return nb
     }
-    var nbOfAdults: Int { // computed
+    var nbOfAdults       : Int { // computed
         var nb = 0
         for person in members {
             if person is Adult {nb += 1}
@@ -257,8 +257,8 @@ final class Family: ObservableObject, CustomStringConvertible {
         for person in members {
             person.print()
         }
-        Swift.print("  family net income:    ",initialNetIncome,"euro")
-        Swift.print("  family taxable income:",initialTaxableIncome,"euro")
+        Swift.print("  family net income:    ",workNetIncome,"euro")
+        Swift.print("  family taxable income:",workTaxableIncome,"euro")
         Swift.print("  family income tax quotient:",familyQuotient)
         Swift.print("  family income taxes:",irpp,"euro")
         // investissement périodiques

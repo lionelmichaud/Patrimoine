@@ -134,7 +134,7 @@
             "salaryRebate"   : 10.0,
             "minSalaryRebate":   441.0,
             "maxSalaryRebate": 12627.0,
-            "childRebate"    : 1512.0,
+            "childRebate"    :  1512.0,
             "irppGrid" : [
                 {
                     "floor" : 9964.0,

@@ -114,25 +114,25 @@ class Person : ObservableObject, Identifiable, CustomStringConvertible, Codable 
     var yearOfDeath           : Int { // computed
         birthDateComponents.year! + ageOfDeath
     }
-    var ageComponents: DateComponents { // computed
+    var ageComponents         : DateComponents { // computed
         Date.calendar.dateComponents([.year, .month, .day],
                                      from: birthDateComponents,
                                      to: CalendarCst.nowComponents)
     }
-    var ageAtEndOfCurrentYear: Int { // computed
+    var ageAtEndOfCurrentYear : Int { // computed
         Date.calendar.dateComponents([.year],
                                      from: birthDateComponents,
                                      to: CalendarCst.endOfYearComp).year!
     }
-    var displayName: String {
+    var displayName           : String {
         let formatter = PersonNameComponentsFormatter()
         formatter.style = .long
         return formatter.string(from: name)
     }
-    var displayBirthDate: String {
+    var displayBirthDate      : String {
         mediumDateFormatter.string(from: birthDate)
     }
-    var description: String {
+    var description           : String {
         return """
         \(displayName)
         seniority: \(String(describing: type(of: self)))

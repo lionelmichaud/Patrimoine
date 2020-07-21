@@ -13,7 +13,7 @@ struct PersonLifeLineView: View {
     @EnvironmentObject var member: Person
     
     class ViewModel: ObservableObject {
-        @Published var steps      : [AnyView]                       = []
+        @Published var steps      : [AnyView]                        = []
         @Published var indicators : [StepperIndicationType<AnyView>] = []
         @Published var pitStops   : [PitStopStep]                    = []
     }

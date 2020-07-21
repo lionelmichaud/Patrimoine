@@ -65,21 +65,23 @@ struct CashFlowLine {
         
         let name = "REVENUS HORS SCI"
         /// revenus du travail
-        var workIncomes     = NetAndTaxable(name: "Revenu Travail")
+        var workIncomes        = NetAndTaxable(name    : "Revenu Travail")
         /// pension de retraite
-        var pensions        = NetAndTaxable(name: "Revenu Pension")
+        var pensions           = NetAndTaxable(name    : "Revenu Pension")
+        /// indemnité de licenciement
+        var layoffCompensation = NetAndTaxable(name : "Indemnité de licenciement")
         /// alloc chomage
-        var unemployAlloc   = NetAndTaxable(name: "Revenu Alloc Chomage")
+        var unemployAlloc      = NetAndTaxable(name    : "Revenu Alloc Chomage")
         /// revenus financiers
-        var financials      = NetAndTaxable(name: "Revenu Financier")
+        var financials         = NetAndTaxable(name    : "Revenu Financier")
         /// revenus des SCPI hors de la SCI
-        var scpis           = NetAndTaxable(name: "Revenu SCPI")
+        var scpis              = NetAndTaxable(name    : "Revenu SCPI")
         /// revenus de locations des biens immobiliers
-        var realEstateRents = NetAndTaxable(name: "Revenu Location")
+        var realEstateRents    = NetAndTaxable(name    : "Revenu Location")
         /// total des ventes des SCPI hors de la SCI
-        var scpiSale        = NetAndTaxable(name: "Vente SCPI")
+        var scpiSale           = NetAndTaxable(name    : "Vente SCPI")
         /// total des ventes des biens immobiliers
-        var realEstateSale  = NetAndTaxable(name: "Vente Immobilier")
+        var realEstateSale     = NetAndTaxable(name    : "Vente Immobilier")
         /// revenus imposable de l'année précédente et reporté à l'année courante
         var taxableIrppRevenueDelayedFromLastYear = Debt(name: "REVENU IMPOSABLE REPORTE DE L'ANNEE PRECEDENTE", value: 0)
         
@@ -87,6 +89,7 @@ struct CashFlowLine {
         var totalCredited: Double {
             workIncomes.credits.total +
                 pensions.credits.total +
+                layoffCompensation.credits.total +
                 unemployAlloc.credits.total +
                 financials.credits.total +
                 scpis.credits.total +
@@ -98,6 +101,7 @@ struct CashFlowLine {
         var totalTaxableIrpp: Double {
             workIncomes.taxablesIrpp.total +
                 pensions.taxablesIrpp.total +
+                layoffCompensation.taxablesIrpp.total +
                 unemployAlloc.taxablesIrpp.total +
                 financials.taxablesIrpp.total +
                 scpis.taxablesIrpp.total +
@@ -113,10 +117,12 @@ struct CashFlowLine {
             var table = NamedValueTable(withName: "REVENUS")
             table.values.append((name  : workIncomes.name,
                                  value : workIncomes.credits.total))
-            table.values.append((name  : pensions.name,
-                                 value : pensions.credits.total))
+            table.values.append((name  : layoffCompensation.name,
+                                 value : layoffCompensation.credits.total))
             table.values.append((name  : unemployAlloc.name,
                                  value : unemployAlloc.credits.total))
+            table.values.append((name  : pensions.name,
+                                 value : pensions.credits.total))
             table.values.append((name  : financials.name,
                                  value : financials.credits.total))
             table.values.append((name  : scpis.name,
@@ -134,6 +140,7 @@ struct CashFlowLine {
         var headersDetailedArray: [String] {
             workIncomes.credits.headersArray +
                 pensions.credits.headersArray +
+                layoffCompensation.credits.headersArray +
                 unemployAlloc.credits.headersArray +
                 financials.credits.headersArray +
                 scpis.credits.headersArray +
@@ -145,6 +152,7 @@ struct CashFlowLine {
         var valuesDetailedArray: [Double] {
             workIncomes.credits.valuesArray +
                 pensions.credits.valuesArray +
+                layoffCompensation.credits.valuesArray +
                 unemployAlloc.credits.valuesArray +
                 financials.credits.valuesArray +
                 scpis.credits.valuesArray +
@@ -162,6 +170,8 @@ struct CashFlowLine {
             workIncomes.print(level: level+1)
             // pension de retraite
             pensions.print(level: level+1)
+            // indemnité de licenciement
+            layoffCompensation.print(level: level+1)
             // alloc chomage
             unemployAlloc.print(level: level+1)
             // financial investements
@@ -186,12 +196,12 @@ struct CashFlowLine {
         
         // properties
         
-        let name = "TAXES"
+        let name                   = "TAXES"
         var familyQuotient: Double = 0.0
-        var irpp: Double           = 0.0
+        var irpp          : Double = 0.0
         var localTaxes             = NamedValueTable(withName: "Taxes Locales")
         var socialTaxes            = NamedValueTable(withName: "Prélev Sociaux")
-        var total: Double { localTaxes.total + socialTaxes.total + irpp }
+        var total         : Double { localTaxes.total + socialTaxes.total + irpp }
         
         // methods
         
@@ -231,19 +241,6 @@ struct CashFlowLine {
                                  value : namedValueTable.total))
             return table
         }
-        //        let name = "LIFE EXPENSES"
-        //        var amounts = [(name: String, value: Double)]()
-        //        var total: Double {
-        //            return amounts.reduce(.zero, {result, element in result + element.value})
-        //        }
-        
-        // methods
-        
-        //        func print(level: Int = 0) {
-        //            let h = String(repeating: StringCst.header, count: level)
-        //            Swift.print(h + name + ":")
-        //            Swift.print(h + StringCst.header, amounts, "total:", total)
-        //        }
     }
     
     // MARK: - properties
@@ -362,7 +359,9 @@ struct CashFlowLine {
                 revenues.unemployAlloc.taxablesIrpp.values.append((name: name, value: alocation.taxable.rounded()))
 
                 /// indemnité de licenciement
-                
+                let compensation = adult.layoffCompensation(during: year)
+                revenues.layoffCompensation.credits.values.append((name: name, value: compensation.net.rounded()))
+                revenues.layoffCompensation.taxablesIrpp.values.append((name: name, value: compensation.taxable.rounded()))
             }
         }
     }
