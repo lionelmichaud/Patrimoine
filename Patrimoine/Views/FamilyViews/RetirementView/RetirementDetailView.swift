@@ -84,16 +84,19 @@ struct RetirementDetailView: View {
     
     func onAppear() {
         // régime général
+        let adult = member as! Adult
         guard let nbTrimestreDecote =
-            Pension.model.regimeGeneral.nbTrimestreDecote(birthDate               : member.birthDate,
-                                                          lastKnownSituation      : (member as! Adult).lastKnownPensionSituation,
-                                                          dateOfPensionLiquidComp : (member as! Adult).dateOfPensionLiquidComp) else {
-                                                            return
+            Pension.model.regimeGeneral.nbTrimestreDecote(birthDate           : member.birthDate,
+                                                          lastKnownSituation  : adult.lastKnownPensionSituation,
+                                                          dateOfPensionLiquid : adult.dateOfPensionLiquid) else {
+             return
         }
         guard let (tauxDePension, dureeDeReference, dureeAssurance, pensionBrute, pensionNette) =
             Pension.model.regimeGeneral.pensionWithDetail(birthDate               : member.birthDate,
-                                                          dateOfPensionLiquidComp : (member as! Adult).dateOfPensionLiquidComp,
-                                                          lastKnownSituation      : (member as! Adult).lastKnownPensionSituation) else {
+                                                          dateOfRetirement        : adult.dateOfRetirement,
+                                                          dateOfEndOfUnemployAlloc: adult.dateOfEndOfUnemployementAllocation,
+                                                          dateOfPensionLiquid     : adult.dateOfPensionLiquid,
+                                                          lastKnownSituation      : adult.lastKnownPensionSituation) else {
             return
         }
         viewModel.general.dateTauxPlein     =
@@ -112,11 +115,13 @@ struct RetirementDetailView: View {
         
         // régime complémentaire
         guard let (coefMinoration, projectedNbOfPoints, pensionBruteAgirc, pensionNetteAgirc) =
-            Pension.model.regimeAgirc.pension(lastAgircKnownSituation : (member as! Adult).lastKnownAgircPensionSituation,
+            Pension.model.regimeAgirc.pension(lastAgircKnownSituation : adult.lastKnownAgircPensionSituation,
                                               birthDate               : member.birthDate,
-                                              lastKnownSituation      : (member as! Adult).lastKnownPensionSituation,
-                                              dateOfPensionLiquidComp : (member as! Adult).dateOfAgircPensionLiquidComp,
-                                              ageOfPensionLiquidComp  : (member as! Adult).ageOfAgircPensionLiquidComp) else { return }
+                                              lastKnownSituation      : adult.lastKnownPensionSituation,
+                                              dateOfRetirement        : adult.dateOfRetirement,
+                                              dateOfEndOfUnemployAlloc: adult.dateOfEndOfUnemployementAllocation,
+                                              dateOfPensionLiquid     : adult.dateOfPensionLiquid,
+                                              ageOfPensionLiquidComp  : adult.ageOfAgircPensionLiquidComp) else { return }
         viewModel.agirc.projectedNbOfPoints = projectedNbOfPoints
         viewModel.agirc.valeurDuPoint       = Pension.model.regimeAgirc.model.valeurDuPoint
         viewModel.agirc.coefMinoration      = coefMinoration

@@ -69,14 +69,16 @@ struct RegimeAgirc: Codable {
     }
     
     func projectedNumberOfPoints(lastAgircKnownSituation : RegimeAgircSituation,
-                                 dateOfPensionLiquidComp : DateComponents) -> Int? {
+                                 dateOfPensionLiquid     : Date) -> Int? {
         let dateRefComp = DateComponents(calendar : Date.calendar,
                                          year     : lastAgircKnownSituation.atEndOf,
                                          month    : 12,
                                          day      : 31)
+        let dateRef = Date.calendar.date(from: dateRefComp)!
+        
         let dureeRestant = Date.calendar.dateComponents([.year, .month, .day],
-                                                        from: dateRefComp,
-                                                        to  : dateOfPensionLiquidComp)
+                                                        from: dateRef,
+                                                        to  : dateOfPensionLiquid)
         guard let anneesPlaines = dureeRestant.year,
             let mois = dureeRestant.month else { return nil }
         
@@ -85,11 +87,13 @@ struct RegimeAgirc: Codable {
         return lastAgircKnownSituation.nbPoints + Int(nbPointsFutur)
     }
     
-    func pension(lastAgircKnownSituation : RegimeAgircSituation,
-                 birthDate               : Date,
-                 lastKnownSituation      : RegimeGeneralSituation,
-                 dateOfPensionLiquidComp : DateComponents,
-                 ageOfPensionLiquidComp  : DateComponents) ->
+    func pension(lastAgircKnownSituation  : RegimeAgircSituation,
+                 birthDate                : Date,
+                 lastKnownSituation       : RegimeGeneralSituation,
+                 dateOfRetirement         : Date,
+                 dateOfEndOfUnemployAlloc : Date?,
+                 dateOfPensionLiquid      : Date,
+                 ageOfPensionLiquidComp   : DateComponents) ->
         (coefMinoration     : Double,
         projectedNbOfPoints : Int,
         pensionBrute        : Double,
@@ -97,9 +101,6 @@ struct RegimeAgirc: Codable {
         
         var coefMinoration: Double
         
-        guard let dateOfPensionLiquid = Date.calendar.date(from: dateOfPensionLiquidComp) else {
-            return nil
-        }
         guard let dateOfAgeMinimumAgirc = dateAgeMinimumAgirc(birthDate:birthDate) else {
             return nil
         }
@@ -115,12 +116,13 @@ struct RegimeAgirc: Codable {
         }
         
         if dateOfPensionLiquid >= dateOfAgeMinimumLegal {
-            // nombre de trimestre manquant au moment de la liquidation de la pensionpour pour obtenir le taux plein
+            // nombre de trimestre manquant au moment de la liquidation de la pension pour pour obtenir le taux plein
             guard let nbTrimManquantPourTauxPlein =
-                Pension.model.regimeGeneral.nbTrimManquantPourTauxPlein(birthYear               : birthDate.year,
-                                                                        lastKnownSituation      : lastKnownSituation,
-                                                                        dateOfPensionLiquidComp : dateOfPensionLiquidComp) else {
-                                                                            return nil
+                Pension.model.regimeGeneral.nbTrimManquantPourTauxPlein(birthYear                : birthDate.year,
+                                                                        lastKnownSituation       : lastKnownSituation,
+                                                                        dateOfRetirement         : dateOfRetirement,
+                                                                        dateOfEndOfUnemployAlloc : dateOfEndOfUnemployAlloc) else {
+                    return nil
             }
             // nombre de trimestre au-delà de l'age minimum légal de départ à la retraite au moment de la liquidation de la pension
             guard let yearOfPensionLiquid = ageOfPensionLiquidComp.year,
@@ -155,8 +157,8 @@ struct RegimeAgirc: Codable {
         }
         
         // projection du nb de points au moment de la demande de liquidation de la pension
-        guard let projectedNumberOfPoints = self.projectedNumberOfPoints(lastAgircKnownSituation: lastAgircKnownSituation,
-                                                                         dateOfPensionLiquidComp: dateOfPensionLiquidComp) else {
+        guard let projectedNumberOfPoints = self.projectedNumberOfPoints(lastAgircKnownSituation : lastAgircKnownSituation,
+                                                                         dateOfPensionLiquid     : dateOfPensionLiquid) else {
             return nil
         }
         

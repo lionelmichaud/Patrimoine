@@ -8,20 +8,21 @@
             "givenName"  : "Lionel"
         },
         "sexe"                 : 0,
-        "birth_Date" : "1964-09-22T00:00:00+01:00",
+        "birth_Date" : "1964-09-22T23:00:00+01:00",
         "work_Income" : {
             "salary_brutSalary"      : 100427,
             "salary_taxableSalary"   : 85821,
             "salary_netSalary"       : 80000,
-            "salary_fromDate"        : "2001-11-15T12:00:00+01:00",
+            "salary_fromDate"        : "2001-11-19T23:00:00+01:00",
             "salary_healthInsurance" : 700
         },
         "nb_Of_Child_Birth"       : 0,
         "age_Of_Death"           : 81,
         "nb_Of_Year_Of_Dependency" : 0,
         "age_Of_Pension_Liquid" : {
-            "year" : 62,
-            "month"  : 6,
+            "year"  : 62,
+            "month" : 0,
+            "day"   : 1,
             "calendar" : {
                 "locale" : {
                     "identifier" : "fr_FR"
@@ -38,12 +39,12 @@
         "regime_General_Situation" : {
             "atEndOf"           : 2019,
             "nbTrimestreAcquis" : 135,
-            "sam"               : 41136
+            "sam"               : 36698
         },
         "age_Of_Agirc_Pension_Liquid" : {
-            "year" : 60,
+            "year" : 62,
             "month": 0,
-            "day"  : 0,
+            "day"  : 1,
             "calendar" : {
                 "locale" : {
                     "identifier" : "fr_FR"
@@ -62,8 +63,8 @@
             "nbPoints"    : 17908,
             "pointsParAn" : 788
         },
-        "date_Of_Retirement"           : "2027-03-31T12:00:00+01:00",
-        "cause_Retirement"             : "Licenciement",
+        "date_Of_Retirement"           : "2026-09-30T23:00:00+01:00",
+        "cause_Retirement"             : "Démission",
         "layoff_Compensation_Bonified" : null
     },
     
@@ -76,7 +77,7 @@
             "givenName" : "Vanessa"
         },
         "sexe"                 : 1,
-        "birth_Date" : "1968-12-17T12:00:00+01:00",
+        "birth_Date" : "1968-12-17T23:00:00+01:00",
         "work_Income" : {
             "turnOver_BNC" : 34000,
             "turnOver_incomeLossInsurance" : 5000
@@ -126,7 +127,7 @@
             "nbPoints"    : 4428,
             "pointsParAn" : 0
         },
-        "date_Of_Retirement"           : "2020-03-29T12:00:00+01:00",
+        "date_Of_Retirement"           : "2020-03-29T23:00:00+01:00",
         "cause_Retirement"             : "Démission",
         "layoff_Compensation_Bonified" : null
     },
@@ -140,7 +141,7 @@
             "givenName" : "Lou-Ann"
         },
         "sexe" : 1,
-        "birth_Date" : "2004-02-04T12:00:00+01:00",
+        "birth_Date" : "2004-02-04T23:00:00+01:00",
         "age_Of_University"   : 18,
         "age_Of_Independence" : 24,
         "age_Of_Death"        : 81,
@@ -155,7 +156,7 @@
             "givenName" : "Arthur"
         },
         "sexe" : 0,
-        "birth_Date" : "2005-09-30T12:00:00+01:00",
+        "birth_Date" : "2005-09-30T23:00:00+01:00",
         "age_Of_University"   : 18,
         "age_Of_Independence" : 24,
         "age_Of_Death"        : 81,

@@ -182,9 +182,11 @@ final class Adult: Person {
     var pensionRegimeGeneral: (brut: Double, net: Double) {
         // pension du régime général
         if let pensionGeneral =
-            Pension.model.regimeGeneral.pensionWithDetail(birthDate               : birthDate,
-                                                          dateOfPensionLiquidComp : dateOfPensionLiquidComp,
-                                                          lastKnownSituation      : lastKnownPensionSituation) {
+            Pension.model.regimeGeneral.pensionWithDetail(birthDate                : birthDate,
+                                                          dateOfRetirement         : dateOfRetirement,
+                                                          dateOfEndOfUnemployAlloc : dateOfEndOfUnemployementAllocation,
+                                                          dateOfPensionLiquid      : dateOfPensionLiquid,
+                                                          lastKnownSituation       : lastKnownPensionSituation) {
             return (pensionGeneral.pensionBrute,
                     pensionGeneral.pensionNette)
         } else {
@@ -207,11 +209,13 @@ final class Adult: Person {
     @Published var lastKnownAgircPensionSituation = RegimeAgircSituation()
     var pensionRegimeAgirc: (brut: Double, net: Double) {
         if let pensionAgirc =
-            Pension.model.regimeAgirc.pension(lastAgircKnownSituation : lastKnownAgircPensionSituation,
-                                              birthDate               : birthDate,
-                                              lastKnownSituation      : lastKnownPensionSituation,
-                                              dateOfPensionLiquidComp : dateOfAgircPensionLiquidComp,
-                                              ageOfPensionLiquidComp  : ageOfAgircPensionLiquidComp) {
+            Pension.model.regimeAgirc.pension(lastAgircKnownSituation  : lastKnownAgircPensionSituation,
+                                              birthDate                : birthDate,
+                                              lastKnownSituation       : lastKnownPensionSituation,
+                                              dateOfRetirement         : dateOfRetirement,
+                                              dateOfEndOfUnemployAlloc : dateOfEndOfUnemployementAllocation,
+                                              dateOfPensionLiquid      : dateOfAgircPensionLiquid,
+                                              ageOfPensionLiquidComp   : ageOfAgircPensionLiquidComp) {
             return (pensionAgirc.pensionBrute,
                     pensionAgirc.pensionNette)
         } else {
