@@ -173,8 +173,8 @@ struct MemberEditView: View {
 
 // MARK: - Saisie adulte
 struct AdultEditView : View {
-    @ObservedObject var personViewModel : PersonViewModel
-    @ObservedObject var adultViewModel  : AdultViewModel
+    @ObservedObject var personViewModel        : PersonViewModel
+    @ObservedObject var adultViewModel         : AdultViewModel
     @State private var compenstationSupraLegal : Bool = false
     
     var body: some View {
@@ -196,10 +196,9 @@ struct AdultEditView : View {
                                 revenueTaxable : $adultViewModel.revenueTaxable,
                                 fromDate       : $adultViewModel.fromDate,
                                 insurance      : $adultViewModel.insurance)
-                DatePicker(selection: $adultViewModel.dateRetirement,
-                           in: Date()...100.years.fromNow! ,
-                           displayedComponents: .date,
-                           label: { Text("Date de cessation d'activité") })
+                DatePicker(selection           : $adultViewModel.dateRetirement,
+                           displayedComponents : .date,
+                           label               : { Text("Date de cessation d'activité") })
                 CasePicker(pickedCase: $adultViewModel.causeOfRetirement, label: "Cause").pickerStyle(SegmentedPickerStyle())
                 if (adultViewModel.causeOfRetirement != Unemployment.Cause.demission) {
                     Toggle(isOn: $adultViewModel.hasAllocationSupraLegale, label: { Text("Indemnité de licenciement supra-légale") })

@@ -44,16 +44,27 @@ struct RegimeAgirc: Codable {
     
     // methods
     
+    /// Age minimum pour demander la liquidation de pension Agirc
+    /// - Parameter birthDate: date de naissance
+    /// - Returns: Age minimum pour demander la liquidation de pension Agirc
     func dateAgeMinimumAgirc(birthDate: Date) -> Date? {
         model.ageMinimum.years.from(birthDate)
     }
     
+    /// Calcul du coefficient de minoration de la pension Agirc si la date de liquidation est avant l'age légal (62 ans)
+    /// - Parameter ndTrimAvantAgeLegal: nb de trimestres entre la date de liquidation Agirc et la date de l'age légal
+    /// - Returns: coefficient de minoration de la pension
     func coefDeMinorationAvantAgeLegal(ndTrimAvantAgeLegal: Int) -> Double? {
         guard let slice = model.gridAvant62.last(where: { $0.ndTrimAvantAgeLegal <= ndTrimAvantAgeLegal})  else { return nil }
 
         return slice.coef
     }
     
+    /// Calcul du coefficient de minoration de la pension Agirc si la date de liquidation est après l'age légal (62 ans)
+    /// - Parameters:
+    ///   - nbTrimManquantPourTauxPlein: nb de Trimestres Manquants Pour obtenir le Taux Plein
+    ///   - nbTrimPostAgeLegalMin: nb de trimestres entre la date de l'age légal et la date de liquidation Agirc
+    /// - Returns: coefficient de minoration de la pension
     func coefDeMinorationApresAgeLegal(nbTrimManquantPourTauxPlein : Int,
                                        nbTrimPostAgeLegalMin       : Int) -> Double? {
         // coefficient de réduction basé sur le nb de trimestre manquants pour obtenir le taux plein
@@ -68,25 +79,76 @@ struct RegimeAgirc: Codable {
         return max(coef1, coef2)
     }
     
-    func projectedNumberOfPoints(lastAgircKnownSituation : RegimeAgircSituation,
-                                 dateOfPensionLiquid     : Date) -> Int? {
+    /// Projection du nombre de points Agirc sur la base du dernier relevé de points et de la prévision de carrière future
+    /// - Parameters:
+    ///   - lastAgircKnownSituation: dernier relevé de situation Agirc
+    ///   - dateOfPensionLiquid: date de liquidation de la pension agirc
+    /// - Returns: nombre de points Agirc projeté à la liquidation de la pension
+    func projectedNumberOfPoints(lastAgircKnownSituation  : RegimeAgircSituation,
+                                 dateOfRetirement         : Date,
+                                 dateOfEndOfUnemployAlloc : Date?) -> Int? {
+        var nbPointsFuturActivite : Double
+        var nbPointsFuturChomage  : Double
         let dateRefComp = DateComponents(calendar : Date.calendar,
                                          year     : lastAgircKnownSituation.atEndOf,
                                          month    : 12,
-                                         day      : 31)
+                                         day      : 31,
+                                         hour     : 23)
         let dateRef = Date.calendar.date(from: dateRefComp)!
         
-        let dureeRestant = Date.calendar.dateComponents([.year, .month, .day],
-                                                        from: dateRef,
-                                                        to  : dateOfPensionLiquid)
-        guard let anneesPlaines = dureeRestant.year,
-            let mois = dureeRestant.month else { return nil }
+        // nombre de points futurs dûs au titre de la future carrière de salarié
+        if dateRef >= dateOfRetirement {
+            // la date du dernier état est postérieure à la date de fin d'activité salarié
+            nbPointsFuturActivite = 0.0
+            
+        } else {
+            // période restant à cotiser à l'Agirc pendant la carrière de salarié
+            let dureeRestant = Date.calendar.dateComponents([.year, .month, .day],
+                                                            from: dateRef,
+                                                            to  : dateOfRetirement)
+            guard let anneesPleines = dureeRestant.year,
+                let moisPleins = dureeRestant.month else { return nil }
+            
+            let nbAnneeRestant: Double = anneesPleines.double() + moisPleins.double() / 12
+            nbPointsFuturActivite = lastAgircKnownSituation.pointsParAn.double() * nbAnneeRestant
+        }
         
-        let nbAnneeRestant: Double = anneesPlaines.double() + mois.double() / 12
-        let nbPointsFutur : Double = lastAgircKnownSituation.pointsParAn.double() * nbAnneeRestant
-        return lastAgircKnownSituation.nbPoints + Int(nbPointsFutur)
+        // nombre de points futurs dûs au titre de la période de chomage indemnisé
+        // https://www.previssima.fr/question-pratique/mes-periodes-de-chomage-comptent-elles-pour-ma-retraite-complementaire.html
+        guard dateOfEndOfUnemployAlloc != nil else {
+            // pas de période de chomage indemnisé donnant droit à des points supplémentaires
+            return lastAgircKnownSituation.nbPoints + Int(nbPointsFuturActivite)
+        }
+        
+        guard dateRef < dateOfEndOfUnemployAlloc! else {
+            // la date du dernier état est postérieure à la date de fin d'indemnisation chomage, le nb de point ne bougera plus
+            return lastAgircKnownSituation.nbPoints + Int(nbPointsFuturActivite)
+        }
+        // on a encore des trimestres à accumuler
+        // période restant à cotiser à l'Agirc pendant la période de chomage indemnisée
+        let dureeRestant = Date.calendar.dateComponents([.year, .month, .day],
+                                                        from: dateRef > dateOfRetirement ? dateRef : dateOfRetirement,
+                                                        to  : dateOfEndOfUnemployAlloc!)
+        guard let anneesPleines = dureeRestant.year,
+            let moisPleins = dureeRestant.month else { return nil }
+        let nbAnneeRestant: Double = anneesPleines.double() + moisPleins.double() / 12
+        // le nb de point acqui par an au chomage semble être le même qu'en période d'activité
+        // TODO: - pas tout à fait car il est basé sur le SJR qui peut être inférieur au salaire journalier réel: passer SJR en paramètre
+        nbPointsFuturChomage = lastAgircKnownSituation.pointsParAn.double() * nbAnneeRestant
+        
+        return lastAgircKnownSituation.nbPoints + Int(nbPointsFuturActivite + nbPointsFuturChomage)
     }
     
+    /// Calcul de la pension Agirc
+    /// - Parameters:
+    ///   - lastAgircKnownSituation:
+    ///   - birthDate:
+    ///   - lastKnownSituation:
+    ///   - dateOfRetirement:
+    ///   - dateOfEndOfUnemployAlloc:
+    ///   - dateOfPensionLiquid:
+    ///   - ageOfPensionLiquidComp:
+    /// - Returns: pension Agirc
     func pension(lastAgircKnownSituation  : RegimeAgircSituation,
                  birthDate                : Date,
                  lastKnownSituation       : RegimeGeneralSituation,
@@ -158,7 +220,8 @@ struct RegimeAgirc: Codable {
         
         // projection du nb de points au moment de la demande de liquidation de la pension
         guard let projectedNumberOfPoints = self.projectedNumberOfPoints(lastAgircKnownSituation : lastAgircKnownSituation,
-                                                                         dateOfPensionLiquid     : dateOfPensionLiquid) else {
+                                                                         dateOfRetirement        : dateOfRetirement,
+                                                                         dateOfEndOfUnemployAlloc: dateOfEndOfUnemployAlloc) else {
             return nil
         }
         

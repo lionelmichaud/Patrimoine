@@ -139,22 +139,28 @@ struct RegimeGeneral: Codable {
             // période de travail non suivi de période d'indeminsation chômage
             dateFinAssurance = dateOfRetirement
         }
-        let duree = Date.calendar.dateComponents([.year, .month, .day],
-                                                 from: dateRef,
-                                                 to  : dateFinAssurance)
-        let (q, _) = duree.month!.quotientAndRemainder(dividingBy: 3)
-        //    Le nombre de trimestres est arrondi au chiffre inférieur
-        let nbTrimestreFutur = (duree.year! * 4) + q
-
-
-        return lastKnownSituation.nbTrimestreAcquis + nbTrimestreFutur
+        if dateRef >= dateFinAssurance {
+            // la date du dernier état est postérieure à la date de fin de cumul des trimestres, ils ne bougeront plus
+            return lastKnownSituation.nbTrimestreAcquis
+            
+        } else {
+            // on a encore des trimestres à accumuler
+            let duree = Date.calendar.dateComponents([.year, .month, .day],
+                                                     from: dateRef,
+                                                     to  : dateFinAssurance)
+            let (q, _) = duree.month!.quotientAndRemainder(dividingBy: 3)
+            //    Le nombre de trimestres est arrondi au chiffre inférieur
+            let nbTrimestreFutur = max(0, (duree.year! * 4) + q)
+            
+            return lastKnownSituation.nbTrimestreAcquis + nbTrimestreFutur
+        }
     }
     
     /// Trouve  la durée de référence pour obtenir une pension à taux plein
     /// - Parameter birthYear: Année de naissance
     /// - Returns: Durée de référence en nombre de trimestres pour obtenir une pension à taux plein ou nil
     func dureeDeReference(birthYear : Int) -> Int? {
-        guard let slice = model.dureeDeReferenceGrid.last(where: { $0.birthYear <= birthYear})  else { return nil }
+        guard let slice = model.dureeDeReferenceGrid.last(where: { $0.birthYear <= birthYear}) else { return nil }
         return slice.ndTrimestre
     }
     
@@ -177,7 +183,7 @@ struct RegimeGeneral: Codable {
     /// - Parameter birthYear: Année de naissance
     /// - Returns: Age minimum pour bénéficer du taux plein sans avoir le nb de trimestres minimumou nil
     func ageTauxPleinLegal(birthYear : Int) -> Int? {
-        guard let slice = model.dureeDeReferenceGrid.last(where: { $0.birthYear <= birthYear})  else { return nil }
+        guard let slice = model.dureeDeReferenceGrid.last(where: { $0.birthYear <= birthYear}) else { return nil }
         return slice.ageTauxPlein
     }
     
