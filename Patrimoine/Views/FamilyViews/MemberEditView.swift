@@ -63,7 +63,6 @@ struct MemberEditView: View {
                 }
             }
             .textFieldStyle(RoundedBorderTextFieldStyle())
-            .avoidKeyboard()
         }
     }
     

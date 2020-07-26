@@ -225,9 +225,14 @@ struct FamilyDetailView_Previews: PreviewProvider {
     static var previews: some View {
         let aMember = family.members.first!
         
-        return MemberDetailView()
+        return Group {
+            MemberDetailView()
+                    .environmentObject(family)
+                .environmentObject(aMember)
+            MemberDetailView()
                 .environmentObject(family)
                 .environmentObject(aMember)
+        }
         
     }
 }

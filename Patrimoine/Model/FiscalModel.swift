@@ -13,6 +13,7 @@ struct Fiscal: Codable {
     // nested types
     
     struct Model: Codable {
+        var PASS                           : Double // Plafond Annuel de la Sécurité Sociale
         var irppOnEstateCapitalGain        : IrppOnRealEstateCapitalGain
         var socialTaxesOnEstateCapitalGain : SocialTaxesOnRealEstateCapitalGain
         var pensionTaxes                   : PensionTaxes
@@ -23,16 +24,15 @@ struct Fiscal: Codable {
         var lifeInsuranceTaxes             : LifeInsuranceTaxes
         var incomeTaxes                    : IncomeTaxes
         var companyProfitTaxes             : CompanyProfitTaxes
-        var PASS                           : Double // Plafond Annuel de la Sécurité Sociale
     }
     
     // properties
     
     static var model: Model  =
-            Bundle.main.decode(Model.self,
-                               from                 : "FiscalModel.json",
-                               dateDecodingStrategy : .iso8601,
-                               keyDecodingStrategy  : .useDefaultKeys)
+        Bundle.main.decode(Model.self,
+                           from                 : "FiscalModel.json",
+                           dateDecodingStrategy : .iso8601,
+                           keyDecodingStrategy  : .useDefaultKeys)
 }
 
 // MARK: - Impôts sur plus-values immobilières
@@ -43,14 +43,14 @@ struct IrppOnRealEstateCapitalGain: Codable {
     
     // tranche de barême de l'IRPP
     struct ExonerationSlice: Codable {
-        let floor        : Int    = 0 // year
-        let discountRate : Double = 0.0 // % par année de détention au-delà de floor
-        let prevDiscount : Double = 0.0 // % cumul des tranches précédentes
+        let floor        : Int // year
+        let discountRate : Double // % par année de détention au-delà de floor
+        let prevDiscount : Double // % cumul des tranches précédentes
     }
     
     struct Model: Codable {
         let exoGrid : [ExonerationSlice]
-        let irpp    : Double = 19.0 // %
+        let irpp    : Double // 19.0 // %
     }
     
     // properties
@@ -90,9 +90,9 @@ struct SocialTaxesOnRealEstateCapitalGain: Codable {
     
     // tranche de barême de l'IRPP
     struct ExonerationSlice: Codable {
-        let floor        : Int    = 0 // year
-        let discountRate : Double = 0.0 // % par année de détention au-delà de floor
-        let prevDiscount : Double = 0.0 // % cumul des tranches précédentes
+        let floor        : Int    // 0 // year
+        let discountRate : Double // 0.0 // % par année de détention au-delà de floor
+        let prevDiscount : Double // 0.0 // % cumul des tranches précédentes
     }
     
     // barême de l'exoneration de charges sociale sur les plus-values immobilières
@@ -105,9 +105,9 @@ struct SocialTaxesOnRealEstateCapitalGain: Codable {
     
     struct Model: Codable {
         let exoGrid      : [ExonerationSlice]
-        let CRDS         : Double = 0.5 // %
-        let CSG          : Double = 9.2 // %
-        let prelevSocial : Double = 7.5 // %
+        let CRDS         : Double // 0.5 // %
+        let CSG          : Double // 9.2 // %
+        let prelevSocial : Double // 7.5 // %
         var total        : Double {
             CRDS + CSG + prelevSocial // %
         }
@@ -149,14 +149,14 @@ struct PensionTaxes: Codable {
     // nested types
     
     struct Model: Codable {
-        let rebate            : Double = 10.0 // %
-        let minRebate         : Double = 393   // € par déclarant
-        let maxRebate         : Double = 3_850 // € par foyer fiscal
-        let CSGdeductible     : Double = 5.9 // %
-        let CRDS              : Double = 0.5 // %
-        let CSG               : Double = 8.3 // %
-        let additionalContrib : Double = 0.3 // %
-        let healthInsurance   : Double = 1.0 // %
+        let rebate            : Double // 10.0 // %
+        let minRebate         : Double // 393   // € par déclarant
+        let maxRebate         : Double // 3_850 // € par foyer fiscal
+        let CSGdeductible     : Double // 5.9 // %
+        let CRDS              : Double // 0.5 // %
+        let CSG               : Double // 8.3 // %
+        let additionalContrib : Double // 0.3 // %
+        let healthInsurance   : Double // 1.0 // %
         var total             : Double {
             CRDS + CSG + additionalContrib + healthInsurance // %
         }
@@ -206,9 +206,9 @@ struct SocialTaxesOnFinancialRevenu: Codable {
     // nested types
     
     struct Model: Codable {
-        let CRDS         : Double = 0.5 // %
-        let CSG          : Double = 9.2 // %
-        let prelevSocial : Double = 7.5  // %
+        let CRDS         : Double // 0.5 // %
+        let CSG          : Double // 9.2 // %
+        let prelevSocial : Double // 7.5  // %
         var total        : Double {
             CRDS + CSG + prelevSocial // %
         }
@@ -242,11 +242,11 @@ struct SocialTaxesOnFinancialRevenu: Codable {
 // MARK: - Charges sociales sur chiffre d'affaire
 // charges sociales sur chiffre d'affaire
 struct SocialTaxesOnTurnover: Codable {
-
+    
     // nested types
     
     struct Model: Codable {
-        let URSSAF : Double = 24 // %
+        let URSSAF : Double // 24 // %
         var total  : Double {
             URSSAF // %
         }
@@ -274,19 +274,19 @@ struct SocialTaxesOnTurnover: Codable {
 // MARK: - Charges sociales sur l'indemnité de licenciement
 // https://www.service-public.fr/particuliers/vosdroits/F987
 struct LayOffTaxes: Codable {
-
+    
     // nested types
     
     struct SocialTaxes: Codable {
-        let maxRebateCoef : Double = 2.0 // x PASS
+        let maxRebateCoef : Double // 2 x PASS
         var maxRebate     : Double {
             maxRebateCoef * Fiscal.model.PASS
         }
-        let rate          : Double = 13.0 // % (le même que sur le salaire)
+        let rate          : Double // 13 % (le même que sur le salaire)
     }
     struct CsgCrds: Codable {
-        let rateDeductible    : Double = 6.8 // %
-        let rateNonDeductible : Double = 2.9 // %
+        let rateDeductible    : Double // 6.5 %
+        let rateNonDeductible : Double // 2.9 %
         var rateTotal         : Double {
             rateDeductible + rateNonDeductible
         }
@@ -345,10 +345,10 @@ struct SocialTaxesOnAllocationChomage: Codable {
     // nested types
     
     struct Model: Codable {
-        let seuilCsgCrds : Double = 50.0 // €, pas cotisation en deça
-        let CRDS         : Double = 0.5 * 0.9825 // %
-        let CSG          : Double = 6.2 // %
-        let retraiteCompl: Double = 3.0 // % du salaire journalier de référence
+        let seuilCsgCrds : Double // 50.0 // €, pas cotisation en deça
+        let CRDS         : Double // 0.5 * 0.9825 // %
+        let CSG          : Double // 6.2 // %
+        let retraiteCompl: Double // 3.0 // % du salaire journalier de référence
     }
     
     // properties
@@ -390,7 +390,7 @@ struct LifeInsuranceTaxes: Codable {
     // nested types
     
     struct Model: Codable {
-        let rebatePerPerson: Double = 4800.0 // euros
+        let rebatePerPerson: Double // 4800.0 // euros
     }
     
     // properties
@@ -413,11 +413,11 @@ struct IncomeTaxes: Codable {
     
     struct Model: Codable {
         let irppGrid       : [IrppSlice]
-        let turnOverRebate : Double = 34.0 // %
-        let salaryRebate   : Double = 10.0 // %
-        let minSalaryRebate: Double = 441 // €
-        let maxSalaryRebate: Double = 12_627 // €
-        let childRebate    : Double = 1_512.0 // €
+        let turnOverRebate : Double // 34.0 // %
+        let salaryRebate   : Double // 10.0 // %
+        let minSalaryRebate: Double // 441 // €
+        let maxSalaryRebate: Double // 12_627 // €
+        let childRebate    : Double // 1_512.0 // €
     }
     
     // properties
@@ -435,7 +435,13 @@ struct IncomeTaxes: Codable {
     func familyQuotient(nbAdults: Int, nbChildren: Int) -> Double {
         Double(nbAdults) + Double(nbChildren) / 2.0
     }
-    func netAndTaxableIncome(from personalIncome: PersonalIncomeType) -> (brutIncome: Double, netIncome: Double, livingIncome: Double, taxableIncome: Double) {
+    
+    func netAndTaxableIncome(from personalIncome: PersonalIncomeType)
+    ->    (brutIncome    : Double,
+           netIncome     : Double,
+           livingIncome  : Double,
+           taxableIncome : Double) {
+        
         switch personalIncome {
             case .salary(let brutSalary, let taxableSalary, let netSalary, _, let charge):
                 // revenu perçu en compte (pour vivre)
@@ -448,7 +454,7 @@ struct IncomeTaxes: Codable {
                         netIncome     : netSalary,
                         livingIncome  : livingIncome,
                         taxableIncome : taxableIncome)
-            
+                
             case .turnOver(let BNC, let charge):
                 let netIncome     = Fiscal.model.socialTaxesOnTurnover.net(BNC)
                 let livingIncome  = netIncome - charge
@@ -459,6 +465,7 @@ struct IncomeTaxes: Codable {
                         taxableIncome : taxableIncome)
         }
     }
+    
     /// Impôt sur le revenu
     /// - Parameters:
     ///   - taxableIncome: revenu imposable
@@ -502,7 +509,7 @@ struct CompanyProfitTaxes: Codable {
     // nested types
     
     struct Model: Codable {
-        let rate: Double = 15.0 // %
+        let rate: Double // 15.0 // %
     }
     
     // properties

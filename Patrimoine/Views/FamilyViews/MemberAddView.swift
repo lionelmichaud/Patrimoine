@@ -7,8 +7,6 @@
 //
 
 import SwiftUI
-// https://github.com/michaelhenry/KeyboardAvoider.git
-import KeyboardAvoider
 
 // MARK: -  Person View Model
 class PersonViewModel: ObservableObject {
@@ -95,8 +93,6 @@ struct MemberAddView: View {
                 }
             }
             .textFieldStyle(RoundedBorderTextFieldStyle())
-            .avoidKeyboard()
-                //.gesture(DragGesture().onChanged{_ in UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for:
         }
     }
     

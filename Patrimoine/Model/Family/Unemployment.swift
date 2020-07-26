@@ -220,12 +220,12 @@ struct AllocationChomage: Codable {
     }
     
     struct AmountModel: Codable {
-        let case1Rate          : Double = 40.4 // % du salaire journalier de référence
-        let case1Fix           : Double = 12.0 // € par jour
-        let case2Rate          : Double = 57.0 // % du salaire journalier de référence
-        let minAllocation      : Double = 29.26 // € par jour
-        let maxAllocationPcent : Double = 75.0 // % du salaire journalier de référence
-        let maxAllocationEuro  : Double = 253.14 // en €
+        let case1Rate          : Double // 40.4 // % du salaire journalier de référence
+        let case1Fix           : Double // 12.0 // € par jour
+        let case2Rate          : Double // 57.0 // % du salaire journalier de référence
+        let minAllocation      : Double // 29.26 // € par jour
+        let maxAllocationPcent : Double // 75.0 // % du salaire journalier de référence
+        let maxAllocationEuro  : Double // 253.14 // en €
     }
     
     struct Model: Codable {

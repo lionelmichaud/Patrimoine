@@ -40,7 +40,6 @@ struct ExpenseDetailedView: View {
             TimeSpanEditView(timeSpan: $localItem.timeSpan)
         }
             .textFieldStyle(RoundedBorderTextFieldStyle())
-            .avoidKeyboard()
             .navigationBarTitle(Text("Dépense " + category.displayString),
                                 displayMode: .inline)
             .navigationBarItems(

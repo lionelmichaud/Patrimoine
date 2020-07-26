@@ -35,7 +35,6 @@ struct ComputationView: View {
             }
             }
             .textFieldStyle(RoundedBorderTextFieldStyle())
-            .avoidKeyboard()
             .padding(.top)
 
             Spacer()

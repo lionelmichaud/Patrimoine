@@ -80,7 +80,6 @@ struct SCPIDetailedView: View {
             
         }
         .textFieldStyle(RoundedBorderTextFieldStyle())
-        .avoidKeyboard()
             //.onAppear(perform: onAppear)
             .navigationBarTitle(Text("SCPI"), displayMode: .inline)
             .navigationBarItems(

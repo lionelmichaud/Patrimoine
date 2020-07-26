@@ -52,7 +52,6 @@ struct FreeInvestDetailedView: View {
             }
         }
         .textFieldStyle(RoundedBorderTextFieldStyle())
-        .avoidKeyboard()
         .navigationBarTitle(Text("Invest. Libre"), displayMode: .inline)
         .navigationBarItems(
             leading: Button(

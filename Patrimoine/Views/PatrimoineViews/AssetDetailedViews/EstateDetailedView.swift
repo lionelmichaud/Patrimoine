@@ -99,7 +99,6 @@ struct RealEstateDetailedView: View {
             }
         }
         .textFieldStyle(RoundedBorderTextFieldStyle())
-        .avoidKeyboard()
             //.onAppear(perform: onAppear)
             .navigationBarTitle(Text("Immeuble"), displayMode: .inline)
             .navigationBarItems(

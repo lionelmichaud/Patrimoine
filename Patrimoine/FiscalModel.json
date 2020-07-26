@@ -1,5 +1,6 @@
 {
     "PASS" : 41136,
+    
     "irppOnEstateCapitalGain" :
     {
         "model" :
@@ -90,6 +91,17 @@
         }
     },
     
+    "socialTaxesOnAllocationChomage" :
+    {
+        "model":
+        {
+            "seuilCsgCrds"  : 50.0,
+            "CRDS"          : 0.5,
+            "CSG"           : 6.2,
+            "retraiteCompl" : 3.0
+        }
+    },
+    
     "layOffTaxes" :
     {
         "model":
@@ -104,17 +116,6 @@
                 "rateDeductible" : 6.8,
                 "rateNonDeductible" : 2.9
             }
-        }
-    },
-    
-    "socialTaxesOnAllocationChomage" :
-    {
-        "model":
-        {
-            "SeuilCsgCrds"  : 50.0,
-            "CRDS"          : 0.5,
-            "CSG"           : 6.2,
-            "retraiteCompl" : 3.0
         }
     },
     

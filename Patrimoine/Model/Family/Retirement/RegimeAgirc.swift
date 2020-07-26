@@ -34,8 +34,8 @@ struct RegimeAgirc: Codable {
     struct Model: Codable {
         let gridAvant62   : [SliceAvantAgeLegal]
         let gridApres62   : [SliceApresAgeLegal]
-        let valeurDuPoint : Double = 1.2714
-        let ageMinimum    : Int    = 57
+        let valeurDuPoint : Double // 1.2714
+        let ageMinimum    : Int    // 57
     }
     
     // properties

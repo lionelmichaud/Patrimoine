@@ -28,11 +28,11 @@ struct RegimeGeneral: Codable {
     
     struct Model: Codable {
         let dureeDeReferenceGrid : [Slice]
-        let ageMinimumLegal      : Int    = 62
-        let nbOfYearForSAM       : Int    = 25 // pour le calcul du SAM
-        let maxReversionRate     : Double = 50.0 // % du SAM
-        let decoteParTrimestre   : Double = 0.625 // % par trimestre
-        let maxNbTrimestreDecote : Int    = 20 // plafond
+        let ageMinimumLegal      : Int    // 62
+        let nbOfYearForSAM       : Int    // 25 pour le calcul du SAM
+        let maxReversionRate     : Double // 50.0 // % du SAM
+        let decoteParTrimestre   : Double // 0.625 // % par trimestre
+        let maxNbTrimestreDecote : Int    // 20 // plafond
     }
     
     // properties

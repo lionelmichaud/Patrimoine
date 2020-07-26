@@ -39,7 +39,6 @@ struct DebtDetailedView: View {
                   message: Text(alertData.message))
         }
         .textFieldStyle(RoundedBorderTextFieldStyle())
-        .avoidKeyboard()
             //.onAppear(perform: onAppear)
             .navigationBarTitle(Text("Dette"), displayMode: .inline)
             .navigationBarItems(

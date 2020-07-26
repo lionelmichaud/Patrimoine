@@ -70,7 +70,6 @@ struct LoanDetailedView: View {
                   message: Text(alertData.message))
         }
         .textFieldStyle(RoundedBorderTextFieldStyle())
-        .avoidKeyboard()
             //.onAppear(perform: onAppear)
             .navigationBarTitle(Text("Emprunt"), displayMode: .inline)
             .navigationBarItems(
