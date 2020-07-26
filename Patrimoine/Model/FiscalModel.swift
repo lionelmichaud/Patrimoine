@@ -436,33 +436,17 @@ struct IncomeTaxes: Codable {
         Double(nbAdults) + Double(nbChildren) / 2.0
     }
     
-    func netAndTaxableIncome(from personalIncome: PersonalIncomeType)
-    ->    (brutIncome    : Double,
-           netIncome     : Double,
-           livingIncome  : Double,
-           taxableIncome : Double) {
+    func taxableIncome(from personalIncome: PersonalIncomeType) -> Double {
         
         switch personalIncome {
-            case .salary(let brutSalary, let taxableSalary, let netSalary, _, let charge):
-                // revenu perçu en compte (pour vivre)
-                let livingIncome = netSalary - charge
+            case .salary(_, let taxableSalary, _, _, _):
                 // application du rabais sur le salaire imposable
                 let rebate = (taxableSalary * Fiscal.model.incomeTaxes.model.salaryRebate / 100.0).clamp(low : model.minSalaryRebate,
                                                                                                          high: model.maxSalaryRebate)
-                let taxableIncome = taxableSalary - rebate
-                return (brutIncome    : brutSalary,
-                        netIncome     : netSalary,
-                        livingIncome  : livingIncome,
-                        taxableIncome : taxableIncome)
+                return taxableSalary - rebate
                 
-            case .turnOver(let BNC, let charge):
-                let netIncome     = Fiscal.model.socialTaxesOnTurnover.net(BNC)
-                let livingIncome  = netIncome - charge
-                let taxableIncome = BNC * (1 - Fiscal.model.incomeTaxes.model.turnOverRebate / 100.0)
-                return (brutIncome    : BNC,
-                        netIncome     : netIncome,
-                        livingIncome  : livingIncome,
-                        taxableIncome : taxableIncome)
+            case .turnOver(let BNC, _):
+                return BNC * (1 - Fiscal.model.incomeTaxes.model.turnOverRebate / 100.0)
         }
     }
     

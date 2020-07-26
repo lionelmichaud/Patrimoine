@@ -10,9 +10,9 @@ import SwiftUI
 import StepperView
 
 struct PersonLifeLineView: View {
-    @EnvironmentObject var member: Person
-    
+   
     class ViewModel: ObservableObject {
+        @Published var personName : String = ""
         @Published var steps      : [AnyView]                        = []
         @Published var indicators : [StepperIndicationType<AnyView>] = []
         @Published var pitStops   : [PitStopStep]                    = []
@@ -36,12 +36,13 @@ struct PersonLifeLineView: View {
             }
         }
         .padding(.vertical, 20)
-        .navigationBarTitle("Ligne de vie de \(member.displayName)", displayMode: .inline)
+        .navigationBarTitle("Ligne de vie de \(viewModel.personName)", displayMode: .inline)
     }
     
     init(withInitialValueFrom member: Person) {
         let radius: CGFloat = 45
         
+        viewModel.personName = member.displayName
         viewModel.steps.append(TextView(text:member.birthDate.stringShortDayMonth + ": Naissance", font: .system(size: 14, weight: .semibold)).padding(.leading).eraseToAnyView())
         viewModel.indicators.append(StepperIndicationType.custom(NumberedCircleView(text: String(member.birthDate.year), width: radius).eraseToAnyView()))
         viewModel.pitStops.append(PitStopStep(view: TextView(text:"Revenu d'activité professionnelle").eraseToAnyView(), lineOptions: PitStopLineOptions.custom(1, Colors.teal.rawValue)))
@@ -104,64 +105,6 @@ struct PersonLifeLineView: View {
         viewModel.indicators.append(StepperIndicationType.custom(NumberedCircleView(text: String(member.yearOfDeath), width: radius).eraseToAnyView()))
         //viewModel.pitStops.append(PitStopStep(view: TextView(text:"Pension du régime général").eraseToAnyView(), lineOptions: PitStopLineOptions.custom(1, Colors.teal.rawValue)))
     }
-}
-
-struct ExampleView6: View {
-    
-    let indicators = [
-        StepperIndicationType<AnyView>.custom(NumberedCircleView(text: "2024", width: 40).eraseToAnyView()),
-        StepperIndicationType.custom(CircledIconView(image: Image("like"),
-                                                     width: 40,
-                                                     strokeColor: Color(UIColor(red: 26/255, green: 188/255, blue: 156/255, alpha: 1.0)))
-                            .eraseToAnyView()),
-        StepperIndicationType.custom(CircledIconView(image: Image("flag"),
-                                                     width: 40,
-                                                     strokeColor: Color.red)
-                            .eraseToAnyView()),
-        StepperIndicationType.custom(CircledIconView(image: Image("book"),
-                                                     width: 40,
-                                                     strokeColor: Colors.gray(.darkSilver).rawValue)
-                            .eraseToAnyView())]
-    
-    let steps = [TextView(text:"Question", font: .system(size: 14, weight: .semibold)),
-                TextView(text:"Expected Answer", font: .system(size: 14, weight: .semibold)),
-                TextView(text:"Red Flags", font: .system(size: 14, weight: .semibold)),
-                TextView(text:"Further Reading", font: .system(size: 14, weight: .semibold))]
-    
-    let pitStops = [PitStopStep(view: TextView(text:PitStopText.p1).eraseToAnyView(), lineOptions: PitStopLineOptions.custom(1, Colors.teal.rawValue)),
-                    PitStopStep(view: TextView(text:PitStopText.p2).eraseToAnyView(),
-                                    lineOptions: PitStopLineOptions.custom(1, Color(UIColor(red: 26/255, green: 188/255, blue: 156/255, alpha: 1.0)))),
-                    PitStopStep(view: TextView(text:PitStopText.p3).eraseToAnyView(), lineOptions: PitStopLineOptions.custom(1, Color.red)),
-                    PitStopStep(view: FurtherReadingView().eraseToAnyView(), lineOptions: PitStopLineOptions.custom(1, Colors.gray(.darkSilver).rawValue))]
-    
-    var body: some View {
-        //ScrollView(Axis.Set.vertical, showsIndicators: false) {
-        VStack {
-            StepperView()
-                .addSteps(steps)
-                .indicators(indicators)
-                .addPitStops(pitStops)
-                //.spacing(100) // sets the spacingg to value specified.
-                .autoSpacing(true) // auto calculates spacing between steps based on the content.
-        }
-       // }
-    }
-}
-
-struct FurtherReadingView:View {
-    var body: some View {
-        VStack(alignment: .leading, spacing: 2) {
-            Button("Github - StepperView") {
-                UIApplication.shared.open(URL(string:"https://github.com/badrinathvm/StepperView")!)
-            }
-        }
-    }
-}
-
-struct PitStopText {
-    static var p1 = "What are Step Indicators ?"
-    static var p2 = "Step indicators are used to."
-    static var p3 = "Even though some languages."
 }
 
 struct PersonLifeLineView_Previews: PreviewProvider {

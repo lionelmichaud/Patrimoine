@@ -29,7 +29,7 @@ struct MemberDetailView: View {
                     Text("\((member as! Adult).nbOfChildBirth)")
                 }
                 AdultDetailView()
-                
+
             } else if member is Child {
                 ChildDetailView()
             }
@@ -174,13 +174,13 @@ struct AdultDetailView: View {
                 }
                 // allocation chomage
                 if adult.hasUnemployementAllocationPeriod {
-                    NavigationLink(destination: UnemployementDetailView()) {
+                    NavigationLink(destination: UnemployementDetailView().environmentObject(self.member)) {
                         AmountView(label  : "Allocation chômage annuelle nette",
                                    amount : adult.unemployementAllocation!.net).foregroundColor(.blue)
                     }
                 }
                 // pension de retraite
-                NavigationLink(destination: RetirementDetailView()) {
+                NavigationLink(destination: RetirementDetailView().environmentObject(self.member)) {
                     AmountView(label  : "Pension de retraite annuelle nette",
                                amount : adult.pension.net).foregroundColor(.blue)
                 }

@@ -23,7 +23,7 @@ struct MemberEditView: View {
     @State private var ageIndependance = ScenarioCst.minAgeIndependance
     // Adult
     @ObservedObject var adultViewModel = AdultViewModel()
-
+    
     var body: some View {
         VStack() {
             HStack() {
@@ -31,7 +31,7 @@ struct MemberEditView: View {
                     action: { self.presentationMode.wrappedValue.dismiss() },
                     label: {
                         Text("Annuler")
-                } )
+                    } )
                 Spacer()
                 Text("Modifier...").font(.title).fontWeight(.bold)
                 Spacer()
@@ -39,7 +39,7 @@ struct MemberEditView: View {
                     action: applyChanges,
                     label: {
                         Text("OK")
-                } )
+                    } )
                     .disabled(false)
             }.padding(.horizontal).padding(.top)
             
@@ -54,7 +54,7 @@ struct MemberEditView: View {
                     }
                     AdultEditView(personViewModel: personViewModel,
                                   adultViewModel : adultViewModel)
-
+                    
                 } else if member is Child {
                     ChildEditView(birthDate       : member.birthDate,
                                   deathAge        : $personViewModel.deathAge,
@@ -152,7 +152,7 @@ struct MemberEditView: View {
             }
             
             adult.nbOfYearOfDependency = adultViewModel.nbYearOfDepend
-
+            
         }
         if let child = member as? Child {
             child.ageOfUniversity = ageUniversity
@@ -197,7 +197,7 @@ struct AdultEditView : View {
                                 insurance      : $adultViewModel.insurance)
                 DatePicker(selection           : $adultViewModel.dateRetirement,
                            displayedComponents : .date,
-                           label               : { Text("Date de cessation d'activité") })
+                           label               : { HStack { Text("Date de cessation d'activité"); Spacer() } })
                 CasePicker(pickedCase: $adultViewModel.causeOfRetirement, label: "Cause").pickerStyle(SegmentedPickerStyle())
                 if (adultViewModel.causeOfRetirement != Unemployment.Cause.demission) {
                     Toggle(isOn: $adultViewModel.hasAllocationSupraLegale, label: { Text("Indemnité de licenciement supra-légale") })
@@ -234,7 +234,7 @@ struct RevenueEditView : View {
     
     var body: some View {
         let salary = revIndex == PersonalIncomeType.salaryId
-
+        
         return Group {
             CaseWithAssociatedValuePicker<PersonalIncomeType>(caseIndex: $revIndex, label: "")
                 .pickerStyle(SegmentedPickerStyle())
@@ -246,13 +246,13 @@ struct RevenueEditView : View {
                 DatePicker(selection           : $fromDate,
                            in                  : 50.years.ago!...Date.now,
                            displayedComponents : .date,
-                           label               : { Text("Date d'embauche") })
+                           label               : { HStack {Text("Date d'embauche"); Spacer() } })
             } else {
                 AmountEditView(label: "BNC", amount: $revenueBrut)
                 AmountEditView(label: "Charges sociales", amount: $insurance)
             }
             if salary {
-
+                
             }
         }
     }
@@ -301,10 +301,10 @@ struct MemberEditView_Previews: PreviewProvider {
     
     static var previews: some View {
         Group {
-        //EmptyView()
-        MemberEditView(withInitialValueFrom: aMember)
-            .environmentObject(family)
-            .environmentObject(aMember)
+            //EmptyView()
+            MemberEditView(withInitialValueFrom: aMember)
+                .environmentObject(family)
+                .environmentObject(aMember)
             Form {
                 RevenueEditView(revIndex       : .constant(1),
                                 revenueBrut    : .constant(100000.0),

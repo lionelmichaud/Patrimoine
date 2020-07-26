@@ -32,17 +32,46 @@ final class Adult: Person {
     @Published var nbOfChildBirth: Int = 0
     
     /// ACTIVITE: revenus du travail
-    @Published var workIncome        : PersonalIncomeType? { // observed
-        willSet {
-            (workBrutIncome, workNetIncome, workLivingIncome, workTaxableIncome) =
-                Fiscal.model.incomeTaxes.netAndTaxableIncome(from: newValue!)
+    @Published var workIncome        : PersonalIncomeType?
+    var workBrutIncome    : Double { // avant charges sociales, dépenses de mutuelle ou d'assurance perte d'emploi
+        switch workIncome {
+            case .salary(let brutSalary, _, _, _, _):
+                return brutSalary
+            case .turnOver(let BNC, _):
+                return BNC
+            case .none:
+                return 0
         }
-    } // observed
-    @Published var workBrutIncome    : Double = 0 // avant charges sociales, dépenses de mutuelle ou d'assurance perte d'emploi
-    @Published var workNetIncome     : Double = 0 // net de feuille de paye, net de charges sociales et mutuelle obligatore
-    @Published var workLivingIncome  : Double = 0 // net de feuille de paye et de mutuelle facultative ou d'assurance perte d'emploi
-    @Published var workTaxableIncome : Double = 0 // taxable à l'IRPP
-    
+    }
+    var workNetIncome     : Double { // net de feuille de paye, net de charges sociales et mutuelle obligatore
+        switch workIncome {
+            case .salary(_, _, let netSalary, _, _):
+                return netSalary
+            case .turnOver(let BNC, _):
+                return Fiscal.model.socialTaxesOnTurnover.net(BNC)
+            case .none:
+                return 0
+        }
+    }
+    var workLivingIncome  : Double { // net de feuille de paye et de mutuelle facultative ou d'assurance perte d'emploi
+        switch workIncome {
+            case .salary(_, _, let netSalary, _, let charge):
+                return netSalary - charge
+            case .turnOver(let BNC, let charge):
+                return Fiscal.model.socialTaxesOnTurnover.net(BNC) - charge
+            case .none:
+                return 0
+        }
+    }
+    var workTaxableIncome : Double { // taxable à l'IRPP
+        switch workIncome {
+            case .none:
+                return 0
+            default:
+                return Fiscal.model.incomeTaxes.taxableIncome(from: workIncome!)
+        }
+    }
+
     /// ACTIVITE: date et cause de cessation d'activité
     @Published var causeOfRetirement: Unemployment.Cause = .demission
     @Published var dateOfRetirement : Date = Date.distantFuture
