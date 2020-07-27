@@ -12,7 +12,7 @@ struct ExpenseView: View {
     @EnvironmentObject var family: Family
     
     private var categories: [(ExpenseCategory, ExpenseArray)] {
-        family.expenses.categories.sorted(by: \.key.displayString)
+        family.expenses.expensesPerCategory.sorted(by: \.key.displayString)
     }
     
     var body: some View {
@@ -82,7 +82,7 @@ struct ExpenseListInCategory: View {
         Section {
             LabeledValueRowView(colapse     : $uiState.expenseViewState.colapseCategories[category.rawValue],
                                 label       : category.displayString,
-                                value       : family.expenses.categories[category]?.value(atEndOf: Date.now.year) ?? 0,
+                                value       : family.expenses.expensesPerCategory[category]?.value(atEndOf: Date.now.year) ?? 0,
                                 indentLevel : 0,
                                 header      : true)
             if !uiState.expenseViewState.colapseCategories[category.rawValue] {
@@ -118,11 +118,11 @@ struct ExpenseListInCategory: View {
     }
     
     func removeItems(at offsets: IndexSet) {
-        family.expenses.categories[self.category]?.delete(at: offsets)
+        family.expenses.expensesPerCategory[self.category]?.delete(at: offsets)
     }
     
     func move(from source: IndexSet, to destination: Int) {
-        family.expenses.categories[self.category]?.move(from: source, to: destination)
+        family.expenses.expensesPerCategory[self.category]?.move(from: source, to: destination)
     }
 }
 

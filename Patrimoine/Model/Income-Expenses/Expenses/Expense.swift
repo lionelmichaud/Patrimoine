@@ -15,7 +15,7 @@ struct Expenses: Codable {
     
     // properties
     
-    var categories: [ExpenseCategory: ExpenseArray] = [:]
+    var expensesPerCategory: [ExpenseCategory: ExpenseArray] = [:]
     
     // initialization
     
@@ -23,7 +23,7 @@ struct Expenses: Codable {
     /// Un fichier par catégorie de dépense.
     init() {
         for category in ExpenseCategory.allCases {
-            categories[category] = ExpenseArray(fileNamePrefix: category.pickerString + "_")
+            expensesPerCategory[category] = ExpenseArray(fileNamePrefix: category.pickerString + "_")
         }
     }
     
@@ -32,9 +32,9 @@ struct Expenses: Codable {
     /// Enregistrer toutes les dépenses dans des fichiers au format JSON..
     /// Un fichier par catégorie de dépense.
     func storeToFile() {
-        for category in categories.keys {
+        for category in expensesPerCategory.keys {
             // encode to JSON file
-            categories[category]?.storeItemsToFile()
+            expensesPerCategory[category]?.storeItemsToFile()
         }
     }
     
@@ -43,7 +43,7 @@ struct Expenses: Codable {
     /// - Returns: dépenses totales
     func value(atEndOf: Int) -> Double {
         var sum = 0.0
-        categories.forEach { (category, expenseArray) in
+        expensesPerCategory.forEach { (category, expenseArray) in
             sum += expenseArray.value(atEndOf: atEndOf)
         }
         return sum
@@ -54,7 +54,7 @@ struct Expenses: Codable {
     /// - Returns: liste complète à plat de toutes les dépenses
     func namedValueTable(atEndOf: Int) -> [(name: String, value: Double)] {
         var table = [(name: String, value: Double)]()
-        categories.forEach { (category, expenseArray) in
+        expensesPerCategory.forEach { (category, expenseArray) in
             table += expenseArray.namedValueTable(atEndOf: atEndOf)
         }
         return table
@@ -64,7 +64,7 @@ struct Expenses: Codable {
     -> [(name: String, value: Double, prop: Bool, idx: Int, firstYearDuration: [Int])] {
         var table = [(name: String, value: Double, prop: Bool, idx: Int, firstYearDuration: [Int])]()
         var idx = 0
-        categories.sortedReversed(by: \.key.displayString).forEach { (category, expenseArray) in
+        expensesPerCategory.sortedReversed(by: \.key.displayString).forEach { (category, expenseArray) in
             let nbItem = expenseArray.items.count
             for expIdx in 0..<nbItem {
                 table.append((name              : expenseArray[nbItem-1-expIdx].name,
@@ -85,7 +85,7 @@ struct Expenses: Codable {
     func namedValueTable(atEndOf: Int) -> [ExpenseCategory: [(name: String, value: Double)]] {
         var dico = [ExpenseCategory: [(name: String, value: Double)]]()
         for category in ExpenseCategory.allCases {
-            if let exps = categories[category] {
+            if let exps = expensesPerCategory[category] {
                 dico[category] = exps.namedValueTable(atEndOf: atEndOf)
             }
         }
@@ -98,19 +98,25 @@ struct Expenses: Codable {
     ///   - inCategory: catégorie de dépenses à prendre
     /// - Returns: liste des dépenses de cette catégorie
     func namedValueTable(atEndOf: Int, inCategory: ExpenseCategory) -> [(name: String, value: Double)] {
-        if let exps = categories[inCategory] {
+        if let exps = expensesPerCategory[inCategory] {
             return exps.namedValueTable(atEndOf: atEndOf)
         } else {
             return []
         }
     }
     
+    func print() {
+        for category in ExpenseCategory.allCases {
+            expensesPerCategory[category]?.print()
+        }
+    }
 }
-// MARK: Tableau de Dépenses
+
+// MARK: - Tableau de Dépenses
 
 typealias ExpenseArray = ItemArray<Expense>
 
-// MARK: Dépense
+// MARK: - Dépense
 
 struct Expense: Identifiable, Codable, Hashable, NameableAndValueable {
     

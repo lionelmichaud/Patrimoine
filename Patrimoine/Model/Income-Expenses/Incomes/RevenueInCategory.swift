@@ -15,24 +15,27 @@ struct Revenues {
     // properties
     
     let name = "REVENUS HORS SCI"
+    
+    var revenuesPerCategory: [RevenueCategory: RevenuesInCategory] = [:]
+
     /// revenus du travail
-    var workIncomes        = RevenueInCategory(name : "Revenu Travail")
+    var workIncomes        = RevenuesInCategory(name : "Revenu Travail")
     /// pension de retraite
-    var pensions           = RevenueInCategory(name : "Revenu Pension")
+    var pensions           = RevenuesInCategory(name : "Revenu Pension")
     /// indemnité de licenciement
-    var layoffCompensation = RevenueInCategory(name : "Indemnité de licenciement")
+    var layoffCompensation = RevenuesInCategory(name : "Indemnité de licenciement")
     /// alloc chomage
-    var unemployAlloc      = RevenueInCategory(name : "Revenu Alloc Chomage")
+    var unemployAlloc      = RevenuesInCategory(name : "Revenu Alloc Chomage")
     /// revenus financiers
-    var financials         = RevenueInCategory(name : "Revenu Financier")
+    var financials         = RevenuesInCategory(name : "Revenu Financier")
     /// revenus des SCPI hors de la SCI
-    var scpis              = RevenueInCategory(name : "Revenu SCPI")
+    var scpis              = RevenuesInCategory(name : "Revenu SCPI")
     /// revenus de locations des biens immobiliers
-    var realEstateRents    = RevenueInCategory(name : "Revenu Location")
+    var realEstateRents    = RevenuesInCategory(name : "Revenu Location")
     /// total des ventes des SCPI hors de la SCI
-    var scpiSale           = RevenueInCategory(name : "Vente SCPI")
+    var scpiSale           = RevenuesInCategory(name : "Vente SCPI")
     /// total des ventes des biens immobiliers
-    var realEstateSale     = RevenueInCategory(name : "Vente Immobilier")
+    var realEstateSale     = RevenuesInCategory(name : "Vente Immobilier")
     /// revenus imposable de l'année précédente et reporté à l'année courante
     var taxableIrppRevenueDelayedFromLastYear = Debt(name: "REVENU IMPOSABLE REPORTE DE L'ANNEE PRECEDENTE", value: 0)
     
@@ -112,40 +115,36 @@ struct Revenues {
             realEstateSale.credits.valuesArray
     }
     
+    // initialization
+    
+    /// Initializer toutes les catéogires (avec des tables vides de revenu)
+    init() {
+        for category in RevenueCategory.allCases {
+            revenuesPerCategory[category] = RevenuesInCategory(name: category.displayString)
+        }
+    }
+
     // methods
     
     func print(level: Int = 0) {
         let h = String(repeating: StringCst.header, count: level)
         Swift.print(h + name + ":    ")
-        // incomes
-        workIncomes.print(level: level+1)
-        // pension de retraite
-        pensions.print(level: level+1)
-        // indemnité de licenciement
-        layoffCompensation.print(level: level+1)
-        // alloc chomage
-        unemployAlloc.print(level: level+1)
-        // financial investements
-        financials.print(level: level+1)
-        // SCPIs
-        scpis.print(level: level+1)
-        // realEstateRents
-        realEstateRents.print(level: level+1)
-        // real estate sales
-        scpiSale.print(level: level+1)
-        // real estate sales
-        realEstateSale.print(level: level+1)
+        
+        for category in RevenueCategory.allCases {
+            revenuesPerCategory[category]?.print(level: level)
+        }
+
         // revenus imposable de l'année précédente et reporté à l'année courante
         taxableIrppRevenueDelayedFromLastYear.print()
+        
         // total des revenus
         Swift.print(h + StringCst.header + "TOTAL NET:", totalCredited, "TOTAL TAXABLE:", totalTaxableIrpp)
     }
 }
 
-
 // MARK: Agrégat de tables des revenus (perçu, taxable) pour une catégorie nommée donnée
 
-struct RevenueInCategory {
+struct RevenuesInCategory {
     
     // properties
     

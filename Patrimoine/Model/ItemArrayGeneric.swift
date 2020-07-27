@@ -69,5 +69,11 @@ struct ItemArray<E: Codable>: Codable where E: NameableAndValueable, E: Identifi
         }
         return table
     }
+    
+    func print() {
+        for item in items {
+            item.print()
+        }
+    }
 }
 
