@@ -8,6 +8,8 @@
 
 import Foundation
 
+// MARK: - Table nommée de couples (nom, valeur)
+
 struct NamedValueTable {
     
     // properties
@@ -35,12 +37,6 @@ struct NamedValueTable {
             .joined(separator: "; ") + "; " + total.roundedString
     }
     
-    // initialization
-    
-    init(withName name: String) {
-        self.name = name
-    }
-    
     // methods
     
     func filtredHeaders(itemSelection: [(label: String, selected: Bool)]) -> [String] {
@@ -56,7 +52,6 @@ struct NamedValueTable {
         Swift.print(h + name)
         Swift.print(h + StringCst.header + "valeurs: ", values, "total: ", total)
     }
-    
 }
 
 /// <#Description#>

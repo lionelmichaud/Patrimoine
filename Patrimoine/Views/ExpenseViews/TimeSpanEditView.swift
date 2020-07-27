@@ -28,7 +28,7 @@ struct TimeSpanEditView: View {
             },
             set: { isLinked in
                 // affecter une valeur par défaut au LifeEvent ou supprimer le lien vers le LifeEvent
-                let boundary = ExpenseTimeSpan.Boundary(
+                let boundary = DateBoundary(
                     event: (isLinked ? self.defaultFromEvent : nil))
                 switch self.timeSpan {
                     case .starting (_):
@@ -58,7 +58,7 @@ struct TimeSpanEditView: View {
             },
             set: { isLinked in
                 // affecter une valeur par défaut au LifeEvent ou supprimer le lien vers le LifeEvent
-                let boundary = ExpenseTimeSpan.Boundary(
+                let boundary = DateBoundary(
                     event: (isLinked ? self.defaultFromEvent : nil))
                 switch self.timeSpan {
                     case .ending (_):
@@ -88,7 +88,7 @@ struct TimeSpanEditView: View {
                 }
         },
             set: { event in
-                let boundary = ExpenseTimeSpan.Boundary(event: event)
+                let boundary = DateBoundary(event: event)
                 switch self.timeSpan {
                     case .starting ( _):
                         self.timeSpan  = .starting(from: boundary)
@@ -116,7 +116,7 @@ struct TimeSpanEditView: View {
                 }
         },
             set: { event in
-                let boundary = ExpenseTimeSpan.Boundary(event: event)
+                let boundary = DateBoundary(event: event)
                 switch self.timeSpan {
                     case .ending (_):
                         self.timeSpan  = .ending(to : boundary)
@@ -311,20 +311,20 @@ struct TimeSpanEditView: View {
                 case ExpenseTimeSpan.permanent.id:
                     self.timeSpan = .permanent
                 
-                case ExpenseTimeSpan.periodic(from: ExpenseTimeSpan.Boundary(), period: 0, to: ExpenseTimeSpan.Boundary()).id:
-                    self.timeSpan = .periodic(from   : ExpenseTimeSpan.Boundary(year: self.bindingFrom.wrappedValue),
+                case ExpenseTimeSpan.periodic(from: DateBoundary(), period: 0, to: DateBoundary()).id:
+                    self.timeSpan = .periodic(from   : DateBoundary(year: self.bindingFrom.wrappedValue),
                                               period : self.bindingPeriod.wrappedValue,
-                                              to     : ExpenseTimeSpan.Boundary(year: self.bindingTo.wrappedValue))
+                                              to     : DateBoundary(year: self.bindingTo.wrappedValue))
                 
-                case ExpenseTimeSpan.starting(from: ExpenseTimeSpan.Boundary()).id:
-                    self.timeSpan = .starting(from: ExpenseTimeSpan.Boundary(year: self.bindingFrom.wrappedValue))
+                case ExpenseTimeSpan.starting(from: DateBoundary()).id:
+                    self.timeSpan = .starting(from: DateBoundary(year: self.bindingFrom.wrappedValue))
                 
-                case ExpenseTimeSpan.ending(to: ExpenseTimeSpan.Boundary()).id:
-                    self.timeSpan = .ending(to: ExpenseTimeSpan.Boundary(year: self.bindingTo.wrappedValue))
+                case ExpenseTimeSpan.ending(to: DateBoundary()).id:
+                    self.timeSpan = .ending(to: DateBoundary(year: self.bindingTo.wrappedValue))
                 
-                case ExpenseTimeSpan.spanning(from: ExpenseTimeSpan.Boundary(), to: ExpenseTimeSpan.Boundary()).id:
-                    self.timeSpan = .spanning(from : ExpenseTimeSpan.Boundary(year: self.bindingFrom.wrappedValue),
-                                              to   : ExpenseTimeSpan.Boundary(year: self.bindingTo.wrappedValue))
+                case ExpenseTimeSpan.spanning(from: DateBoundary(), to: DateBoundary()).id:
+                    self.timeSpan = .spanning(from : DateBoundary(year: self.bindingFrom.wrappedValue),
+                                              to   : DateBoundary(year: self.bindingTo.wrappedValue))
                 
                 case ExpenseTimeSpan.exceptional(inYear:0).id:
                     self.timeSpan = .exceptional(inYear: self.bindingYear.wrappedValue)
@@ -343,7 +343,7 @@ struct TimeSpanEditView: View {
                     .pickerStyle(SegmentedPickerStyle())
             }
             // en fonction du type choisi
-            if caseIndex.wrappedValue == ExpenseTimeSpan.ending (to: ExpenseTimeSpan.Boundary()).id {
+            if caseIndex.wrappedValue == ExpenseTimeSpan.ending (to: DateBoundary()).id {
                 // TimeSpan = .ending
                 BoundaryEditView(label    : "Fin",
                                  event    : bindingToEvent,
@@ -351,14 +351,14 @@ struct TimeSpanEditView: View {
                                  year     : bindingTo,
                                  name     : bindingNameTo)
                 
-            } else if caseIndex.wrappedValue == ExpenseTimeSpan.starting(from: ExpenseTimeSpan.Boundary()).id {
+            } else if caseIndex.wrappedValue == ExpenseTimeSpan.starting(from: DateBoundary()).id {
                 // TimeSpan = .starting
                 BoundaryEditView(label    : "Début",
                                  event    : bindingFromEvent,
                                  isLinked : bindingIsLinkedToFromEvent,
                                  year     : bindingFrom,
                                  name     : bindingNameFrom)
-            } else if caseIndex.wrappedValue == ExpenseTimeSpan.spanning(from: ExpenseTimeSpan.Boundary(), to: ExpenseTimeSpan.Boundary()).id {
+            } else if caseIndex.wrappedValue == ExpenseTimeSpan.spanning(from: DateBoundary(), to: DateBoundary()).id {
                 // TimeSpan = .spanning
                 BoundaryEditView(label    : "Début",
                                  event    : bindingFromEvent,
@@ -371,7 +371,7 @@ struct TimeSpanEditView: View {
                                  year     : bindingTo,
                                  name     : bindingNameTo)
 
-            } else if caseIndex.wrappedValue == ExpenseTimeSpan.periodic(from: ExpenseTimeSpan.Boundary(), period: 0, to: ExpenseTimeSpan.Boundary()).id {
+            } else if caseIndex.wrappedValue == ExpenseTimeSpan.periodic(from: DateBoundary(), period: 0, to: DateBoundary()).id {
                 // TimeSpan = .periodic
                 BoundaryEditView(label    : "Début",
                                  event    : bindingFromEvent,
@@ -403,8 +403,8 @@ struct TimeSpanEditView: View {
 
 struct TimeSpanEditView_Previews: PreviewProvider {
     static var previews: some View {
-        TimeSpanEditView(timeSpan: .constant(ExpenseTimeSpan.spanning(from: ExpenseTimeSpan.Boundary(year: 2020),
-                                                                      to  : ExpenseTimeSpan.Boundary(year: 2022))))
+        TimeSpanEditView(timeSpan: .constant(ExpenseTimeSpan.spanning(from: DateBoundary(year: 2020),
+                                                                      to  : DateBoundary(year: 2022))))
             .previewLayout(PreviewLayout.sizeThatFits)
             .padding([.bottom, .top])
             .previewDisplayName("TimeSpanEditView")

@@ -14,6 +14,7 @@ struct FamilyView: View {
     
     var body: some View {
         NavigationView {
+            // Primary view
             List {
                 // entête
                 FamilyHeaderView()

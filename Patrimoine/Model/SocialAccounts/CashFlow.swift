@@ -41,15 +41,9 @@ struct CashFlowLine {
             let name: String
             
             /// table des revenus versés en compte courant avant taxes, prélèvements sociaux et impots
-            var credits      = NamedValueTable(withName: "PERCU")
+            var credits      = NamedValueTable(name: "PERCU")
             /// table des fractions de revenus versés en compte courant qui est imposable à l'IRPP
-            var taxablesIrpp = NamedValueTable(withName: "TAXABLE")
-            
-            // initialization
-            
-            init(name: String) {
-                self.name = name
-            }
+            var taxablesIrpp = NamedValueTable(name: "TAXABLE")
             
             // methods
             
@@ -65,23 +59,23 @@ struct CashFlowLine {
         
         let name = "REVENUS HORS SCI"
         /// revenus du travail
-        var workIncomes        = NetAndTaxable(name    : "Revenu Travail")
+        var workIncomes        = NetAndTaxable(name : "Revenu Travail")
         /// pension de retraite
-        var pensions           = NetAndTaxable(name    : "Revenu Pension")
+        var pensions           = NetAndTaxable(name : "Revenu Pension")
         /// indemnité de licenciement
         var layoffCompensation = NetAndTaxable(name : "Indemnité de licenciement")
         /// alloc chomage
-        var unemployAlloc      = NetAndTaxable(name    : "Revenu Alloc Chomage")
+        var unemployAlloc      = NetAndTaxable(name : "Revenu Alloc Chomage")
         /// revenus financiers
-        var financials         = NetAndTaxable(name    : "Revenu Financier")
+        var financials         = NetAndTaxable(name : "Revenu Financier")
         /// revenus des SCPI hors de la SCI
-        var scpis              = NetAndTaxable(name    : "Revenu SCPI")
+        var scpis              = NetAndTaxable(name : "Revenu SCPI")
         /// revenus de locations des biens immobiliers
-        var realEstateRents    = NetAndTaxable(name    : "Revenu Location")
+        var realEstateRents    = NetAndTaxable(name : "Revenu Location")
         /// total des ventes des SCPI hors de la SCI
-        var scpiSale           = NetAndTaxable(name    : "Vente SCPI")
+        var scpiSale           = NetAndTaxable(name : "Vente SCPI")
         /// total des ventes des biens immobiliers
-        var realEstateSale     = NetAndTaxable(name    : "Vente Immobilier")
+        var realEstateSale     = NetAndTaxable(name : "Vente Immobilier")
         /// revenus imposable de l'année précédente et reporté à l'année courante
         var taxableIrppRevenueDelayedFromLastYear = Debt(name: "REVENU IMPOSABLE REPORTE DE L'ANNEE PRECEDENTE", value: 0)
         
@@ -114,7 +108,7 @@ struct CashFlowLine {
         
         /// tableau des noms  et valeurs des catégories de revenus
         var namedValueTable: NamedValueTable {
-            var table = NamedValueTable(withName: "REVENUS")
+            var table = NamedValueTable(name: "REVENUS")
             table.values.append((name  : workIncomes.name,
                                  value : workIncomes.credits.total))
             table.values.append((name  : layoffCompensation.name,
@@ -199,14 +193,14 @@ struct CashFlowLine {
         let name                   = "TAXES"
         var familyQuotient: Double = 0.0
         var irpp          : Double = 0.0
-        var localTaxes             = NamedValueTable(withName: "Taxes Locales")
-        var socialTaxes            = NamedValueTable(withName: "Prélev Sociaux")
+        var localTaxes             = NamedValueTable(name: "Taxes Locales")
+        var socialTaxes            = NamedValueTable(name: "Prélev Sociaux")
         var total         : Double { localTaxes.total + socialTaxes.total + irpp }
         
         // methods
         
         var namedValueTable: NamedValueTable {
-            var table = NamedValueTable(withName: name)
+            var table = NamedValueTable(name: name)
             table.values.append((name  : "IRPP",
                                  value : irpp))
             table.values.append((name  : localTaxes.name,
@@ -234,9 +228,9 @@ struct CashFlowLine {
         
         // properties
         
-        var namedValueTable = NamedValueTable(withName: "LIFE EXPENSES")
+        var namedValueTable = NamedValueTable(name: "LIFE EXPENSES")
         var summaryValueTable: NamedValueTable {
-            var table = NamedValueTable(withName: "Dépenses")
+            var table = NamedValueTable(name: "Dépenses")
             table.values.append((name  : "Dépenses",
                                  value : namedValueTable.total))
             return table
@@ -250,7 +244,7 @@ struct CashFlowLine {
     var revenues      = Revenues()
     var taxes         = Taxes()
     var expenses      = Expenses()
-    var debtPayements = NamedValueTable(withName : "Remb. dette")
+    var debtPayements = NamedValueTable(name : "Remb. dette")
     var taxableIrppRevenueDelayedToNextYear = Debt(name: "REVENU IMPOSABLE REPORTE A L'ANNEE SUIVANTE", value: 0)
     let sciCashFlowLine : SciCashFlowLine // les comptes annuels de la SCI
     var sumOfrevenues   : Double {

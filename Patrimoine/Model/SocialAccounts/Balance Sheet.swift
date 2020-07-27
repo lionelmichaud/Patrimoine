@@ -11,9 +11,9 @@ struct BalanceSheetLine {
 	// année de début de la simulation
 	var year: Int   = 0
 	// actifs
-    var assets      = NamedValueTable(withName: "ACTIF")
+    var assets      = NamedValueTable(name: "ACTIF")
 	// passifs
-	var liabilities = NamedValueTable(withName: "PASSIF")
+	var liabilities = NamedValueTable(name: "PASSIF")
 	// net
 	var net       : Double {
 		assets.total + liabilities.total

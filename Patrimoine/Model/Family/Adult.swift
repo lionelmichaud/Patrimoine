@@ -232,7 +232,7 @@ final class Adult: Person {
         return Date.calendar.dateComponents([.year, .month, .day], from: liquidDate!)
     } // computed
     @Published var ageOfAgircPensionLiquidComp: DateComponents = DateComponents(calendar: Date.calendar, year: 62, month: 0, day: 1)
-    var displayDateOfAgircPensionLiquid: String { // computed
+    var displayDateOfAgircPensionLiquid       : String { // computed
         mediumDateFormatter.string(from: dateOfAgircPensionLiquid)
     } // computed
     @Published var lastKnownAgircPensionSituation = RegimeAgircSituation()

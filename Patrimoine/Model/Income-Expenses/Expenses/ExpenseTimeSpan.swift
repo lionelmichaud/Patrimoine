@@ -12,64 +12,21 @@ import Foundation
 
 enum ExpenseTimeSpan: PickableIdentifiableEnum, Hashable {
     
-    /// Limite temporelle d'une dépense: début ou fin.
-    /// Date fixe ou calculée à partir d'un éventuel événement de vie d'une personne
-    struct Boundary: Hashable, Codable {
-        // date fixe ou calculée à partir d'un éventuel événement de vie d'une personne
-        var fixedYear: Int = 0
-        // non nil si la date est liée à un événement de vie d'une personne
-        var event    : LifeEvent?
-        // personne associée à l'évenement
-        var name     : String = ""
-        
-        init() {
-        }
-        init(year: Int) {
-            self.fixedYear = year
-            self.event     = nil
-            self.name      = ""
-        }
-        init(event: LifeEvent?) {
-            self.event = event
-            self.name  = ""
-        }
-        init(name: String) {
-            self.name  = name
-            self.event = nil
-        }
-        // date fixe ou calculée à partir d'un éventuel événement de vie d'une personne
-        var year: Int {
-            if let lifeEvent = self.event {
-                // rechercher la personne
-                if let person = Expense.family?.member(withName: name) {
-                    // rechercher l'année de l'événement pour cette personne
-                    return person.yearOf(event: lifeEvent) ?? -1
-                } else {
-                    // on ne trouve pas le nom de la personne dans la famille
-                    return -1
-                }
-            } else {
-                // pas d'événement, la date est fixe
-                return fixedYear
-            }
-        }
-   }
-    
     case permanent
-    case periodic (from: Boundary, period: Int, to: Boundary)
-    case starting (from: Boundary)
-    case ending   (to:   Boundary)
-    case spanning (from: Boundary, to: Boundary)
+    case periodic (from: DateBoundary, period: Int, to: DateBoundary)
+    case starting (from: DateBoundary)
+    case ending   (to:   DateBoundary)
+    case spanning (from: DateBoundary, to: DateBoundary)
     case exceptional (inYear: Int)
     
     // MARK: - Static properties
 
     static var allCases: [ExpenseTimeSpan] {
         return [.permanent,
-                .periodic (from: Boundary(), period: 1, to: Boundary()),
-                .starting (from: Boundary()),
-                .ending   (to:   Boundary()),
-                .spanning (from: Boundary(), to: Boundary()),
+                .periodic (from: DateBoundary(), period: 1, to: DateBoundary()),
+                .starting (from: DateBoundary()),
+                .ending   (to:   DateBoundary()),
+                .spanning (from: DateBoundary(), to: DateBoundary()),
                 .exceptional (inYear: 0)]
     }
     
@@ -219,8 +176,8 @@ extension ExpenseTimeSpan: Codable {
         }
         
         // decode .periodic
-        if let from = try? container.decode(Boundary.self, forKey: .periodic_from) {
-            if let to = try? container.decode(Boundary.self, forKey: .periodic_to) {
+        if let from = try? container.decode(DateBoundary.self, forKey: .periodic_from) {
+            if let to = try? container.decode(DateBoundary.self, forKey: .periodic_to) {
                 if let period = try? container.decode(Int.self, forKey: .periodic_period) {
                     self = .periodic(from: from, period: period, to: to)
                     return
@@ -229,21 +186,21 @@ extension ExpenseTimeSpan: Codable {
         }
         
         // decode .spanning
-        if let from = try? container.decode(Boundary.self, forKey: .spanning_from) {
-            if let to = try? container.decode(Boundary.self, forKey: .spanning_to) {
+        if let from = try? container.decode(DateBoundary.self, forKey: .spanning_from) {
+            if let to = try? container.decode(DateBoundary.self, forKey: .spanning_to) {
                 self = .spanning(from: from, to: to)
                 return
             }
         }
         
         // decode .starting
-        if let from = try? container.decode(Boundary.self, forKey: .starting_from) {
+        if let from = try? container.decode(DateBoundary.self, forKey: .starting_from) {
             self = .starting (from: from)
             return
         }
         
         // decode .ending
-        if let to = try? container.decode(Boundary.self, forKey: .ending_to) {
+        if let to = try? container.decode(DateBoundary.self, forKey: .ending_to) {
             self = .ending (to: to)
             return
         }

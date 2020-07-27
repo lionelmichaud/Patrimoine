@@ -20,9 +20,9 @@ struct SciCashFlowLine {
         // properties
         
         // dividendes des SCPI de la SCI
-        var sciDividends = NamedValueTable(withName: "SCI-REVENUS DE SCPI")
+        var sciDividends = NamedValueTable(name: "SCI-REVENUS DE SCPI")
         // ventes des SCPI de la SCI
-        var scpiSale     = NamedValueTable(withName: "SCI-VENTES SCPI")
+        var scpiSale     = NamedValueTable(name: "SCI-VENTES SCPI")
         // total de tous les revenus nets de l'année: loyers + ventes de la SCI
         var total: Double { sciDividends.total + scpiSale.total }
         // total de tous les revenus imposables à l'IS de l'année: loyers + plus-values de la SCI
@@ -120,7 +120,7 @@ struct SciCashFlowLine {
     }
     
     var namedValueTable: NamedValueTable {
-        var table = NamedValueTable(withName: "SCI")
+        var table = NamedValueTable(name: "SCI")
         table.values.append((name  : "Revenu SCI",
                              value : netCashFlow))
         return table
