@@ -96,12 +96,12 @@ struct MemberEditView: View {
                     adultViewModel.revenueNet     = netSalary
                     adultViewModel.fromDate       = fromDate
                     adultViewModel.insurance      = healthInsurance
-                    adultViewModel.revIndex = PersonalIncomeType.salaryId
+                    adultViewModel.revIndex = WorkIncomeType.salaryId
                 case let .turnOver(BNC, incomeLossInsurance):
                     adultViewModel.revenueBrut = BNC
                     adultViewModel.revenueNet  = BNC
                     adultViewModel.insurance = incomeLossInsurance
-                    adultViewModel.revIndex  = PersonalIncomeType.turnOverId
+                    adultViewModel.revIndex  = WorkIncomeType.turnOverId
                 case .none:
                     adultViewModel.revenueBrut    = 0
                     adultViewModel.revenueTaxable = 0
@@ -138,16 +138,16 @@ struct MemberEditView: View {
             adult.lastKnownPensionSituation = adultViewModel.lastKnownPensionSituation
             adult.lastKnownAgircPensionSituation = adultViewModel.lastKnownAgircSituation
             
-            if adultViewModel.revIndex == PersonalIncomeType.salaryId {
+            if adultViewModel.revIndex == WorkIncomeType.salaryId {
                 adult.workIncome =
-                    PersonalIncomeType.salary(brutSalary      : adultViewModel.revenueBrut,
+                    WorkIncomeType.salary(brutSalary      : adultViewModel.revenueBrut,
                                               taxableSalary   : adultViewModel.revenueTaxable,
                                               netSalary       : adultViewModel.revenueNet,
                                               fromDate        : adultViewModel.fromDate,
                                               healthInsurance : adultViewModel.insurance)
             } else {
                 adult.workIncome =
-                    PersonalIncomeType.turnOver(BNC                 : adultViewModel.revenueBrut,
+                    WorkIncomeType.turnOver(BNC                 : adultViewModel.revenueBrut,
                                                 incomeLossInsurance : adultViewModel.insurance)
             }
             
@@ -233,10 +233,10 @@ struct RevenueEditView : View {
     @Binding var insurance      : Double
     
     var body: some View {
-        let salary = revIndex == PersonalIncomeType.salaryId
+        let salary = revIndex == WorkIncomeType.salaryId
         
         return Group {
-            CaseWithAssociatedValuePicker<PersonalIncomeType>(caseIndex: $revIndex, label: "")
+            CaseWithAssociatedValuePicker<WorkIncomeType>(caseIndex: $revIndex, label: "")
                 .pickerStyle(SegmentedPickerStyle())
             if salary {
                 AmountEditView(label: "Salaire brut", amount: $revenueBrut)

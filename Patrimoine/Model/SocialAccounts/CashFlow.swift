@@ -33,49 +33,27 @@ struct CashFlowLine {
         
         // nested types
         
-        /// table des revenus d'une catégorie donnée
-        struct NetAndTaxable {
-            
-            // properties
-            
-            let name: String
-            
-            /// table des revenus versés en compte courant avant taxes, prélèvements sociaux et impots
-            var credits      = NamedValueTable(name: "PERCU")
-            /// table des fractions de revenus versés en compte courant qui est imposable à l'IRPP
-            var taxablesIrpp = NamedValueTable(name: "TAXABLE")
-            
-            // methods
-            
-            func print(level: Int = 0) {
-                let h = String(repeating: StringCst.header, count: level)
-                Swift.print(h + name)
-                Swift.print(h + StringCst.header + "credits:      ", credits, "total:", credits.total)
-                Swift.print(h + StringCst.header + "taxables IRPP:", taxablesIrpp, "total:", taxablesIrpp.total)
-            }
-        }
-        
         // properties
         
         let name = "REVENUS HORS SCI"
         /// revenus du travail
-        var workIncomes        = NetAndTaxable(name : "Revenu Travail")
+        var workIncomes        = Revenue(name : "Revenu Travail")
         /// pension de retraite
-        var pensions           = NetAndTaxable(name : "Revenu Pension")
+        var pensions           = Revenue(name : "Revenu Pension")
         /// indemnité de licenciement
-        var layoffCompensation = NetAndTaxable(name : "Indemnité de licenciement")
+        var layoffCompensation = Revenue(name : "Indemnité de licenciement")
         /// alloc chomage
-        var unemployAlloc      = NetAndTaxable(name : "Revenu Alloc Chomage")
+        var unemployAlloc      = Revenue(name : "Revenu Alloc Chomage")
         /// revenus financiers
-        var financials         = NetAndTaxable(name : "Revenu Financier")
+        var financials         = Revenue(name : "Revenu Financier")
         /// revenus des SCPI hors de la SCI
-        var scpis              = NetAndTaxable(name : "Revenu SCPI")
+        var scpis              = Revenue(name : "Revenu SCPI")
         /// revenus de locations des biens immobiliers
-        var realEstateRents    = NetAndTaxable(name : "Revenu Location")
+        var realEstateRents    = Revenue(name : "Revenu Location")
         /// total des ventes des SCPI hors de la SCI
-        var scpiSale           = NetAndTaxable(name : "Vente SCPI")
+        var scpiSale           = Revenue(name : "Vente SCPI")
         /// total des ventes des biens immobiliers
-        var realEstateSale     = NetAndTaxable(name : "Vente Immobilier")
+        var realEstateSale     = Revenue(name : "Vente Immobilier")
         /// revenus imposable de l'année précédente et reporté à l'année courante
         var taxableIrppRevenueDelayedFromLastYear = Debt(name: "REVENU IMPOSABLE REPORTE DE L'ANNEE PRECEDENTE", value: 0)
         

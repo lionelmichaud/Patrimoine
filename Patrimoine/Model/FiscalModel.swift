@@ -436,7 +436,7 @@ struct IncomeTaxes: Codable {
         Double(nbAdults) + Double(nbChildren) / 2.0
     }
     
-    func taxableIncome(from personalIncome: PersonalIncomeType) -> Double {
+    func taxableIncome(from personalIncome: WorkIncomeType) -> Double {
         
         switch personalIncome {
             case .salary(_, let taxableSalary, _, _, _):

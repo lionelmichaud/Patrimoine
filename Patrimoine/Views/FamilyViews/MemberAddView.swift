@@ -128,16 +128,16 @@ struct MemberAddView: View {
                 newMember.lastKnownPensionSituation = adultViewModel.lastKnownPensionSituation
                 newMember.lastKnownAgircPensionSituation = adultViewModel.lastKnownAgircSituation
                 
-                if adultViewModel.revIndex == PersonalIncomeType.salaryId {
+                if adultViewModel.revIndex == WorkIncomeType.salaryId {
                     newMember.workIncome =
-                        PersonalIncomeType.salary(brutSalary      : adultViewModel.revenueBrut,
+                        WorkIncomeType.salary(brutSalary      : adultViewModel.revenueBrut,
                                                   taxableSalary   : adultViewModel.revenueTaxable,
                                                   netSalary       : adultViewModel.revenueNet,
                                                   fromDate        : adultViewModel.fromDate,
                                                   healthInsurance : adultViewModel.insurance)
                 } else {
                     newMember.workIncome =
-                        PersonalIncomeType.turnOver(BNC                 : adultViewModel.revenueBrut,
+                        WorkIncomeType.turnOver(BNC                 : adultViewModel.revenueBrut,
                                                     incomeLossInsurance : adultViewModel.insurance)
                 }
                 

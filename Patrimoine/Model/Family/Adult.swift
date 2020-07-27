@@ -32,7 +32,7 @@ final class Adult: Person {
     @Published var nbOfChildBirth: Int = 0
     
     /// ACTIVITE: revenus du travail
-    @Published var workIncome        : PersonalIncomeType?
+    @Published var workIncome        : WorkIncomeType?
     var workBrutIncome    : Double { // avant charges sociales, dépenses de mutuelle ou d'assurance perte d'emploi
         switch workIncome {
             case .salary(let brutSalary, _, _, _, _):
@@ -320,7 +320,7 @@ final class Adult: Person {
             try container.decode(Int.self,
                                  forKey: .nb_Of_Year_Of_Dependency)
         workIncome =
-            try container.decode(PersonalIncomeType.self,
+            try container.decode(WorkIncomeType.self,
                                  forKey: .work_Income)
         
         // Get superDecoder for superclass and call super.init(from:) with it

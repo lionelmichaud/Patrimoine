@@ -10,19 +10,19 @@ import Foundation
 
 // MARK: - Revenus du travail
 /// revenus du travail
-public enum PersonalIncomeType: PickableIdentifiableEnum {
+public enum WorkIncomeType: PickableIdentifiableEnum {
     case salary (brutSalary: Double, taxableSalary: Double, netSalary: Double, fromDate: Date, healthInsurance: Double)
     case turnOver (BNC: Double, incomeLossInsurance: Double)
     
     @available(*, unavailable)
     case all
     
-    public static var allCases: [PersonalIncomeType] {
+    public static var allCases: [WorkIncomeType] {
         return [.salary(brutSalary: 0, taxableSalary: 0, netSalary: 0, fromDate: Date.now, healthInsurance: 0), .turnOver(BNC: 0, incomeLossInsurance: 0)]
     }
     
     public static var salaryId: Int {
-        PersonalIncomeType.salary(brutSalary      : 0,
+        WorkIncomeType.salary(brutSalary      : 0,
                                   taxableSalary   : 0,
                                   netSalary       : 0,
                                   fromDate        : Date.now,
@@ -30,7 +30,7 @@ public enum PersonalIncomeType: PickableIdentifiableEnum {
     }
     
     public static var turnOverId: Int {
-        PersonalIncomeType.turnOver(BNC: 0, incomeLossInsurance: 0).id
+        WorkIncomeType.turnOver(BNC: 0, incomeLossInsurance: 0).id
     }
     
     public var rawValue: Int {
@@ -68,7 +68,7 @@ public enum PersonalIncomeType: PickableIdentifiableEnum {
     }
 }
 
-extension PersonalIncomeType: Codable {
+extension WorkIncomeType: Codable {
     // coding keys
     private enum CodingKeys: String, CodingKey {
         case salary_brutSalary, salary_taxableSalary, salary_netSalary, salary_fromDate, salary_healthInsurance

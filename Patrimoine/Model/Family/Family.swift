@@ -57,7 +57,9 @@ final class Family: ObservableObject, CustomStringConvertible {
     // MARK: - Initialization
 
     init() {
+        // initialiser les membres de la famille à partir du fichier JSON
         self.members  = Family.loadMembersFromFile()
+        // initialiser les catégories de dépenses à partir des fichiers JSON
         self.expenses = Expenses()
         Expense.family = self
     }

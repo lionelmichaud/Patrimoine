@@ -9,9 +9,108 @@
 import Foundation
 import SwiftUI
 
-// MARK: Dépense
+// MARK: - Dictionnaire de Dépenses par catégorie (un tableau de dépenses par catégorie)
+
+struct Expenses: Codable {
+    
+    // properties
+    
+    var categories: [ExpenseCategory: ExpenseArray] = [:]
+    
+    // initialization
+    
+    /// Lire toutes les dépenses dans des fichiers au format JSON..
+    /// Un fichier par catégorie de dépense.
+    init() {
+        for category in ExpenseCategory.allCases {
+            categories[category] = ExpenseArray(fileNamePrefix: category.pickerString + "_")
+        }
+    }
+    
+    // methods
+    
+    /// Enregistrer toutes les dépenses dans des fichiers au format JSON..
+    /// Un fichier par catégorie de dépense.
+    func storeToFile() {
+        for category in categories.keys {
+            // encode to JSON file
+            categories[category]?.storeItemsToFile()
+        }
+    }
+    
+    /// Somme de toutes les dépenses, toutes catégories confondues
+    /// - Parameter atEndOf: année de calcul
+    /// - Returns: dépenses totales
+    func value(atEndOf: Int) -> Double {
+        var sum = 0.0
+        categories.forEach { (category, expenseArray) in
+            sum += expenseArray.value(atEndOf: atEndOf)
+        }
+        return sum
+    }
+    
+    /// Liste complète à plat de toutes les dépenses, toutes catégories confondues
+    /// - Parameter atEndOf: année de calcul
+    /// - Returns: liste complète à plat de toutes les dépenses
+    func namedValueTable(atEndOf: Int) -> [(name: String, value: Double)] {
+        var table = [(name: String, value: Double)]()
+        categories.forEach { (category, expenseArray) in
+            table += expenseArray.namedValueTable(atEndOf: atEndOf)
+        }
+        return table
+    }
+    
+    func namedValuedTimeFrameTable()
+    -> [(name: String, value: Double, prop: Bool, idx: Int, firstYearDuration: [Int])] {
+        var table = [(name: String, value: Double, prop: Bool, idx: Int, firstYearDuration: [Int])]()
+        var idx = 0
+        categories.sortedReversed(by: \.key.displayString).forEach { (category, expenseArray) in
+            let nbItem = expenseArray.items.count
+            for expIdx in 0..<nbItem {
+                table.append((name              : expenseArray[nbItem-1-expIdx].name,
+                              value             : expenseArray[nbItem-1-expIdx].value,
+                              prop             : expenseArray[nbItem-1-expIdx].proportional,
+                              idx               : idx,
+                              firstYearDuration : [expenseArray[nbItem-1-expIdx].firstYear,
+                                                   expenseArray[nbItem-1-expIdx].lastYear - expenseArray[nbItem-1-expIdx].firstYear + 1]))
+                idx += 1
+            }
+        }
+        return table
+    }
+    
+    /// Liste dles dépenses par catégorie
+    /// - Parameter atEndOf: année de calcul
+    /// - Returns: liste des dépenses par catégorie
+    func namedValueTable(atEndOf: Int) -> [ExpenseCategory: [(name: String, value: Double)]] {
+        var dico = [ExpenseCategory: [(name: String, value: Double)]]()
+        for category in ExpenseCategory.allCases {
+            if let exps = categories[category] {
+                dico[category] = exps.namedValueTable(atEndOf: atEndOf)
+            }
+        }
+        return dico
+    }
+    
+    /// Liste dles dépenses d'une catégorie donnée
+    /// - Parameters:
+    ///   - atEndOf: année de calcul
+    ///   - inCategory: catégorie de dépenses à prendre
+    /// - Returns: liste des dépenses de cette catégorie
+    func namedValueTable(atEndOf: Int, inCategory: ExpenseCategory) -> [(name: String, value: Double)] {
+        if let exps = categories[inCategory] {
+            return exps.namedValueTable(atEndOf: atEndOf)
+        } else {
+            return []
+        }
+    }
+    
+}
+// MARK: Tableau de Dépenses
 
 typealias ExpenseArray = ItemArray<Expense>
+
+// MARK: Dépense
 
 struct Expense: Identifiable, Codable, Hashable, NameableAndValueable {
     
@@ -72,118 +171,7 @@ struct Expense: Identifiable, Codable, Hashable, NameableAndValueable {
     }
 }
 
-//extension Expense : Hashable {
-//    static func == (l: Expense, r: Expense) -> Bool {
-//        l.name == r.name &&
-//            l.value == r.value &&
-//            l.proportional == r.proportional &&
-//            l.timeSpan == r.timeSpan
-//    }
-//    func hash(into hasher: inout Hasher) {
-//        hasher.combine(name)
-//        hasher.combine(value)
-//        hasher.combine(proportional)
-//        hasher.combine(timeSpan)
-//    }
-//}
 extension Expense: Comparable {
     static func < (lhs: Expense, rhs: Expense) -> Bool { (lhs.name < rhs.name) }
 }
 
-// MARK: - Dictionnaire de Dépenses par catégorie
-
-struct Expenses: Codable {
-    
-    // properties
-    
-    var categories: [ExpenseCategory: ExpenseArray] = [:]
-
-    // initialization
-    
-    /// Lire toutes les dépenses dans des fichiers au format JSON..
-    /// Un fichier par catégorie de dépense.
-    init() {
-        for category in ExpenseCategory.allCases {
-            categories[category] = ExpenseArray(fileNamePrefix: category.pickerString + "_")
-        }
-    }
-    
-    // methods
-    
-    /// Enregistrer toutes les dépenses dans des fichiers au format JSON..
-    /// Un fichier par catégorie de dépense.
-    func storeToFile() {
-        for category in categories.keys {
-            // encode to JSON file
-            categories[category]?.storeItemsToFile()
-        }
-    }
-    
-    /// Somme de toutes les dépenses, toutes catégories confondues
-    /// - Parameter atEndOf: année de calcul
-    /// - Returns: dépenses totales
-    func value(atEndOf: Int) -> Double {
-        var sum = 0.0
-        categories.forEach { (category, expenseArray) in
-            sum += expenseArray.value(atEndOf: atEndOf)
-        }
-        return sum
-    }
-    
-    /// Liste complète à plat de toutes les dépenses, toutes catégories confondues
-    /// - Parameter atEndOf: année de calcul
-    /// - Returns: liste complète à plat de toutes les dépenses
-    func namedValueTable(atEndOf: Int) -> [(name: String, value: Double)] {
-        var table = [(name: String, value: Double)]()
-        categories.forEach { (category, expenseArray) in
-            table += expenseArray.namedValueTable(atEndOf: atEndOf)
-        }
-        return table
-    }
-    
-    func namedValuedTimeFrameTable()
-        -> [(name: String, value: Double, prop: Bool, idx: Int, firstYearDuration: [Int])] {
-        var table = [(name: String, value: Double, prop: Bool, idx: Int, firstYearDuration: [Int])]()
-        var idx = 0
-        categories.sortedReversed(by: \.key.displayString).forEach { (category, expenseArray) in
-            let nbItem = expenseArray.items.count
-            for expIdx in 0..<nbItem {
-                table.append((name              : expenseArray[nbItem-1-expIdx].name,
-                              value             : expenseArray[nbItem-1-expIdx].value,
-                              prop             : expenseArray[nbItem-1-expIdx].proportional,
-                              idx               : idx,
-                              firstYearDuration : [expenseArray[nbItem-1-expIdx].firstYear,
-                                                   expenseArray[nbItem-1-expIdx].lastYear - expenseArray[nbItem-1-expIdx].firstYear + 1]))
-                idx += 1
-            }
-        }
-        return table
-    }
-    
-    /// Liste dles dépenses par catégorie
-    /// - Parameter atEndOf: année de calcul
-    /// - Returns: liste des dépenses par catégorie
-    func namedValueTable(atEndOf: Int) -> [ExpenseCategory: [(name: String, value: Double)]] {
-        var dico = [ExpenseCategory: [(name: String, value: Double)]]()
-        for category in ExpenseCategory.allCases {
-            if let exps = categories[category] {
-                dico[category] = exps.namedValueTable(atEndOf: atEndOf)
-            }
-        }
-        return dico
-    }
-    
-    /// Liste dles dépenses d'une catégorie donnée
-    /// - Parameters:
-    ///   - atEndOf: année de calcul
-    ///   - inCategory: catégorie de dépenses à prendre
-    /// - Returns: liste des dépenses de cette catégorie
-    func namedValueTable(atEndOf: Int, inCategory: ExpenseCategory) -> [(name: String, value: Double)] {
-        if let exps = categories[inCategory] {
-            return exps.namedValueTable(atEndOf: atEndOf)
-        } else {
-            return []
-        }
-    }
-    
-}
