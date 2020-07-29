@@ -13,7 +13,7 @@ class PersonViewModel: ObservableObject {
     @Published var familyName = ""
     @Published var givenName  = ""
     @Published var sexe       = Sexe.male
-    @Published var seniority  = Seniority.adult
+    @Published var seniority  = Seniority.enfant
     @Published var birthDate  = Date()
     @Published var deathAge   = 81
 }
@@ -48,6 +48,7 @@ struct MemberAddView: View {
     @EnvironmentObject var patrimoine : Patrimoin
     @EnvironmentObject var uiState    : UIState
     @Environment(\.presentationMode) var presentationMode
+    @State private var alertItem : AlertItem?
     // Person
     @ObservedObject var personViewModel = PersonViewModel()
     // Child
@@ -80,8 +81,22 @@ struct MemberAddView: View {
             }.padding(.horizontal).padding(.top)
             
             Form {
-                CiviliteEditView(personViewModel: personViewModel)
-                
+                if #available(iOS 14.0, *) {
+                    CiviliteEditView(personViewModel: personViewModel)
+                        .onChange(of: personViewModel.seniority) { newState in
+                            // pas plus de deux adultes dans une famille
+                            if newState == .adult && family.nbOfAdults == 2 {
+                                self.alertItem = AlertItem(title         : Text("Pas plus de adultes par famille"),
+                                                           dismissButton : .default(Text("OK")))
+                                personViewModel.seniority = .enfant
+                            }
+                        }
+                        .alert(item: $alertItem) { alertItem in myAlert(alertItem: alertItem) }
+                } else {
+                    // Fallback on earlier versions
+                    CiviliteEditView(personViewModel: personViewModel)
+                }
+
                 if formIsValid() {
                     if personViewModel.seniority == .adult {
                         AdultEditView(personViewModel: personViewModel,
@@ -96,8 +111,10 @@ struct MemberAddView: View {
                 }
             }
             .textFieldStyle(RoundedBorderTextFieldStyle())
+
         }
     }
+
     
     /// Création du nouveau membre et ajout à la famille
     func addMember() {

@@ -13,15 +13,62 @@ import SwiftUI
 struct RetirementEditView: View {
     @ObservedObject var personViewModel : PersonViewModel
     @ObservedObject var adultViewModel  : AdultViewModel
-
+    @State private var alertItem : AlertItem?
+    
     var body : some View {
-        Group {
-            // régime complémentaire
-            RegimeAgircEditView(personViewModel : personViewModel,
-                                  adultViewModel  : adultViewModel)
-            // régime général
-            RegimeGeneralEditView(personViewModel : personViewModel,
-                                adultViewModel  : adultViewModel)
+        if #available(iOS 14.0, *) {
+            Group {
+                // régime complémentaire
+                RegimeAgircEditView(personViewModel : personViewModel,
+                                    adultViewModel  : adultViewModel)
+                    .onChange(of: adultViewModel.ageAgircPension) { newState in
+                        if (newState > adultViewModel.agePension) ||
+                            (newState == adultViewModel.agePension && adultViewModel.trimAgircPension > adultViewModel.trimPension) {
+                            adultViewModel.ageAgircPension  = adultViewModel.agePension
+                            adultViewModel.trimAgircPension = adultViewModel.trimPension
+                            self.alertItem = AlertItem(title         : Text("La pension complémentaire doit être liquidée avant la pension base"),
+                                                       dismissButton : .default(Text("OK")))
+                        }
+                    }
+                    .onChange(of: adultViewModel.trimAgircPension) { newState in
+                        if (adultViewModel.ageAgircPension == adultViewModel.agePension && newState > adultViewModel.trimPension) {
+                            adultViewModel.ageAgircPension  = adultViewModel.agePension
+                            adultViewModel.trimAgircPension = adultViewModel.trimPension
+                            self.alertItem = AlertItem(title         : Text("La pension complémentaire doit être liquidée avant la pension base"),
+                                                       dismissButton : .default(Text("OK")))
+                        }
+                    }
+                // régime général
+                RegimeGeneralEditView(personViewModel : personViewModel,
+                                      adultViewModel  : adultViewModel)
+                    .onChange(of: adultViewModel.agePension) { newState in
+                        if (newState < adultViewModel.ageAgircPension) ||
+                            (newState == adultViewModel.ageAgircPension && adultViewModel.trimAgircPension > adultViewModel.trimPension) {
+                            adultViewModel.agePension  = adultViewModel.ageAgircPension
+                            adultViewModel.trimPension = adultViewModel.trimAgircPension
+                            self.alertItem = AlertItem(title         : Text("La pension complémentaire doit être liquidée avant la pension base"),
+                                                       dismissButton : .default(Text("OK")))
+                        }
+                    }
+                    .onChange(of: adultViewModel.trimPension) { newState in
+                        if (adultViewModel.ageAgircPension == adultViewModel.agePension && adultViewModel.trimAgircPension > newState) {
+                            adultViewModel.agePension  = adultViewModel.ageAgircPension
+                            adultViewModel.trimPension = adultViewModel.trimAgircPension
+                            self.alertItem = AlertItem(title         : Text("La pension complémentaire doit être liquidée avant la pension base"),
+                                                       dismissButton : .default(Text("OK")))
+                        }
+                    }
+            }
+            .alert(item: $alertItem) { alertItem in myAlert(alertItem: alertItem) }
+        } else {
+            Group {
+                // régime complémentaire
+                RegimeAgircEditView(personViewModel : personViewModel,
+                                    adultViewModel  : adultViewModel)
+                // régime général
+                RegimeGeneralEditView(personViewModel : personViewModel,
+                                      adultViewModel  : adultViewModel)
+            }
         }
     }
 }
@@ -42,7 +89,7 @@ struct RegimeAgircEditView: View {
                         Text("\(adultViewModel.ageAgircPension) ans").foregroundColor(.secondary)
                     }
                 }
-                Stepper(value: $adultViewModel.trimAgircPension, in: 0...4) {
+                Stepper(value: $adultViewModel.trimAgircPension, in: 0...3) {
                     Text("\(adultViewModel.trimAgircPension * 3) mois").foregroundColor(.secondary)
                 }
                 .frame(width: 160)
@@ -84,7 +131,7 @@ struct RegimeGeneralEditView: View {
                         Text("\(adultViewModel.agePension) ans").foregroundColor(.secondary)
                     }
                 }
-                Stepper(value: $adultViewModel.trimPension, in: 0...4) {
+                Stepper(value: $adultViewModel.trimPension, in: 0...3) {
                     Text("\(adultViewModel.trimPension * 3) mois").foregroundColor(.secondary)
                 }
                 .frame(width: 160)

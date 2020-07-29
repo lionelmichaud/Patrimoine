@@ -172,10 +172,12 @@ struct MemberEditView: View {
 
 // MARK: - Saisie adulte
 struct AdultEditView : View {
+    @EnvironmentObject var member              : Person
     @ObservedObject var personViewModel        : PersonViewModel
     @ObservedObject var adultViewModel         : AdultViewModel
     @State private var compenstationSupraLegal : Bool = false
-    
+    @State private var alertItem               : AlertItem?
+
     var body: some View {
         Group {
             Section(header: Text("SCENARIO").font(.subheadline)) {
@@ -195,9 +197,23 @@ struct AdultEditView : View {
                                 revenueTaxable : $adultViewModel.revenueTaxable,
                                 fromDate       : $adultViewModel.fromDate,
                                 insurance      : $adultViewModel.insurance)
-                DatePicker(selection           : $adultViewModel.dateRetirement,
-                           displayedComponents : .date,
-                           label               : { HStack { Text("Date de cessation d'activité"); Spacer() } })
+                if #available(iOS 14.0, *) {
+                    DatePicker(selection           : $adultViewModel.dateRetirement,
+                               displayedComponents : .date,
+                               label               : { HStack { Text("Date de cessation d'activité"); Spacer() } })
+                        .onChange(of: adultViewModel.dateRetirement) { newState in
+                            if (newState > (member as! Adult).dateOfAgircPensionLiquid) ||
+                                (newState > (member as! Adult).dateOfPensionLiquid) {
+                                self.alertItem = AlertItem(title         : Text("La date de cessation d'activité est postérieure à la date de liquiditaion d'une pension de retraite"),
+                                                           dismissButton : .default(Text("OK")))
+                            }
+                        }
+                        .alert(item: $alertItem) { alertItem in myAlert(alertItem: alertItem) }
+                } else {
+                    DatePicker(selection           : $adultViewModel.dateRetirement,
+                               displayedComponents : .date,
+                               label               : { HStack { Text("Date de cessation d'activité"); Spacer() } })
+                }
                 CasePicker(pickedCase: $adultViewModel.causeOfRetirement, label: "Cause").pickerStyle(SegmentedPickerStyle())
                 if (adultViewModel.causeOfRetirement != Unemployment.Cause.demission) {
                     Toggle(isOn: $adultViewModel.hasAllocationSupraLegale, label: { Text("Indemnité de licenciement supra-légale") })

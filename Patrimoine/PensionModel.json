@@ -3,7 +3,7 @@
     {
         "model" :
         {
-            "ageMinimumLegal"      : 65,
+            "ageMinimumLegal"      : 62,
             "nbOfYearForSAM"       : 25,
             "maxReversionRate"     : 50.0,
             "decoteParTrimestre"   : 0.625,
