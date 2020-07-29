@@ -18,7 +18,7 @@ struct RegimeAgircSituation: Codable {
 
 struct RegimeAgirc: Codable {
     
-    // nested types
+    // MARK: - Nested types
     
     struct SliceAvantAgeLegal: Codable {
         var ndTrimAvantAgeLegal : Int
@@ -38,12 +38,12 @@ struct RegimeAgirc: Codable {
         let ageMinimum    : Int    // 57
     }
     
-    // properties
+    // MARK: - Properties
     
     var model: Model
     
-    // methods
-    
+    // MARK: - Methods
+
     /// Age minimum pour demander la liquidation de pension Agirc
     /// - Parameter birthDate: date de naissance
     /// - Returns: Age minimum pour demander la liquidation de pension Agirc

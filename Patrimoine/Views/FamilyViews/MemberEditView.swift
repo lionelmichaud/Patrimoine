@@ -164,8 +164,8 @@ struct MemberEditView: View {
         
         // remettre à zéro la simulation et sa vue
         simulation.reset(withPatrimoine: patrimoine)
-        uiState.simulationViewState.selectedItem = nil
-        
+        uiState.resetSimulation()
+
         self.presentationMode.wrappedValue.dismiss()
     }
 }

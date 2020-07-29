@@ -60,10 +60,15 @@ struct AssetView: View {
     }
 }
 struct RealEstateView: View {
+    @EnvironmentObject var simulation : Simulation
     @EnvironmentObject var patrimoine : Patrimoin
     @EnvironmentObject var uiState    : UIState
 
     func removeItems(at offsets: IndexSet) {
+        // remettre à zéro la simulation et sa vue
+        simulation.reset(withPatrimoine: patrimoine)
+        uiState.resetSimulation()
+
         patrimoine.assets.realEstates.delete(at: offsets)
     }
     
@@ -111,10 +116,15 @@ struct RealEstateView: View {
 }
 
 struct ScpiView: View {
+    @EnvironmentObject var simulation : Simulation
     @EnvironmentObject var patrimoine : Patrimoin
     @EnvironmentObject var uiState    : UIState
 
     func removeItems(at offsets: IndexSet) {
+        // remettre à zéro la simulation et sa vue
+        simulation.reset(withPatrimoine: patrimoine)
+        uiState.resetSimulation()
+
         patrimoine.assets.scpis.delete(at: offsets)
     }
     
@@ -176,9 +186,14 @@ struct ScpiView: View {
 
 struct PeriodicInvestView: View {
     @EnvironmentObject var patrimoine : Patrimoin
+    @EnvironmentObject var simulation : Simulation
     @EnvironmentObject var uiState    : UIState
 
     func removeItems(at offsets: IndexSet) {
+        // remettre à zéro la simulation et sa vue
+        simulation.reset(withPatrimoine: patrimoine)
+        uiState.resetSimulation()
+
         patrimoine.assets.periodicInvests.delete(at: offsets)
     }
     
@@ -227,10 +242,15 @@ struct PeriodicInvestView: View {
 }
 
 struct FreeInvestView: View {
+    @EnvironmentObject var simulation : Simulation
     @EnvironmentObject var patrimoine : Patrimoin
     @EnvironmentObject var uiState    : UIState
 
     func removeItems(at offsets: IndexSet) {
+        // remettre à zéro la simulation et sa vue
+        simulation.reset(withPatrimoine: patrimoine)
+        uiState.resetSimulation()
+
         patrimoine.assets.freeInvests.delete(at: offsets)
     }
     
@@ -280,10 +300,15 @@ struct FreeInvestView: View {
 }
 
 struct SciScpiView: View {
+    @EnvironmentObject var simulation : Simulation
     @EnvironmentObject var patrimoine : Patrimoin
     @EnvironmentObject var uiState    : UIState
 
     func removeItems(at offsets: IndexSet) {
+        // remettre à zéro la simulation et sa vue
+        simulation.reset(withPatrimoine: patrimoine)
+        uiState.resetSimulation()
+
         patrimoine.assets.sci.scpis.delete(at: offsets)
     }
     
@@ -345,14 +370,19 @@ struct SciScpiView: View {
 
 
 struct AssetView_Previews: PreviewProvider {
-    static var patrimoine  = Patrimoin()
+    static var simulation = Simulation()
+    static var patrimoine = Patrimoin()
+    static var uiState    = UIState()
 
     static var previews: some View {
         return
             Group {
                     NavigationView {
                         List {
-                        AssetView().environmentObject(patrimoine)
+                        AssetView()
+                            .environmentObject(simulation)
+                            .environmentObject(patrimoine)
+                            .environmentObject(uiState)
                         }
                 }
                     .colorScheme(.dark)
@@ -361,7 +391,10 @@ struct AssetView_Previews: PreviewProvider {
                 
                 NavigationView {
                     List {
-                        AssetView().environmentObject(patrimoine)
+                        AssetView()
+                            .environmentObject(simulation)
+                            .environmentObject(patrimoine)
+                            .environmentObject(uiState)
                     }
                 }
                     .colorScheme(.light)

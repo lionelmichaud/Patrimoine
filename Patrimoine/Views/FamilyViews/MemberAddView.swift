@@ -43,7 +43,10 @@ class AdultViewModel: ObservableObject {
 // MARK: - Saisie du nouveau membre de la famille
 struct MemberAddView: View {
     //@Environment(\.managedObjectContext) var moc
-    @EnvironmentObject var family: Family
+    @EnvironmentObject var family     : Family
+    @EnvironmentObject var simulation : Simulation
+    @EnvironmentObject var patrimoine : Patrimoin
+    @EnvironmentObject var uiState    : UIState
     @Environment(\.presentationMode) var presentationMode
     // Person
     @ObservedObject var personViewModel = PersonViewModel()
@@ -98,6 +101,10 @@ struct MemberAddView: View {
     
     /// Création du nouveau membre et ajout à la famille
     func addMember() {
+        // remettre à zéro la simulation et sa vue
+        simulation.reset(withPatrimoine: patrimoine)
+        uiState.resetSimulation()
+        
         switch personViewModel.seniority {
             case .adult  :
                 // creation du nouveau membre
@@ -209,11 +216,17 @@ struct CiviliteEditView : View {
 }
 
 struct MemberAddView_Previews: PreviewProvider {
-    static var family  = Family()
+    static var family     = Family()
+    static var simulation = Simulation()
+    static var patrimoine = Patrimoin()
+    static var uiState    = UIState()
 
     static var previews: some View {
             MemberAddView()
                 .environmentObject(family)
+                .environmentObject(simulation)
+                .environmentObject(patrimoine)
+                .environmentObject(uiState)
     }
 }
 

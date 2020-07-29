@@ -62,10 +62,23 @@ final class Family: ObservableObject, CustomStringConvertible {
         // initialiser les catégories de dépenses à partir des fichiers JSON
         self.expenses = Expenses()
         Expense.family = self
+        Person.family = self
     }
     
     // MARK: - Methodes
-
+    
+    /// Rend l'époux d'un adult de la famille (s'il existe)
+    /// - Parameter member: membre adult de la famille
+    /// - Returns: époux  (s'il existe)
+    func spouseOf(_ member: Adult) -> Adult? {
+        for person in members {
+            if let adult = person as? Adult {
+                if adult != member { return adult }
+            }
+        }
+        return nil
+    }
+    
     /// Nombre d'enfant dans le foyer fiscal
     /// - Parameter year: année
     func nbOfFiscalChildren(during year: Int) -> Int {
@@ -90,10 +103,10 @@ final class Family: ObservableObject, CustomStringConvertible {
         return nb
     }
     
-    /// Revenus de la famille durant l'année
+    /// Revenus du tavail cumulés de la famille durant l'année
     /// - Parameter year: année
     /// - Parameter netIncome: revenu net de charges et d'assurance (à vivre)
-    /// - Parameter taxableIncome: revenu imposable à l'IRPP
+    /// - Parameter taxableIncome: Revenus du tavail cumulés imposable à l'IRPP
     func income(during year: Int) -> (netIncome: Double, taxableIncome: Double) {
         var totalNetIncome     : Double = 0.0
         var totalTaxableIncome : Double = 0.0
@@ -121,6 +134,20 @@ final class Family: ObservableObject, CustomStringConvertible {
             taxableIncome : income(during : year).taxableIncome, // A CORRIGER
             nbAdults      : nbOfAdultAlive(atEndOf    : year),
             nbChildren    : nbOfFiscalChildren(during : year))
+    }
+    
+    /// Pensions de retraite cumulées de la famille durant l'année
+    /// - Parameter year: année
+    /// - Returns: Pensions de retraite cumulées brutes
+    func pension(during year: Int, withReversion: Bool = true) -> Double {
+        var pension = 0.0
+        for person in members {
+            if let adult = person as? Adult {
+                pension += adult.pension(during        : year,
+                                         withReversion : withReversion).brut
+            }
+        }
+        return pension
     }
     
     /// Mettre à jour le nombre d'enfant de chaque parent de la famille

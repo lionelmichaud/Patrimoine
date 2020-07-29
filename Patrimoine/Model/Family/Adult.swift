@@ -452,21 +452,24 @@ final class Adult: Person {
     
     /// Revenu net de charges pour vivre et revenu taxable à l'IRPP
     /// - Parameter year: année
-    func workIncome(during year: Int) -> (net: Double, taxableIrpp: Double) {
-        // TODO: proratiser
-        if isActive(during: year) {
-            let nbWeeks = (dateOfRetirementComp.year == year ? dateOfRetirement.weekOfYear.double() : 52)
-            return (net         : workLivingIncome  * nbWeeks / 52,
-                    taxableIrpp : workTaxableIncome * nbWeeks / 52)
-        } else {
-            return (0.0, 0.0)
+    func workIncome(during year: Int)
+    -> (net: Double, taxableIrpp: Double) {
+        guard isAlive(atEndOf: year) else {
+            return (0, 0)
         }
+        let nbWeeks = (dateOfRetirementComp.year == year ? dateOfRetirement.weekOfYear.double() : 52)
+        return (net         : workLivingIncome  * nbWeeks / 52,
+                taxableIrpp : workTaxableIncome * nbWeeks / 52)
     }
     
     /// Calcul de la pension de retraite
     /// - Parameter year: année
     /// - Returns: pension brute, nette de charges sociales, taxable à l'IRPP
-    func pension(during year: Int) -> (brut: Double, net: Double, taxable: Double) {
+    func pension(during year: Int, withReversion: Bool = true)
+    -> (brut: Double, net: Double, taxable: Double) {
+        guard isAlive(atEndOf: year) else {
+            return (0, 0, 0)
+        }
         var brut = 0.0
         var net  = 0.0
         // pension du régime général
@@ -476,21 +479,64 @@ final class Adult: Person {
             brut += pension.brut * nbWeeks / 52
             net  += pension.net  * nbWeeks / 52
         }
-        // pension du régime complémentaire
+        // ajouter la pension du régime complémentaire
         if isAgircPensioned(during: year) {
             let pension = pensionRegimeAgirc
             let nbWeeks = (dateOfAgircPensionLiquidComp.year == year ? (52 - dateOfAgircPensionLiquid.weekOfYear).double() : 52)
             brut += pension.brut * nbWeeks / 52
             net  += pension.net  * nbWeeks / 52
         }
+        if withReversion {
+            // ajouter la pension de réversion s'il y en a une
+            if let pensionReversion = Person.family?.spouseOf(self)?.pensionReversionForSpouse(during: year) {
+                brut += pensionReversion.brut
+                net  += pensionReversion.net
+            }
+        }
         let taxable = Fiscal.model.pensionTaxes.taxable(from: net)
         return (brut, net, taxable)
+    }
+    
+    /// Calcul de la pension de réversion laissée au conjoint
+    /// - Parameter year: année
+    /// - Returns: pension de réversion laissée au conjoint
+    /// - Warning: pension laissée au conjoint
+    func pensionReversionForSpouse(during year: Int)
+    -> (brut: Double, net: Double)? {
+        // la personne est décédée
+        guard !isAlive(atEndOf: year) else {
+            // la personne est vivante => pas de pension de réversion
+            return nil
+        }
+        // le conjoint existe
+        guard let spouse = Person.family?.spouseOf(self) else {
+            return nil
+        }
+        // le conjoint est vivant
+        guard spouse.isAlive(atEndOf: year) else {
+            return nil
+        }
+        // somme des pensions au moment du décès
+        let yearOfDeath = self.yearOfDeath
+        guard let pensionTotaleAvantDeces = Person.family?.pension(during        : yearOfDeath,
+                                                                   withReversion : false) else {
+            return nil
+        }
+        // la pension du conjoint survivant, avec réversion, est limitée à un % de la somme des deux
+        let pensionApresDeces = pensionTotaleAvantDeces * Pension.model.reversion.model.tauxReversion / 100.0
+        let pensionDuConjoint = spouse.pension(during        : yearOfDeath,
+                                               withReversion : false).brut
+        // le complément de réversion est calculé en conséquence
+        let brut = max(0, pensionApresDeces - pensionDuConjoint)
+        let net  = Pension.model.reversion.net(brut)
+        return (brut, net)
     }
     
     /// Allocation chômage perçue dans l'année
     /// - Parameter year: année
     /// - Returns: Allocation chômage perçue dans l'année brute, nette de charges sociales, taxable à l'IRPP
-    func unemployementAllocation(during year: Int) -> (brut: Double, net: Double, taxable: Double) {
+    func unemployementAllocation(during year: Int)
+    -> (brut: Double, net: Double, taxable: Double) {
         guard isReceivingUnemployementAllocation(during: year) else {
             return (0,0,0)
         }
@@ -544,7 +590,8 @@ final class Adult: Person {
     /// Indemnité de licenciement perçue dans l'année
     /// - Parameter year: année
     /// - Returns: Indemnité de licenciement perçue dans l'année brute, nette de charges sociales, taxable à l'IRPP
-    func layoffCompensation(during year: Int) -> (brut: Double, net: Double, taxable: Double) {
+    func layoffCompensation(during year: Int)
+    -> (brut: Double, net: Double, taxable: Double) {
         guard year == dateOfRetirement.year else {
             return (0,0,0)
         }

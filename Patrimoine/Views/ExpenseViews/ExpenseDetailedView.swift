@@ -76,7 +76,7 @@ struct ExpenseDetailedView: View {
     // sauvegarder les changements
     func applyChanges() {
         guard localItem.timeSpan.isValid else {
-            self.alertItem = AlertItem(title         : Text("La valeur de début doit être antérieure ou égale à la valeur de fin"),
+            self.alertItem = AlertItem(title         : Text("La date de début doit être antérieure ou égale à la date de fin"),
                                        dismissButton : .default(Text("OK")))
             return
         }
@@ -96,8 +96,8 @@ struct ExpenseDetailedView: View {
         
         // remettre à zéro la simulation et sa vue
         simulation.reset(withPatrimoine: patrimoine)
-        uiState.simulationViewState.selectedItem = nil
-        
+        uiState.resetSimulation()
+
         self.presentationMode.wrappedValue.dismiss()
     }
     

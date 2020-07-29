@@ -9,9 +9,12 @@
 import SwiftUI
 
 struct FamilyView: View {
-    @EnvironmentObject var family: Family
+    @EnvironmentObject var family     : Family
+    @EnvironmentObject var simulation : Simulation
+    @EnvironmentObject var patrimoine : Patrimoin
+    @EnvironmentObject var uiState    : UIState
     @State var showingSheet = false
-    
+
     var body: some View {
         NavigationView {
             // Primary view
@@ -43,6 +46,9 @@ struct FamilyView: View {
             .sheet(isPresented: $showingSheet) {
                 MemberAddView()
                     .environmentObject(self.family)
+                    .environmentObject(self.simulation)
+                    .environmentObject(self.patrimoine)
+                    .environmentObject(self.uiState)
         }
     }
 }

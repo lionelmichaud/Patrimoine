@@ -12,11 +12,16 @@ import Foundation
 
 struct Pension: Codable {
     
+    // MARK: - Nested types
+    
     struct Model: Codable {
         var regimeGeneral: RegimeGeneral
         var regimeAgirc  : RegimeAgirc
+        var reversion    : PensionReversion
     }
     
+    // MARK: -  Static properties
+
     static var model: Model =
         Bundle.main.decode(Model.self,
                            from                 : "PensionModel.json",

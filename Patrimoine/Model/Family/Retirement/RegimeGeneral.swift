@@ -18,7 +18,7 @@ struct RegimeGeneralSituation: Codable {
 
 struct RegimeGeneral: Codable {
     
-    // nested types
+    // MARK: - Nested types
     
     struct Slice: Codable {
         var birthYear   : Int
@@ -35,12 +35,12 @@ struct RegimeGeneral: Codable {
         let maxNbTrimestreDecote : Int    // 20 // plafond
     }
     
-    // properties
+    // MARK: - Properties
     
     var model: Model
     
-    // methods
-    
+    // MARK: - Methods
+
     /// Calcul du taux de reversion en tenant compte d'une décote éventuelle
     /// - Parameters:
     ///   - birthDate: date de naissance

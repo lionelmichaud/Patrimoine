@@ -14,12 +14,13 @@ import Foundation
 enum RevenueCategory: Int, PickableEnum, Codable, Hashable {
     case workIncomes
     case pensions
+    case pensionsReversion
     case layoffCompensation
     case unemployAlloc
     case financials
     case scpis
-    case realEstateRents
     case scpiSale
+    case realEstateRents
     case realEstateSale
     
     // properties
@@ -32,7 +33,9 @@ enum RevenueCategory: Int, PickableEnum, Codable, Hashable {
             case .workIncomes:
                 return "Revenu Travail"
             case .pensions:
-                return "Revenu Pension"
+                return "Pension"
+            case .pensionsReversion:
+                return "Pension réversion"
             case .layoffCompensation:
                 return "Indemnité de licenciement"
             case .unemployAlloc:
@@ -41,10 +44,10 @@ enum RevenueCategory: Int, PickableEnum, Codable, Hashable {
                 return "Revenu Financier"
             case .scpis:
                 return "Revenu SCPI"
-            case .realEstateRents:
-                return "Revenu Location"
             case .scpiSale:
                 return "Vente SCPI"
+            case .realEstateRents:
+                return "Revenu Location"
             case .realEstateSale:
                 return "Vente Immeuble"
         }

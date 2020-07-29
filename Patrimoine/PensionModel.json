@@ -258,6 +258,13 @@
             "valeurDuPoint" : 1.2714,
             "ageMinimum"    : 57
         }
+    },
+    
+    "reversion" :
+    {
+        "model" :
+        {
+            "tauxReversion" : 70.0
+        }
     }
 }
-

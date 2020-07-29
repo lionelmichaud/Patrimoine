@@ -143,7 +143,7 @@ struct RealEstateDetailedView: View {
         
         // remettre à zéro la simulation et sa vue
         simulation.reset(withPatrimoine: patrimoine)
-        uiState.simulationViewState.selectedItem = nil
+        uiState.resetSimulation()
 
         //patrimoine.assets.realEstates.storeItemsToFile()
         self.presentationMode.wrappedValue.dismiss()

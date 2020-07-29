@@ -72,33 +72,26 @@ extension SocialAccounts {
         
         func buildRevenusTableCSV(firstLine: CashFlowLine) {
             let personsNames                = firstLine.ages.persons.map(\.name).joined(separator: "; ")
-            let revenusWorkIncomeNames      = firstLine.revenues.workIncomes.credits.headerCSV
-            let revenusFinancialNames       = firstLine.revenues.financials.credits.headerCSV
-            let revenusScpiNames            = firstLine.revenues.scpis.credits.headerCSV
-            let revenusrealEstateRentsNames = firstLine.revenues.realEstateRents.credits.headerCSV
-            let revenusScpiSaleNames        = firstLine.revenues.scpiSale.credits.headerCSV
-            let revenusRealEstateSaleNames  = firstLine.revenues.realEstateSale.credits.headerCSV
-            heading = "YEAR; \(personsNames); \(revenusWorkIncomeNames); \(revenusFinancialNames); \(revenusScpiNames); \(revenusrealEstateRentsNames); \(revenusScpiSaleNames); \(revenusRealEstateSaleNames); \(firstLine.revenues.taxableIrppRevenueDelayedFromLastYear.name);"
-            
+            let revenusWorkIncomeNames      = firstLine.revenues.perCategory[.workIncomes]?.credits.headerCSV
+            let revenusFinancialNames       = firstLine.revenues.perCategory[.financials]?.credits.headerCSV
+            let revenusScpiNames            = firstLine.revenues.perCategory[.scpis]?.credits.headerCSV
+            let revenusrealEstateRentsNames = firstLine.revenues.perCategory[.realEstateRents]?.credits.headerCSV
+            let revenusScpiSaleNames        = firstLine.revenues.perCategory[.scpiSale]?.credits.headerCSV
+            let revenusRealEstateSaleNames  = firstLine.revenues.perCategory[.realEstateSale]?.credits.headerCSV
+            heading = "YEAR; \(personsNames); \(revenusWorkIncomeNames ?? ""); \(revenusFinancialNames ?? ""); \(revenusScpiNames ?? ""); \(revenusrealEstateRentsNames ?? ""); \(revenusScpiSaleNames ?? ""); \(revenusRealEstateSaleNames ?? ""); \(firstLine.revenues.taxableIrppRevenueDelayedFromLastYear.name);"
+
             // For every element , extract the values as a comma-separated string.
             // - Ages: year, age, age...
-            let rowsOfAges = cashFlowArray.map { "\($0.year); \($0.ages.persons.map { (person: (name: String, age: Int)) -> String in String(person.age)}.joined(separator: "; ")); "
+            let rowsOfAges = cashFlowArray.map { "\($0.year); \($0.ages.persons.map { (person: (name: String, age: Int)) -> String in String(person.age) }.joined(separator: "; ")); "
             }
             // - Revenues.workIncomes: credits, credits, credits...
-            let rowsRevenusWorkIncome = cashFlowArray.map { "\($0.revenues.workIncomes.credits.valuesCSV); "
-            }
-            let rowsRevenusFinancial = cashFlowArray.map { "\($0.revenues.financials.credits.valuesCSV); "
-            }
-            let rowsRevenusScpi = cashFlowArray.map { "\($0.revenues.scpis.credits.valuesCSV); "
-            }
-            let rowsRevenusRealEstateRents = cashFlowArray.map { "\($0.revenues.realEstateRents.credits.valuesCSV); "
-            }
-            let rowsRevenusScpiSale = cashFlowArray.map { "\($0.revenues.scpiSale.credits.valuesCSV); "
-            }
-            let rowsRevenusRealEstateSale = cashFlowArray.map { "\($0.revenues.realEstateSale.credits.valuesCSV); "
-            }
-            let rowsRevenusReporte = cashFlowArray.map { "\($0.revenues.taxableIrppRevenueDelayedFromLastYear.value(atEndOf:0).roundedString); "
-            }
+            let rowsRevenusWorkIncome      = cashFlowArray.map { "\($0.revenues.perCategory[.workIncomes]?.credits.valuesCSV ?? ""); " }
+            let rowsRevenusFinancial       = cashFlowArray.map { "\($0.revenues.perCategory[.financials]?.credits.valuesCSV ?? ""); " }
+            let rowsRevenusScpi            = cashFlowArray.map { "\($0.revenues.perCategory[.scpis]?.credits.valuesCSV ?? ""); " }
+            let rowsRevenusRealEstateRents = cashFlowArray.map { "\($0.revenues.perCategory[.realEstateRents]?.credits.valuesCSV ?? ""); " }
+            let rowsRevenusScpiSale        = cashFlowArray.map { "\($0.revenues.perCategory[.scpiSale]?.credits.valuesCSV ?? ""); " }
+            let rowsRevenusRealEstateSale  = cashFlowArray.map { "\($0.revenues.perCategory[.realEstateSale]?.credits.valuesCSV ?? ""); " }
+            let rowsRevenusReporte         = cashFlowArray.map { "\($0.revenues.taxableIrppRevenueDelayedFromLastYear.value(atEndOf :0).roundedString); " }
             
             rows = zip(rowsOfAges, rowsRevenusWorkIncome).map(+)
             rows = zip(rows, rowsRevenusFinancial).map(+)
@@ -115,15 +108,10 @@ extension SocialAccounts {
             heading += "\(sciDividendsNames); \(sciSalesNames); IS; REMB. SCI;"
             
             // For every element , extract the values as a comma-separated string.
-            let rowsSciDividends   = cashFlowArray.map { "\($0.sciCashFlowLine.revenues.sciDividends.valuesCSV); "
-            }
-            let rowsSciSales       = cashFlowArray.map { "\($0.sciCashFlowLine.revenues.scpiSale.valuesCSV); "
-            }
-            let rowsSciIS          = cashFlowArray.map { "\((-$0.sciCashFlowLine.IS).roundedString); "
-            }
-            
-            let rowsSciNetCashFlow = cashFlowArray.map { "\($0.sciCashFlowLine.netCashFlow.roundedString); "
-            }
+            let rowsSciDividends   = cashFlowArray.map { "\($0.sciCashFlowLine.revenues.sciDividends.valuesCSV); " }
+            let rowsSciSales       = cashFlowArray.map { "\($0.sciCashFlowLine.revenues.scpiSale.valuesCSV); " }
+            let rowsSciIS          = cashFlowArray.map { "\((-$0.sciCashFlowLine.IS).roundedString); " }
+            let rowsSciNetCashFlow = cashFlowArray.map { "\($0.sciCashFlowLine.netCashFlow.roundedString); " }
             
             rows = zip(rows, rowsSciDividends).map(+)
             rows = zip(rows, rowsSciSales).map(+)
@@ -132,21 +120,16 @@ extension SocialAccounts {
         }
         
         func buildTaxesTableCSV(firstLine: CashFlowLine) {
-            let localTaxesNames = firstLine.taxes.localTaxes.headerCSV
+            let localTaxesNames  = firstLine.taxes.localTaxes.headerCSV
             let socialTaxesNames = firstLine.taxes.socialTaxes.headerCSV
             heading += "COEF FAMILIAL; IRPP; \(localTaxesNames); \(socialTaxesNames); TAXES TOTALES;"
             
             // For every element , extract the values as a comma-separated string.
-            let rowsCoef = cashFlowArray.map { "\($0.taxes.familyQuotient.roundedString); "
-            }
-            let rowsIrpp = cashFlowArray.map { "\($0.taxes.irpp.roundedString); "
-            }
-            let rowsLocalTaxes = cashFlowArray.map { "\($0.taxes.localTaxes.valuesCSV); "
-            }
-            let rowsSocialTaxes = cashFlowArray.map { "\($0.taxes.socialTaxes.valuesCSV); "
-            }
-            let rowsTotal = cashFlowArray.map { "\($0.taxes.total.roundedString); "
-            }
+            let rowsCoef        = cashFlowArray.map { "\($0.taxes.familyQuotient.roundedString); " }
+            let rowsIrpp        = cashFlowArray.map { "\($0.taxes.irpp.roundedString); " }
+            let rowsLocalTaxes  = cashFlowArray.map { "\($0.taxes.localTaxes.valuesCSV); " }
+            let rowsSocialTaxes = cashFlowArray.map { "\($0.taxes.socialTaxes.valuesCSV); " }
+            let rowsTotal       = cashFlowArray.map { "\($0.taxes.total.roundedString); " }
             
             rows = zip(rows, rowsCoef).map(+)
             rows = zip(rows, rowsIrpp).map(+)

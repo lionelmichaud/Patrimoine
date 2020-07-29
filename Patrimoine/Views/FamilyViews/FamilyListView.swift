@@ -9,7 +9,10 @@
 import SwiftUI
 
 struct FamilyListView : View {
-    @EnvironmentObject var family: Family
+    @EnvironmentObject var family     : Family
+    @EnvironmentObject var patrimoine : Patrimoin
+    @EnvironmentObject var simulation : Simulation
+    @EnvironmentObject var uiState    : UIState
 
     var body: some View {
         Section {
@@ -19,9 +22,17 @@ struct FamilyListView : View {
                 }
                 .isDetailLink(true)
             }
-            .onDelete(perform: family.deleteMembers)
+            .onDelete(perform: deleteMembers)
             .onMove(perform: family.moveMembers)
         }
+    }
+    
+    func deleteMembers(at offsets: IndexSet) {
+        // remettre à zéro la simulation et sa vue
+        simulation.reset(withPatrimoine: patrimoine)
+        uiState.resetSimulation()
+        // supprimer le membre de la famille
+        family.deleteMembers(at: offsets)
     }
 }
 

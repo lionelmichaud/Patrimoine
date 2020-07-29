@@ -9,8 +9,8 @@
 import SwiftUI
 
 struct ExpenseView: View {
-    @EnvironmentObject var family: Family
-    
+    @EnvironmentObject var family     : Family
+
     private var categories: [(ExpenseCategory, ExpenseArray)] {
         family.expenses.expensesPerCategory.sorted(by: \.key.displayString)
     }
@@ -72,8 +72,10 @@ struct ExpenseHeaderView: View {
 }
 
 struct ExpenseListInCategory: View {
-    @EnvironmentObject var family  : Family
-    @EnvironmentObject var uiState : UIState
+    @EnvironmentObject var family     : Family
+    @EnvironmentObject var simulation : Simulation
+    @EnvironmentObject var patrimoine : Patrimoin
+    @EnvironmentObject var uiState    : UIState
     let category: ExpenseCategory
     var expenses: ExpenseArray
     //@State private var colapse = true
@@ -118,6 +120,10 @@ struct ExpenseListInCategory: View {
     }
     
     func removeItems(at offsets: IndexSet) {
+        // remettre à zéro la simulation et sa vue
+        simulation.reset(withPatrimoine: patrimoine)
+        uiState.resetSimulation()
+        // supprimer la dépense
         family.expenses.expensesPerCategory[self.category]?.delete(at: offsets)
     }
     

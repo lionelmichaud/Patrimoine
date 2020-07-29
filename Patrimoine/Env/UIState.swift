@@ -84,4 +84,9 @@ class UIState: ObservableObject {
     init() {
         expenseViewState.colapseCategories = Array(repeating: true, count: ExpenseCategory.allCases.count)
     }
+    
+    func resetSimulation() {
+        simulationViewState.selectedItem = .computation
+        chartsViewState.selectedItem     = nil
+    }
 }
