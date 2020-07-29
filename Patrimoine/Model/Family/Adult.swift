@@ -454,7 +454,7 @@ final class Adult: Person {
     /// - Parameter year: année
     func workIncome(during year: Int)
     -> (net: Double, taxableIrpp: Double) {
-        guard isAlive(atEndOf: year) else {
+        guard isActive(during: year) else {
             return (0, 0)
         }
         let nbWeeks = (dateOfRetirementComp.year == year ? dateOfRetirement.weekOfYear.double() : 52)
@@ -516,16 +516,16 @@ final class Adult: Person {
         guard spouse.isAlive(atEndOf: year) else {
             return nil
         }
-        // somme des pensions au moment du décès
-        let yearOfDeath = self.yearOfDeath
-        guard let pensionTotaleAvantDeces = Person.family?.pension(during        : yearOfDeath,
-                                                                   withReversion : false) else {
-            return nil
-        }
+        // somme des pensions brutes l'année précédent le décès du conjoint décédé
+        // et de l'année courante pour le conjoint survivant
+        let yearBeforeDeath         = self.yearOfDeath - 1
+        let pensionDuDecede         = self.pension(during        : yearBeforeDeath,
+                                                   withReversion : false).brut
+        let pensionDuConjoint       = spouse.pension(during        : year,
+                                                     withReversion : false).brut
+        let pensionTotaleAvantDeces = pensionDuDecede + pensionDuConjoint
         // la pension du conjoint survivant, avec réversion, est limitée à un % de la somme des deux
         let pensionApresDeces = pensionTotaleAvantDeces * Pension.model.reversion.model.tauxReversion / 100.0
-        let pensionDuConjoint = spouse.pension(during        : yearOfDeath,
-                                               withReversion : false).brut
         // le complément de réversion est calculé en conséquence
         let brut = max(0, pensionApresDeces - pensionDuConjoint)
         let net  = Pension.model.reversion.net(brut)

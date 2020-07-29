@@ -86,8 +86,9 @@
         "age_Of_Death"           : 86,
         "nb_Of_Year_Of_Dependency" : 0,
         "age_Of_Pension_Liquid" : {
-            "day"  : 0,
             "year" : 62,
+            "month": 0,
+            "day"  : 1,
             "calendar" : {
                 "locale" : {
                     "identifier" : "fr_FR"
@@ -107,8 +108,9 @@
             "sam"               : 25000
         },
         "age_Of_Agirc_Pension_Liquid" : {
-            "year" : 58,
-            "month"  : 6,
+            "year" : 62,
+            "month": 0,
+            "day"  : 1,
             "calendar" : {
                 "locale" : {
                     "identifier" : "fr_FR"

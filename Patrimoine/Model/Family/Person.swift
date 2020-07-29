@@ -215,6 +215,7 @@ class Person : ObservableObject, Identifiable, CustomStringConvertible, Codable 
     /// True si la personne est encore vivante à la fin de l'année donnée
     /// - Parameter year: année
     /// - Returns: True si la personne est encore vivante
+    /// - Warnings: la personne n'est pas vivante l'année du décès
     func isAlive(atEndOf year : Int) -> Bool {
         year < yearOfDeath
     }

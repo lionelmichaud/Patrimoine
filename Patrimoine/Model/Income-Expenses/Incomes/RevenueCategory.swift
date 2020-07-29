@@ -14,7 +14,6 @@ import Foundation
 enum RevenueCategory: Int, PickableEnum, Codable, Hashable {
     case workIncomes
     case pensions
-    case pensionsReversion
     case layoffCompensation
     case unemployAlloc
     case financials
@@ -34,8 +33,6 @@ enum RevenueCategory: Int, PickableEnum, Codable, Hashable {
                 return "Revenu Travail"
             case .pensions:
                 return "Pension"
-            case .pensionsReversion:
-                return "Pension réversion"
             case .layoffCompensation:
                 return "Indemnité de licenciement"
             case .unemployAlloc:
