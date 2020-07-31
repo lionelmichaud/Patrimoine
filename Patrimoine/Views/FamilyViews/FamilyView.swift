@@ -25,7 +25,8 @@ struct FamilyView: View {
                 // liste des membres de la famille
                 FamilyListView()
             }
-                .listStyle(GroupedListStyle())
+                .defaultSideBarListStyle()
+                //.listStyle(GroupedListStyle())
                 .environment(\.horizontalSizeClass, .regular)
                 .navigationBarTitle("Famille")
                 .navigationBarItems(

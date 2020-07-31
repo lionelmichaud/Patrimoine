@@ -28,7 +28,8 @@ struct ExpenseView: View {
                                               expenses: expenses)
                     }
                 }
-                .listStyle(GroupedListStyle())
+                .defaultSideBarListStyle()
+                //.listStyle(GroupedListStyle())
                 .environment(\.horizontalSizeClass, .regular)
                 
             }

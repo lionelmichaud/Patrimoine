@@ -9,14 +9,14 @@
 import SwiftUI
 import ActivityIndicatorView // https://github.com/exyte/ActivityIndicatorView.git
 
-// MARK: - Syle de bouton customisé
-struct MyButtonStyle: ButtonStyle {
-    var color     : Color     = .blue
+// MARK: - Syle de bouton Rectangle à coins arrondis
+struct RoundedRectButtonStyle: ButtonStyle {
+    var color     : Color     = .accentColor
     var width     : CGFloat?  = nil
     var height    : CGFloat?  = nil
     var alignment : Alignment = .center
     
-    public func makeBody(configuration: MyButtonStyle.Configuration) -> some View {
+    public func makeBody(configuration: RoundedRectButtonStyle.Configuration) -> some View {
         MyButton(configuration : configuration,
                  color         : color,
                  width         : width,
@@ -25,11 +25,11 @@ struct MyButtonStyle: ButtonStyle {
     }
     
     struct MyButton: View {
-        let configuration : MyButtonStyle.Configuration
-        var color     : Color     = .blue
-        var width     : CGFloat?  = nil
-        var height    : CGFloat?  = nil
-        var alignment : Alignment = .center
+        let configuration : RoundedRectButtonStyle.Configuration
+        var color         : Color     = .accentColor
+        var width         : CGFloat?  = nil
+        var height        : CGFloat?  = nil
+        var alignment     : Alignment = .center
         
         var body: some View {
             
@@ -46,11 +46,56 @@ struct MyButtonStyle: ButtonStyle {
 }
 
 extension Button {
-    func myButtonStyle(color     : Color     = .blue,
-                       width     : CGFloat?  = nil,
-                       height    : CGFloat?  = nil,
-                       alignment : Alignment = .center) -> some View {
-        self.buttonStyle(MyButtonStyle(color: color, width: width, height: height, alignment: alignment))
+    func roundedRectButtonStyle(color : Color     = .accentColor,
+                       width          : CGFloat?  = nil,
+                       height         : CGFloat?  = nil,
+                       alignment      : Alignment = .center) -> some View {
+        self.buttonStyle(RoundedRectButtonStyle(color: color, width: width, height: height, alignment: alignment))
+    }
+}
+
+// MARK: - Syle de bouton Capsule - façon iOS 14
+struct CapsuleButtonStyle: ButtonStyle {
+    var color     : Color     = Color("buttonBackgroundColor")
+    var width     : CGFloat?  = nil
+    var height    : CGFloat?  = nil
+    var alignment : Alignment = .center
+    var withShadow: Bool      = false
+    
+    public func makeBody(configuration: CapsuleButtonStyle.Configuration) -> some View {
+        MyButton(configuration : configuration,
+                 color         : color,
+                 width         : width,
+                 height        : height,
+                 alignment     : alignment)
+    }
+    
+    struct MyButton: View {
+        let configuration : CapsuleButtonStyle.Configuration
+        var color         : Color     = Color("buttonBackgroundColor")
+        var width         : CGFloat?  = nil
+        var height        : CGFloat?  = nil
+        var alignment     : Alignment = .center
+        var withShadow    : Bool      = false
+
+        var body: some View {
+            
+            return configuration.label
+                .frame(width: width, height: height, alignment: alignment)
+                .foregroundColor(.accentColor)
+                .padding(.vertical, 5.0)
+                .padding(.horizontal, 10.0)
+                .background(Capsule(style: .continuous).fill(color))
+        }
+    }
+}
+
+extension Button {
+    func capsuleButtonStyle(color     : Color     = Color("buttonBackgroundColor"),
+                            width     : CGFloat?  = nil,
+                            height    : CGFloat?  = nil,
+                            alignment : Alignment = .center) -> some View {
+        self.buttonStyle(CapsuleButtonStyle(color: color, width: width, height: height, alignment: alignment))
     }
 }
 
@@ -442,12 +487,22 @@ struct MenuContentView: View {
 // MARK: - Tests & Previews
 
 struct HelperViews_Previews: PreviewProvider {
-    struct MyButtonStyleView: View {
+    struct RoundedRectButtonStyleView: View {
         var body: some View {
             VStack {
                 Button("Tap Me!") {
                     print("button pressed!")
-                }.myButtonStyle(color: .blue, width: 200)
+                }.roundedRectButtonStyle(color: .blue, width: 200)
+            }
+        }
+    }
+    
+    struct CapsuleButtonStyleView: View {
+        var body: some View {
+            VStack {
+                Button("Tap Me!") {
+                    print("button pressed!")
+                }.capsuleButtonStyle(color: Color("buttonBackgroundColor"))
             }
         }
     }
@@ -458,10 +513,20 @@ struct HelperViews_Previews: PreviewProvider {
     static var previews: some View {
         Group {
             Group {
-                MyButtonStyleView()
+                RoundedRectButtonStyleView()
                     .previewLayout(PreviewLayout.sizeThatFits)
                     .padding()
-                    .previewDisplayName("MyButtonStyleView")
+                    .previewDisplayName("RoundedRectButtonStyleView")
+                CapsuleButtonStyleView()
+                    .preferredColorScheme(.dark)
+                    .previewLayout(PreviewLayout.sizeThatFits)
+                    .padding()
+                    .previewDisplayName("RoundedRectButtonStyleView")
+                CapsuleButtonStyleView()
+                    .preferredColorScheme(.light)
+                    .previewLayout(PreviewLayout.sizeThatFits)
+                    .padding()
+                    .previewDisplayName("RoundedRectButtonStyleView")
                 ProgressBar(value             : 5,
                             minValue          : 0,
                             maxValue          : 10,

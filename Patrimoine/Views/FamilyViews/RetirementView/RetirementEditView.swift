@@ -61,6 +61,7 @@ struct RetirementEditView: View {
             }
             .alert(item: $alertItem) { alertItem in myAlert(alertItem: alertItem) }
         } else {
+            // Fallback on earlier versions
             Group {
                 // régime complémentaire
                 RegimeAgircEditView(personViewModel : personViewModel,

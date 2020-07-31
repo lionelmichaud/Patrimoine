@@ -24,7 +24,13 @@ struct CashFlowGlobalChartView: View {
         }
         .navigationBarTitle(Text("Cash Flow"), displayMode: .inline)
         .navigationBarItems(trailing: Button(action: saveImage,
-                                             label : { Text("Sauver image") }))
+                                             label : {
+                                                HStack {
+                                                    Image(systemName: "square.and.arrow.down")
+                                                    Text("Image")
+                                                }
+                                             }).capsuleButtonStyle()
+        )
     }
     
     func saveImage() {
@@ -37,17 +43,18 @@ struct CashFlowDetailedChartView: View {
     @EnvironmentObject var simulation : Simulation
     @EnvironmentObject var uiState    : UIState
     @State private var menuIsPresented = false
-    let menuWidth: CGFloat = 250
+    let menuWidth: CGFloat = 200
     
     var body: some View {
         GeometryReader { geometry in
             ZStack(alignment: .leading) {
-                // zone de graphique
+                /// zone de graphique
                 VStack {
                     // sélecteur: Actif / Passif / Tout
                     CasePicker(pickedCase: self.$uiState.cfChartState.combination, label: "")
                         .padding(.horizontal)
                         .pickerStyle(SegmentedPickerStyle())
+                    // graphique
                     CashFlowStackedBarChartView(socialAccounts: self.$simulation.socialAccounts,
                                                 title         : self.simulation.title,
                                                 combination   : self.uiState.cfChartState.combination,
@@ -57,7 +64,7 @@ struct CashFlowDetailedChartView: View {
                 .frame(width: geometry.size.width, height: geometry.size.height)
                 .offset(x: self.menuIsPresented ? self.menuWidth : 0)
                 
-                // slide out menu de filtrage des séries à afficher
+                /// slide out menu de filtrage des séries à afficher
                 if self.menuIsPresented {
                     MenuContentView(itemSelection: self.$uiState.cfChartState.itemSelection)
                         .frame(width: self.menuWidth)
@@ -69,17 +76,20 @@ struct CashFlowDetailedChartView: View {
         }
         .navigationBarTitle(Text("Cash Flow"), displayMode: .inline)
         .navigationBarItems(
-            leading: Button(action: {
-                                    withAnimation { self.menuIsPresented.toggle() }
-                                },
-                            label: {
+            leading: Button(action: { withAnimation { self.menuIsPresented.toggle() } },
+                            label : {
                                 HStack {
-                                    Image(systemName: "gear")
-                                    Text("Filtre")
+                                    Image(systemName: "line.horizontal.3.decrease.circle")
+                                    Text("Filtrer")
                                 }
-            } ),
+                            } ).capsuleButtonStyle(),
             trailing: Button(action: saveImage,
-                             label : { Text("Sauver image") })
+                             label : {
+                                HStack {
+                                    Image(systemName: "square.and.arrow.down")
+                                    Text("Image")
+                                }
+                             } ).capsuleButtonStyle()
         )
     }
     
@@ -157,14 +167,22 @@ struct CashFlowLineChartView: UIViewRepresentable {
 
 /// Wrapper de BarChartView
 struct CashFlowStackedBarChartView: UIViewRepresentable {
+    
+    // type properties
+    
+    static var titleStatic      : String = "image"
+    static var uiView           : BarChartView?
+    static var snapshotNb       : Int = 0
+    
+    // properties
+    
     @Binding var socialAccounts : SocialAccounts
     var title                   : String
     var combination             : SocialAccounts.CashCombination
     var itemSelection           : [(label: String, selected: Bool)]
-    static var titleStatic      : String = "image"
-    static var uiView           : BarChartView?
-    static var snapshotNb       : Int = 0
 
+    // initializers
+    
     internal init(socialAccounts : Binding<SocialAccounts>,
                   title          : String,
                   combination    : SocialAccounts.CashCombination,
@@ -175,6 +193,8 @@ struct CashFlowStackedBarChartView: UIViewRepresentable {
         self.itemSelection   = itemSelection
         self._socialAccounts = socialAccounts
     }
+    
+    // type methods
     
     /// Sauvegarde de l'image en fichier  et dans l'album photo au format .PNG
     static func saveImage() {
@@ -215,6 +235,8 @@ struct CashFlowStackedBarChartView: UIViewRepresentable {
         }
         CashFlowStackedBarChartView.snapshotNb += 1
     }
+    
+    // methods
     
     func makeUIView(context: Context) -> BarChartView {
         let view = socialAccounts.drawCashFlowStackedBarChart(combination  : combination,

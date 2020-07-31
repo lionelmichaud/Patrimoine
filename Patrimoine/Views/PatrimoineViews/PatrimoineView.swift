@@ -25,7 +25,8 @@ struct PatrimoineView: View {
                     // passifs
                     LiabilityView()
                 }
-                .listStyle(GroupedListStyle())
+                .defaultSideBarListStyle()
+                //.listStyle(GroupedListStyle())
                 .environment(\.horizontalSizeClass, .regular)
 
             }

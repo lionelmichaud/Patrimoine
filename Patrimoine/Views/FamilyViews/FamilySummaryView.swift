@@ -25,7 +25,7 @@ struct FamilySummaryView: View {
     @State private var cashFlow      : CashFlowLine? = nil
     
     var body: some View {
-        List {
+        Form {
             Section(header: Text("MEMBRES")) {
                 IntegerView(label   : "Nombre de membres",
                             integer : family.members.count,
@@ -83,7 +83,6 @@ struct FamilySummaryView: View {
                 }
             }
         }
-        .listStyle(GroupedListStyle())
         .navigationBarTitle(Text("Résumé"), displayMode: .inline)
         .onAppear(perform:{
             self.cashFlow = try? CashFlowLine(withYear      : Date.now.year,

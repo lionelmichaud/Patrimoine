@@ -61,7 +61,9 @@ final class Family: ObservableObject, CustomStringConvertible {
         self.members  = Family.loadMembersFromFile()
         // initialiser les catégories de dépenses à partir des fichiers JSON
         self.expenses = Expenses()
+        // injection de family dans la propriété statique de Expense pour lier les évenements à des personnes
         Expense.family = self
+        // injection de family dans la propriété statique de Person pour lier les évenements à des personnes
         Person.family = self
     }
     

@@ -20,16 +20,19 @@ struct SimulationView: View {
         NavigationView {
             VStack {
                 // entête
-                SimulationHeaderView()
+                //SimulationHeaderView()
                 
                 //liste
                 List {
+                    // calcul de simulation
                     NavigationLink(destination : ComputationView(),
                                    tag         : .computation,
                                    selection   : $uiState.simulationViewState.selectedItem) {
                                     Text("Calculs")
                     }
                     .isDetailLink(true)
+                    
+                    // affichage des graphiques
                     NavigationLink(destination: ChartsView(),
                                    tag         : .charts,
                                    selection   : $uiState.simulationViewState.selectedItem) {
@@ -37,13 +40,14 @@ struct SimulationView: View {
                     }
                     .isDetailLink(false)
                 }
-                .listStyle(GroupedListStyle())
+                .defaultSideBarListStyle()
+                //.listStyle(GroupedListStyle())
                 .environment(\.horizontalSizeClass, .regular)
             }
             .navigationBarTitle("Simulation")
             
             // vue par défaut
-            ComputationView()
+            SimulationHeaderView()
         }
         .navigationViewStyle(DoubleColumnNavigationViewStyle())
     }
@@ -55,7 +59,7 @@ struct SimulationHeaderView : View {
     var body: some View {
         Group {
             if !simulation.isComputed {
-                VStack(alignment: .leading) {
+                VStack {
                     Text("Aucune données à présenter")
                     Text("Calculer une simulation au préalable").foregroundColor(.red)
                 }

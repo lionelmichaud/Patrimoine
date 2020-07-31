@@ -210,6 +210,7 @@ struct AdultEditView : View {
                         }
                         .alert(item: $alertItem) { alertItem in myAlert(alertItem: alertItem) }
                 } else {
+                    // Fallback on earlier versions
                     DatePicker(selection           : $adultViewModel.dateRetirement,
                                displayedComponents : .date,
                                label               : { HStack { Text("Date de cessation d'activité"); Spacer() } })

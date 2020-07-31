@@ -75,7 +75,7 @@ struct ContentView: View {
         self.simulation = simulation
         
         // injection de family dans la propriété statique de Expenses pour lier les évenements à des personnes
-        Expense.family = family
+//        Expense.family = family
     }
     
 }

@@ -28,7 +28,7 @@ struct PatrimoineSummaryView: View {
             .padding(.horizontal)
             
             // tableau
-            List {
+            Form {
                 Section(header: header("", year: Int(uiState.expenseViewState.evalDate))) {
                     HStack {
                         Text("Actif Net").fontWeight(.bold)

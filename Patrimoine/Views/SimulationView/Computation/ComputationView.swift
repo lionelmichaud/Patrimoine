@@ -17,45 +17,114 @@ struct ComputationView: View {
     @State private var busySaveWheelAnimate : Bool = false
     @State private var busyCompWheelAnimate : Bool = false
     
-    var body: some View {
-        VStack {
+    struct ComputationForm: View {
+        @EnvironmentObject var uiState    : UIState
+        @EnvironmentObject var simulation : Simulation
+        
+        var body: some View {
             Form {
-            HStack{
-                Text("Titre")
-                    .frame(width: 70, alignment: .leading)
-                TextField("", text: $simulation.title)
+                HStack{
+                    Text("Titre")
+                        .frame(width: 70, alignment: .leading)
+                    TextField("", text: $simulation.title)
+                        .textFieldStyle(RoundedBorderTextFieldStyle())
+                }
+                //.padding(.top)
+                HStack {
+                    Text("Nombre d'années à calculer: ") + Text(String(Int(uiState.computationState.nbYears)))
+                    Slider(value : $uiState.computationState.nbYears,
+                           in    : 5 ... 50,
+                           step  : 5,
+                           onEditingChanged: {_ in
+                           })
+                }
+                if !simulation.isComputed {
+                    // pas de données à afficher
+                    VStack(alignment: .leading) {
+                        Text("Aucune données à présenter")
+                        Text("Calculer une simulation au préalable").foregroundColor(.red)
+                    }
+                    
+                } else {
+                    Text("Simulation disponible: \(simulation.firstYear!) à \(simulation.lastYear!)")
+                        .font(.callout)
+                }
             }
-            HStack {
-                Text("Nombre d'années à calculer: ") + Text(String(Int(uiState.computationState.nbYears)))
-                Slider(value : $uiState.computationState.nbYears,
-                       in    : 5 ... 50,
-                       step  : 5,
-                       onEditingChanged: {_ in
-                })
-            }
-            }
-            .textFieldStyle(RoundedBorderTextFieldStyle())
-            .padding(.top)
-
+        }
+    }
+    
+    var body: some View {
+//                if #available(iOS 14.0, *) {
+//                    ComputationForm()
+//                        .navigationBarTitle("Calcul", displayMode: .inline)
+//                        .toolbar {
+//                            ToolbarItem(placement: .bottomBar) {
+//                                // bouton calculer
+//                                Button(action: computeSimulation,
+//                                       label: {
+//                                        HStack(alignment: .center) {
+//                                            if busyCompWheelAnimate {
+//                                                ActivityIndicatorView(isVisible : $busyCompWheelAnimate,
+//                                                                      type      : .flickeringDots)
+//                                                    .frame(maxWidth: 20, maxHeight: 20)
+//                                            } else {
+//                                                Image(systemName: "function")
+//                                                    .imageScale(.large)//.padding(.trailing, 4.0)
+//                                            }
+//                                            Text("Calculer")
+//                                        }
+//                                       }
+//                                )
+        //                        .myButtonStyle(width: 125, height: 5)
+        //                        .padding(.horizontal)
+//                            }
+        //                    ToolbarItem(placement: .bottomBar) {
+        //                        // bouton sauvegarder
+        //                        Button(action: saveSimulation,
+        //                               label: {
+        //                                HStack(alignment: .center) {
+        //                                    if busySaveWheelAnimate {
+        //                                        ActivityIndicatorView(isVisible : $busySaveWheelAnimate,
+        //                                                              type      : .flickeringDots)
+        //                                            .frame(maxWidth: 20, maxHeight: 20)
+        //                                    } else {
+        //                                        Image(systemName: "pencil.and.ellipsis.rectangle")
+        //                                            .imageScale(.large)//.padding(.trailing)
+        //                                    }
+        //                                    Text("Enregistrer")
+        //                                }
+        //                               }
+        //                        )
+        //                        .myButtonStyle(width: 125, height: 5)
+        //                        .padding(.horizontal)
+        //                        .disabled(!(simulation.isComputed && !simulation.isSaved))
+        //                        .opacity(!(simulation.isComputed && !simulation.isSaved) ? 0.5 : 1.0)
+        //                    }
+//                        }
+//                } else {
+        // Fallback on earlier versions
+        VStack {
+            ComputationForm()
+            
             Spacer()
             
             HStack {
                 // bouton calculer
-                    Button(action: computeSimulation,
-                           label: {
-                            HStack(alignment: .center) {
-                                if busyCompWheelAnimate {
-                                    ActivityIndicatorView(isVisible: $busyCompWheelAnimate, type: .flickeringDots)
-                                        .frame(maxWidth: 50, maxHeight: 50)
-                                } else {
-                                    Image(systemName: "function")
-                                        .imageScale(.large)//.padding(.trailing, 4.0)
-                                }
-                                Text("Calculer")
+                Button(action: computeSimulation,
+                       label: {
+                        HStack(alignment: .center) {
+                            if busyCompWheelAnimate {
+                                ActivityIndicatorView(isVisible: $busyCompWheelAnimate, type: .flickeringDots)
+                                    .frame(maxWidth: 50, maxHeight: 50)
+                            } else {
+                                Image(systemName: "function")
+                                    .imageScale(.large)//.padding(.trailing, 4.0)
                             }
-                    }
-                    )
-                        .myButtonStyle(width: 125)
+                            Text("Calculer")
+                        }
+                       }
+                )
+                .roundedRectButtonStyle(width: 125)
                 
                 Spacer()
                 
@@ -73,16 +142,16 @@ struct ComputationView: View {
                             }
                             Text("Enregistrer")
                         }
-                }
+                       }
                 )
-                    .myButtonStyle(width: 125)
-                    .disabled(!(simulation.isComputed && !simulation.isSaved))
-                    .opacity(!(simulation.isComputed && !simulation.isSaved) ? 0.5 : 1.0)
+                .roundedRectButtonStyle(width: 125)
+                .disabled(!(simulation.isComputed && !simulation.isSaved))
+                .opacity(!(simulation.isComputed && !simulation.isSaved) ? 0.5 : 1.0)
             }.padding()
         }
-        .padding(.horizontal)
         .navigationBarTitle("Calcul", displayMode: .inline)
     }
+//        }
     
     func computeSimulation() {
         busyCompWheelAnimate.toggle()
@@ -132,3 +201,4 @@ struct ComputationView_Previews: PreviewProvider {
         //.previewLayout(PreviewLayout.sizeThatFits)
     }
 }
+

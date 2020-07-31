@@ -19,12 +19,14 @@ struct ChartsView: View {
     var body: some View {
         VStack {
             if !simulation.isComputed {
+                // pas de données à afficher
                 VStack(alignment: .leading) {
                     Text("Aucune données à présenter")
                     Text("Calculer une simulation au préalable").foregroundColor(.red)
                     Spacer()
                 }
                 .padding(.horizontal)
+                
             } else {
                 Text("Simulation disponible: \(simulation.firstYear!) à \(simulation.lastYear!)")
                     .font(.callout)
@@ -43,7 +45,7 @@ struct ChartsView: View {
                         NavigationLink(destination: BalanceSheetDetailedChartView(),
                                        tag         : .bilanDetail,
                                        selection   : $uiState.chartsViewState.selectedItem) {
-                                        Text("Détail par catégorie")
+                                        Text("Par catégorie")
                         }
                         .isDetailLink(true)
                         .padding(.leading)
@@ -61,13 +63,14 @@ struct ChartsView: View {
                         NavigationLink(destination: CashFlowDetailedChartView(),
                                        tag         : .cfDetail,
                                        selection   : $uiState.chartsViewState.selectedItem) {
-                                        Text("Détail par catégorie")
+                                        Text("Par catégorie")
                         }
                         .isDetailLink(true)
                         .padding(.leading)
                     }
                 }
-                .listStyle(GroupedListStyle())
+                .defaultSideBarListStyle()
+                //.listStyle(GroupedListStyle())
                 .environment(\.horizontalSizeClass, .regular)
             }
         }
