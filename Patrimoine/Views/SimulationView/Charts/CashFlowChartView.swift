@@ -239,22 +239,44 @@ struct CashFlowStackedBarChartView: UIViewRepresentable {
     // methods
     
     func makeUIView(context: Context) -> BarChartView {
-        let view = socialAccounts.drawCashFlowStackedBarChart(combination  : combination,
-                                                              itemSelection: itemSelection)
-        CashFlowStackedBarChartView.uiView = view
-        return view
+        // créer et configurer un nouveau bar graph
+        let chartView = BarChartView(title: "Revenus / Dépenses")
+        
+        //: ### BarChartData
+        let dataSet = socialAccounts.getCashFlowStackedBarChartDataSet(combination  : combination,
+                                                                       itemSelection: itemSelection)
+        
+        // ajouter les data au graphique
+        let data = BarChartData(dataSet: dataSet)
+        //data.addDataSet(dataSet)
+        data.setValueTextColor(ChartThemes.DarkChartColors.valueColor)
+        data.setValueFont(NSUIFont(name: "HelveticaNeue-Light", size: CGFloat(12.0))!)
+        data.setValueFormatter(DefaultValueFormatter(formatter: valueKiloFormatter))
+        
+        // ajouter le dataset au graphique
+        chartView.data = data
+        
+        chartView.animate(yAxisDuration: 0.5, easingOption: .linear)
+        CashFlowStackedBarChartView.uiView = chartView
+        return chartView
     }
     
     func updateUIView(_ uiView: BarChartView, context: Context) {
         uiView.clear()
         //uiView.data?.clearValues()
+
+        //: ### BarChartData
         let dataSet = socialAccounts.getCashFlowStackedBarChartDataSet(combination  : combination,
                                                                        itemSelection: itemSelection)
+        // ajouter les data au graphique
         let data = BarChartData(dataSet: dataSet)
         data.setValueTextColor(#colorLiteral(red: 1, green: 1, blue: 1, alpha: 1))
         data.setValueFont(NSUIFont(name: "HelveticaNeue-Light", size: CGFloat(12.0))!)
         data.setValueFormatter(DefaultValueFormatter(formatter: valueKiloFormatter))
+        
+        // ajouter le dataset au graphique
         uiView.data = data
+        
         uiView.data?.notifyDataChanged()
         uiView.notifyDataSetChanged()
     }

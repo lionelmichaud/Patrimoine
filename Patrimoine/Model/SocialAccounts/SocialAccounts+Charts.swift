@@ -57,7 +57,7 @@ extension SocialAccounts {
     
     
     // MARK: - Génération de graphiques BILAN
-
+    
     /// Dessiner un graphe à lignes : passif + actif + net
     /// - Returns: UIView
     func drawBalanceSheetLineChart() -> LineChartView {
@@ -349,7 +349,7 @@ extension SocialAccounts {
                                           label: (labels.count == 1 ? labels.first : nil))
                 dataSet.stackLabels = labels
                 dataSet.colors      = ChartThemes.positiveColors(number: dataSet.stackLabels.count)
-            
+                
             case .liabilities:
                 dataEntries += balanceArray.map { // pour chaque année
                     BarChartDataEntry(x       : $0.year.double(),
@@ -360,12 +360,12 @@ extension SocialAccounts {
                                           label: (labels.count == 1 ? labels.first : nil))
                 dataSet.stackLabels = labels
                 dataSet.colors      = ChartThemes.negativeColors(number: dataSet.stackLabels.count)
-            
+                
             case .both:
                 dataEntries += balanceArray.map {
                     BarChartDataEntry(x       : $0.year.double(),
                                       yValues : $0.assets.filtredValues(itemSelection: itemSelection) +
-                                                $0.liabilities.filtredValues(itemSelection: itemSelection))
+                                        $0.liabilities.filtredValues(itemSelection: itemSelection))
                 }
                 let labels = firstLine.assets.filtredHeaders(itemSelection : itemSelection) +
                     firstLine.liabilities.filtredHeaders(itemSelection : itemSelection)
@@ -489,7 +489,7 @@ extension SocialAccounts {
     }
     
     // MARK: - Génération de graphiques CASH FLOW
-
+    
     /// Dessiner un graphe à lignes : revenus + dépenses + net
     /// - Returns: UIView
     func drawCashFlowLineChart() -> LineChartView {
@@ -510,7 +510,7 @@ extension SocialAccounts {
         chartView.borderColor               = ChartThemes.DarkChartColors.borderColor
         chartView.borderLineWidth           = 1.0
         chartView.drawBordersEnabled        = true
-
+        
         //: ### xAxis
         let xAxis = chartView.xAxis
         xAxis.enabled                  = true
@@ -524,7 +524,7 @@ extension SocialAccounts {
         xAxis.labelCount               = 200
         xAxis.drawGridLinesEnabled     = true
         xAxis.drawAxisLineEnabled      = true
-
+        
         //: ### LeftAxis
         let leftAxis = chartView.leftAxis
         leftAxis.enabled               = true
@@ -553,11 +553,11 @@ extension SocialAccounts {
         legend.orientation         = .horizontal
         legend.verticalAlignment   = .bottom
         legend.horizontalAlignment = .left
-
+        
         //: ### Description
         chartView.chartDescription?.text = "Revenu / Dépense"
         chartView.chartDescription?.enabled = true
-
+        
         //: ### ChartDataEntry
         var yVals1 = [ChartDataEntry]()
         var yVals2 = [ChartDataEntry]()
@@ -588,7 +588,7 @@ extension SocialAccounts {
         set1.highlightColor        = #colorLiteral(red : 0.4666666687, green : 0.7647058964, blue : 0.2666666806, alpha : 1)
         set1.highlightEnabled      = true
         set1.drawCircleHoleEnabled = false
-
+        
         set2 = LineChartDataSet(entries: yVals2, label: "Dépenses")
         set2.axisDependency        = .left
         set2.colors                = [NSUIColor.red]
@@ -600,7 +600,7 @@ extension SocialAccounts {
         set2.highlightColor        = NSUIColor.red
         set2.highlightEnabled      = true
         set2.drawCircleHoleEnabled = false
-
+        
         set3 = LineChartDataSet(entries: yVals3, label: "Net")
         set3.axisDependency        = .left
         set3.colors                = [NSUIColor.white]
@@ -612,7 +612,7 @@ extension SocialAccounts {
         set3.highlightColor        = NSUIColor.white
         set3.highlightEnabled      = true
         set3.drawCircleHoleEnabled = false
-
+        
         // ajouter les dataSet au dataSets
         var dataSets = [LineChartDataSet]()
         dataSets.append(set1)
@@ -645,7 +645,7 @@ extension SocialAccounts {
                 // Résumé seulement
                 let sciLegend      = firstLine.sciCashFlowLine.namedValueTable.values.map({($0.name, true)})
                 return revenuesLegend + sciLegend
-            
+                
             case .expenses:
                 let taxesLegend  = firstLine.taxes.namedValueTable.values.map({($0.name, true)})
                 // Résumé seulement
@@ -653,7 +653,7 @@ extension SocialAccounts {
                 // Résumé seulement
                 let debtsLegend  = firstLine.debtPayements.values.map({($0.name, true)})
                 return expenseLegend + taxesLegend + debtsLegend
-            
+                
             case .both:
                 let revenuesLegend = firstLine.revenues.namedValueTable.values.map({($0.name, true)})
                 // Résumé seulement
@@ -674,8 +674,13 @@ extension SocialAccounts {
     /// - Returns: DataSet
     func getCashFlowStackedBarChartDataSet(
         combination  : CashCombination = .both,
-        itemSelection: [(label: String, selected: Bool)]) -> BarChartDataSet {
+        itemSelection: [(label: String, selected: Bool)]) -> BarChartDataSet? {
         
+        // si la table est vide alors quitter
+        guard !cashFlowArray.isEmpty else {
+            return nil
+        }
+
         let firstLine   = cashFlowArray.first!
         var dataEntries = [ChartDataEntry]()
         let dataSet : BarChartDataSet
@@ -697,7 +702,7 @@ extension SocialAccounts {
                 // légendes des revenus
                 dataSet.stackLabels = labels
                 dataSet.colors      = ChartThemes.positiveColors(number: dataSet.stackLabels.count)
-            
+                
             case .expenses:
                 // valeurs des taxes + valeurs des dépenses + valeurs des dettes
                 dataEntries = cashFlowArray.map { // pour chaque année
@@ -716,7 +721,7 @@ extension SocialAccounts {
                 // légendes des dépenses
                 dataSet.stackLabels = labels
                 dataSet.colors = ChartThemes.negativeColors(number: dataSet.stackLabels.count)
-            
+                
             case .both:
                 // valeurs des revenus + valeurs des revenus de la SCI + valeurs des taxes + valeurs des dépenses + valeurs des dettes
                 dataEntries = cashFlowArray.map {
@@ -725,7 +730,7 @@ extension SocialAccounts {
                     let yExpenses = -$0.expenses.summaryValueTable.filtredValues(itemSelection: itemSelection)
                     let yTaxes    = -$0.taxes.namedValueTable.filtredValues(itemSelection: itemSelection)
                     let yDebt     = -$0.debtPayements.filtredValues(itemSelection: itemSelection)
-
+                    
                     return BarChartDataEntry(x       : $0.year.double(),
                                              yValues : yRevenues + ySCI + yExpenses + yTaxes + yDebt)
                 }
@@ -747,44 +752,36 @@ extension SocialAccounts {
                 dataSet.stackLabels = labels
                 dataSet.colors = ChartThemes.positiveNegativeColors (numberPositive: numberPositive,
                                                                      numberNegative: numberNegative)
-
+                
         }
         
         return dataSet
     }
+}
+
+// MARK: - Extension de BarChartView pour customizer la configuration des Graph de l'appli
+extension BarChartView {
     
-    /// Dessiner un graphe barre empilées : revenus / dépenses / tout
-    /// - Parameters:
-    ///   - combination: revenus / dépenses / tout
-    ///   - itemSelection: séries sélectionnées pour être affichées
-    /// - Returns: UIView
-    func drawCashFlowStackedBarChart(
-        combination: CashCombination = .both,
-        itemSelection: [(label: String, selected: Bool)]) -> BarChartView {
-        
-        let chartView = BarChartView()
-        
-        // si la table est vide alors quitter
-        guard !cashFlowArray.isEmpty else {
-            return chartView
-        }
+    convenience init (title: String) {
+        self.init()
         
         //: ### General
-        chartView.pinchZoomEnabled          = true
-        chartView.doubleTapToZoomEnabled    = true
-        chartView.dragEnabled               = true
-        chartView.drawGridBackgroundEnabled = true
-        chartView.backgroundColor           = ChartThemes.DarkChartColors.backgroundColor
-        chartView.borderColor               = ChartThemes.DarkChartColors.borderColor
-        chartView.borderLineWidth           = 1.0
-        chartView.drawBordersEnabled        = true
-        chartView.drawValueAboveBarEnabled  = false
-        chartView.drawBarShadowEnabled      = false
-        chartView.fitBars                   = true
-        chartView.highlightFullBarEnabled   = false
+        self.pinchZoomEnabled          = true
+        self.doubleTapToZoomEnabled    = true
+        self.dragEnabled               = true
+        self.drawGridBackgroundEnabled = true
+        self.backgroundColor           = ChartThemes.DarkChartColors.backgroundColor
+        self.borderColor               = ChartThemes.DarkChartColors.borderColor
+        self.borderLineWidth           = 1.0
+        self.drawBordersEnabled        = true
+        self.drawValueAboveBarEnabled  = false
+        self.drawBarShadowEnabled      = false
+        self.fitBars                   = true
+        self.highlightFullBarEnabled   = false
+        self.gridBackgroundColor       = NSUIColor.black
 
         //: ### xAxis
-        let xAxis = chartView.xAxis
+        let xAxis = self.xAxis
         xAxis.enabled                   = true
         xAxis.drawLabelsEnabled         = true
         xAxis.labelFont                 = ChartThemes.ChartDefaults.labelFont
@@ -796,22 +793,23 @@ extension SocialAccounts {
         xAxis.labelCount                = 200
         xAxis.drawGridLinesEnabled      = true
         xAxis.drawAxisLineEnabled       = true
-
+        
         //: ### RightAxis
-        let rightAxis = chartView.rightAxis
+        let rightAxis = self.rightAxis
         rightAxis.enabled = false
         
         //: ### LeftAxis
-        let leftAxis = chartView.leftAxis
+        let leftAxis = self.leftAxis
         leftAxis.enabled              = true
         leftAxis.labelFont            = ChartThemes.ChartDefaults.labelFont
         leftAxis.labelTextColor       = ChartThemes.DarkChartColors.labelTextColor
         leftAxis.valueFormatter       = KiloEuroFormatter()
         leftAxis.drawGridLinesEnabled = true
         leftAxis.drawZeroLineEnabled  = false
-
+        
         //: ### Legend
-        let legend = chartView.legend
+        let legend = self.legend
+        legend.enabled             = true
         legend.font                = ChartThemes.ChartDefaults.legendFont
         legend.textColor           = ChartThemes.DarkChartColors.legendColor
         legend.form                = .square
@@ -819,38 +817,20 @@ extension SocialAccounts {
         legend.orientation         = .horizontal
         legend.verticalAlignment   = .bottom
         legend.horizontalAlignment = .left
-
+        
         //: ### Description
-        chartView.chartDescription?.text = "Revenus / Dépenses"
-        chartView.chartDescription?.enabled = true
+        self.chartDescription?.text = title
+        self.chartDescription?.enabled = true
         
         // bulle d'info
         let marker = DateValueMarkerView(color               : ChartThemes.BallonColors.color,
                                          font                : ChartThemes.ChartDefaults.baloonfont,
                                          textColor           : ChartThemes.BallonColors.textColor,
                                          insets              : UIEdgeInsets(top: 8, left: 8, bottom: 20, right: 8),
-                                         xAxisValueFormatter : chartView.xAxis.valueFormatter!,
-                                         yAxisValueFormatter : chartView.leftAxis.valueFormatter!)
-        marker.chartView   = chartView
+                                         xAxisValueFormatter : self.xAxis.valueFormatter!,
+                                         yAxisValueFormatter : self.leftAxis.valueFormatter!)
+        marker.chartView   = self
         marker.minimumSize = CGSize(width : 80, height : 40)
-        chartView.marker   = marker
-        
-        //: ### BarChartData
-        let dataSet = getCashFlowStackedBarChartDataSet(combination  : combination,
-                                                        itemSelection: itemSelection)
-        
-        // ajouter les data au graphique
-        let data = BarChartData(dataSet: dataSet)
-        //data.addDataSet(dataSet)
-        data.setValueTextColor(ChartThemes.DarkChartColors.valueColor)
-        data.setValueFont(NSUIFont(name: "HelveticaNeue-Light", size: CGFloat(12.0))!)
-        data.setValueFormatter(DefaultValueFormatter(formatter: valueKiloFormatter))
-
-        // ajouter le dataset au graphique
-        chartView.data = data
-        chartView.gridBackgroundColor = NSUIColor.black
-        chartView.animate(yAxisDuration: 0.5, easingOption: .linear)
-        
-        return chartView
+        self.marker   = marker
     }
 }

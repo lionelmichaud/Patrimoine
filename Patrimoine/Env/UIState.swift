@@ -68,8 +68,12 @@ class UIState: ObservableObject {
     
     // MARK: - Etat des filtres graphes Cash Flow
     struct CashFlowChartState {
-        var combination    : SocialAccounts.CashCombination = .both
-        var itemSelection  : [(label: String, selected: Bool)] = []
+        var combination            : SocialAccounts.CashCombination = .both
+        var itemSelection          : [(label: String, selected: Bool)] = []
+        var onlyOneCategorySeleted : Bool {
+            let count = itemSelection.reduce(.zero, { result, element in result + (element.selected ? 1 : 0) } )
+            return count == 1
+        }
     }
     
     @Published var selectedTab         = Tab.family
