@@ -101,7 +101,7 @@ struct RevenuesInCategory {
     // properties
     
     /// nom de la catégorie de revenus
-    var name: String
+    var name: String // category.displayString
     
     /// table des revenus versés en compte courant avant taxes, prélèvements sociaux et impots
     var credits      = NamedValueTable(name: "PERCU")

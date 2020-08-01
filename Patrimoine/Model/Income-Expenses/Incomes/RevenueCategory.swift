@@ -27,6 +27,7 @@ enum RevenueCategory: Int, PickableEnum, Codable, Hashable {
     var id: Int {
         return self.rawValue
     }
+    
     var pickerString: String {
         switch self {
             case .workIncomes:
@@ -48,5 +49,19 @@ enum RevenueCategory: Int, PickableEnum, Codable, Hashable {
             case .realEstateSale:
                 return "Vente Immeuble"
         }
+    }
+
+    // type methods
+    
+    /// Cherche l'Enum correspondant au nom de la catégorie
+    /// - Parameter name: nom de la catégorie (displayString)
+    /// - Returns: Enum
+    static func category(of name: String) -> RevenueCategory? {
+        for category in RevenueCategory.allCases {
+            if category.displayString == name {
+                return category
+            }
+        }
+        return nil
     }
 }

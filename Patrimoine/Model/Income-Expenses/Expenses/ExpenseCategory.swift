@@ -21,6 +21,7 @@ enum ExpenseCategory: Int, PickableEnum, Codable, Hashable {
     var id: Int {
         return self.rawValue
     }
+    
     var displayString: String {
         switch self {
             case .alimentation:
@@ -31,6 +32,7 @@ enum ExpenseCategory: Int, PickableEnum, Codable, Hashable {
                 return "Autre"
         }
     }
+    
     var pickerString: String {
         switch self {
             case .alimentation:
@@ -40,6 +42,20 @@ enum ExpenseCategory: Int, PickableEnum, Codable, Hashable {
             case .autre:
                 return "Autre"
         }
+    }
+
+    // type methods
+    
+    /// Cherche l'Enum correspondant au nom de la catégorie
+    /// - Parameter name: nom de la catégorie (displayString)
+    /// - Returns: Enum
+    static func category(of name: String) -> ExpenseCategory? {
+        for category in ExpenseCategory.allCases {
+            if category.displayString == name {
+                return category
+            }
+        }
+        return nil
     }
 }
 

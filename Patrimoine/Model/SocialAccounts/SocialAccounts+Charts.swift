@@ -757,11 +757,84 @@ extension SocialAccounts {
         
         return dataSet
     }
+    
+    func getCashFlowCategoryStackedBarChartDataSet(categoryName: String) -> BarChartDataSet? {
+
+        // si la table est vide alors quitter
+        guard !cashFlowArray.isEmpty else {
+            return nil
+        }
+        
+        let firstLine   = cashFlowArray.first!
+        var dataEntries = [ChartDataEntry]()
+        let dataSet : BarChartDataSet
+
+        if let found = firstLine.revenues.namedValueTable.values.first(where: { $0.name == categoryName } ) {
+            /// rechercher la catégorie dans les revenus
+            print("revenues : \(found)")
+            guard let category = RevenueCategory.category(of: categoryName) else {
+                return BarChartDataSet()
+            }
+            print("  nom : \(category)")
+            guard let labelsInCategory = firstLine.revenues.perCategory[category]?.credits.headersArray else {
+                return BarChartDataSet()
+            }
+            print("  legende : ", labelsInCategory)
+
+            // valeurs des revenus de la catégorie
+            dataEntries = cashFlowArray.map { // pour chaque année
+                let y = $0.revenues.perCategory[category]?.credits.valuesArray
+                return BarChartDataEntry(x       : $0.year.double(),
+                                         yValues : y!)
+            }
+            dataSet = BarChartDataSet(entries : dataEntries,
+                                      label   : (labelsInCategory.count == 1 ? labelsInCategory.first : nil))
+            dataSet.stackLabels = labelsInCategory
+
+            // rechercher la catégorie dans les revenus de la SCI
+        } else if let found = firstLine.sciCashFlowLine.namedValueTable.values.first(where: { $0.name == categoryName } ) {
+            print("sciCashFlowLine : \(found)")
+            dataSet = BarChartDataSet()
+
+        } else if let found = firstLine.taxes.namedValueTable.values.first(where: { $0.name == categoryName } ) {
+            /// rechercher les valeurs des dépenses
+            print("taxes : \(found)")
+            dataSet = BarChartDataSet()
+
+        } else if categoryName == firstLine.expenses.summaryValueTable.name {
+            /// rechercher les valeurs des dépenses
+            print("expenses : \(categoryName)")
+            let labelsInCategory = firstLine.expenses.namedValueTable.headersArray
+            print("  legende : ", labelsInCategory)
+            
+            // valeurs des dépenses
+            dataEntries = cashFlowArray.map { // pour chaque année
+                let y = $0.expenses.namedValueTable.valuesArray
+                return BarChartDataEntry(x       : $0.year.double(),
+                                         yValues : -y)
+            }
+
+            dataSet = BarChartDataSet(entries : dataEntries,
+                                      label   : (labelsInCategory.count == 1 ? labelsInCategory.first : nil))
+            dataSet.stackLabels = labelsInCategory
+
+        } else {
+            dataSet = BarChartDataSet()
+        }
+
+        // légendes des revenus de la catégorie
+        dataSet.colors = ChartThemes.positiveColors(number: dataSet.stackLabels.count)
+        
+        return dataSet
+    }
+    
 }
 
 // MARK: - Extension de BarChartView pour customizer la configuration des Graph de l'appli
 extension BarChartView {
     
+    /// Création d'un BarChartView avec une présentation customisée
+    /// - Parameter title: Titre du graphique
     convenience init (title: String) {
         self.init()
         

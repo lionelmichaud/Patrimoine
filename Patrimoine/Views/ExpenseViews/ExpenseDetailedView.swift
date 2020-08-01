@@ -61,7 +61,7 @@ struct ExpenseDetailedView: View {
         if let initialItemValue = item {
             // modification d'un élément existant
             _localItem = State(initialValue: initialItemValue)
-            _index     = State(initialValue: family.expenses.expensesPerCategory[category]?.items.firstIndex(of: initialItemValue))
+            _index     = State(initialValue: family.expenses.perCategory[category]?.items.firstIndex(of: initialItemValue))
         } else {
             index = nil
         }
@@ -69,7 +69,7 @@ struct ExpenseDetailedView: View {
     
     func duplicate() {
         if index != nil {
-            family.expenses.expensesPerCategory[self.category]?.add(localItem)
+            family.expenses.perCategory[self.category]?.add(localItem)
         }
     }
     
@@ -87,11 +87,11 @@ struct ExpenseDetailedView: View {
         }
         if let index = index {
             // modifier un éléménet existant
-            family.expenses.expensesPerCategory[self.category]?.update(with: localItem,
+            family.expenses.perCategory[self.category]?.update(with: localItem,
                                                               at  : index)
         } else {
             // créer un nouvel élément
-            family.expenses.expensesPerCategory[self.category]?.add(localItem)
+            family.expenses.perCategory[self.category]?.add(localItem)
         }
         
         // remettre à zéro la simulation et sa vue

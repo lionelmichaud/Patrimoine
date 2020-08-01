@@ -238,10 +238,26 @@ struct CashFlowStackedBarChartView: UIViewRepresentable {
     
     // methods
     
+    func onlyOneCategorySelected () -> Bool {
+        let count = itemSelection.reduce(.zero, { result, element in result + (element.selected ? 1 : 0) } )
+        return count == 1
+    }
+    
+    func firstCategorySelected () -> String? {
+        if let foundSelection = itemSelection.first(where: { $0.selected }) {
+            return foundSelection.label
+        } else {
+            return nil
+        }
+    }
+    
+   /// Création de la vue du Graphique
+    /// - Parameter context:
+    /// - Returns: Graphique View
     func makeUIView(context: Context) -> BarChartView {
         // créer et configurer un nouveau bar graph
         let chartView = BarChartView(title: "Revenus / Dépenses")
-        
+
         //: ### BarChartData
         let dataSet = socialAccounts.getCashFlowStackedBarChartDataSet(combination  : combination,
                                                                        itemSelection: itemSelection)
@@ -261,15 +277,31 @@ struct CashFlowStackedBarChartView: UIViewRepresentable {
         return chartView
     }
     
+    /// Mise à jour de la vue du Graphique
+    /// - Parameters:
+    ///   - uiView: Graphique View
+    ///   - context:
     func updateUIView(_ uiView: BarChartView, context: Context) {
         uiView.clear()
         //uiView.data?.clearValues()
-
+        
         //: ### BarChartData
-        let dataSet = socialAccounts.getCashFlowStackedBarChartDataSet(combination  : combination,
-                                                                       itemSelection: itemSelection)
+        let aDataSet : BarChartDataSet?
+        if onlyOneCategorySelected() {
+            // il y a un seule catégorie de sélectionnée, afficher le détail
+            if let categoryName = firstCategorySelected() {
+                aDataSet = socialAccounts.getCashFlowCategoryStackedBarChartDataSet(categoryName: categoryName)
+            } else {
+                aDataSet = nil
+            }
+        } else {
+            // il y a plusieurs catégories sélectionnées, afficher le graphe résumé par catégorie
+            aDataSet = socialAccounts.getCashFlowStackedBarChartDataSet(combination   : combination,
+                                                                        itemSelection : itemSelection)
+        }
+        
         // ajouter les data au graphique
-        let data = BarChartData(dataSet: dataSet)
+        let data = BarChartData(dataSet: ((aDataSet == nil ? BarChartDataSet() : aDataSet)!))
         data.setValueTextColor(#colorLiteral(red: 1, green: 1, blue: 1, alpha: 1))
         data.setValueFont(NSUIFont(name: "HelveticaNeue-Light", size: CGFloat(12.0))!)
         data.setValueFormatter(DefaultValueFormatter(formatter: valueKiloFormatter))
