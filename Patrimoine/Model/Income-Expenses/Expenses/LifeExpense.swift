@@ -11,18 +11,18 @@ import SwiftUI
 
 // MARK: - Dictionnaire de Dépenses par catégorie (un tableau de dépenses par catégorie)
 
-struct Expenses: Codable {
+struct LifeExpenses: Codable {
     
     // properties
     
-    var perCategory: [ExpenseCategory: ExpenseArray] = [:]
+    var perCategory: [LifeExpenseCategory: ExpenseArray] = [:]
     
     // initialization
     
     /// Lire toutes les dépenses dans des fichiers au format JSON..
     /// Un fichier par catégorie de dépense.
     init() {
-        for category in ExpenseCategory.allCases {
+        for category in LifeExpenseCategory.allCases {
             perCategory[category] = ExpenseArray(fileNamePrefix: category.pickerString + "_")
         }
     }
@@ -82,9 +82,9 @@ struct Expenses: Codable {
     /// Liste dles dépenses par catégorie
     /// - Parameter atEndOf: année de calcul
     /// - Returns: liste des dépenses par catégorie
-    func namedValueTable(atEndOf: Int) -> [ExpenseCategory: [(name: String, value: Double)]] {
-        var dico = [ExpenseCategory: [(name: String, value: Double)]]()
-        for category in ExpenseCategory.allCases {
+    func namedValueTable(atEndOf: Int) -> [LifeExpenseCategory: [(name: String, value: Double)]] {
+        var dico = [LifeExpenseCategory: [(name: String, value: Double)]]()
+        for category in LifeExpenseCategory.allCases {
             if let exps = perCategory[category] {
                 dico[category] = exps.namedValueTable(atEndOf: atEndOf)
             }
@@ -97,7 +97,7 @@ struct Expenses: Codable {
     ///   - atEndOf: année de calcul
     ///   - inCategory: catégorie de dépenses à prendre
     /// - Returns: liste des dépenses de cette catégorie
-    func namedValueTable(atEndOf: Int, inCategory: ExpenseCategory) -> [(name: String, value: Double)] {
+    func namedValueTable(atEndOf: Int, inCategory: LifeExpenseCategory) -> [(name: String, value: Double)] {
         if let exps = perCategory[inCategory] {
             return exps.namedValueTable(atEndOf: atEndOf)
         } else {
@@ -106,7 +106,7 @@ struct Expenses: Codable {
     }
     
     func print() {
-        for category in ExpenseCategory.allCases {
+        for category in LifeExpenseCategory.allCases {
             perCategory[category]?.print()
         }
     }
@@ -114,11 +114,11 @@ struct Expenses: Codable {
 
 // MARK: - Tableau de Dépenses
 
-typealias ExpenseArray = ItemArray<Expense>
+typealias ExpenseArray = ItemArray<LifeExpense>
 
-// MARK: - Dépense
+// MARK: - Dépense de la famille
 
-struct Expense: Identifiable, Codable, Hashable, NameableAndValueable {
+struct LifeExpense: Identifiable, Codable, Hashable, NameableAndValueable {
     
     // MARK: - Static properties
 
@@ -130,7 +130,7 @@ struct Expense: Identifiable, Codable, Hashable, NameableAndValueable {
     var name         : String = ""
     var value        : Double = 0.0
     var proportional : Bool   = false
-    var timeSpan     : ExpenseTimeSpan
+    var timeSpan     : LifeExpenseTimeSpan
 
     // MARK: - Computed properties
     
@@ -144,7 +144,7 @@ struct Expense: Identifiable, Codable, Hashable, NameableAndValueable {
     
     // MARK: - Initialization
     
-    init(name: String, timeSpan: ExpenseTimeSpan, proportional: Bool = false, value: Double) {
+    init(name: String, timeSpan: LifeExpenseTimeSpan, proportional: Bool = false, value: Double) {
         self.name         = name
         self.value        = value
         self.proportional = proportional
@@ -156,7 +156,7 @@ struct Expense: Identifiable, Codable, Hashable, NameableAndValueable {
     func value(atEndOf year: Int) -> Double {
         if timeSpan.contains(year) {
             if proportional {
-                if let family = Expense.family {
+                if let family = LifeExpense.family {
                     return value * Double(family.nbOfAdultAlive(atEndOf: year) + family.nbOfFiscalChildren(during: year))
                 } else {
                     return 0
@@ -177,7 +177,7 @@ struct Expense: Identifiable, Codable, Hashable, NameableAndValueable {
     }
 }
 
-extension Expense: Comparable {
-    static func < (lhs: Expense, rhs: Expense) -> Bool { (lhs.name < rhs.name) }
+extension LifeExpense: Comparable {
+    static func < (lhs: LifeExpense, rhs: LifeExpense) -> Bool { (lhs.name < rhs.name) }
 }
 

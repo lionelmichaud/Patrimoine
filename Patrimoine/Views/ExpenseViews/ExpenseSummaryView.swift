@@ -69,7 +69,7 @@ struct ExpenseSummaryChartView: UIViewRepresentable {
         let dataSet : BarChartDataSet
         
         // pour chaque categorie de dépense
-        //for _ in ExpenseCategory.allCases {
+        //for _ in LifeExpenseCategory.allCases {
         // pour chaque dépense
         //  chercher le nom de la dépense
         //  chercher la position de la dépense dans le tableau des dépense

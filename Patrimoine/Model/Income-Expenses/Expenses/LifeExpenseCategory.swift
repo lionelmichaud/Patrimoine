@@ -1,5 +1,5 @@
 //
-//  ExpenseCategory.swift
+//  LifeExpenseCategory.swift
 //  Patrimoine
 //
 //  Created by Lionel MICHAUD on 29/05/2020.
@@ -11,7 +11,7 @@ import Foundation
 // MARK: - Catégories de dépenses
 
 /// Catégories de dépenses
-enum ExpenseCategory: Int, PickableEnum, Codable, Hashable {
+enum LifeExpenseCategory: Int, PickableEnum, Codable, Hashable {
     case alimentation
     case autre
     case vetement
@@ -49,8 +49,8 @@ enum ExpenseCategory: Int, PickableEnum, Codable, Hashable {
     /// Cherche l'Enum correspondant au nom de la catégorie
     /// - Parameter name: nom de la catégorie (displayString)
     /// - Returns: Enum
-    static func category(of name: String) -> ExpenseCategory? {
-        for category in ExpenseCategory.allCases {
+    static func category(of name: String) -> LifeExpenseCategory? {
+        for category in LifeExpenseCategory.allCases {
             if category.displayString == name {
                 return category
             }

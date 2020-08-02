@@ -9,7 +9,7 @@
 import SwiftUI
 
 struct TimeSpanEditView: View {
-    @Binding var timeSpan : ExpenseTimeSpan
+    @Binding var timeSpan : LifeExpenseTimeSpan
     let defaultToEvent    : LifeEvent = .deces
     let defaultFromEvent  : LifeEvent = .cessationActivite
     
@@ -39,7 +39,7 @@ struct TimeSpanEditView: View {
                         self.timeSpan = .spanning(from: boundary, to: to)
                     default:
                         // should never be called
-                        fatalError("ExpenseTimeSpan : Case out of bound")
+                        fatalError("LifeExpenseTimeSpan : Case out of bound")
                 }
             })
     }
@@ -69,7 +69,7 @@ struct TimeSpanEditView: View {
                         self.timeSpan = .spanning(from: from, to: boundary)
                     default:
                         // should never be called
-                        fatalError("ExpenseTimeSpan : Case out of bound")
+                        fatalError("LifeExpenseTimeSpan : Case out of bound")
                 }
             })
     }
@@ -98,7 +98,7 @@ struct TimeSpanEditView: View {
                         self.timeSpan  = .spanning(from: boundary, to: to)
                     default:
                         // should never be called
-                        fatalError("ExpenseTimeSpan : Case out of bound")
+                        fatalError("LifeExpenseTimeSpan : Case out of bound")
                 }
         } )
     }
@@ -126,7 +126,7 @@ struct TimeSpanEditView: View {
                         self.timeSpan  = .spanning(from: from, to: boundary)
                     default:
                         // should never be called
-                        fatalError("ExpenseTimeSpan : Case out of bound")
+                        fatalError("LifeExpenseTimeSpan : Case out of bound")
                 }
         } )
     }
@@ -160,7 +160,7 @@ struct TimeSpanEditView: View {
                         self.timeSpan  = .spanning(from: boundary, to: to)
                     default:
                         // should never be called
-                        fatalError("ExpenseTimeSpan : Case out of bound")
+                        fatalError("LifeExpenseTimeSpan : Case out of bound")
                 }
         } )
     }
@@ -192,7 +192,7 @@ struct TimeSpanEditView: View {
                         boundary.name = name // modifier le nom associé à l'événement
                         self.timeSpan = .spanning(from: from, to: boundary)
                     default:
-                        fatalError("ExpenseTimeSpan : Case out of bound")
+                        fatalError("LifeExpenseTimeSpan : Case out of bound")
                 }
             })
     }
@@ -224,7 +224,7 @@ struct TimeSpanEditView: View {
                         boundary.fixedYear = year // modifier l'année
                         self.timeSpan = .spanning(from: boundary, to: to)
                     default:
-                        fatalError("ExpenseTimeSpan : Case out of bound")
+                        fatalError("LifeExpenseTimeSpan : Case out of bound")
                 }
         })
     }
@@ -255,7 +255,7 @@ struct TimeSpanEditView: View {
                     boundary.fixedYear = year // modifier l'année
                     self.timeSpan = .spanning(from: from, to: boundary)
                 default:
-                    fatalError("ExpenseTimeSpan : Case out of bound")
+                    fatalError("LifeExpenseTimeSpan : Case out of bound")
             }
         })
     }
@@ -276,7 +276,7 @@ struct TimeSpanEditView: View {
                 case .periodic(let from, _, let to):
                     self.timeSpan = .periodic(from: from, period: $0, to: to)
                 default:
-                    fatalError("ExpenseTimeSpan : Case out of bound")
+                    fatalError("LifeExpenseTimeSpan : Case out of bound")
             }
         })
     }
@@ -296,7 +296,7 @@ struct TimeSpanEditView: View {
                 case .exceptional(_):
                     self.timeSpan = .exceptional(inYear: $0)
                 default:
-                    fatalError("ExpenseTimeSpan : Case out of bound")
+                    fatalError("LifeExpenseTimeSpan : Case out of bound")
             }
         })
     }
@@ -308,29 +308,29 @@ struct TimeSpanEditView: View {
             },
         set: {id in
             switch id {
-                case ExpenseTimeSpan.permanent.id:
+                case LifeExpenseTimeSpan.permanent.id:
                     self.timeSpan = .permanent
                 
-                case ExpenseTimeSpan.periodic(from: DateBoundary(), period: 0, to: DateBoundary()).id:
+                case LifeExpenseTimeSpan.periodic(from: DateBoundary(), period: 0, to: DateBoundary()).id:
                     self.timeSpan = .periodic(from   : DateBoundary(year: self.bindingFrom.wrappedValue),
                                               period : self.bindingPeriod.wrappedValue,
                                               to     : DateBoundary(year: self.bindingTo.wrappedValue))
                 
-                case ExpenseTimeSpan.starting(from: DateBoundary()).id:
+                case LifeExpenseTimeSpan.starting(from: DateBoundary()).id:
                     self.timeSpan = .starting(from: DateBoundary(year: self.bindingFrom.wrappedValue))
                 
-                case ExpenseTimeSpan.ending(to: DateBoundary()).id:
+                case LifeExpenseTimeSpan.ending(to: DateBoundary()).id:
                     self.timeSpan = .ending(to: DateBoundary(year: self.bindingTo.wrappedValue))
                 
-                case ExpenseTimeSpan.spanning(from: DateBoundary(), to: DateBoundary()).id:
+                case LifeExpenseTimeSpan.spanning(from: DateBoundary(), to: DateBoundary()).id:
                     self.timeSpan = .spanning(from : DateBoundary(year: self.bindingFrom.wrappedValue),
                                               to   : DateBoundary(year: self.bindingTo.wrappedValue))
                 
-                case ExpenseTimeSpan.exceptional(inYear:0).id:
+                case LifeExpenseTimeSpan.exceptional(inYear:0).id:
                     self.timeSpan = .exceptional(inYear: self.bindingYear.wrappedValue)
                 
                 default:
-                    fatalError("ExpenseTimeSpan : Case out of bound")
+                    fatalError("LifeExpenseTimeSpan : Case out of bound")
             }
         })
     }
@@ -339,11 +339,11 @@ struct TimeSpanEditView: View {
         Group {
             Section(header: Text("PLAGE DE TEMPS")) {
                 // choisir le type de TimeFrame pour la dépense
-                CaseWithAssociatedValuePicker<ExpenseTimeSpan>(caseIndex: caseIndex, label: "")
+                CaseWithAssociatedValuePicker<LifeExpenseTimeSpan>(caseIndex: caseIndex, label: "")
                     .pickerStyle(SegmentedPickerStyle())
             }
             // en fonction du type choisi
-            if caseIndex.wrappedValue == ExpenseTimeSpan.ending (to: DateBoundary()).id {
+            if caseIndex.wrappedValue == LifeExpenseTimeSpan.ending (to: DateBoundary()).id {
                 // TimeSpan = .ending
                 BoundaryEditView(label    : "Fin",
                                  event    : bindingToEvent,
@@ -351,14 +351,14 @@ struct TimeSpanEditView: View {
                                  year     : bindingTo,
                                  name     : bindingNameTo)
                 
-            } else if caseIndex.wrappedValue == ExpenseTimeSpan.starting(from: DateBoundary()).id {
+            } else if caseIndex.wrappedValue == LifeExpenseTimeSpan.starting(from: DateBoundary()).id {
                 // TimeSpan = .starting
                 BoundaryEditView(label    : "Début",
                                  event    : bindingFromEvent,
                                  isLinked : bindingIsLinkedToFromEvent,
                                  year     : bindingFrom,
                                  name     : bindingNameFrom)
-            } else if caseIndex.wrappedValue == ExpenseTimeSpan.spanning(from: DateBoundary(), to: DateBoundary()).id {
+            } else if caseIndex.wrappedValue == LifeExpenseTimeSpan.spanning(from: DateBoundary(), to: DateBoundary()).id {
                 // TimeSpan = .spanning
                 BoundaryEditView(label    : "Début",
                                  event    : bindingFromEvent,
@@ -371,7 +371,7 @@ struct TimeSpanEditView: View {
                                  year     : bindingTo,
                                  name     : bindingNameTo)
 
-            } else if caseIndex.wrappedValue == ExpenseTimeSpan.periodic(from: DateBoundary(), period: 0, to: DateBoundary()).id {
+            } else if caseIndex.wrappedValue == LifeExpenseTimeSpan.periodic(from: DateBoundary(), period: 0, to: DateBoundary()).id {
                 // TimeSpan = .periodic
                 BoundaryEditView(label    : "Début",
                                  event    : bindingFromEvent,
@@ -393,7 +393,7 @@ struct TimeSpanEditView: View {
                     })
                 }
                 
-            } else if caseIndex.wrappedValue == ExpenseTimeSpan.exceptional(inYear: 0).id {
+            } else if caseIndex.wrappedValue == LifeExpenseTimeSpan.exceptional(inYear: 0).id {
                     // TimeSpan = .exceptional
                     IntegerEditView(label: "Durant l'année", integer: bindingYear)
             }
@@ -403,7 +403,7 @@ struct TimeSpanEditView: View {
 
 struct TimeSpanEditView_Previews: PreviewProvider {
     static var previews: some View {
-        TimeSpanEditView(timeSpan: .constant(ExpenseTimeSpan.spanning(from: DateBoundary(year: 2020),
+        TimeSpanEditView(timeSpan: .constant(LifeExpenseTimeSpan.spanning(from: DateBoundary(year: 2020),
                                                                       to  : DateBoundary(year: 2022))))
             .previewLayout(PreviewLayout.sizeThatFits)
             .padding([.bottom, .top])

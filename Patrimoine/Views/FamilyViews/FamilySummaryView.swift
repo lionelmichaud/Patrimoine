@@ -67,11 +67,11 @@ struct FamilySummaryView: View {
                                 integer : Int(cashFlow!.taxes.familyQuotient))
                     // FIXME: donne un impot nul !
                     AmountView(label : "Montant de l'IRPP",
-                               amount: cashFlow!.taxes.irpp)
+                               amount: cashFlow!.taxes.perCategory[.irpp]!.total)
                     AmountView(label : "Taxes locales",
-                               amount: cashFlow!.taxes.localTaxes.total)
+                               amount: cashFlow!.taxes.perCategory[.localTaxes]!.total)
                     AmountView(label : "Prélevements Sociaux",
-                               amount: cashFlow!.taxes.socialTaxes.total)
+                               amount: cashFlow!.taxes.perCategory[.socialTaxes]!.total)
                     AmountView(label : "Prélevements totaux",
                                amount: cashFlow!.taxes.total,
                                weight: .bold)

@@ -86,7 +86,7 @@ class UIState: ObservableObject {
     @Published var cfChartState        = CashFlowChartState()
     
     init() {
-        expenseViewState.colapseCategories = Array(repeating: true, count: ExpenseCategory.allCases.count)
+        expenseViewState.colapseCategories = Array(repeating: true, count: LifeExpenseCategory.allCases.count)
     }
     
     func resetSimulation() {

@@ -28,46 +28,8 @@ struct CashFlowLine {
         }
     }
     
-    // MARK: - agrégat des impôts et taxes
-    struct Taxes {
-        
-        // properties
-        
-        let name                   = "TAXES"
-        var familyQuotient: Double = 0.0
-        var irpp          : Double = 0.0
-        var localTaxes             = NamedValueTable(name: "Taxes Locales")
-        var socialTaxes            = NamedValueTable(name: "Prélev Sociaux")
-        var total         : Double { localTaxes.total + socialTaxes.total + irpp }
-        
-        // methods
-        
-        var namedValueTable: NamedValueTable {
-            var table = NamedValueTable(name: name)
-            table.values.append((name  : "IRPP",
-                                 value : irpp))
-            table.values.append((name  : localTaxes.name,
-                                 value : localTaxes.total))
-            table.values.append((name  : socialTaxes.name,
-                                 value : socialTaxes.total))
-            return table
-        }
-        
-        func print(level: Int = 0) {
-            let h = String(repeating: StringCst.header, count: level)
-            Swift.print(h + name + ":")
-            Swift.print(h + StringCst.header + "QUOTIEN FAMILIAL:", familyQuotient, "IRPP:", irpp)
-            // impôts locaux
-            localTaxes.print(level: level+1)
-            // prélèvements sociaux
-            socialTaxes.print(level: level+1)
-            // total des taxes
-            Swift.print(h + StringCst.header + "TOTAL TAXES:", total)
-        }
-    }
-    
-    // MARK: - agrégat des dépenses
-    struct Expenses {
+    // MARK: - agrégat des dépenses de vie
+    struct ValuedExpenses {
         
         // properties
         
@@ -84,9 +46,9 @@ struct CashFlowLine {
     
     let year: Int
     var ages          = Ages()
-    var revenues      = Revenues()
-    var taxes         = Taxes()
-    var expenses      = Expenses()
+    var revenues      = ValuedRevenues()
+    var taxes         = ValuedTaxes()
+    var expenses      = ValuedExpenses()
     var debtPayements = NamedValueTable(name : "Remb. dette")
     var taxableIrppRevenueDelayedToNextYear = Debt(name: "REVENU IMPOSABLE REPORTE A L'ANNEE SUIVANTE", value: 0)
     let sciCashFlowLine : SciCashFlowLine // les comptes annuels de la SCI
@@ -135,10 +97,11 @@ struct CashFlowLine {
         // IRPP: calcule de l'impot sur l'ensemble des revenus: IRPP
         taxes.familyQuotient = Fiscal.model.incomeTaxes.familyQuotient(nbAdults   : family.nbOfAdultAlive(atEndOf: year),
                                                                        nbChildren : family.nbOfFiscalChildren(during: year))
-        taxes.irpp = Fiscal.model.incomeTaxes.irpp(taxableIncome : revenues.totalTaxableIrpp,
-                                                   nbAdults      : family.nbOfAdultAlive(atEndOf: year),
-                                                   nbChildren    : family.nbOfFiscalChildren(during: year)).rounded()
-        
+        let irpp = Fiscal.model.incomeTaxes.irpp(taxableIncome : revenues.totalTaxableIrpp,
+                                                 nbAdults      : family.nbOfAdultAlive(atEndOf: year),
+                                                 nbChildren    : family.nbOfFiscalChildren(during: year)).rounded()
+        taxes.perCategory[.irpp]?.values.append((name: "IRPP", value: irpp.rounded()))
+
         // EXPENSES: compute and populate family expenses
         expenses.namedValueTable.values = family.expenses.namedValueTable(atEndOf: year)
         
@@ -225,8 +188,8 @@ struct CashFlowLine {
             revenues.perCategory[.realEstateRents]?.taxablesIrpp.values.append((name: name,
                                                                                 value: yearlyRent.taxableIrpp.rounded()))
             // prélèvements sociaux payés sur le loyer
-            taxes.socialTaxes.values.append((name: name,
-                                             value: yearlyRent.socialTaxes.rounded()))
+            taxes.perCategory[.socialTaxes]?.values.append((name : name,
+                                             value               : yearlyRent.socialTaxes.rounded()))
             
             // produit de la vente inscrit en compte courant: produit net de charges sociales et d'impôt sur la plus-value
             let liquidatedValue = realEstate.liquidatedValue(year)
@@ -235,7 +198,7 @@ struct CashFlowLine {
             
             // impôts locaux
             let yearlyLocaltaxes = realEstate.yearlyLocalTaxes(during: year)
-            taxes.localTaxes.values.append((name: name,
+            taxes.perCategory[.localTaxes]?.values.append((name: name,
                                             value: yearlyLocaltaxes.rounded()))
         }
     }
@@ -254,7 +217,7 @@ struct CashFlowLine {
             revenues.perCategory[.scpis]?.taxablesIrpp.values.append((name: name,
                                                                       value: yearlyRevenue.taxableIrpp.rounded()))
             // prélèvements sociaux payés sur les dividendes de SCPI
-            taxes.socialTaxes.values.append((name: name,
+            taxes.perCategory[.socialTaxes]?.values.append((name: name,
                                              value: yearlyRevenue.socialTaxes.rounded()))
             
             // populate SCPI sale revenue: produit de vente net de charges sociales et d'impôt sur la plus-value
@@ -297,7 +260,7 @@ struct CashFlowLine {
                                                                                    value: liquidatedValue.taxableIrppInterests.rounded()))
             }
             // prélèvements sociaux
-            taxes.socialTaxes.values.append((name: name, value: liquidatedValue.socialTaxes.rounded()))
+            taxes.perCategory[.socialTaxes]?.values.append((name: name, value: liquidatedValue.socialTaxes.rounded()))
         }
     }
     

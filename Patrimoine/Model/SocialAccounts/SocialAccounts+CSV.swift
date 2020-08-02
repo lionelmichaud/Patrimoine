@@ -120,15 +120,16 @@ extension SocialAccounts {
         }
         
         func buildTaxesTableCSV(firstLine: CashFlowLine) {
-            let localTaxesNames  = firstLine.taxes.localTaxes.headerCSV
-            let socialTaxesNames = firstLine.taxes.socialTaxes.headerCSV
-            heading += "COEF FAMILIAL; IRPP; \(localTaxesNames); \(socialTaxesNames); TAXES TOTALES;"
+            let irppNames        = firstLine.taxes.perCategory[.irpp]!.headerCSV
+            let localTaxesNames  = firstLine.taxes.perCategory[.localTaxes]!.headerCSV
+            let socialTaxesNames = firstLine.taxes.perCategory[.socialTaxes]!.headerCSV
+            heading += "QUOT FAMILIAL; \(irppNames); \(localTaxesNames); \(socialTaxesNames); TAXES TOTALES;"
             
             // For every element , extract the values as a comma-separated string.
             let rowsCoef        = cashFlowArray.map { "\($0.taxes.familyQuotient.roundedString); " }
-            let rowsIrpp        = cashFlowArray.map { "\($0.taxes.irpp.roundedString); " }
-            let rowsLocalTaxes  = cashFlowArray.map { "\($0.taxes.localTaxes.valuesCSV); " }
-            let rowsSocialTaxes = cashFlowArray.map { "\($0.taxes.socialTaxes.valuesCSV); " }
+            let rowsIrpp        = cashFlowArray.map { "\($0.taxes.perCategory[.irpp]!.valuesCSV); " }
+            let rowsLocalTaxes  = cashFlowArray.map { "\($0.taxes.perCategory[.localTaxes]!.valuesCSV); " }
+            let rowsSocialTaxes = cashFlowArray.map { "\($0.taxes.perCategory[.socialTaxes]!.valuesCSV); " }
             let rowsTotal       = cashFlowArray.map { "\($0.taxes.total.roundedString); " }
             
             rows = zip(rows, rowsCoef).map(+)

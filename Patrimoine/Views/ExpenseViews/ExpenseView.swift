@@ -11,7 +11,7 @@ import SwiftUI
 struct ExpenseView: View {
     @EnvironmentObject var family     : Family
 
-    private var categories: [(ExpenseCategory, ExpenseArray)] {
+    private var categories: [(LifeExpenseCategory, ExpenseArray)] {
         family.expenses.perCategory.sorted(by: \.key.displayString)
     }
     
@@ -77,7 +77,7 @@ struct ExpenseListInCategory: View {
     @EnvironmentObject var simulation : Simulation
     @EnvironmentObject var patrimoine : Patrimoin
     @EnvironmentObject var uiState    : UIState
-    let category: ExpenseCategory
+    let category: LifeExpenseCategory
     var expenses: ExpenseArray
     //@State private var colapse = true
 

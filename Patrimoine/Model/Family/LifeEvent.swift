@@ -39,7 +39,7 @@ struct DateBoundary: Hashable, Codable {
     var year: Int {
         if let lifeEvent = self.event {
             // rechercher la personne
-            if let person = Expense.family?.member(withName: name) {
+            if let person = LifeExpense.family?.member(withName: name) {
                 // rechercher l'année de l'événement pour cette personne
                 return person.yearOf(event: lifeEvent) ?? -1
             } else {

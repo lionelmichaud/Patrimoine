@@ -1,5 +1,5 @@
 //
-//  ExpenseTimeSpan.swift
+//  LifeExpenseTimeSpan.swift
 //  Patrimoine
 //
 //  Created by Lionel MICHAUD on 29/05/2020.
@@ -10,7 +10,7 @@ import Foundation
 
 // MARK: - Elongation temporelle du poste de dépense
 
-enum ExpenseTimeSpan: PickableIdentifiableEnum, Hashable {
+enum LifeExpenseTimeSpan: PickableIdentifiableEnum, Hashable {
     
     case permanent
     case periodic (from: DateBoundary, period: Int, to: DateBoundary)
@@ -21,7 +21,7 @@ enum ExpenseTimeSpan: PickableIdentifiableEnum, Hashable {
     
     // MARK: - Static properties
 
-    static var allCases: [ExpenseTimeSpan] {
+    static var allCases: [LifeExpenseTimeSpan] {
         return [.permanent,
                 .periodic (from: DateBoundary(), period: 1, to: DateBoundary()),
                 .starting (from: DateBoundary()),
@@ -154,7 +154,7 @@ enum ExpenseTimeSpan: PickableIdentifiableEnum, Hashable {
 
 // MARK: - Extension: Codable
 
-extension ExpenseTimeSpan: Codable {
+extension LifeExpenseTimeSpan: Codable {
     // coding keys
     private enum CodingKeys: String, CodingKey {
         case permanent, periodic_from, periodic_to, periodic_period, spanning_from, spanning_to
@@ -211,7 +211,7 @@ extension ExpenseTimeSpan: Codable {
             return
         }
         
-        throw ExpenseTimeSpanError.decoding("Error decoding 'ExpenseTimeSpan' ! \(dump(container))")
+        throw ExpenseTimeSpanError.decoding("Error decoding 'LifeExpenseTimeSpan' ! \(dump(container))")
     }
 
     // MARK: - Coding
@@ -246,7 +246,7 @@ extension ExpenseTimeSpan: Codable {
 
 // MARK: - Extension: Description
 
-extension ExpenseTimeSpan: CustomStringConvertible{
+extension LifeExpenseTimeSpan: CustomStringConvertible{
     public var description: String{
         get{
             switch self {

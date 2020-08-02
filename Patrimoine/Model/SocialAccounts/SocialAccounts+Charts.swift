@@ -790,17 +790,36 @@ extension SocialAccounts {
             dataSet = BarChartDataSet(entries : dataEntries,
                                       label   : (labelsInCategory.count == 1 ? labelsInCategory.first : nil))
             dataSet.stackLabels = labelsInCategory
-
-            // rechercher la catégorie dans les revenus de la SCI
+            dataSet.colors      = ChartThemes.positiveColors(number : dataSet.stackLabels.count)
+            
         } else if let found = firstLine.sciCashFlowLine.namedValueTable.values.first(where: { $0.name == categoryName } ) {
+            /// rechercher la catégorie dans les revenus de la SCI
             print("sciCashFlowLine : \(found)")
             dataSet = BarChartDataSet()
 
         } else if let found = firstLine.taxes.namedValueTable.values.first(where: { $0.name == categoryName } ) {
-            /// rechercher les valeurs des dépenses
+            /// rechercher les valeurs des taxes
             print("taxes : \(found)")
-            dataSet = BarChartDataSet()
-
+            guard let category = TaxeCategory.category(of: categoryName) else {
+                return BarChartDataSet()
+            }
+            print("  nom : \(category)")
+            guard let labelsInCategory = firstLine.taxes.perCategory[category]?.headersArray else {
+                return BarChartDataSet()
+            }
+            print("  legende : ", labelsInCategory)
+            
+            // valeurs des revenus de la catégorie
+            dataEntries = cashFlowArray.map { // pour chaque année
+                let y = $0.taxes.perCategory[category]?.valuesArray
+                return BarChartDataEntry(x       : $0.year.double(),
+                                         yValues : -y!)
+            }
+            dataSet = BarChartDataSet(entries : dataEntries,
+                                      label   : (labelsInCategory.count == 1 ? labelsInCategory.first : nil))
+            dataSet.stackLabels = labelsInCategory
+            dataSet.colors      = ChartThemes.negativeColors(number : dataSet.stackLabels.count)
+            
         } else if categoryName == firstLine.expenses.summaryValueTable.name {
             /// rechercher les valeurs des dépenses
             print("expenses : \(categoryName)")
@@ -817,14 +836,12 @@ extension SocialAccounts {
             dataSet = BarChartDataSet(entries : dataEntries,
                                       label   : (labelsInCategory.count == 1 ? labelsInCategory.first : nil))
             dataSet.stackLabels = labelsInCategory
+            dataSet.colors      = ChartThemes.negativeColors(number : dataSet.stackLabels.count)
 
         } else {
             dataSet = BarChartDataSet()
         }
 
-        // légendes des revenus de la catégorie
-        dataSet.colors = ChartThemes.positiveColors(number: dataSet.stackLabels.count)
-        
         return dataSet
     }
     
@@ -894,7 +911,7 @@ extension BarChartView {
         //: ### Description
         self.chartDescription?.text = title
         self.chartDescription?.enabled = true
-        
+
         // bulle d'info
         let marker = DateValueMarkerView(color               : ChartThemes.BallonColors.color,
                                          font                : ChartThemes.ChartDefaults.baloonfont,

@@ -14,13 +14,13 @@ struct ExpenseDetailedView: View {
     @EnvironmentObject var patrimoine : Patrimoin
     @EnvironmentObject var uiState    : UIState
     @Environment(\.presentationMode) var presentationMode
-    private var item             : Expense?
-    private let category         : ExpenseCategory
+    private var item             : LifeExpense?
+    private let category         : LifeExpenseCategory
     @State private var alertItem : AlertItem?
     @State private var index     : Int?
-    @State private var localItem = Expense(name     : "",
-                                           timeSpan : .permanent,
-                                           value    : 0.0)
+    @State private var localItem = LifeExpense(name     : "",
+                                               timeSpan : .permanent,
+                                               value    : 0.0)
     
     var body: some View {
         Form {
@@ -55,7 +55,7 @@ struct ExpenseDetailedView: View {
             .alert(item: $alertItem, content: myAlert) 
     }
     
-    init(category: ExpenseCategory, item: Expense?, family: Family) {
+    init(category: LifeExpenseCategory, item: LifeExpense?, family: Family) {
         self.item     = item
         self.category = category
         if let initialItemValue = item {
@@ -114,9 +114,9 @@ struct ExpenseDetailedView_Previews: PreviewProvider {
 
     static var previews: some View {
         ExpenseDetailedView(category : .autre,
-                            item     : Expense(name    : "Test",
-                                               timeSpan: .permanent,
-                                               value   : 1234.0),
+                            item     : LifeExpense(name    : "Test",
+                                                   timeSpan: .permanent,
+                                                   value   : 1234.0),
                             family   : family)
             .environmentObject(family)
             .environmentObject(simulation)

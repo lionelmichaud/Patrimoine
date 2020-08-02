@@ -10,7 +10,7 @@ import Foundation
 
 // MARK: - agrégat de revenus pour une catégories donnée
 
-struct Revenues {
+struct ValuedRevenues {
     
     // properties
     
@@ -23,11 +23,6 @@ struct Revenues {
     /// total de tous les revenus nets de l'année versé en compte courant avant taxes et impots
     var totalCredited: Double {
         perCategory.reduce(.zero, { result, element in result + element.value.credits.total } )
-        //        var total = 0.0
-        //        for category in RevenueCategory.allCases {
-        //            total += revenuesPerCategory[category]?.credits.total ?? 0.0
-        //        }
-        //        return total
     }
     /// total de tous les revenus de l'année imposables à l'IRPP
     var totalTaxableIrpp: Double {
