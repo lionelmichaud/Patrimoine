@@ -521,12 +521,12 @@ struct HelperViews_Previews: PreviewProvider {
                     .preferredColorScheme(.dark)
                     .previewLayout(PreviewLayout.sizeThatFits)
                     .padding()
-                    .previewDisplayName("RoundedRectButtonStyleView")
+                    .previewDisplayName("CapsuleButtonStyleView")
                 CapsuleButtonStyleView()
                     .preferredColorScheme(.light)
                     .previewLayout(PreviewLayout.sizeThatFits)
                     .padding()
-                    .previewDisplayName("RoundedRectButtonStyleView")
+                    .previewDisplayName("CapsuleButtonStyleView")
                 ProgressBar(value             : 5,
                             minValue          : 0,
                             maxValue          : 10,

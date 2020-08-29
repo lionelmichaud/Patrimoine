@@ -7,6 +7,9 @@
 //
 
 import Foundation
+import os
+
+fileprivate let customLog = Logger(subsystem: "me.michaud.lionel.Patrimoine", category: "Model.RegimeGeneral")
 
 // MARK: - Régime Général
 
@@ -48,13 +51,16 @@ struct RegimeGeneral: Codable {
     ///   - dateOfRetirementComp: date de demande de liquidation de la pension de retraite
     /// - Returns: taux de reversion en tenant compte d'une décote éventuelle en %
     func tauxDePension(birthDate           : Date,
-                       lastKnownSituation  : RegimeGeneralSituation,
+                       dureeAssurance      : Int,
+                       dureeDeReference    : Int,
                        dateOfPensionLiquid : Date) -> Double? {
         guard let nbTrimestreDecote = nbTrimestreDecote(birthDate           : birthDate,
-                                                        lastKnownSituation  : lastKnownSituation,
+                                                        dureeAssurance      : dureeAssurance,
+                                                        dureeDeReference    : dureeDeReference,
                                                         dateOfPensionLiquid : dateOfPensionLiquid) else {
-                                                            return nil
+            return nil
         }
+        customLog.log(level: .info, "nb Trimestre Decote = \(nbTrimestreDecote, privacy: .public)")
         return model.maxReversionRate - model.decoteParTrimestre * nbTrimestreDecote.double()
     }
     
@@ -70,7 +76,8 @@ struct RegimeGeneral: Codable {
     /// Le nombre de trimestres est arrondi au chiffre supérieur. Le nombre de trimestres manquants retenu est le plus avantageux pour vous.
     /// Le nombre de trimestres est plafonné à 20
     func nbTrimestreDecote(birthDate           : Date,
-                           lastKnownSituation  : RegimeGeneralSituation,
+                           dureeAssurance      : Int,
+                           dureeDeReference    : Int,
                            dateOfPensionLiquid : Date) -> Int? {
         var duree: DateComponents
         
@@ -85,28 +92,15 @@ struct RegimeGeneral: Codable {
         //    Le nombre de trimestres est arrondi au chiffre supérieur
         let trimestresManquantAgeTauxPlein = max(0, (duree.year! * 4) + (r1 > 0 ? q1 + 1 : q1))
         
-        /// le nombre de trimestres manquant entre la date de votre départ en retraite et la durée d'assurance retraite ouvrant droit au taux plein
-        guard let dureeDeReference = dureeDeReference(birthYear: birthDate.year) else {
-            return nil
-        }
-        let trimestreRestant = max(0, dureeDeReference - lastKnownSituation.nbTrimestreAcquis)
-        let dateRefComp = DateComponents(calendar : Date.calendar,
-                                         year     : lastKnownSituation.atEndOf,
-                                         month    : 12,
-                                         day      : 31,
-                                         hour     : 23)
-        let dateRef = Date.calendar.date(from: dateRefComp)!
-        guard let dateTousTrimestre = (trimestreRestant * 3).months.from(dateRef) else {
-            return nil
-        }
-        duree = Date.calendar.dateComponents([.year, .month, .day],
-                                             from: dateOfPensionLiquid,
-                                             to  : dateTousTrimestre)
-        let (q2, r2) = duree.month!.quotientAndRemainder(dividingBy: 3)
-        //    Le nombre de trimestres est arrondi au chiffre supérieur
-        let trimestresManquantNbTrimestreTauxPlein = max(0, (duree.year! * 4) + (r2 > 0 ? q2 + 1 : q2))
+        /// le nombre de trimestres manquant entre le nb de trimestre accumulés à la date de votre départ en retraite et la durée d'assurance retraite ouvrant droit au taux plein
+        customLog.log(level: .info, "Durée de référence = \(dureeDeReference, privacy: .public)")
+        let trimestresManquantNbTrimestreTauxPlein = max(0, dureeDeReference - dureeAssurance)
         
         // retenir le plus favorable des deux et limiter à 20 max
+        customLog.log(level: .info, "trimestres Manquant Nb Trimestre Taux Plein = \(trimestresManquantNbTrimestreTauxPlein, privacy: .public)")
+        customLog.log(level: .info, "trimestres Manquant Age Taux Plein = \(trimestresManquantAgeTauxPlein, privacy: .public)")
+        customLog.log(level: .info, "model.max Nb Trimestre Decote = \(model.maxNbTrimestreDecote, privacy: .public)")
+
         return min(trimestresManquantNbTrimestreTauxPlein,
                    trimestresManquantAgeTauxPlein,
                    model.maxNbTrimestreDecote)
@@ -132,11 +126,12 @@ struct RegimeGeneral: Codable {
         if let dateFinAlloc = dateOfEndOfUnemployAlloc {
             // Période de travail suivi de période d'indeminsation chômage:
             // - Les périodes de chômage indemnisé sont considérées comme des trimestres d'assurance retraite au régime général de la Sécurité sociale dans la limite de 4 trimestres par an.
-            // - Les périodes de chômage involontaire non indemnisé sont considérées comme des trimestres d'assurance retraite au régime général de la Sécurité sociale. La 1re période de chômage non indemnisé, qu'elle soit continue ou non, est prise en compte dans la limite d'un an et demi (6 trimestres).
+            // - Les périodes de chômage involontaire non indemnisé sont considérées comme des trimestres d'assurance retraite au régime général de la Sécurité sociale.
+            //   La 1re période de chômage non indemnisé, qu'elle soit continue ou non, est prise en compte dans la limite d'un an et demi (6 trimestres).
             dateFinAssurance = (1.years + 6.months).from(dateFinAlloc)!
             
         } else {
-            // période de travail non suivi de période d'indeminsation chômage
+            // période de travail non suivi de période d'indemnisation chômage
             dateFinAssurance = dateOfRetirement
         }
         if dateRef >= dateFinAssurance {
@@ -257,15 +252,17 @@ struct RegimeGeneral: Codable {
                  dateOfPensionLiquid      : Date,
                  lastKnownSituation       : RegimeGeneralSituation) -> Double? {
         // Salaire annuel moyen x Taux de la pension x (Durée d'assurance du salarié au régime général / Durée de référence pour obtenir une pension à taux plein)
-        guard let tauxDePension = tauxDePension(birthDate           : birthDate,
-                                                lastKnownSituation  : lastKnownSituation,
-                                                dateOfPensionLiquid : dateOfPensionLiquid) else { return nil }
-        
-        guard let dureeDeReference = dureeDeReference(birthYear: birthDate.year) else { return nil }
-        
         let dureeAssurance = self.dureeAssurance(lastKnownSituation       : lastKnownSituation,
                                                  dateOfRetirement         : dateOfRetirement,
                                                  dateOfEndOfUnemployAlloc : dateOfEndOfUnemployAlloc)
+        
+        guard let dureeDeReference = dureeDeReference(birthYear: birthDate.year) else { return nil }
+        
+        guard let tauxDePension = tauxDePension(birthDate           : birthDate,
+                                                dureeAssurance      : dureeAssurance,
+                                                dureeDeReference    : dureeDeReference,
+                                                dateOfPensionLiquid : dateOfPensionLiquid) else { return nil }
+        
         return pension(sam              : lastKnownSituation.sam,
                        tauxDePension    : tauxDePension,
                        dureeAssurance   : dureeAssurance,
@@ -278,32 +275,41 @@ struct RegimeGeneral: Codable {
                            dateOfEndOfUnemployAlloc : Date?,
                            dateOfPensionLiquid      : Date,
                            lastKnownSituation       : RegimeGeneralSituation) ->
-        (tauxDePension   : Double,
-        dureeDeReference : Int,
-        dureeAssurance   : Int,
-        pensionBrute     : Double,
-        pensionNette     : Double)? {
-            // Salaire annuel moyen x Taux de la pension x (Durée d'assurance du salarié au régime général / Durée de référence pour obtenir une pension à taux plein)
-            guard let tauxDePension = tauxDePension(birthDate           : birthDate,
-                                                    lastKnownSituation  : lastKnownSituation,
-                                                    dateOfPensionLiquid : dateOfPensionLiquid) else { return nil }
-            
-            guard let dureeDeReference = dureeDeReference(birthYear: birthDate.year) else { return nil }
-            
-            let dureeAssurance = self.dureeAssurance(lastKnownSituation       : lastKnownSituation,
-                                                     dateOfRetirement         : dateOfRetirement,
-                                                     dateOfEndOfUnemployAlloc : dateOfEndOfUnemployAlloc)
-            let pensionBrute = pension(sam              : lastKnownSituation.sam,
-                                       tauxDePension    : tauxDePension,
-                                       dureeAssurance   : dureeAssurance,
-                                       dureeDeReference : dureeDeReference)
-            let pensionNette = Fiscal.model.pensionTaxes.net(pensionBrute)
-            
-            return (tauxDePension    : tauxDePension,
-                    dureeDeReference : dureeDeReference,
-                    dureeAssurance   : dureeAssurance,
-                    pensionBrute     : pensionBrute,
-                    pensionNette     : pensionNette)
+    (tauxDePension    : Double,
+     dureeDeReference : Int,
+     dureeAssurance   : Int,
+     pensionBrute     : Double,
+     pensionNette     : Double)? {
+        // Salaire annuel moyen x Taux de la pension x (Durée d'assurance du salarié au régime général / Durée de référence pour obtenir une pension à taux plein)
+        let dureeAssurance = self.dureeAssurance(lastKnownSituation       : lastKnownSituation,
+                                                 dateOfRetirement         : dateOfRetirement,
+                                                 dateOfEndOfUnemployAlloc : dateOfEndOfUnemployAlloc)
+        customLog.log(level: .info, "duree Assurance = \(dureeAssurance, privacy: .public)")
+
+        guard let dureeDeReference = dureeDeReference(birthYear: birthDate.year) else { return nil }
+        customLog.log(level: .info, "duree De Reference = \(dureeDeReference, privacy: .public)")
+        
+        guard let tauxDePension = tauxDePension(birthDate           : birthDate,
+                                                dureeAssurance      : dureeAssurance,
+                                                dureeDeReference    : dureeDeReference,
+                                                dateOfPensionLiquid : dateOfPensionLiquid) else { return nil }
+        customLog.log(level: .info, "taux De Pension = \(tauxDePension, privacy: .public)")
+
+
+        let pensionBrute = pension(sam              : lastKnownSituation.sam,
+                                   tauxDePension    : tauxDePension,
+                                   dureeAssurance   : dureeAssurance,
+                                   dureeDeReference : dureeDeReference)
+        customLog.log(level: .info, "pension Brute = \(pensionBrute, privacy: .public)")
+        
+        let pensionNette = Fiscal.model.pensionTaxes.net(pensionBrute)
+        customLog.log(level: .info, "pension Nette = \(pensionNette, privacy: .public)")
+
+        return (tauxDePension    : tauxDePension,
+                dureeDeReference : dureeDeReference,
+                dureeAssurance   : dureeAssurance,
+                pensionBrute     : pensionBrute,
+                pensionNette     : pensionNette)
     }
 }
 

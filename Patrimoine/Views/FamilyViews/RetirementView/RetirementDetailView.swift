@@ -85,19 +85,20 @@ struct RetirementDetailView: View {
     func onAppear() {
         // régime général
         let adult = member as! Adult
+        guard let (tauxDePension, dureeDeReference, dureeAssurance, pensionBrute, pensionNette) =
+                Pension.model.regimeGeneral.pensionWithDetail(birthDate               : member.birthDate,
+                                                              dateOfRetirement        : adult.dateOfRetirement,
+                                                              dateOfEndOfUnemployAlloc: adult.dateOfEndOfUnemployementAllocation,
+                                                              dateOfPensionLiquid     : adult.dateOfPensionLiquid,
+                                                              lastKnownSituation      : adult.lastKnownPensionSituation) else {
+            return
+        }
         guard let nbTrimestreDecote =
             Pension.model.regimeGeneral.nbTrimestreDecote(birthDate           : member.birthDate,
-                                                          lastKnownSituation  : adult.lastKnownPensionSituation,
+                                                          dureeAssurance      : dureeAssurance,
+                                                          dureeDeReference    : dureeDeReference,
                                                           dateOfPensionLiquid : adult.dateOfPensionLiquid) else {
              return
-        }
-        guard let (tauxDePension, dureeDeReference, dureeAssurance, pensionBrute, pensionNette) =
-            Pension.model.regimeGeneral.pensionWithDetail(birthDate               : member.birthDate,
-                                                          dateOfRetirement        : adult.dateOfRetirement,
-                                                          dateOfEndOfUnemployAlloc: adult.dateOfEndOfUnemployementAllocation,
-                                                          dateOfPensionLiquid     : adult.dateOfPensionLiquid,
-                                                          lastKnownSituation      : adult.lastKnownPensionSituation) else {
-            return
         }
         viewModel.general.dateTauxPlein     =
             Pension.model.regimeGeneral.dateTauxPlein(birthDate          : member.birthDate,

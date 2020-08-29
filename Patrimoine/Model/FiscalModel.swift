@@ -183,14 +183,21 @@ struct PensionTaxes: Codable {
     /// Calcule la pension taxable à l'IRPP en applicant un abattement plafonné
     /// - Parameter net: pension nette de charges sociales
     /// - Returns: pension taxable à l'IRPP
-    func taxable(from net: Double) -> Double {
-        let rebate = (net * model.rebate / 100.0).clamp(low: model.minRebate, high: model.maxRebate)
-        return max (0, net - rebate)
+    /// - Reference: https://www.l-expert-comptable.com/a/532523-csg-deductible-en-2018.html
+    func taxable(from brut: Double) -> Double {
+        let base   = net(brut) + csgNonDeductibleDeIrpp(brut)
+        // TODO: - il faudrait prendre en compte que le rabais maxi est par foyer et non pas par personne
+        let rebate = (base * model.rebate / 100.0).clamp(low: model.minRebate, high: model.maxRebate)
+        return max (0, base - rebate)
     }
     
-    // TODO: - Taux CSG déductible de l'impôt sur le revenu 5.9%
-    func csgDeductibleDeIrpp(_ brut: Double) -> Double {
-        brut * model.CSGdeductible
+    // TODO: - Prendre en compte la CSG déductible du revenu imposable sur le revenu 5.9%
+    /// Calcule le montant de CSG NON déductible du revenu imposable
+    /// - Parameter brut: pension brute
+    /// - Returns: fraction de la pension NON déductible du revenu imposable
+    /// - Reference: https://www.l-expert-comptable.com/a/532523-csg-deductible-en-2018.html
+    func csgNonDeductibleDeIrpp(_ brut: Double) -> Double {
+        brut * (model.CSG - model.CSGdeductible) / 100.0
     }
 }
 
@@ -415,8 +422,8 @@ struct IncomeTaxes: Codable {
         let irppGrid       : [IrppSlice]
         let turnOverRebate : Double // 34.0 // %
         let salaryRebate   : Double // 10.0 // %
-        let minSalaryRebate: Double // 441 // €
-        let maxSalaryRebate: Double // 12_627 // €
+        let minRebate      : Double // 441 // €
+        let maxRebate      : Double // 12_627 // €
         let childRebate    : Double // 1_512.0 // €
     }
     
@@ -441,8 +448,8 @@ struct IncomeTaxes: Codable {
         switch personalIncome {
             case .salary(_, let taxableSalary, _, _, _):
                 // application du rabais sur le salaire imposable
-                let rebate = (taxableSalary * Fiscal.model.incomeTaxes.model.salaryRebate / 100.0).clamp(low : model.minSalaryRebate,
-                                                                                                         high: model.maxSalaryRebate)
+                let rebate = (taxableSalary * Fiscal.model.incomeTaxes.model.salaryRebate / 100.0).clamp(low : model.minRebate,
+                                                                                                         high: model.maxRebate)
                 return taxableSalary - rebate
                 
             case .turnOver(let BNC, _):

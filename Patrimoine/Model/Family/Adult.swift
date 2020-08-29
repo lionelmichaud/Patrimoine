@@ -258,7 +258,7 @@ final class Adult: Person {
         let pensionAgirc   = pensionRegimeAgirc
         let brut           = pensionGeneral.brut + pensionAgirc.brut
         let net            = pensionGeneral.net  + pensionAgirc.net
-        let taxable        = Fiscal.model.pensionTaxes.taxable(from: net)
+        let taxable        = Fiscal.model.pensionTaxes.taxable(from: brut)
         return (brut, net, taxable)
     } // computed
     
@@ -493,7 +493,7 @@ final class Adult: Person {
                 net  += pensionReversion.net
             }
         }
-        let taxable = Fiscal.model.pensionTaxes.taxable(from: net)
+        let taxable = Fiscal.model.pensionTaxes.taxable(from: brut)
         return (brut, net, taxable)
     }
     

@@ -28,8 +28,8 @@ struct CashFlowLine {
         }
     }
     
-    // MARK: - agrégat des dépenses de vie
-    struct ValuedExpenses {
+    // MARK: - agrégat des dépenses de vie valorisées
+    struct ValuedLifeExpenses {
         
         // properties
         
@@ -42,21 +42,38 @@ struct CashFlowLine {
         }
     }
     
+    // MARK: - agrégat des remboursements d'emprunt valorisées
+    struct ValuedLoanPayments {
+        
+        // properties
+        
+        var namedValueTable = NamedValueTable(name: "LOAN PAYMENTS")
+        var summaryValueTable: NamedValueTable {
+            var table = NamedValueTable(name: "Remb. dette")
+            table.values.append((name  : "Remb. dette",
+                                 value : namedValueTable.total))
+            return table
+        }
+    }
+    
     // MARK: - properties
     
     let year: Int
     var ages          = Ages()
     var revenues      = ValuedRevenues()
     var taxes         = ValuedTaxes()
-    var expenses      = ValuedExpenses()
-    var debtPayements = NamedValueTable(name : "Remb. dette")
+    var lifeExpenses  = ValuedLifeExpenses()
+    var debtPayements = ValuedLoanPayments()
     var taxableIrppRevenueDelayedToNextYear = Debt(name: "REVENU IMPOSABLE REPORTE A L'ANNEE SUIVANTE", value: 0)
     let sciCashFlowLine : SciCashFlowLine // les comptes annuels de la SCI
     var sumOfrevenues   : Double {
-        revenues.totalCredited + sciCashFlowLine.netCashFlow
+        revenues.totalCredited +
+            sciCashFlowLine.netCashFlow
     }
     var sumOfExpenses: Double {
-        taxes.total + expenses.namedValueTable.total + debtPayements.total
+        taxes.total +
+            lifeExpenses.namedValueTable.total +
+            debtPayements.namedValueTable.total
     }
     var netCashFlow: Double {
         sumOfrevenues - sumOfExpenses
@@ -103,7 +120,7 @@ struct CashFlowLine {
         taxes.perCategory[.irpp]?.values.append((name: "IRPP", value: irpp.rounded()))
 
         // EXPENSES: compute and populate family expenses
-        expenses.namedValueTable.values = family.expenses.namedValueTable(atEndOf: year)
+        lifeExpenses.namedValueTable.values = family.expenses.namedValueTable(atEndOf: year)
         
         // LOAN: populate remboursement d'emprunts
         populateLoanCashFlow(of: patrimoine)
@@ -270,7 +287,8 @@ struct CashFlowLine {
         for loan in patrimoine.liabilities.loans.items.sorted(by:<) {
             let yearlyPayement = -loan.yearlyPayement(year)
             let name           = loan.name
-            debtPayements.values.append((name: name, value: yearlyPayement.rounded()))
+            debtPayements.namedValueTable.values.append((name : name,
+                                                         value: yearlyPayement.rounded()))
         }
     }
     
@@ -313,9 +331,9 @@ struct CashFlowLine {
         // taxes
         taxes.print(level: 1)
         // expenses
-        expenses.namedValueTable.print(level: 1)
+        lifeExpenses.namedValueTable.print(level: 1)
         // remboursements d'emprunts
-        debtPayements.print(level: 1)
+        debtPayements.namedValueTable.print(level: 1)
         // net cash flow
         Swift.print(StringCst.header + "NET CASH FLOW:", netCashFlow)
         // revenu imposable à l'IRPP reporté à l'année suivante

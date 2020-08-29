@@ -649,9 +649,9 @@ extension SocialAccounts {
             case .expenses:
                 let taxesLegend  = firstLine.taxes.namedValueTable.values.map({($0.name, true)})
                 // Résumé seulement
-                let expenseLegend  = firstLine.expenses.summaryValueTable.values.map({($0.name, true)})
+                let expenseLegend  = firstLine.lifeExpenses.summaryValueTable.values.map({($0.name, true)})
                 // Résumé seulement
-                let debtsLegend  = firstLine.debtPayements.values.map({($0.name, true)})
+                let debtsLegend  = firstLine.debtPayements.summaryValueTable.values.map({($0.name, true)})
                 return expenseLegend + taxesLegend + debtsLegend
                 
             case .both:
@@ -660,9 +660,9 @@ extension SocialAccounts {
                 let sciLegend      = firstLine.sciCashFlowLine.namedValueTable.values.map({($0.name, true)})
                 let taxesLegend  = firstLine.taxes.namedValueTable.values.map({($0.name, true)})
                 // Résumé seulement
-                let expenseLegend  = firstLine.expenses.summaryValueTable.values.map({($0.name, true)})
+                let expenseLegend  = firstLine.lifeExpenses.summaryValueTable.values.map({($0.name, true)})
                 // Résumé seulement
-                let debtsLegend  = firstLine.debtPayements.values.map({($0.name, true)})
+                let debtsLegend  = firstLine.debtPayements.summaryValueTable.values.map({($0.name, true)})
                 return revenuesLegend + sciLegend + expenseLegend + taxesLegend + debtsLegend
         }
     }
@@ -706,15 +706,15 @@ extension SocialAccounts {
             case .expenses:
                 // valeurs des taxes + valeurs des dépenses + valeurs des dettes
                 dataEntries = cashFlowArray.map { // pour chaque année
-                    let yExpenses = -$0.expenses.summaryValueTable.filtredValues(itemSelection: itemSelection)
+                    let yExpenses = -$0.lifeExpenses.summaryValueTable.filtredValues(itemSelection: itemSelection)
                     let yTaxes    = -$0.taxes.namedValueTable.filtredValues(itemSelection: itemSelection)
-                    let yDebt     = -$0.debtPayements.filtredValues(itemSelection: itemSelection)
+                    let yDebt     = -$0.debtPayements.summaryValueTable.filtredValues(itemSelection: itemSelection)
                     return BarChartDataEntry(x       : $0.year.double(),
                                              yValues : yExpenses + yTaxes + yDebt)
                 }
-                let labelExpenses = firstLine.expenses.summaryValueTable.filtredHeaders(itemSelection: itemSelection)
+                let labelExpenses = firstLine.lifeExpenses.summaryValueTable.filtredHeaders(itemSelection: itemSelection)
                 let labelTaxes    = firstLine.taxes.namedValueTable.filtredHeaders(itemSelection: itemSelection)
-                let labelDebt     = firstLine.debtPayements.filtredHeaders(itemSelection: itemSelection)
+                let labelDebt     = firstLine.debtPayements.summaryValueTable.filtredHeaders(itemSelection: itemSelection)
                 let labels        = labelExpenses + labelTaxes + labelDebt
                 dataSet = BarChartDataSet(entries : dataEntries,
                                           label   : (labels.count == 1 ? labels.first : nil))
@@ -727,9 +727,9 @@ extension SocialAccounts {
                 dataEntries = cashFlowArray.map {
                     let yRevenues = $0.revenues.namedValueTable.filtredValues(itemSelection: itemSelection)
                     let ySCI      = $0.sciCashFlowLine.namedValueTable.filtredValues(itemSelection: itemSelection)
-                    let yExpenses = -$0.expenses.summaryValueTable.filtredValues(itemSelection: itemSelection)
+                    let yExpenses = -$0.lifeExpenses.summaryValueTable.filtredValues(itemSelection: itemSelection)
                     let yTaxes    = -$0.taxes.namedValueTable.filtredValues(itemSelection: itemSelection)
-                    let yDebt     = -$0.debtPayements.filtredValues(itemSelection: itemSelection)
+                    let yDebt     = -$0.debtPayements.summaryValueTable.filtredValues(itemSelection: itemSelection)
                     
                     return BarChartDataEntry(x       : $0.year.double(),
                                              yValues : yRevenues + ySCI + yExpenses + yTaxes + yDebt)
@@ -739,9 +739,9 @@ extension SocialAccounts {
                 let labelsPositive  = labelRevenues + labelSCI
                 let numberPositive  = labelsPositive.count
                 
-                let labelExpenses   = firstLine.expenses.summaryValueTable.filtredHeaders(itemSelection: itemSelection)
+                let labelExpenses   = firstLine.lifeExpenses.summaryValueTable.filtredHeaders(itemSelection: itemSelection)
                 let labelTaxes      = firstLine.taxes.namedValueTable.filtredHeaders(itemSelection: itemSelection)
-                let labelDebt       = firstLine.debtPayements.filtredHeaders(itemSelection: itemSelection)
+                let labelDebt       = firstLine.debtPayements.summaryValueTable.filtredHeaders(itemSelection: itemSelection)
                 let labelsNegative  = labelExpenses + labelTaxes + labelDebt
                 let numberNegative  = labelsNegative.count
                 
@@ -820,15 +820,15 @@ extension SocialAccounts {
             dataSet.stackLabels = labelsInCategory
             dataSet.colors      = ChartThemes.negativeColors(number : dataSet.stackLabels.count)
             
-        } else if categoryName == firstLine.expenses.summaryValueTable.name {
+        } else if categoryName == firstLine.lifeExpenses.summaryValueTable.name {
             /// rechercher les valeurs des dépenses
             print("expenses : \(categoryName)")
-            let labelsInCategory = firstLine.expenses.namedValueTable.headersArray
+            let labelsInCategory = firstLine.lifeExpenses.namedValueTable.headersArray
             print("  legende : ", labelsInCategory)
             
             // valeurs des dépenses
             dataEntries = cashFlowArray.map { // pour chaque année
-                let y = $0.expenses.namedValueTable.valuesArray
+                let y = $0.lifeExpenses.namedValueTable.valuesArray
                 return BarChartDataEntry(x       : $0.year.double(),
                                          yValues : -y)
             }

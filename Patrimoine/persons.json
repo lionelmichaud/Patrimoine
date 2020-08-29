@@ -17,7 +17,7 @@
             "salary_healthInsurance" : 700
         },
         "nb_Of_Child_Birth"       : 0,
-        "age_Of_Death"           : 81,
+        "age_Of_Death"           : 91,
         "nb_Of_Year_Of_Dependency" : 0,
         "age_Of_Pension_Liquid" : {
             "year"  : 62,
@@ -60,10 +60,10 @@
         },
         "regime_Agirc_Situation" : {
             "atEndOf"     : 2018,
-            "nbPoints"    : 17908,
+            "nbPoints"    : 17907,
             "pointsParAn" : 788
         },
-        "date_Of_Retirement"           : "2026-09-30T23:00:00+01:00",
+        "date_Of_Retirement"           : "2022-01-01T23:00:00+01:00",
         "cause_Retirement"             : "Démission",
         "layoff_Compensation_Bonified" : null
     },
@@ -83,7 +83,7 @@
             "turnOver_incomeLossInsurance" : 5000
         },
         "nb_Of_Child_Birth"       : 2,
-        "age_Of_Death"           : 86,
+        "age_Of_Death"           : 96,
         "nb_Of_Year_Of_Dependency" : 0,
         "age_Of_Pension_Liquid" : {
             "year" : 62,
@@ -103,9 +103,9 @@
             "month" : 0
         },
         "regime_General_Situation" : {
-            "atEndOf"           : 2015,
-            "nbTrimestreAcquis" : 105,
-            "sam"               : 25000
+            "atEndOf"           : 2019,
+            "nbTrimestreAcquis" : 143,
+            "sam"               : 31800
         },
         "age_Of_Agirc_Pension_Liquid" : {
             "year" : 62,
@@ -129,7 +129,7 @@
             "nbPoints"    : 4428,
             "pointsParAn" : 0
         },
-        "date_Of_Retirement"           : "2030-03-29T23:00:00+01:00",
+        "date_Of_Retirement"           : "2027-01-01T23:00:00+01:00",
         "cause_Retirement"             : "Démission",
         "layoff_Compensation_Bonified" : null
     },

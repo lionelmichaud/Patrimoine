@@ -120,34 +120,54 @@ extension SocialAccounts {
         }
         
         func buildTaxesTableCSV(firstLine: CashFlowLine) {
-            let irppNames        = firstLine.taxes.perCategory[.irpp]!.headerCSV
-            let localTaxesNames  = firstLine.taxes.perCategory[.localTaxes]!.headerCSV
-            let socialTaxesNames = firstLine.taxes.perCategory[.socialTaxes]!.headerCSV
-            heading += "QUOT FAMILIAL; \(irppNames); \(localTaxesNames); \(socialTaxesNames); TAXES TOTALES;"
+//            let irppNames        = firstLine.taxes.perCategory[.irpp]!.headerCSV
+//            let localTaxesNames  = firstLine.taxes.perCategory[.localTaxes]!.headerCSV
+//            let socialTaxesNames = firstLine.taxes.perCategory[.socialTaxes]!.headerCSV
+            heading += "QUOT FAMILIAL; "
+            TaxeCategory.allCases.forEach { category in
+                heading += firstLine.taxes.perCategory[category]!.headerCSV + "; "
+            }
+            heading += "TAXES TOTALES; "
             
             // For every element , extract the values as a comma-separated string.
-            let rowsCoef        = cashFlowArray.map { "\($0.taxes.familyQuotient.roundedString); " }
-            let rowsIrpp        = cashFlowArray.map { "\($0.taxes.perCategory[.irpp]!.valuesCSV); " }
-            let rowsLocalTaxes  = cashFlowArray.map { "\($0.taxes.perCategory[.localTaxes]!.valuesCSV); " }
-            let rowsSocialTaxes = cashFlowArray.map { "\($0.taxes.perCategory[.socialTaxes]!.valuesCSV); " }
-            let rowsTotal       = cashFlowArray.map { "\($0.taxes.total.roundedString); " }
-            
+            let rowsCoef = cashFlowArray.map { "\($0.taxes.familyQuotient.roundedString); " }
             rows = zip(rows, rowsCoef).map(+)
-            rows = zip(rows, rowsIrpp).map(+)
-            rows = zip(rows, rowsLocalTaxes).map(+)
-            rows = zip(rows, rowsSocialTaxes).map(+)
+            
+            TaxeCategory.allCases.forEach { category in
+                rows = zip(rows, cashFlowArray.map { "\($0.taxes.perCategory[category]!.valuesCSV); " }).map(+)
+            }
+//            let rowsIrpp        = cashFlowArray.map { "\($0.taxes.perCategory[.irpp]!.valuesCSV); " }
+//            rows = zip(rows, rowsIrpp).map(+)
+//            let rowsLocalTaxes  = cashFlowArray.map { "\($0.taxes.perCategory[.localTaxes]!.valuesCSV); " }
+//            rows = zip(rows, rowsLocalTaxes).map(+)
+//            let rowsSocialTaxes = cashFlowArray.map { "\($0.taxes.perCategory[.socialTaxes]!.valuesCSV); " }
+//            rows = zip(rows, rowsSocialTaxes).map(+)
+            let rowsTotal = cashFlowArray.map { "\($0.taxes.total.roundedString); " }
+            rows = zip(rows, rowsTotal).map(+)
+        }
+        
+        func buildLifeExpensesTableCSV(firstLine: CashFlowLine) {
+            let expensesNames = firstLine.lifeExpenses.namedValueTable.headerCSV
+            heading += "\(expensesNames); TOTAL DEPENSES \n"
+            
+            // For every element , extract the values as a comma-separated string.
+            let rowsExpenses = cashFlowArray.map { "\($0.lifeExpenses.namedValueTable.valuesCSV)" }
+            rows = zip(rows, rowsExpenses).map(+)
+            
+            let rowsTotal = cashFlowArray.map { "\($0.lifeExpenses.namedValueTable.total.roundedString); " }
             rows = zip(rows, rowsTotal).map(+)
         }
         
         func buildDebtsTableCSV(firstLine: CashFlowLine) {
-            let debtsNames = firstLine.debtPayements.headerCSV
-            heading += "\(debtsNames)\n"
+            let debtsNames = firstLine.debtPayements.namedValueTable.headerCSV
+            heading += "\(debtsNames); TOTAL LOAN \n"
             
             // For every element , extract the values as a comma-separated string.
-            let rowsDebt = cashFlowArray.map { "\($0.debtPayements.valuesCSV)"
-            }
-            
+            let rowsDebt = cashFlowArray.map { "\($0.debtPayements.namedValueTable.valuesCSV)" }
             rows = zip(rows, rowsDebt).map(+)
+
+            let rowsTotal = cashFlowArray.map { "\($0.debtPayements.namedValueTable.total.roundedString); " }
+            rows = zip(rows, rowsTotal).map(+)
         }
         
         // si la table est vide alors quitter
@@ -166,6 +186,9 @@ extension SocialAccounts {
         
         // construire la partie SCI du tableau
         buildSciTableCSV(firstLine: firstLine)
+        
+        // construire la partie Dépenses de vie du tableau
+        buildLifeExpensesTableCSV(firstLine: firstLine)
         
         // construire la partie Taxes du tableau
         buildTaxesTableCSV(firstLine: firstLine)
