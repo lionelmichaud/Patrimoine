@@ -7,6 +7,7 @@
             "nbOfYearForSAM"       : 25,
             "maxReversionRate"     : 50.0,
             "decoteParTrimestre"   : 0.625,
+            "surcoteParTrimestre"  : 1.25,
             "maxNbTrimestreDecote" : 20,
             "dureeDeReferenceGrid" : [
                 {

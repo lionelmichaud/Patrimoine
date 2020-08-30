@@ -215,7 +215,8 @@ final class Adult: Person {
                                                           dateOfRetirement         : dateOfRetirement,
                                                           dateOfEndOfUnemployAlloc : dateOfEndOfUnemployementAllocation,
                                                           dateOfPensionLiquid      : dateOfPensionLiquid,
-                                                          lastKnownSituation       : lastKnownPensionSituation) {
+                                                          lastKnownSituation       : lastKnownPensionSituation,
+                                                          nbEnfant                 : 3) {
             return (pensionGeneral.pensionBrute,
                     pensionGeneral.pensionNette)
         } else {
@@ -387,8 +388,8 @@ final class Adult: Person {
             case .liquidationPension:
                 return dateOfPensionLiquid.year
             // TODO: ajouter la liquidation de la pension complémentaire
-            // TODO:ajouter le licenciement
-            // TODO:ajouter la fin des indemnités chomage
+            // TODO: ajouter le licenciement
+            // TODO: ajouter la fin des indemnités chomage
         }
     }
     

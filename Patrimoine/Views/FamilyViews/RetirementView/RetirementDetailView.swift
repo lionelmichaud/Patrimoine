@@ -16,6 +16,7 @@ struct RetirementDetailView: View {
         struct General {
             var sam              : Double = 0
             var tauxDePension    : Double = 0
+            var majorationEnfant : Double = 0
             var dureeDeReference : Int    = 0
             var dureeAssurance   : Int    = 0
             var dateTauxPlein    : Date?
@@ -49,11 +50,13 @@ struct RetirementDetailView: View {
             Section(header: Text("REGIME GENERAL").font(.subheadline)) {
                 AmountView(label: "Salaire annuel moyen", amount: viewModel.general.sam, comment: "SAM")
                 AgeDateView(label: "Date du taux plein")
-                IntegerView(label: "Nombre de trimestres de décote", integer: viewModel.general.nbTrimestreDecote)
+                IntegerView(label: viewModel.general.nbTrimestreDecote >= 0 ? "Nombre de trimestres de surcote" : "Nombre de trimestres de décote",
+                            integer: viewModel.general.nbTrimestreDecote)
                 PercentView(label: "Taux de réversion", percent: viewModel.general.tauxDePension, comment: "Trev")
+                PercentView(label: "Majoration pour enfants", percent: viewModel.general.majorationEnfant, comment: "Menf")
                 IntegerView(label: "Durée d'assurance (trimestres)", integer: viewModel.general.dureeAssurance, comment: "Da")
                 IntegerView(label: "Durée de référence (trimestres)", integer: viewModel.general.dureeDeReference, comment: "Dr")
-                AmountView(label: "Pension annuelle brute", amount: viewModel.general.pensionBrute, comment: "Brut = SAM x Trev x Da/Dr")
+                AmountView(label: "Pension annuelle brute", amount: viewModel.general.pensionBrute, comment: "Brut = SAM x Trev x (1 + Menf) x Da/Dr")
                 AmountView(label: "Pension annuelle nette", amount: viewModel.general.pensionNette, weight: .bold, comment: "Net = Brut - Prélev sociaux")
             }
             Section(header: Text("REGIME COMPLEMENTAIRE").font(.subheadline)) {
@@ -85,19 +88,20 @@ struct RetirementDetailView: View {
     func onAppear() {
         // régime général
         let adult = member as! Adult
-        guard let (tauxDePension, dureeDeReference, dureeAssurance, pensionBrute, pensionNette) =
-                Pension.model.regimeGeneral.pensionWithDetail(birthDate               : member.birthDate,
-                                                              dateOfRetirement        : adult.dateOfRetirement,
-                                                              dateOfEndOfUnemployAlloc: adult.dateOfEndOfUnemployementAllocation,
-                                                              dateOfPensionLiquid     : adult.dateOfPensionLiquid,
-                                                              lastKnownSituation      : adult.lastKnownPensionSituation) else {
+        guard let (tauxDePension, majorationEnfant, dureeDeReference, dureeAssurance, pensionBrute, pensionNette) =
+                Pension.model.regimeGeneral.pensionWithDetail(birthDate                : adult.birthDate,
+                                                              dateOfRetirement         : adult.dateOfRetirement,
+                                                              dateOfEndOfUnemployAlloc : adult.dateOfEndOfUnemployementAllocation,
+                                                              dateOfPensionLiquid      : adult.dateOfPensionLiquid,
+                                                              lastKnownSituation       : adult.lastKnownPensionSituation,
+                                                              nbEnfant                 : 3) else {
             return
         }
         guard let nbTrimestreDecote =
-            Pension.model.regimeGeneral.nbTrimestreDecote(birthDate           : member.birthDate,
-                                                          dureeAssurance      : dureeAssurance,
-                                                          dureeDeReference    : dureeDeReference,
-                                                          dateOfPensionLiquid : adult.dateOfPensionLiquid) else {
+                Pension.model.regimeGeneral.nbTrimestreSurDecote(birthDate           : adult.birthDate,
+                                                                 dureeAssurance      : dureeAssurance,
+                                                                 dureeDeReference    : dureeDeReference,
+                                                                 dateOfPensionLiquid : adult.dateOfPensionLiquid) else {
              return
         }
         viewModel.general.dateTauxPlein     =
@@ -107,6 +111,7 @@ struct RetirementDetailView: View {
             viewModel.general.ageTauxPlein  = member.age(atDate: viewModel.general.dateTauxPlein!)
         }
         viewModel.general.sam               = (member as! Adult).lastKnownPensionSituation.sam
+        viewModel.general.majorationEnfant  = majorationEnfant / 100
         viewModel.general.tauxDePension     = tauxDePension / 100
         viewModel.general.nbTrimestreDecote = nbTrimestreDecote
         viewModel.general.dureeDeReference  = dureeDeReference
@@ -117,7 +122,7 @@ struct RetirementDetailView: View {
         // régime complémentaire
         guard let (coefMinoration, projectedNbOfPoints, pensionBruteAgirc, pensionNetteAgirc) =
             Pension.model.regimeAgirc.pension(lastAgircKnownSituation : adult.lastKnownAgircPensionSituation,
-                                              birthDate               : member.birthDate,
+                                              birthDate               : adult.birthDate,
                                               lastKnownSituation      : adult.lastKnownPensionSituation,
                                               dateOfRetirement        : adult.dateOfRetirement,
                                               dateOfEndOfUnemployAlloc: adult.dateOfEndOfUnemployementAllocation,

@@ -158,7 +158,7 @@ struct AdultDetailView: View {
                     AmountView(label  : "Salaire net de feuille de paye", amount : revenueNet)
                     AmountView(label  : "Coût de la mutuelle (protec. sup.)", amount : insurance)
                     AmountView(label  : "Salaire net moins mutuelle facultative (à vivre)", amount : revenueLiving)
-                    AmountView(label  : "Salaire imposable", amount : revenueTaxable)
+                    AmountView(label  : "Salaire imposable (après abattement)", amount : revenueTaxable)
                     HStack {
                         Text("Date d'embauche")
                         Spacer()
@@ -169,7 +169,7 @@ struct AdultDetailView: View {
                     AmountView(label  : "BNC net de charges sociales", amount : revenueNet)
                     AmountView(label  : "Coût des assurances", amount : insurance)
                     AmountView(label  : "BNC net de charges sociales et d'assurances (à vivre)", amount : revenueLiving)
-                    AmountView(label  : "BNC imposable", amount : revenueTaxable)
+                    AmountView(label  : "BNC imposable (après abattement)", amount : revenueTaxable)
 
                 }
                 // allocation chomage
