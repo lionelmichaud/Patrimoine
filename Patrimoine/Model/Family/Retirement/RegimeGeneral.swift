@@ -23,6 +23,13 @@ struct RegimeGeneral: Codable {
     
     // MARK: - Nested types
     
+    typealias PensionDetails = (tauxDePension    : Double,
+                                majorationEnfant : Double,
+                                dureeDeReference : Int,
+                                dureeAssurance   : Int,
+                                pensionBrute     : Double,
+                                pensionNette     : Double)?
+    
     enum RegimeGeneralError: String, CustomStringConvertible, Error {
         case impossibleToCompute
         case ilegalValue
@@ -349,7 +356,7 @@ struct RegimeGeneral: Codable {
         sam * tauxDePension/100 * (1.0 + majorationEnfant/100) * dureeAssurance.double() / dureeDeReference.double()
     }
     
-    /// Calcul de la retraite brutte du salarié du secteur privé
+    /// Calcul de la retraite brute du salarié du secteur privé
     /// - Parameters:
     ///   - sam: Salaire annuel moyen:
     /// - Important: Votre salaire annuel moyen est déterminé en calculant la moyenne des salaires bruts ayant donné lieu à cotisation au régime général durant les 25 années les plus avantageuses de votre carrière.
@@ -359,12 +366,12 @@ struct RegimeGeneral: Codable {
     ///   - dureeAssurance: Durée d'assurance du salarié au régime général
     ///   - birthYear: Année de naissance
     /// - Returns: Le montant brut de la pension de retraite ou nil
-    func pension(birthDate                : Date,
-                 dateOfRetirement         : Date,
-                 dateOfEndOfUnemployAlloc : Date?,
-                 dateOfPensionLiquid      : Date,
-                 lastKnownSituation       : RegimeGeneralSituation,
-                 nbEnfant                 : Int) -> Double? {
+    func pensionBrute(birthDate                : Date,
+                      dateOfRetirement         : Date,
+                      dateOfEndOfUnemployAlloc : Date?,
+                      dateOfPensionLiquid      : Date,
+                      lastKnownSituation       : RegimeGeneralSituation,
+                      nbEnfant                 : Int) -> Double? {
         // Salaire annuel moyen x Taux de la pension x Majoration enfant x(Durée d'assurance du salarié au régime général / Durée de référence pour obtenir une pension à taux plein)
         let dureeAssurance = self.dureeAssurance(lastKnownSituation       : lastKnownSituation,
                                                  dateOfRetirement         : dateOfRetirement,
@@ -393,12 +400,12 @@ struct RegimeGeneral: Codable {
     }
     
     /// version détaillée
-    func pensionWithDetail(birthDate                : Date,
-                           dateOfRetirement         : Date,
-                           dateOfEndOfUnemployAlloc : Date?,
-                           dateOfPensionLiquid      : Date,
-                           lastKnownSituation       : RegimeGeneralSituation,
-                           nbEnfant                 : Int) ->
+    func pension(birthDate                : Date,
+                 dateOfRetirement         : Date,
+                 dateOfEndOfUnemployAlloc : Date?,
+                 dateOfPensionLiquid      : Date,
+                 lastKnownSituation       : RegimeGeneralSituation,
+                 nbEnfant                 : Int) ->
     (tauxDePension    : Double,
      majorationEnfant : Double,
      dureeDeReference : Int,

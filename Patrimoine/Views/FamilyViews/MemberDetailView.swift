@@ -97,93 +97,105 @@ struct AdultDetailView: View {
         
         return Group {
             /// Section: scénario
-            Section(header: Text("SCENARIO").font(.subheadline)) {
-                HStack {
-                    Text("Age de décès estimé")
-                    Spacer()
-                    Text("\(member.ageOfDeath) ans en \(String(member.yearOfDeath))")
-                }
-                HStack {
-                    Text("Cessation d'activité")
-                    Spacer()
-                    Text("\(adult.age(atDate: adult.dateOfRetirement).year!) ans \(adult.age(atDate: adult.dateOfRetirement).month!) mois au \(mediumDateFormatter.string(from: adult.dateOfRetirement))")
-                }
-                HStack {
-                    Text("Cause")
-                    Spacer()
-                    Text(adult.causeOfRetirement.displayString)
-                }.padding(.leading)
-                if adult.hasUnemployementAllocationPeriod {
-                    if adult.dateOfStartOfAllocationReduction != nil {
+            Section {
+                DisclosureGroup (
+                    content: {
                         HStack {
-                            Text("Début de la période de réducition d'allocation chômage")
+                            Text("Age de décès estimé")
                             Spacer()
-                            Text("\(adult.age(atDate: adult.dateOfStartOfAllocationReduction!).year!) ans \(adult.age(atDate: adult.dateOfStartOfAllocationReduction!).month!) mois au \(mediumDateFormatter.string(from: adult.dateOfStartOfAllocationReduction!))")
+                            Text("\(member.ageOfDeath) ans en \(String(member.yearOfDeath))")
+                        }
+                        HStack {
+                            Text("Cessation d'activité")
+                            Spacer()
+                            Text("\(adult.age(atDate: adult.dateOfRetirement).year!) ans \(adult.age(atDate: adult.dateOfRetirement).month!) mois au \(mediumDateFormatter.string(from: adult.dateOfRetirement))")
+                        }
+                        HStack {
+                            Text("Cause")
+                            Spacer()
+                            Text(adult.causeOfRetirement.displayString)
                         }.padding(.leading)
-                    }
-                    HStack {
-                        Text("Fin de la période d'allocation chômage")
-                        Spacer()
-                        Text("\(adult.age(atDate: adult.dateOfEndOfUnemployementAllocation!).year!) ans \(adult.age(atDate: adult.dateOfEndOfUnemployementAllocation!).month!) mois au \(mediumDateFormatter.string(from: adult.dateOfEndOfUnemployementAllocation!))")
-                    }.padding(.leading)
-                }
-                HStack {
-                    Text("Liquidation de pension - régime complém.")
-                    Spacer()
-                    Text("\(adult.ageOfAgircPensionLiquidComp.year!) ans \(adult.ageOfAgircPensionLiquidComp.month!) mois fin \(monthMediumFormatter.string(from: adult.dateOfAgircPensionLiquid)) \(String(adult.dateOfAgircPensionLiquid.year))")
-                }
-                HStack {
-                    Text("Liquidation de pension - régime général")
-                    Spacer()
-                    Text("\(adult.ageOfPensionLiquidComp.year!) ans \(adult.ageOfPensionLiquidComp.month!) mois fin \(monthMediumFormatter.string(from: adult.dateOfPensionLiquid)) \(String(adult.dateOfPensionLiquid.year))")
-                }
-                HStack {
-                    Text("Dépendance")
-                    Spacer()
-                    if adult.nbOfYearOfDependency == 0 {
-                        Text("aucune")
-                    } else {
-                        Text("\(adult.nbOfYearOfDependency) ans à partir de \(String(adult.yearOfDependency))")
-                    }
-                }
-                NavigationLink(destination: PersonLifeLineView(withInitialValueFrom: self.member)) {
-                    Text("Ligne de vie").foregroundColor(.blue)
-                }
+                        if adult.hasUnemployementAllocationPeriod {
+                            if adult.dateOfStartOfAllocationReduction != nil {
+                                HStack {
+                                    Text("Début de la période de réducition d'allocation chômage")
+                                    Spacer()
+                                    Text("\(adult.age(atDate: adult.dateOfStartOfAllocationReduction!).year!) ans \(adult.age(atDate: adult.dateOfStartOfAllocationReduction!).month!) mois au \(mediumDateFormatter.string(from: adult.dateOfStartOfAllocationReduction!))")
+                                }.padding(.leading)
+                            }
+                            HStack {
+                                Text("Fin de la période d'allocation chômage")
+                                Spacer()
+                                Text("\(adult.age(atDate: adult.dateOfEndOfUnemployementAllocation!).year!) ans \(adult.age(atDate: adult.dateOfEndOfUnemployementAllocation!).month!) mois au \(mediumDateFormatter.string(from: adult.dateOfEndOfUnemployementAllocation!))")
+                            }.padding(.leading)
+                        }
+                        HStack {
+                            Text("Liquidation de pension - régime complém.")
+                            Spacer()
+                            Text("\(adult.ageOfAgircPensionLiquidComp.year!) ans \(adult.ageOfAgircPensionLiquidComp.month!) mois fin \(monthMediumFormatter.string(from: adult.dateOfAgircPensionLiquid)) \(String(adult.dateOfAgircPensionLiquid.year))")
+                        }
+                        HStack {
+                            Text("Liquidation de pension - régime général")
+                            Spacer()
+                            Text("\(adult.ageOfPensionLiquidComp.year!) ans \(adult.ageOfPensionLiquidComp.month!) mois fin \(monthMediumFormatter.string(from: adult.dateOfPensionLiquid)) \(String(adult.dateOfPensionLiquid.year))")
+                        }
+                        HStack {
+                            Text("Dépendance")
+                            Spacer()
+                            if adult.nbOfYearOfDependency == 0 {
+                                Text("aucune")
+                            } else {
+                                Text("\(adult.nbOfYearOfDependency) ans à partir de \(String(adult.yearOfDependency))")
+                            }
+                        }
+                        NavigationLink(destination: PersonLifeLineView(withInitialValueFrom: self.member)) {
+                            Text("Ligne de vie").foregroundColor(.blue)
+                        }
+                    },
+                    label: {
+                        Text("SCENARIO DE VIE").font(.headline)
+                    })
             }
             
             /// Section: revenus
-            Section(header: Text("REVENUS").font(.subheadline)) {
-                if income?.pickerString == "Salaire" {
-                    AmountView(label  : "Salaire brut", amount : revenueBrut)
-                    AmountView(label  : "Salaire net de feuille de paye", amount : revenueNet)
-                    AmountView(label  : "Coût de la mutuelle (protec. sup.)", amount : insurance)
-                    AmountView(label  : "Salaire net moins mutuelle facultative (à vivre)", amount : revenueLiving)
-                    AmountView(label  : "Salaire imposable (après abattement)", amount : revenueTaxable)
-                    HStack {
-                        Text("Date d'embauche")
-                        Spacer()
-                        Text(fromDate)
-                    }
-                } else {
-                    AmountView(label  : "BNC", amount : revenueBrut)
-                    AmountView(label  : "BNC net de charges sociales", amount : revenueNet)
-                    AmountView(label  : "Coût des assurances", amount : insurance)
-                    AmountView(label  : "BNC net de charges sociales et d'assurances (à vivre)", amount : revenueLiving)
-                    AmountView(label  : "BNC imposable (après abattement)", amount : revenueTaxable)
-
-                }
-                // allocation chomage
-                if adult.hasUnemployementAllocationPeriod {
-                    NavigationLink(destination: UnemployementDetailView().environmentObject(self.member)) {
-                        AmountView(label  : "Allocation chômage annuelle nette",
-                                   amount : adult.unemployementAllocation!.net).foregroundColor(.blue)
-                    }
-                }
-                // pension de retraite
-                NavigationLink(destination: RetirementDetailView().environmentObject(self.member)) {
-                    AmountView(label  : "Pension de retraite annuelle nette",
-                               amount : adult.pension.net).foregroundColor(.blue)
-                }
+            Section {
+                DisclosureGroup (
+                    content: {
+                        if income?.pickerString == "Salaire" {
+                            AmountView(label  : "Salaire brut", amount : revenueBrut)
+                            AmountView(label  : "Salaire net de feuille de paye", amount : revenueNet)
+                            AmountView(label  : "Coût de la mutuelle (protec. sup.)", amount : insurance)
+                            AmountView(label  : "Salaire net moins mutuelle facultative (à vivre)", amount : revenueLiving)
+                            AmountView(label  : "Salaire imposable (après abattement)", amount : revenueTaxable)
+                            HStack {
+                                Text("Date d'embauche")
+                                Spacer()
+                                Text(fromDate)
+                            }
+                        } else {
+                            AmountView(label  : "BNC", amount : revenueBrut)
+                            AmountView(label  : "BNC net de charges sociales", amount : revenueNet)
+                            AmountView(label  : "Coût des assurances", amount : insurance)
+                            AmountView(label  : "BNC net de charges sociales et d'assurances (à vivre)", amount : revenueLiving)
+                            AmountView(label  : "BNC imposable (après abattement)", amount : revenueTaxable)
+                            
+                        }
+                        // allocation chomage
+                        if adult.hasUnemployementAllocationPeriod {
+                            NavigationLink(destination: UnemployementDetailView().environmentObject(self.member)) {
+                                AmountView(label  : "Allocation chômage annuelle nette",
+                                           amount : adult.unemployementAllocation!.net).foregroundColor(.blue)
+                            }
+                        }
+                        // pension de retraite
+                        NavigationLink(destination: RetirementDetailView().environmentObject(self.member)) {
+                            AmountView(label  : "Pension de retraite annuelle nette",
+                                       amount : adult.pension.net).foregroundColor(.blue)
+                        }
+                    },
+                    label: {
+                        Text("REVENUS").font(.headline)
+                    })
             }
         }
     }

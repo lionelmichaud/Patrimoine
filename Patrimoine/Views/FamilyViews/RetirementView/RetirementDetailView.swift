@@ -89,7 +89,7 @@ struct RetirementDetailView: View {
         // régime général
         let adult = member as! Adult
         guard let (tauxDePension, majorationEnfant, dureeDeReference, dureeAssurance, pensionBrute, pensionNette) =
-                Pension.model.regimeGeneral.pensionWithDetail(birthDate                : adult.birthDate,
+                Pension.model.regimeGeneral.pension(birthDate                : adult.birthDate,
                                                               dateOfRetirement         : adult.dateOfRetirement,
                                                               dateOfEndOfUnemployAlloc : adult.dateOfEndOfUnemployementAllocation,
                                                               dateOfPensionLiquid      : adult.dateOfPensionLiquid,

@@ -23,6 +23,11 @@ struct RegimeAgirc: Codable {
     
     // MARK: - Nested types
     
+    typealias PensionDetails = (coefMinoration      : Double,
+                                projectedNbOfPoints : Int,
+                                pensionBrute        : Double,
+                                pensionNette        : Double)?
+
     struct SliceAvantAgeLegal: Codable {
         var ndTrimAvantAgeLegal : Int
         var coef                : Double

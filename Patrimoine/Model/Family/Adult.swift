@@ -211,7 +211,7 @@ final class Adult: Person {
     var pensionRegimeGeneral: (brut: Double, net: Double) {
         // pension du régime général
         if let pensionGeneral =
-            Pension.model.regimeGeneral.pensionWithDetail(birthDate                : birthDate,
+            Pension.model.regimeGeneral.pension(birthDate                : birthDate,
                                                           dateOfRetirement         : dateOfRetirement,
                                                           dateOfEndOfUnemployAlloc : dateOfEndOfUnemployementAllocation,
                                                           dateOfPensionLiquid      : dateOfPensionLiquid,
