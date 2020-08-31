@@ -44,6 +44,7 @@ struct RegimeAgirc: Codable {
         let gridApres62   : [SliceApresAgeLegal]
         let valeurDuPoint : Double // 1.2714
         let ageMinimum    : Int    // 57
+        let devalAnnuelle : Double // -1.0% en dessous de l'inflation annuelle
     }
     
     // MARK: - Properties
@@ -164,13 +165,14 @@ struct RegimeAgirc: Codable {
     
     /// Calcul de la pension Agirc
     /// - Parameters:
-    ///   - lastAgircKnownSituation:
-    ///   - birthDate:
-    ///   - lastKnownSituation:
-    ///   - dateOfRetirement:
-    ///   - dateOfEndOfUnemployAlloc:
-    ///   - dateOfPensionLiquid:
+    ///   - lastAgircKnownSituation: nière situation connue pour le régime AGIRC
+    ///   - birthDate: date de naissance
+    ///   - lastKnownSituation: dernière situation connue pour le régime général
+    ///   - dateOfRetirement: date de cessation d'activité
+    ///   - dateOfEndOfUnemployAlloc: date de fin de perception des allocations chomage
+    ///   - dateOfPensionLiquid: date de demande de liquidation de la pension
     ///   - ageOfPensionLiquidComp:
+    ///   - year: année de calcul
     /// - Returns: pension Agirc
     func pension(lastAgircKnownSituation  : RegimeAgircSituation,
                  birthDate                : Date,
@@ -178,8 +180,9 @@ struct RegimeAgirc: Codable {
                  dateOfRetirement         : Date,
                  dateOfEndOfUnemployAlloc : Date?,
                  dateOfPensionLiquid      : Date,
-                 ageOfPensionLiquidComp   : DateComponents) ->
-    (coefMinoration     : Double,
+                 ageOfPensionLiquidComp   : DateComponents,
+                 during year              : Int? = nil) ->
+    (coefMinoration      : Double,
      projectedNbOfPoints : Int,
      pensionBrute        : Double,
      pensionNette        : Double)? {
@@ -272,11 +275,19 @@ struct RegimeAgirc: Codable {
         customLog.log(level: .info, "projected Number Of Points = \(projectedNumberOfPoints, privacy: .public)")
 
         // Pension = Nombre de points X Valeurs du point X Coefficient de minoration
-        let pensionBrute = projectedNumberOfPoints.double() * model.valeurDuPoint * coefMinoration
+        var pensionBrute = projectedNumberOfPoints.double() * model.valeurDuPoint * coefMinoration
         customLog.log(level: .info, "pension Brute = \(projectedNumberOfPoints, privacy: .public)")
 
-        let pensionNette = Fiscal.model.pensionTaxes.net(pensionBrute)
+        var pensionNette = Fiscal.model.pensionTaxes.net(pensionBrute)
         customLog.log(level: .info, "pension Nette = \(pensionNette, privacy: .public)")
+        
+        if let yearEval = year {
+            if yearEval < dateOfRetirement.year {
+                customLog.log(level: .error, "pension / yearEval < dateOfRetirement")
+            }
+            pensionBrute *= pow((1.0 + model.devalAnnuelle/100.0), (yearEval - dateOfRetirement.year).double())
+            pensionNette *= pow((1.0 + model.devalAnnuelle/100.0), (yearEval - dateOfRetirement.year).double())
+        }
 
         return (coefMinoration      : coefMinoration,
                 projectedNbOfPoints : projectedNumberOfPoints,

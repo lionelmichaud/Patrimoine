@@ -210,15 +210,14 @@ final class Adult: Person {
     @Published var lastKnownPensionSituation = RegimeGeneralSituation()
     var pensionRegimeGeneral: (brut: Double, net: Double) {
         // pension du régime général
-        if let pensionGeneral =
+        if let (brut, net) =
             Pension.model.regimeGeneral.pension(birthDate                : birthDate,
-                                                          dateOfRetirement         : dateOfRetirement,
-                                                          dateOfEndOfUnemployAlloc : dateOfEndOfUnemployementAllocation,
-                                                          dateOfPensionLiquid      : dateOfPensionLiquid,
-                                                          lastKnownSituation       : lastKnownPensionSituation,
-                                                          nbEnfant                 : 3) {
-            return (pensionGeneral.pensionBrute,
-                    pensionGeneral.pensionNette)
+                                                dateOfRetirement         : dateOfRetirement,
+                                                dateOfEndOfUnemployAlloc : dateOfEndOfUnemployementAllocation,
+                                                dateOfPensionLiquid      : dateOfPensionLiquid,
+                                                lastKnownSituation       : lastKnownPensionSituation,
+                                                nbEnfant                 : 3) {
+            return (brut, net)
         } else {
             return (0, 0)
         }
@@ -463,11 +462,49 @@ final class Adult: Person {
                 taxableIrpp : workTaxableIncome * nbWeeks / 52)
     }
     
+    func pensionRegimeGeneral(during year: Int)
+    -> (brut: Double, net: Double) {
+        // pension du régime général
+        if let (brut, net) =
+            Pension.model.regimeGeneral.pension(birthDate                : birthDate,
+                                                dateOfRetirement         : dateOfRetirement,
+                                                dateOfEndOfUnemployAlloc : dateOfEndOfUnemployementAllocation,
+                                                dateOfPensionLiquid      : dateOfPensionLiquid,
+                                                lastKnownSituation       : lastKnownPensionSituation,
+                                                nbEnfant                 : 3,
+                                                during                   : year) {
+            return (brut, net)
+        } else {
+            return (0, 0)
+        }
+    }
+
+    func pensionRegimeAgirc(during year: Int)
+    -> (brut: Double, net: Double) {
+        if let pensionAgirc =
+            Pension.model.regimeAgirc.pension(lastAgircKnownSituation  : lastKnownAgircPensionSituation,
+                                              birthDate                : birthDate,
+                                              lastKnownSituation       : lastKnownPensionSituation,
+                                              dateOfRetirement         : dateOfRetirement,
+                                              dateOfEndOfUnemployAlloc : dateOfEndOfUnemployementAllocation,
+                                              dateOfPensionLiquid      : dateOfAgircPensionLiquid,
+                                              ageOfPensionLiquidComp   : ageOfAgircPensionLiquidComp,
+                                              during                   : year) {
+            return (pensionAgirc.pensionBrute,
+                    pensionAgirc.pensionNette)
+        } else {
+            return (0, 0)
+        }
+    }
+
     /// Calcul de la pension de retraite
     /// - Parameter year: année
     /// - Returns: pension brute, nette de charges sociales, taxable à l'IRPP
-    func pension(during year: Int, withReversion: Bool = true)
-    -> (brut: Double, net: Double, taxable: Double) {
+    func pension(during year   : Int,
+                 withReversion : Bool = true)
+    -> (brut    : Double,
+        net     : Double,
+        taxable : Double) {
         guard isAlive(atEndOf: year) else {
             return (0, 0, 0)
         }
@@ -475,14 +512,14 @@ final class Adult: Person {
         var net  = 0.0
         // pension du régime général
         if isPensioned(during: year) {
-            let pension = pensionRegimeGeneral
+            let pension = pensionRegimeGeneral(during: year)
             let nbWeeks = (dateOfPensionLiquidComp.year == year ? (52 - dateOfPensionLiquid.weekOfYear).double() : 52)
             brut += pension.brut * nbWeeks / 52
             net  += pension.net  * nbWeeks / 52
         }
         // ajouter la pension du régime complémentaire
         if isAgircPensioned(during: year) {
-            let pension = pensionRegimeAgirc
+            let pension = pensionRegimeAgirc(during: year)
             let nbWeeks = (dateOfAgircPensionLiquidComp.year == year ? (52 - dateOfAgircPensionLiquid.weekOfYear).double() : 52)
             brut += pension.brut * nbWeeks / 52
             net  += pension.net  * nbWeeks / 52

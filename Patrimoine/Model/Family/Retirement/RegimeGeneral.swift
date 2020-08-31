@@ -54,6 +54,7 @@ struct RegimeGeneral: Codable {
         let decoteParTrimestre   : Double // 0.625 // % par trimestre
         let surcoteParTrimestre  : Double // 1.25  // % par trimestre
         let maxNbTrimestreDecote : Int    // 20 // plafond
+        let devalAnnuelle        : Double // -1.0% en dessous de l'inflation annuelle
     }
     
     // MARK: - Properties
@@ -346,6 +347,12 @@ struct RegimeGeneral: Codable {
     ///   - tauxDePension: Taux de la pension
     ///   - dureeAssurance: Durée d'assurance du salarié au régime général
     ///   - dureeDeReference: Durée de référence pour obtenir une pension à taux plein
+    /// - Important: Votre salaire annuel moyen est déterminé en calculant la moyenne des salaires bruts ayant donné lieu à cotisation au régime général durant les 25 années les plus avantageuses de votre carrière.
+    ///   Tous les éléments de rémunération (salaire de base, primes, heures supplémentaires) et les indemnités journalières de maternité sont pris en compte pour le calcul du salaire annuel moyen.
+    ///   Si vous avez travaillé moins de 25 ans, votre salaire annuel moyen est égal à la moyenne de vos salaires bruts durant ces années de travail.
+    ///   - tauxDePension: Taux de la pension
+    ///   - dureeAssurance: Durée d'assurance du salarié au régime général
+    ///   - birthYear: Année de naissance
     /// - Returns: Le montant brut de la pension de retraite
     func pension(sam              : Double,
                  tauxDePension    : Double,
@@ -356,22 +363,24 @@ struct RegimeGeneral: Codable {
         sam * tauxDePension/100 * (1.0 + majorationEnfant/100) * dureeAssurance.double() / dureeDeReference.double()
     }
     
-    /// Calcul de la retraite brute du salarié du secteur privé
+    /// Calcule les données relatives à la pension de retraite
     /// - Parameters:
-    ///   - sam: Salaire annuel moyen:
-    /// - Important: Votre salaire annuel moyen est déterminé en calculant la moyenne des salaires bruts ayant donné lieu à cotisation au régime général durant les 25 années les plus avantageuses de votre carrière.
-    ///   Tous les éléments de rémunération (salaire de base, primes, heures supplémentaires) et les indemnités journalières de maternité sont pris en compte pour le calcul du salaire annuel moyen.
-    ///   Si vous avez travaillé moins de 25 ans, votre salaire annuel moyen est égal à la moyenne de vos salaires bruts durant ces années de travail.
-    ///   - tauxDePension: Taux de la pension
-    ///   - dureeAssurance: Durée d'assurance du salarié au régime général
-    ///   - birthYear: Année de naissance
-    /// - Returns: Le montant brut de la pension de retraite ou nil
-    func pensionBrute(birthDate                : Date,
-                      dateOfRetirement         : Date,
-                      dateOfEndOfUnemployAlloc : Date?,
-                      dateOfPensionLiquid      : Date,
-                      lastKnownSituation       : RegimeGeneralSituation,
-                      nbEnfant                 : Int) -> Double? {
+    ///   - birthDate: date de naissance
+    ///   - dateOfRetirement: date de cessation d'activité
+    ///   - dateOfEndOfUnemployAlloc: date de fin de perception des allocations chomage
+    ///   - dateOfPensionLiquid: date de demande de liquidation de la pension
+    ///   - lastKnownSituation: dernière situation connue pour le régime général
+    ///   - nbEnfant: nb d'enfant aus sens de la retraite (pour les majorations)
+    /// - Returns: Les données relatives à la pension de retraite ou nil
+    func pension(birthDate                : Date,
+                 dateOfRetirement         : Date,
+                 dateOfEndOfUnemployAlloc : Date?,
+                 dateOfPensionLiquid      : Date,
+                 lastKnownSituation       : RegimeGeneralSituation,
+                 nbEnfant                 : Int,
+                 during year              : Int? = nil)
+    -> (brut : Double,
+        net  : Double)? {
         // Salaire annuel moyen x Taux de la pension x Majoration enfant x(Durée d'assurance du salarié au régime général / Durée de référence pour obtenir une pension à taux plein)
         let dureeAssurance = self.dureeAssurance(lastKnownSituation       : lastKnownSituation,
                                                  dateOfRetirement         : dateOfRetirement,
@@ -392,20 +401,35 @@ struct RegimeGeneral: Codable {
         
         let majorationEnfant = self.majorationEnfant(nbEnfant: nbEnfant)
         
-        return pension(sam              : lastKnownSituation.sam,
-                       tauxDePension    : tauxDePension,
-                       majorationEnfant : majorationEnfant,
-                       dureeAssurance   : dureeAssurance,
-                       dureeDeReference : dureeDeReference)
+        let pensionBrute = pension(sam              : lastKnownSituation.sam,
+                                   tauxDePension    : tauxDePension,
+                                   majorationEnfant : majorationEnfant,
+                                   dureeAssurance   : dureeAssurance,
+                                   dureeDeReference : dureeDeReference)
+        
+        let pensionNette = Fiscal.model.pensionTaxes.net(pensionBrute)
+        
+        return (brut : pensionBrute,
+                net  : pensionNette)
     }
     
-    /// version détaillée
+    /// Calcule les données relatives à la pension de retraite
+    /// - Parameters:
+    ///   - birthDate: date de naissance
+    ///   - dateOfRetirement: date de cessation d'activité
+    ///   - dateOfEndOfUnemployAlloc: date de fin de perception des allocations chomage
+    ///   - dateOfPensionLiquid: date de demande de liquidation de la pension
+    ///   - lastKnownSituation: dernière situation connue pour le régime général
+    ///   - nbEnfant: nb d'enfant aus sens de la retraite (pour les majorations)
+    ///   - year: année de calcul
+    /// - Returns: Les données relatives à la pension de retraite ou nil
     func pension(birthDate                : Date,
                  dateOfRetirement         : Date,
                  dateOfEndOfUnemployAlloc : Date?,
                  dateOfPensionLiquid      : Date,
                  lastKnownSituation       : RegimeGeneralSituation,
-                 nbEnfant                 : Int) ->
+                 nbEnfant                 : Int,
+                 during year              : Int? = nil) ->
     (tauxDePension    : Double,
      majorationEnfant : Double,
      dureeDeReference : Int,
@@ -435,16 +459,24 @@ struct RegimeGeneral: Codable {
 
         let majorationEnfant = self.majorationEnfant(nbEnfant: nbEnfant)
         
-        let pensionBrute = pension(sam              : lastKnownSituation.sam,
+        var pensionBrute = pension(sam              : lastKnownSituation.sam,
                                    tauxDePension    : tauxDePension,
                                    majorationEnfant : majorationEnfant,
                                    dureeAssurance   : dureeAssurance,
                                    dureeDeReference : dureeDeReference)
         customLog.log(level: .info, "pension Brute = \(pensionBrute, privacy: .public)")
 
-        let pensionNette = Fiscal.model.pensionTaxes.net(pensionBrute)
+        var pensionNette = Fiscal.model.pensionTaxes.net(pensionBrute)
         customLog.log(level: .info, "pension Nette = \(pensionNette, privacy: .public)")
 
+        if let yearEval = year {
+            if yearEval < dateOfRetirement.year {
+                customLog.log(level: .error, "pension / yearEval < dateOfRetirement")
+            }
+            pensionBrute *= pow((1.0 + model.devalAnnuelle/100.0), (yearEval - dateOfRetirement.year).double())
+            pensionNette *= pow((1.0 + model.devalAnnuelle/100.0), (yearEval - dateOfRetirement.year).double())
+        }
+        
         return (tauxDePension    : tauxDePension,
                 majorationEnfant : majorationEnfant,
                 dureeDeReference : dureeDeReference,
