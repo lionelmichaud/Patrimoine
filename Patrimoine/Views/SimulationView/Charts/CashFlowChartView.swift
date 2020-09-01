@@ -22,7 +22,8 @@ struct CashFlowGlobalChartView: View {
                                   title          : simulation.title)
                 .padding(.trailing, 4)
         }
-        .navigationBarTitle(Text("Cash Flow"), displayMode: .inline)
+        .navigationTitle("Cash Flow")
+        .navigationBarTitleDisplayMode(.inline)
         .navigationBarItems(trailing: Button(action: saveImage,
                                              label : {
                                                 HStack {
@@ -74,22 +75,27 @@ struct CashFlowDetailedChartView: View {
             }
             
         }
-        .navigationBarTitle(Text("Cash Flow"), displayMode: .inline)
+        .navigationTitle("Cash Flow")
+        .navigationBarTitleDisplayMode(.inline)
         .navigationBarItems(
-            leading: Button(action: { withAnimation { self.menuIsPresented.toggle() } },
-                            label : {
-                                HStack {
-                                    Image(systemName: "line.horizontal.3.decrease.circle")
-                                    Text("Filtrer")
-                                }
-                            } ).capsuleButtonStyle(),
-            trailing: Button(action: saveImage,
-                             label : {
-                                HStack {
-                                    Image(systemName: "square.and.arrow.down")
-                                    Text("Image")
-                                }
-                             } ).capsuleButtonStyle()
+            leading: Button(action: {
+                withAnimation { self.menuIsPresented.toggle() }
+                
+            },
+            label : {
+                HStack {
+                    Image(systemName: "line.horizontal.3.decrease.circle")
+                    Text("Filtrer")
+                }
+            } ).capsuleButtonStyle(),
+            trailing: Button(
+                action: saveImage,
+                label : {
+                    HStack {
+                        Image(systemName: "square.and.arrow.down")
+                        Text("Image")
+                    }
+                } ).capsuleButtonStyle()
         )
     }
     

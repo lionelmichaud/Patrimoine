@@ -57,7 +57,8 @@ struct PeriodicInvestDetailedView: View {
             }
         }
         .textFieldStyle(RoundedBorderTextFieldStyle())
-        .navigationBarTitle(Text("Invest. Périodique"), displayMode: .inline)
+        .navigationTitle("Invest. Périodique")
+        .navigationBarTitleDisplayMode(.inline)
         .navigationBarItems(
             leading: Button(
                 action : duplicate,

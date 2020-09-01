@@ -99,20 +99,20 @@ struct RealEstateDetailedView: View {
             }
         }
         .textFieldStyle(RoundedBorderTextFieldStyle())
-            //.onAppear(perform: onAppear)
-            .navigationBarTitle(Text("Immeuble"), displayMode: .inline)
-            .navigationBarItems(
-                leading: Button(
-                    action : duplicate,
-                    label  : { Text("Dupliquer")} )
-                        .disabled(index == nil),
-                trailing: Button(
-                    action: applyChanges,
-                    label: { Text("Sauver") } )
-                    .disabled(!changeOccured())
+        .navigationTitle("Immeuble")
+        .navigationBarTitleDisplayMode(.inline)
+        .navigationBarItems(
+            leading: Button(
+                action : duplicate,
+                label  : { Text("Dupliquer")} )
+                .disabled(index == nil),
+            trailing: Button(
+                action: applyChanges,
+                label: { Text("Sauver") } )
+                .disabled(!changeOccured())
         )
     }
-
+    
     init(item: RealEstateAsset?, patrimoine: Patrimoin) {
         self.item = item
         if let initialItemValue = item {

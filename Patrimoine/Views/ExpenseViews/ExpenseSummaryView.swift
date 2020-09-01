@@ -32,7 +32,8 @@ struct ExpenseSummaryView: View {
             ExpenseSummaryChartView(endDate  : uiState.expenseViewState.endDate,
                                     evalDate : uiState.expenseViewState.evalDate)
                 .padding()
-                .navigationBarTitle(Text("Résumé"), displayMode: .inline)
+                .navigationTitle("Résumé")
+                .navigationBarTitleDisplayMode(.inline)
             // paramétrage du graphique
             HStack {
                 Text(String(minDate))

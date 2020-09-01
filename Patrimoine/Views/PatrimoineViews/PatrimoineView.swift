@@ -30,7 +30,7 @@ struct PatrimoineView: View {
                 .environment(\.horizontalSizeClass, .regular)
 
             }
-            .navigationBarTitle("Patrimoine")
+            .navigationTitle("Patrimoine")
             .navigationBarItems(
                 leading: EditButton())
 

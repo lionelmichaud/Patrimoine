@@ -12,7 +12,7 @@ struct SCPIDetailedView: View {
     @EnvironmentObject var patrimoine : Patrimoin
     @EnvironmentObject var simulation : Simulation
     @EnvironmentObject var uiState    : UIState
-
+    
     var item: SCPI?
     var updateItem: (_ item: SCPI, _ index: Int) -> ()
     var addItem: (_ item: SCPI) -> ()
@@ -80,17 +80,18 @@ struct SCPIDetailedView: View {
             
         }
         .textFieldStyle(RoundedBorderTextFieldStyle())
-            //.onAppear(perform: onAppear)
-            .navigationBarTitle(Text("SCPI"), displayMode: .inline)
-            .navigationBarItems(
-                leading: Button(
-                    action : duplicate,
-                    label  : { Text("Dupliquer")} )
-                        .disabled(index == nil),
-                trailing: Button(
-                    action: applyChanges,
-                    label: { Text("Sauver") } )
-                    .disabled(!changeOccured())
+        //.onAppear(perform: onAppear)
+        .navigationTitle("SCPI")
+        .navigationBarTitleDisplayMode(.inline)
+        .navigationBarItems(
+            leading: Button(
+                action : duplicate,
+                label  : { Text("Dupliquer")} )
+                .disabled(index == nil),
+            trailing: Button(
+                action: applyChanges,
+                label: { Text("Sauver") } )
+                .disabled(!changeOccured())
         )
     }
     
@@ -133,7 +134,7 @@ struct SCPIDetailedView: View {
         // remettre à zéro la simulation et sa vue
         simulation.reset(withPatrimoine: patrimoine)
         uiState.resetSimulation()
-
+        
         self.presentationMode.wrappedValue.dismiss()
     }
     
@@ -144,7 +145,7 @@ struct SCPIDetailedView: View {
 
 struct SCPIDetailedView_Previews: PreviewProvider {
     static var patrimoine  = Patrimoin()
-
+    
     static var previews: some View {
         return
             Group {
@@ -157,6 +158,6 @@ struct SCPIDetailedView_Previews: PreviewProvider {
                         .environmentObject(patrimoine)
                 }
                 .previewDisplayName("SCPIDetailedView")
-        }
+            }
     }
 }

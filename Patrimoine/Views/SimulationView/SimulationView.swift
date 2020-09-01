@@ -28,7 +28,7 @@ struct SimulationView: View {
                     NavigationLink(destination : ComputationView(),
                                    tag         : .computation,
                                    selection   : $uiState.simulationViewState.selectedItem) {
-                                    Text("Calculs")
+                        Text("Calculs")
                     }
                     .isDetailLink(true)
                     
@@ -36,16 +36,16 @@ struct SimulationView: View {
                     NavigationLink(destination: ChartsView(),
                                    tag         : .charts,
                                    selection   : $uiState.simulationViewState.selectedItem) {
-                                    Text("Graphiques")
+                        Text("Graphiques")
                     }
                     .isDetailLink(false)
                 }
                 .defaultSideBarListStyle()
-                //.listStyle(GroupedListStyle())
+                //.listStyle(InsetGroupedListStyle())
                 .environment(\.horizontalSizeClass, .regular)
             }
-            .navigationBarTitle("Simulation")
-            
+            .navigationTitle("Simulation")
+
             // vue par défaut
             SimulationHeaderView()
         }

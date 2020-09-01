@@ -54,96 +54,43 @@ struct ComputationView: View {
     }
     
     var body: some View {
-        if #available(iOS 14.0, *) {
-            ComputationForm()
-                .navigationTitle("Calcul")
-                .navigationBarTitleDisplayMode(.inline)
-                .toolbar {
-                    ToolbarItem(placement: .bottomBar) {
-                        // bouton sauvegarder
-                        Button(action: saveSimulation,
-                               label: {
-                                HStack(alignment: .center) {
-                                    if busySaveWheelAnimate {
-                                        ProgressView()
-                                    }
-                                    Image(systemName: "pencil.and.ellipsis.rectangle")
-                                        .imageScale(.large)
-                                    Text("Enregistrer")
-                                }
-                               }
-                        )
-                        .capsuleButtonStyle(width: 125)
-                        .disabled(!(simulation.isComputed && !simulation.isSaved))
-                        .opacity(!(simulation.isComputed && !simulation.isSaved) ? 0.5 : 1.0)
-                    }
-                    ToolbarItem(placement: .bottomBar) {
-                        // bouton calculer
-                        Button(action: computeSimulation,
-                               label: {
-                                HStack(alignment: .center) {
-                                    if busyCompWheelAnimate {
-                                        ProgressView()
-                                    }
-                                    Image(systemName: "function")
-                                        .imageScale(.large)
-                                    Text("Calculer")
-                                }
-                               }
-                        )
-                        .capsuleButtonStyle(width: 125)
-                    }
-                }
-        } else {
-            // Fallback on earlier versions
-            VStack {
-                ComputationForm()
-                
-                Spacer()
-                
-                HStack {
-                    // bouton calculer
-                    Button(action: computeSimulation,
-                           label: {
-                            HStack(alignment: .center) {
-                                if busyCompWheelAnimate {
-                                    ActivityIndicatorView(isVisible: $busyCompWheelAnimate, type: .flickeringDots)
-                                        .frame(maxWidth: 50, maxHeight: 50)
-                                } else {
-                                    Image(systemName: "function")
-                                        .imageScale(.large)//.padding(.trailing, 4.0)
-                                }
-                                Text("Calculer")
-                            }
-                           }
-                    )
-                    .roundedRectButtonStyle(width: 125)
-                    
-                    Spacer()
-                    
+        ComputationForm()
+            .navigationTitle("Calcul")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .bottomBar) {
                     // bouton sauvegarder
                     Button(action: saveSimulation,
                            label: {
                             HStack(alignment: .center) {
                                 if busySaveWheelAnimate {
-                                    ActivityIndicatorView(isVisible: $busySaveWheelAnimate,
-                                                          type: .flickeringDots)
-                                        .frame(maxWidth: 20, maxHeight: 20)
-                                } else {
-                                    Image(systemName: "pencil.and.ellipsis.rectangle")
-                                        .imageScale(.large)//.padding(.trailing)
+                                    ProgressView()
                                 }
+                                Image(systemName: "pencil.and.ellipsis.rectangle")
+                                    .imageScale(.large)
                                 Text("Enregistrer")
                             }
                            }
                     )
-                    .roundedRectButtonStyle(width: 125)
                     .disabled(!(simulation.isComputed && !simulation.isSaved))
                     .opacity(!(simulation.isComputed && !simulation.isSaved) ? 0.5 : 1.0)
-                }.padding()
+                }
+                ToolbarItem(placement: .bottomBar) {
+                    // bouton calculer
+                    Button(action: computeSimulation,
+                           label: {
+                            HStack(alignment: .center) {
+                                if busyCompWheelAnimate {
+                                    ProgressView()
+                                }
+                                Image(systemName: "function")
+                                    .imageScale(.large)
+                                Text("Calculer")
+                            }
+                           }
+                    )
+                }
             }
-            .navigationBarTitle("Calcul", displayMode: .inline)
-        }
     }
     
     func computeSimulation() {

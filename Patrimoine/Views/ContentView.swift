@@ -25,9 +25,9 @@ struct ContentView: View {
  
     // MARK: - Properties
 
-    var family     : Family
-    var patrimoine : Patrimoin
-    var simulation : Simulation
+    @StateObject private var family     = Family()
+    @StateObject private var patrimoine = Patrimoin()
+    @StateObject private var simulation = Simulation()
     @EnvironmentObject private var uiState: UIState
     //@State private var selectedTab = UIState.Tab.family
     
@@ -63,21 +63,6 @@ struct ContentView: View {
         .environmentObject(simulation)
         .environmentObject(uiState)
     }
-    
-    // MARK: - Initializer
-
-    internal init(family     : Family     = Family(),
-                  patrimoine : Patrimoin  = Patrimoin(),
-                  simulation : Simulation = Simulation()) {
-        // chargement des données en fichier
-        self.family     = family
-        self.patrimoine = patrimoine
-        self.simulation = simulation
-        
-        // injection de family dans la propriété statique de Expenses pour lier les évenements à des personnes
-//        Expense.family = family
-    }
-    
 }
 
 struct ContentView_Previews: PreviewProvider {

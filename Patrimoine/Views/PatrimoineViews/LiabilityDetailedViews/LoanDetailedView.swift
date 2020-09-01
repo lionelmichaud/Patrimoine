@@ -11,14 +11,14 @@ import SwiftUI
 struct LoanDetailedView: View {
     @EnvironmentObject var simulation : Simulation
     @EnvironmentObject var uiState    : UIState
-
+    
     var item: Loan?
     // commun
     @EnvironmentObject var patrimoine: Patrimoin
     @Environment(\.presentationMode) var presentationMode
     @State private var alertData: AlertData? = nil
     @State private var index: Int?
-
+    
     // à adapter
     @State private var localItem = Loan(name: "",
                                         firstYear: Date.now.year,
@@ -70,15 +70,16 @@ struct LoanDetailedView: View {
                   message: Text(alertData.message))
         }
         .textFieldStyle(RoundedBorderTextFieldStyle())
-            //.onAppear(perform: onAppear)
-            .navigationBarTitle(Text("Emprunt"), displayMode: .inline)
-            .navigationBarItems(
-                trailing: Button(
-                    action: applyChanges,
-                    label: {
-                        Text("Sauver")
+        //.onAppear(perform: onAppear)
+        .navigationTitle("Emprunt")
+        .navigationBarTitleDisplayMode(.inline)
+        .navigationBarItems(
+            trailing: Button(
+                action: applyChanges,
+                label: {
+                    Text("Sauver")
                 } )
-                    .disabled(!changeOccured())
+                .disabled(!changeOccured())
         )
     }
     
@@ -110,7 +111,7 @@ struct LoanDetailedView: View {
         // remettre à zéro la simulation et sa vue
         simulation.reset(withPatrimoine: patrimoine)
         uiState.resetSimulation()
-
+        
         self.presentationMode.wrappedValue.dismiss()
     }
     
@@ -120,9 +121,9 @@ struct LoanDetailedView: View {
     
     func isValid() -> Bool {
         if localItem.loanedValue > 0 {
-        self.alertData = AlertData(title: "Erreur",
-                                   message: "Le montant emprunté doit être négatif")
-        return false
+            self.alertData = AlertData(title: "Erreur",
+                                       message: "Le montant emprunté doit être négatif")
+            return false
         } else {
             return true
         }
@@ -131,14 +132,14 @@ struct LoanDetailedView: View {
 
 struct LoanDetailedView_Previews: PreviewProvider {
     static var patrimoine  = Patrimoin()
-
+    
     static var previews: some View {
         return
             NavigationView() {
                 LoanDetailedView(item: patrimoine.liabilities.loans[0],
                                  patrimoine: patrimoine)
-                .environmentObject(patrimoine)
-        }
-        .previewDisplayName("LoanDetailedView")
+                    .environmentObject(patrimoine)
+            }
+            .previewDisplayName("LoanDetailedView")
     }
 }

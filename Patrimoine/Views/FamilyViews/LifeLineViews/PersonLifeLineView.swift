@@ -36,7 +36,8 @@ struct PersonLifeLineView: View {
             }
         }
         .padding(.vertical, 20)
-        .navigationBarTitle("Ligne de vie de \(viewModel.personName)", displayMode: .inline)
+        .navigationTitle("Ligne de vie de \(viewModel.personName)")
+        .navigationBarTitleDisplayMode(.inline)
     }
     
     init(withInitialValueFrom member: Person) {

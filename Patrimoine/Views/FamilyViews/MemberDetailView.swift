@@ -42,7 +42,8 @@ struct MemberDetailView: View {
                 .environmentObject(self.simulation)
                 .environmentObject(self.uiState)
         }
-        .navigationBarTitle("Membre", displayMode: .inline)
+        .navigationTitle("Membre")
+        .navigationBarTitleDisplayMode(.inline)
         .navigationBarItems(
             trailing: Button(
                 action: {

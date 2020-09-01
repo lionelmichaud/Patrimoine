@@ -86,6 +86,9 @@ struct CapsuleButtonStyle: ButtonStyle {
                 .padding(.vertical, 5.0)
                 .padding(.horizontal, 10.0)
                 .background(Capsule(style: .continuous).fill(color))
+                //.compositingGroup()
+                //.shadow(color: .black, radius: 3)
+                .opacity(configuration.isPressed ? 0.4 : 1.0)
         }
     }
 }
@@ -457,15 +460,27 @@ struct MenuContentView: View {
         // filtre des séries à (dé)sélectionner
         VStack {
             HStack {
-                Button(action: { self.setAll(selected: true) }) {
-                    HStack {Text("Tout")
-                        Image(systemName: "checkmark.square")
-                    }}
+                Button(
+                    action: {
+                        self.setAll(selected: true)
+                    },
+                    label: {
+                        HStack {
+                            Text("Tout")
+                            Image(systemName: "checkmark.square")
+                        }
+                    }).capsuleButtonStyle()
                 Spacer()
-                Button(action: { self.setAll(selected: false) }) {
-                    HStack {Text("Rien")
-                        Image(systemName: "square")
-                    }}
+                Button(
+                    action: {
+                        self.setAll(selected: false)
+                    },
+                    label: {
+                        HStack {
+                            Text("Rien")
+                            Image(systemName: "square")
+                        }
+                    }).capsuleButtonStyle()
             }.padding(.horizontal)
             
             List (0 ..< itemSelection.count) { idx in

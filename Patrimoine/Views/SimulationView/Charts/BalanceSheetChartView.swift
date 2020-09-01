@@ -22,7 +22,8 @@ struct BalanceSheetGlobalChartView: View {
                                       title         : simulation.title)
                 .padding(.trailing, 4)
         }
-        .navigationBarTitle(Text("Bilan"), displayMode: .inline)
+        .navigationTitle("Bilan")
+        .navigationBarTitleDisplayMode(.inline)
         .navigationBarItems(trailing: Button(action: saveImage,
                                              label : { Text("Sauver image") }))
     }
@@ -37,27 +38,28 @@ struct BalanceSheetDetailedChartView: View {
     @EnvironmentObject var simulation : Simulation
     @EnvironmentObject var uiState    : UIState
     @State private var menuIsPresented = false
-    let menuWidth: CGFloat = 250
+    let menuWidth: CGFloat = 200
     
     var body: some View {
         GeometryReader { geometry in
             ZStack(alignment: .leading) {
-                // zone de graphique
+                /// zone de graphique
                 VStack {
                     // sélecteur: Actif / Passif / Tout
                     CasePicker(pickedCase: self.$uiState.bsChartState.combination, label: "")
                         .padding(.horizontal)
                         .pickerStyle(SegmentedPickerStyle())
+                    // graphique
                     BalanceSheetStackedBarChartView(socialAccounts: self.$simulation.socialAccounts,
                                                     title         : self.simulation.title,
                                                     combination   : self.uiState.bsChartState.combination,
                                                     itemSelection : self.uiState.bsChartState.itemSelection)
                         .padding(.trailing, 4)
                 }
-                    .frame(width: geometry.size.width, height: geometry.size.height)
-                    .offset(x: self.menuIsPresented ? self.menuWidth : 0)
+                .frame(width: geometry.size.width, height: geometry.size.height)
+                .offset(x: self.menuIsPresented ? self.menuWidth : 0)
                 
-                // slide out menu de filtrage des séries à afficher
+                /// slide out menu de filtrage des séries à afficher
                 if self.menuIsPresented {
                     MenuContentView(itemSelection: self.$uiState.bsChartState.itemSelection)
                         .frame(width: self.menuWidth)
@@ -67,20 +69,27 @@ struct BalanceSheetDetailedChartView: View {
             }
             
         }
-        .navigationBarTitle(Text("Bilan"), displayMode: .inline)
+        .navigationTitle("Bilan")
+        .navigationBarTitleDisplayMode(.inline)
         .navigationBarItems(
             leading: Button(
                 action: {
                     withAnimation { self.menuIsPresented.toggle() }
-            },
+                },
                 label: {
                     HStack {
-                        Text("Filtre")
-                        Image(systemName: "checkmark.square")
+                        Image(systemName: "line.horizontal.3.decrease.circle")
+                        Text("Filtrer")
                     }
-            } ),
-            trailing: Button(action: saveImage,
-                             label : { Text("Sauver image") })
+                } ).capsuleButtonStyle(),
+            trailing: Button(
+                action: saveImage,
+                label : {
+                    HStack {
+                        Image(systemName: "square.and.arrow.down")
+                        Text("Image")
+                    }
+                } ).capsuleButtonStyle()
         )
     }
     

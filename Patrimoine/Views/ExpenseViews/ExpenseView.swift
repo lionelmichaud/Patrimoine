@@ -33,7 +33,7 @@ struct ExpenseView: View {
                 .environment(\.horizontalSizeClass, .regular)
                 
             }
-            .navigationBarTitle("Dépenses")
+            .navigationTitle("Dépenses")
             .navigationBarItems(
                 leading: EditButton())
             

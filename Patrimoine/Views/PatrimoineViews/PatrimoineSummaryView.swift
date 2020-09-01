@@ -150,7 +150,8 @@ struct PatrimoineSummaryView: View {
                 }
             }
             .listStyle(GroupedListStyle())
-            .navigationBarTitle(Text("Résumé"), displayMode: .inline)
+            .navigationTitle("Résumé")
+            .navigationBarTitleDisplayMode(.inline)
         }
     }
     

@@ -74,7 +74,7 @@ struct ChartsView: View {
                 .environment(\.horizontalSizeClass, .regular)
             }
         }
-        .navigationBarTitle("Graphiques")
+        .navigationTitle("Graphiques")
     }
 }
 

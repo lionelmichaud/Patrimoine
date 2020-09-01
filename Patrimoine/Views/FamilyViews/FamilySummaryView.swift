@@ -83,7 +83,8 @@ struct FamilySummaryView: View {
                 }
             }
         }
-        .navigationBarTitle(Text("Résumé"), displayMode: .inline)
+        .navigationTitle("Résumé")
+        .navigationBarTitleDisplayMode(.inline)
         .onAppear(perform:{
             self.cashFlow = try? CashFlowLine(withYear      : Date.now.year,
                                               withFamily    : self.family,

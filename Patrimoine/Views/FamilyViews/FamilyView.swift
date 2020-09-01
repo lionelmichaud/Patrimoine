@@ -28,7 +28,7 @@ struct FamilyView: View {
                 .defaultSideBarListStyle()
                 //.listStyle(GroupedListStyle())
                 .environment(\.horizontalSizeClass, .regular)
-                .navigationBarTitle("Famille")
+                .navigationTitle("Famille")
                 .navigationBarItems(
                     leading: EditButton(),
                     trailing: Button(action: {

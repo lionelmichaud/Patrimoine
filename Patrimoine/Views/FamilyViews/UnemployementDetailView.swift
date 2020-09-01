@@ -71,7 +71,8 @@ struct UnemployementDetailView: View {
                 }
             }
         }
-        .navigationBarTitle("Allocation chômage de \(member.displayName)", displayMode: .inline)
+        .navigationTitle("Allocation chômage de \(member.displayName)")
+        .navigationBarTitleDisplayMode(.inline)
         .onAppear(perform: onAppear)
     }
     
