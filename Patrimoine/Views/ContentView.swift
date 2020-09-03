@@ -72,8 +72,8 @@ struct ContentView_Previews: PreviewProvider {
         Group {
             ContentView().colorScheme(.dark)
                 .environmentObject(uiState)
-            //ContentView().colorScheme(.light)
-                            .environment(\.locale, .init(identifier: "fr"))
+                //ContentView().colorScheme(.light)
+                .environment(\.locale, .init(identifier: "fr"))
             //                .previewDevice(PreviewDevice(rawValue: "iPhone X"))
             //                .previewDisplayName("iPhone X")
             //            ContentView()

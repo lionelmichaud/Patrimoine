@@ -71,9 +71,7 @@ struct CashFlowDetailedChartView: View {
                         .frame(width: self.menuWidth)
                         .transition(.move(edge: .leading))
                 }
-                
             }
-            
         }
         .navigationTitle("Cash Flow")
         .navigationBarTitleDisplayMode(.inline)
