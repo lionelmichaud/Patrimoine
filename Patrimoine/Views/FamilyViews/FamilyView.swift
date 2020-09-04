@@ -17,7 +17,7 @@ struct FamilyView: View {
     
     var body: some View {
         NavigationView {
-            // Primary view
+            /// Primary view
             List {
                 // entête
                 FamilyHeaderView()
@@ -31,15 +31,17 @@ struct FamilyView: View {
             .navigationTitle("Famille")
             .navigationBarItems(
                 leading: EditButton(),
-                trailing: Button(action: {
-                    withAnimation {
-                        self.showingSheet = true
-                    }
-                },
-                label: {
-                    Image(systemName: "plus").padding()
-                }))
-            // vue par défaut
+                trailing: Button(
+                    action: {
+                        withAnimation {
+                            self.showingSheet = true
+                        }
+                    },
+                    label: {
+                        Image(systemName: "plus").padding()
+                    }))
+            
+            /// vue par défaut
             FamilySummaryView()
         }
         .navigationViewStyle(DoubleColumnNavigationViewStyle())
@@ -55,9 +57,9 @@ struct FamilyView: View {
 }
 
 struct FamilyView_Previews: PreviewProvider {
-    static let family  = Family()
+    static let family     = Family()
     static let patrimoine = Patrimoin()
-    static let uiState = UIState()
+    static let uiState    = UIState()
     
     static var previews: some View {
         FamilyView()

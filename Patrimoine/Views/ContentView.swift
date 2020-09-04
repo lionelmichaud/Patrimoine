@@ -9,69 +9,57 @@
 import SwiftUI
 
 struct ContentView: View {
-    // MARK: - Nested struct
     
-    struct TabLabel: View {
-        let imageName: String
-        let label: String
-        
-        var body: some View {
-            Group {
-                Image(systemName: imageName).imageScale(.large)
-                Text(label)
-            }
-        }
-    }
- 
+    // MARK: - Environment Properties
+
+    @EnvironmentObject private var uiState: UIState
+    //@SceneStorage("selectedTab") var selection = UIState.Tab.family
+    
     // MARK: - Properties
 
-    @StateObject private var family     = Family()
-    @StateObject private var patrimoine = Patrimoin()
-    @StateObject private var simulation = Simulation()
-    @EnvironmentObject private var uiState: UIState
-    //@State private var selectedTab = UIState.Tab.family
-    
     var body: some View {
         TabView(selection: $uiState.selectedTab){
-            // composition de la famille
+            /// composition de la famille
             FamilyView()
-                .tabItem { TabLabel(imageName: "person.2.fill", label: "Famille") }
+                .tabItem { Label("Famille", systemImage: "person.2.fill") }
                 .tag(UIState.Tab.family)
             
-            // dépenses de la famille
+            /// dépenses de la famille
             ExpenseView()
-                .tabItem { TabLabel(imageName: "cart.fill", label: "Dépenses") }
+                .tabItem { Label("Dépenses", systemImage: "cart.fill") }
                 .tag(UIState.Tab.expense)
             
-            // actifs & passifs du patrimoine de la famille
+            /// actifs & passifs du patrimoine de la famille
             PatrimoineView()
-                .tabItem { TabLabel(imageName: "dollarsign.circle.fill", label: "Patrimoine") }
+                .tabItem { Label("Patrimoine", systemImage: "dollarsign.circle.fill") }
                 .tag(UIState.Tab.asset)
             
-            // scenario paramètrique de simulation
+            /// scenario paramètrique de simulation
             ScenarioView()
-                .tabItem { TabLabel(imageName: "slider.horizontal.3", label: "Scénarios") }
+                .tabItem { Label("Scénarios", systemImage: "slider.horizontal.3") }
                 .tag(UIState.Tab.scenario)
             
-            // calcul et présentation des résultats de simulation
+            /// calcul et présentation des résultats de simulation
             SimulationView()
-                .tabItem { TabLabel(imageName: "chart.bar.fill", label: "Simulation") }
+                .tabItem { Label("Simulation", systemImage: "chart.bar.fill") }
                 .tag(UIState.Tab.simulation)
         }
-        .environmentObject(family)
-        .environmentObject(patrimoine)
-        .environmentObject(simulation)
-        .environmentObject(uiState)
     }
 }
 
 struct ContentView_Previews: PreviewProvider {
-    static let uiState = UIState()
-    
+    static let uiState    = UIState()
+    static let family     = Family()
+    static let patrimoine = Patrimoin()
+    static let simulation = Simulation()
+
     static var previews: some View {
         Group {
             ContentView().colorScheme(.dark)
                 .environmentObject(uiState)
+                .environmentObject(family)
+                .environmentObject(patrimoine)
+                .environmentObject(simulation)
                 //ContentView().colorScheme(.light)
                 .environment(\.locale, .init(identifier: "fr"))
             //                .previewDevice(PreviewDevice(rawValue: "iPhone X"))

@@ -21,51 +21,129 @@ struct MemberDetailView: View {
     var body: some View {
         Form {
             Text(member.displayName).font(.headline)
+            
+            /// partie commune
             MemberAgeDateView(member: member)
+            
             if member is Adult {
+                /// partie spécifique adulte
                 HStack {
                     Text("Nombre d'enfants")
                     Spacer()
                     Text("\((member as! Adult).nbOfChildBirth)")
                 }
                 AdultDetailView()
-
+                
             } else if member is Child {
+                /// partie spécifique enfant
                 ChildDetailView()
             }
         }
         .sheet(isPresented: $showingSheet) {
             MemberEditView(withInitialValueFrom: self.member)
-                .environmentObject(self.member)
-                .environmentObject(self.family)
-                .environmentObject(self.patrimoine)
-                .environmentObject(self.simulation)
-                .environmentObject(self.uiState)
+//                .environmentObject(self.family)
+//                .environmentObject(self.patrimoine)
+//                .environmentObject(self.simulation)
+//                .environmentObject(self.uiState)
         }
         .navigationTitle("Membre")
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarItems(
             trailing: Button(
-                action: {
-                    withAnimation {
-                        self.showingSheet = true
-                    }
-                },
-                label: {
-                    Text("Modifier")
-                }
+                action: { withAnimation { self.showingSheet = true } },
+                label : { Text("Modifier") }
             )
+            .capsuleButtonStyle()
         )
     }
 }
 
 // MARK: - Adult View
 
-struct AdultDetailView: View {
-    @EnvironmentObject var member: Person
+fileprivate struct AdultDetailView: View {
+    var body: some View {
+        Group {
+            /// Section: scénario
+            ScenarioSection()
+            
+            /// Section: revenus
+            RevenuSection()
+        }
+    }
+}
+
+fileprivate struct ScenarioSection: View {
+    @EnvironmentObject var member : Person
 
     var body: some View {
-        let adult          = member as! Adult
+        let adult = member as! Adult
+        return Section {
+            DisclosureGroup (
+                content: {
+                    HStack {
+                        Text("Age de décès estimé")
+                        Spacer()
+                        Text("\(member.ageOfDeath) ans en \(String(member.yearOfDeath))")
+                    }
+                    HStack {
+                        Text("Cessation d'activité")
+                        Spacer()
+                        Text("\(adult.age(atDate: adult.dateOfRetirement).year!) ans \(adult.age(atDate: adult.dateOfRetirement).month!) mois au \(mediumDateFormatter.string(from: adult.dateOfRetirement))")
+                    }
+                    HStack {
+                        Text("Cause")
+                        Spacer()
+                        Text(adult.causeOfRetirement.displayString)
+                    }.padding(.leading)
+                    if adult.hasUnemployementAllocationPeriod {
+                        if adult.dateOfStartOfAllocationReduction != nil {
+                            HStack {
+                                Text("Début de la période de réducition d'allocation chômage")
+                                Spacer()
+                                Text("\(adult.age(atDate: adult.dateOfStartOfAllocationReduction!).year!) ans \(adult.age(atDate: adult.dateOfStartOfAllocationReduction!).month!) mois au \(mediumDateFormatter.string(from: adult.dateOfStartOfAllocationReduction!))")
+                            }.padding(.leading)
+                        }
+                        HStack {
+                            Text("Fin de la période d'allocation chômage")
+                            Spacer()
+                            Text("\(adult.age(atDate: adult.dateOfEndOfUnemployementAllocation!).year!) ans \(adult.age(atDate: adult.dateOfEndOfUnemployementAllocation!).month!) mois au \(mediumDateFormatter.string(from: adult.dateOfEndOfUnemployementAllocation!))")
+                        }.padding(.leading)
+                    }
+                    HStack {
+                        Text("Liquidation de pension - régime complém.")
+                        Spacer()
+                        Text("\(adult.ageOfAgircPensionLiquidComp.year!) ans \(adult.ageOfAgircPensionLiquidComp.month!) mois fin \(monthMediumFormatter.string(from: adult.dateOfAgircPensionLiquid)) \(String(adult.dateOfAgircPensionLiquid.year))")
+                    }
+                    HStack {
+                        Text("Liquidation de pension - régime général")
+                        Spacer()
+                        Text("\(adult.ageOfPensionLiquidComp.year!) ans \(adult.ageOfPensionLiquidComp.month!) mois fin \(monthMediumFormatter.string(from: adult.dateOfPensionLiquid)) \(String(adult.dateOfPensionLiquid.year))")
+                    }
+                    HStack {
+                        Text("Dépendance")
+                        Spacer()
+                        if adult.nbOfYearOfDependency == 0 {
+                            Text("aucune")
+                        } else {
+                            Text("\(adult.nbOfYearOfDependency) ans à partir de \(String(adult.yearOfDependency))")
+                        }
+                    }
+                    NavigationLink(destination: PersonLifeLineView(withInitialValueFrom: self.member)) {
+                        Text("Ligne de vie").foregroundColor(.blue)
+                    }
+                },
+                label: {
+                    Text("SCENARIO DE VIE").font(.headline)
+                })
+        }
+    }
+}
+
+fileprivate struct RevenuSection: View {
+    @EnvironmentObject var member : Person
+    
+    var body: some View {
+        let adult = member as! Adult
         let income         = adult.workIncome
         var revenueBrut    = 0.0
         var revenueNet     = 0.0
@@ -96,117 +174,53 @@ struct AdultDetailView: View {
                 insurance      = 0
         }
         
-        return Group {
-            /// Section: scénario
-            Section {
-                DisclosureGroup (
-                    content: {
+        return Section {
+            DisclosureGroup (
+                content: {
+                    if income?.pickerString == "Salaire" {
+                        AmountView(label  : "Salaire brut", amount : revenueBrut)
+                        AmountView(label  : "Salaire net de feuille de paye", amount : revenueNet)
+                        AmountView(label  : "Coût de la mutuelle (protec. sup.)", amount : insurance)
+                        AmountView(label  : "Salaire net moins mutuelle facultative (à vivre)", amount : revenueLiving)
+                        AmountView(label  : "Salaire imposable (après abattement)", amount : revenueTaxable)
                         HStack {
-                            Text("Age de décès estimé")
+                            Text("Date d'embauche")
                             Spacer()
-                            Text("\(member.ageOfDeath) ans en \(String(member.yearOfDeath))")
+                            Text(fromDate)
                         }
-                        HStack {
-                            Text("Cessation d'activité")
-                            Spacer()
-                            Text("\(adult.age(atDate: adult.dateOfRetirement).year!) ans \(adult.age(atDate: adult.dateOfRetirement).month!) mois au \(mediumDateFormatter.string(from: adult.dateOfRetirement))")
+                    } else {
+                        AmountView(label  : "BNC", amount : revenueBrut)
+                        AmountView(label  : "BNC net de charges sociales", amount : revenueNet)
+                        AmountView(label  : "Coût des assurances", amount : insurance)
+                        AmountView(label  : "BNC net de charges sociales et d'assurances (à vivre)", amount : revenueLiving)
+                        AmountView(label  : "BNC imposable (après abattement)", amount : revenueTaxable)
+                        
+                    }
+                    // allocation chomage
+                    if adult.hasUnemployementAllocationPeriod {
+                        NavigationLink(destination: UnemployementDetailView().environmentObject(self.member)) {
+                            AmountView(label  : "Allocation chômage annuelle nette",
+                                       amount : adult.unemployementAllocation!.net).foregroundColor(.blue)
                         }
-                        HStack {
-                            Text("Cause")
-                            Spacer()
-                            Text(adult.causeOfRetirement.displayString)
-                        }.padding(.leading)
-                        if adult.hasUnemployementAllocationPeriod {
-                            if adult.dateOfStartOfAllocationReduction != nil {
-                                HStack {
-                                    Text("Début de la période de réducition d'allocation chômage")
-                                    Spacer()
-                                    Text("\(adult.age(atDate: adult.dateOfStartOfAllocationReduction!).year!) ans \(adult.age(atDate: adult.dateOfStartOfAllocationReduction!).month!) mois au \(mediumDateFormatter.string(from: adult.dateOfStartOfAllocationReduction!))")
-                                }.padding(.leading)
-                            }
-                            HStack {
-                                Text("Fin de la période d'allocation chômage")
-                                Spacer()
-                                Text("\(adult.age(atDate: adult.dateOfEndOfUnemployementAllocation!).year!) ans \(adult.age(atDate: adult.dateOfEndOfUnemployementAllocation!).month!) mois au \(mediumDateFormatter.string(from: adult.dateOfEndOfUnemployementAllocation!))")
-                            }.padding(.leading)
-                        }
-                        HStack {
-                            Text("Liquidation de pension - régime complém.")
-                            Spacer()
-                            Text("\(adult.ageOfAgircPensionLiquidComp.year!) ans \(adult.ageOfAgircPensionLiquidComp.month!) mois fin \(monthMediumFormatter.string(from: adult.dateOfAgircPensionLiquid)) \(String(adult.dateOfAgircPensionLiquid.year))")
-                        }
-                        HStack {
-                            Text("Liquidation de pension - régime général")
-                            Spacer()
-                            Text("\(adult.ageOfPensionLiquidComp.year!) ans \(adult.ageOfPensionLiquidComp.month!) mois fin \(monthMediumFormatter.string(from: adult.dateOfPensionLiquid)) \(String(adult.dateOfPensionLiquid.year))")
-                        }
-                        HStack {
-                            Text("Dépendance")
-                            Spacer()
-                            if adult.nbOfYearOfDependency == 0 {
-                                Text("aucune")
-                            } else {
-                                Text("\(adult.nbOfYearOfDependency) ans à partir de \(String(adult.yearOfDependency))")
-                            }
-                        }
-                        NavigationLink(destination: PersonLifeLineView(withInitialValueFrom: self.member)) {
-                            Text("Ligne de vie").foregroundColor(.blue)
-                        }
-                    },
-                    label: {
-                        Text("SCENARIO DE VIE").font(.headline)
-                    })
-            }
-            
-            /// Section: revenus
-            Section {
-                DisclosureGroup (
-                    content: {
-                        if income?.pickerString == "Salaire" {
-                            AmountView(label  : "Salaire brut", amount : revenueBrut)
-                            AmountView(label  : "Salaire net de feuille de paye", amount : revenueNet)
-                            AmountView(label  : "Coût de la mutuelle (protec. sup.)", amount : insurance)
-                            AmountView(label  : "Salaire net moins mutuelle facultative (à vivre)", amount : revenueLiving)
-                            AmountView(label  : "Salaire imposable (après abattement)", amount : revenueTaxable)
-                            HStack {
-                                Text("Date d'embauche")
-                                Spacer()
-                                Text(fromDate)
-                            }
-                        } else {
-                            AmountView(label  : "BNC", amount : revenueBrut)
-                            AmountView(label  : "BNC net de charges sociales", amount : revenueNet)
-                            AmountView(label  : "Coût des assurances", amount : insurance)
-                            AmountView(label  : "BNC net de charges sociales et d'assurances (à vivre)", amount : revenueLiving)
-                            AmountView(label  : "BNC imposable (après abattement)", amount : revenueTaxable)
-                            
-                        }
-                        // allocation chomage
-                        if adult.hasUnemployementAllocationPeriod {
-                            NavigationLink(destination: UnemployementDetailView().environmentObject(self.member)) {
-                                AmountView(label  : "Allocation chômage annuelle nette",
-                                           amount : adult.unemployementAllocation!.net).foregroundColor(.blue)
-                            }
-                        }
-                        // pension de retraite
-                        NavigationLink(destination: RetirementDetailView().environmentObject(self.member)) {
-                            AmountView(label  : "Pension de retraite annuelle nette",
-                                       amount : adult.pension.net).foregroundColor(.blue)
-                        }
-                    },
-                    label: {
-                        Text("REVENUS").font(.headline)
-                    })
-            }
+                    }
+                    // pension de retraite
+                    NavigationLink(destination: RetirementDetailView().environmentObject(self.member)) {
+                        AmountView(label  : "Pension de retraite annuelle nette",
+                                   amount : adult.pension.net).foregroundColor(.blue)
+                    }
+                },
+                label: {
+                    Text("REVENUS").font(.headline)
+                })
         }
     }
 }
 
 // MARK: - Child View
 
-struct ChildDetailView: View {
+fileprivate struct ChildDetailView: View {
     @EnvironmentObject var member: Person
-
+    
     var body: some View {
         let child = member as! Child
         return Section(header: Text("SCENARIO").font(.subheadline)) {
@@ -234,13 +248,13 @@ struct ChildDetailView: View {
 
 struct FamilyDetailView_Previews: PreviewProvider {
     static var family  = Family()
-
+    
     static var previews: some View {
         let aMember = family.members.first!
         
         return Group {
             MemberDetailView()
-                    .environmentObject(family)
+                .environmentObject(family)
                 .environmentObject(aMember)
             MemberDetailView()
                 .environmentObject(family)
@@ -249,3 +263,4 @@ struct FamilyDetailView_Previews: PreviewProvider {
         
     }
 }
+

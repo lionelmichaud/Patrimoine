@@ -9,6 +9,7 @@
 import SwiftUI
 
 // MARK: -  Person View Model
+
 class PersonViewModel: ObservableObject {
     @Published var familyName = ""
     @Published var givenName  = ""
@@ -19,6 +20,7 @@ class PersonViewModel: ObservableObject {
 }
 
 // MARK: -  Adult View Model
+
 class AdultViewModel: ObservableObject {
     @Published var dateRetirement            = Date()
     @Published var causeOfRetirement         = Unemployment.Cause.demission
@@ -41,6 +43,7 @@ class AdultViewModel: ObservableObject {
 }
 
 // MARK: - Saisie du nouveau membre de la famille
+
 struct MemberAddView: View {
     //@Environment(\.managedObjectContext) var moc
     @EnvironmentObject var family     : Family
@@ -56,47 +59,40 @@ struct MemberAddView: View {
     @State private var ageIndependance = ScenarioCst.minAgeIndependance
     // Adult
     @ObservedObject var adultViewModel = AdultViewModel()
-
+    
     var body: some View {
         VStack() {
+            /// Barre de titre
             HStack() {
-                Button(
-                    action: { self.presentationMode.wrappedValue.dismiss() },
-                    label: {
-                        Text("Annuler")
-                } )
+                Button(action: { self.presentationMode.wrappedValue.dismiss() },
+                       label: { Text("Annuler") } )
+                    .capsuleButtonStyle()
+                
                 Spacer()
                 Text("Ajouter...").font(.title).fontWeight(.bold)
                 Spacer()
-                Button(
-                    action: addMember,
-                    label: {
-                        Text("OK")
-                            .bold()
-                            .padding(.vertical, 2.0)
-                            .padding(.horizontal, 8.0)
-                            .background(Capsule(style: .circular).stroke(formIsValid() ? Color.blue : Color.gray, lineWidth: 2))
-                } )
+                
+                Button(action: addMember,
+                       label: { Text("OK") } )
+                    .capsuleButtonStyle()
                     .disabled(!formIsValid())
-            }.padding(.horizontal).padding(.top)
+            }
+            .padding(.horizontal)
+            .padding(.top)
             
+            /// Formulaire
             Form {
-                if #available(iOS 14.0, *) {
-                    CiviliteEditView(personViewModel: personViewModel)
-                        .onChange(of: personViewModel.seniority) { newState in
-                            // pas plus de deux adultes dans une famille
-                            if newState == .adult && family.nbOfAdults == 2 {
-                                self.alertItem = AlertItem(title         : Text("Pas plus de adultes par famille"),
-                                                           dismissButton : .default(Text("OK")))
-                                personViewModel.seniority = .enfant
-                            }
+                CiviliteEditView(personViewModel: personViewModel)
+                    .onChange(of: personViewModel.seniority) { newState in
+                        // pas plus de deux adultes dans une famille
+                        if newState == .adult && family.nbOfAdults == 2 {
+                            self.alertItem = AlertItem(title         : Text("Pas plus de adultes par famille"),
+                                                       dismissButton : .default(Text("OK")))
+                            personViewModel.seniority = .enfant
                         }
-                        .alert(item: $alertItem) { alertItem in myAlert(alertItem: alertItem) }
-                } else {
-                    // Fallback on earlier versions
-                    CiviliteEditView(personViewModel: personViewModel)
-                }
-
+                    }
+                    .alert(item: $alertItem) { alertItem in myAlert(alertItem: alertItem) }
+                
                 if formIsValid() {
                     if personViewModel.seniority == .adult {
                         AdultEditView(personViewModel: personViewModel,
@@ -111,10 +107,9 @@ struct MemberAddView: View {
                 }
             }
             .textFieldStyle(RoundedBorderTextFieldStyle())
-
         }
     }
-
+    
     
     /// Création du nouveau membre et ajout à la famille
     func addMember() {
@@ -144,7 +139,7 @@ struct MemberAddView: View {
                         newMember.layoffCompensationBonified = nil
                     }
                 }
-
+                
                 newMember.setAgeOfPensionLiquidComp(year  : adultViewModel.agePension,
                                                     month : adultViewModel.trimPension * 3)
                 newMember.setAgeOfAgircPensionLiquidComp(year  : adultViewModel.ageAgircPension,
@@ -155,22 +150,22 @@ struct MemberAddView: View {
                 if adultViewModel.revIndex == WorkIncomeType.salaryId {
                     newMember.workIncome =
                         WorkIncomeType.salary(brutSalary      : adultViewModel.revenueBrut,
-                                                  taxableSalary   : adultViewModel.revenueTaxable,
-                                                  netSalary       : adultViewModel.revenueNet,
-                                                  fromDate        : adultViewModel.fromDate,
-                                                  healthInsurance : adultViewModel.insurance)
+                                              taxableSalary   : adultViewModel.revenueTaxable,
+                                              netSalary       : adultViewModel.revenueNet,
+                                              fromDate        : adultViewModel.fromDate,
+                                              healthInsurance : adultViewModel.insurance)
                 } else {
                     newMember.workIncome =
                         WorkIncomeType.turnOver(BNC                 : adultViewModel.revenueBrut,
-                                                    incomeLossInsurance : adultViewModel.insurance)
+                                                incomeLossInsurance : adultViewModel.insurance)
                 }
                 
                 newMember.nbOfYearOfDependency = adultViewModel.nbYearOfDepend
-
+                
                 // ajout du nouveau membre à la famille
                 family.addMember(newMember)
-                // debug
-                //print(family)
+            // debug
+            //print(family)
             
             case .enfant :
                 // creation du nouveau membre
@@ -183,8 +178,8 @@ struct MemberAddView: View {
                 newMember.ageOfIndependence = ageIndependance
                 // ajout du nouveau membre à la famille
                 family.addMember(newMember)
-                // debug
-                //print(family)
+            // debug
+            //print(family)
             
         }
         
@@ -205,9 +200,10 @@ struct MemberAddView: View {
 
 
 // MARK: - Saisie des civilités du nouveau membre
+
 struct CiviliteEditView : View {
     @ObservedObject var personViewModel: PersonViewModel
-
+    
     var body: some View {
         Section {
             CasePicker(pickedCase: $personViewModel.sexe, label: "Genre")
@@ -237,13 +233,13 @@ struct MemberAddView_Previews: PreviewProvider {
     static var simulation = Simulation()
     static var patrimoine = Patrimoin()
     static var uiState    = UIState()
-
+    
     static var previews: some View {
-            MemberAddView()
-                .environmentObject(family)
-                .environmentObject(simulation)
-                .environmentObject(patrimoine)
-                .environmentObject(uiState)
+        MemberAddView()
+            .environmentObject(family)
+            .environmentObject(simulation)
+            .environmentObject(patrimoine)
+            .environmentObject(uiState)
     }
 }
 

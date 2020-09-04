@@ -10,11 +10,13 @@ import SwiftUI
 
 struct MemberEditView: View {
     @EnvironmentObject var family     : Family
-    @EnvironmentObject var member     : Person
     @EnvironmentObject var patrimoine : Patrimoin
     @EnvironmentObject var simulation : Simulation
     @EnvironmentObject var uiState    : UIState
     @Environment(\.presentationMode) var presentationMode
+    
+    let member: Person
+    
     @State var showingSheet = false
     // Person
     @ObservedObject var personViewModel = PersonViewModel()
@@ -26,27 +28,26 @@ struct MemberEditView: View {
     
     var body: some View {
         VStack() {
+            /// Barre de titre
             HStack() {
-                Button(
-                    action: { self.presentationMode.wrappedValue.dismiss() },
-                    label: {
-                        Text("Annuler")
-                    } )
+                Button(action: { presentationMode.wrappedValue.dismiss() },
+                       label : { Text("Annuler") } )
+                    .capsuleButtonStyle()
                 Spacer()
                 Text("Modifier...").font(.title).fontWeight(.bold)
                 Spacer()
-                Button(
-                    action: applyChanges,
-                    label: {
-                        Text("OK")
-                    } )
+                Button(action: applyChanges,
+                       label : { Text("OK") } )
+                    .capsuleButtonStyle()
                     .disabled(false)
             }.padding(.horizontal).padding(.top)
             
+            /// Formulaire
             Form {
                 Text(member.displayName).font(.headline)
                 MemberAgeDateView(member: member).foregroundColor(.gray)
                 if member is Adult {
+                    /// Adulte
                     HStack {
                         Text("Nombre d'enfants")
                         Spacer()
@@ -56,6 +57,7 @@ struct MemberEditView: View {
                                   adultViewModel : adultViewModel)
                     
                 } else if member is Child {
+                    /// Enfant
                     ChildEditView(birthDate       : member.birthDate,
                                   deathAge        : $personViewModel.deathAge,
                                   ageUniversity   : $ageUniversity,
@@ -69,6 +71,7 @@ struct MemberEditView: View {
     /// Initialise le ViweModel à partir des propriété d'un membre existant
     /// - Parameter member: le membre de la famille
     init(withInitialValueFrom member: Person) {
+        self.member = member
         // Person
         personViewModel.deathAge = member.ageOfDeath
         // Child
@@ -141,14 +144,14 @@ struct MemberEditView: View {
             if adultViewModel.revIndex == WorkIncomeType.salaryId {
                 adult.workIncome =
                     WorkIncomeType.salary(brutSalary      : adultViewModel.revenueBrut,
-                                              taxableSalary   : adultViewModel.revenueTaxable,
-                                              netSalary       : adultViewModel.revenueNet,
-                                              fromDate        : adultViewModel.fromDate,
-                                              healthInsurance : adultViewModel.insurance)
+                                          taxableSalary   : adultViewModel.revenueTaxable,
+                                          netSalary       : adultViewModel.revenueNet,
+                                          fromDate        : adultViewModel.fromDate,
+                                          healthInsurance : adultViewModel.insurance)
             } else {
                 adult.workIncome =
                     WorkIncomeType.turnOver(BNC                 : adultViewModel.revenueBrut,
-                                                incomeLossInsurance : adultViewModel.insurance)
+                                            incomeLossInsurance : adultViewModel.insurance)
             }
             
             adult.nbOfYearOfDependency = adultViewModel.nbYearOfDepend
@@ -165,30 +168,33 @@ struct MemberEditView: View {
         // remettre à zéro la simulation et sa vue
         simulation.reset(withPatrimoine: patrimoine)
         uiState.resetSimulation()
-
+        
         self.presentationMode.wrappedValue.dismiss()
     }
 }
 
 // MARK: - Saisie adulte
 struct AdultEditView : View {
-    @EnvironmentObject var member              : Person
     @ObservedObject var personViewModel        : PersonViewModel
     @ObservedObject var adultViewModel         : AdultViewModel
     @State private var compenstationSupraLegal : Bool = false
     @State private var alertItem               : AlertItem?
-
-    var body: some View {
-        Group {
-            Section(header: Text("SCENARIO").font(.subheadline)) {
-                Stepper(value: $personViewModel.deathAge, in: Date().year - personViewModel.birthDate.year ... 100) {
-                    HStack {
-                        Text("Age de décès estimé ")
-                        Spacer()
-                        Text("\(personViewModel.deathAge) ans").foregroundColor(.secondary)
-                    }
+    
+    fileprivate func scenarioView() -> some View {
+        return Section(header: Text("SCENARIO").font(.subheadline)) {
+            Stepper(value: $personViewModel.deathAge, in: Date().year - personViewModel.birthDate.year ... 100) {
+                HStack {
+                    Text("Age de décès estimé ")
+                    Spacer()
+                    Text("\(personViewModel.deathAge) ans").foregroundColor(.secondary)
                 }
             }
+        }
+    }
+    
+    var body: some View {
+        Group {
+            scenarioView()
             // activité
             Section(header: Text("ACTIVITE")) {
                 RevenueEditView(revIndex       : $adultViewModel.revIndex,
@@ -197,24 +203,17 @@ struct AdultEditView : View {
                                 revenueTaxable : $adultViewModel.revenueTaxable,
                                 fromDate       : $adultViewModel.fromDate,
                                 insurance      : $adultViewModel.insurance)
-                if #available(iOS 14.0, *) {
-                    DatePicker(selection           : $adultViewModel.dateRetirement,
-                               displayedComponents : .date,
-                               label               : { HStack { Text("Date de cessation d'activité"); Spacer() } })
-                        .onChange(of: adultViewModel.dateRetirement) { newState in
-                            if (newState > (member as! Adult).dateOfAgircPensionLiquid) ||
-                                (newState > (member as! Adult).dateOfPensionLiquid) {
-                                self.alertItem = AlertItem(title         : Text("La date de cessation d'activité est postérieure à la date de liquiditaion d'une pension de retraite"),
-                                                           dismissButton : .default(Text("OK")))
-                            }
-                        }
-                        .alert(item: $alertItem) { alertItem in myAlert(alertItem: alertItem) }
-                } else {
-                    // Fallback on earlier versions
-                    DatePicker(selection           : $adultViewModel.dateRetirement,
-                               displayedComponents : .date,
-                               label               : { HStack { Text("Date de cessation d'activité"); Spacer() } })
-                }
+                DatePicker(selection           : $adultViewModel.dateRetirement,
+                           displayedComponents : .date,
+                           label               : { HStack { Text("Date de cessation d'activité"); Spacer() } })
+//                    .onChange(of: adultViewModel.dateRetirement) { newState in
+//                        if (newState > (self.member as! Adult).dateOfAgircPensionLiquid) ||
+//                            (newState > (self.member as! Adult).dateOfPensionLiquid) {
+//                            self.alertItem = AlertItem(title         : Text("La date de cessation d'activité est postérieure à la date de liquiditaion d'une pension de retraite"),
+//                                                       dismissButton : .default(Text("OK")))
+//                        }
+//                    }
+//                    .alert(item: $alertItem) { alertItem in myAlert(alertItem: alertItem) }
                 CasePicker(pickedCase: $adultViewModel.causeOfRetirement, label: "Cause").pickerStyle(SegmentedPickerStyle())
                 if (adultViewModel.causeOfRetirement != Unemployment.Cause.demission) {
                     Toggle(isOn: $adultViewModel.hasAllocationSupraLegale, label: { Text("Indemnité de licenciement supra-légale") })
@@ -241,7 +240,7 @@ struct AdultEditView : View {
 }
 
 // MARK: - Saisie des revenus
-struct RevenueEditView : View {
+fileprivate struct RevenueEditView : View {
     @Binding var revIndex       : Int
     @Binding var revenueBrut    : Double
     @Binding var revenueNet     : Double
@@ -310,7 +309,6 @@ struct ChildEditView : View {
         }
     }
 }
-
 
 struct MemberEditView_Previews: PreviewProvider {
     static var family  = Family()

@@ -76,16 +76,16 @@ struct CashFlowDetailedChartView: View {
         .navigationTitle("Cash Flow")
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarItems(
-            leading: Button(action: {
-                withAnimation { self.menuIsPresented.toggle() }
-                
-            },
-            label : {
-                HStack {
-                    Image(systemName: "line.horizontal.3.decrease.circle")
-                    Text("Filtrer")
-                }
-            } ).capsuleButtonStyle(),
+            leading: Button(
+                action: {
+                    withAnimation { self.menuIsPresented.toggle() }
+                },
+                label : {
+                    HStack {
+                        Image(systemName: "line.horizontal.3.decrease.circle")
+                        Text("Filtrer")
+                    }
+                } ).capsuleButtonStyle(),
             trailing: Button(
                 action: saveImage,
                 label : {
