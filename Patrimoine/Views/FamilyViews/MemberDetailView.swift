@@ -140,79 +140,110 @@ fileprivate struct ScenarioSection: View {
 }
 
 fileprivate struct RevenuSection: View {
-    @EnvironmentObject var member : Person
     
-    var body: some View {
-        let adult = member as! Adult
-        let income         = adult.workIncome
-        var revenueBrut    = 0.0
-        var revenueNet     = 0.0
-        var revenueTaxable = 0.0
-        var revenueLiving  = 0.0
-        var fromDate       = ""
-        var insurance      = 0.0
+    // MARK: - View Model
+    
+    struct ViewModel {
+        var unemployementAllocation          : (brut: Double, net: Double)? = nil
+        var income                           : WorkIncomeType? = nil
+        var pension                          = (brut: 0.0, net: 0.0, taxable: 0.0)
+        var hasUnemployementAllocationPeriod = false
+        var revenueBrut                      = 0.0
+        var revenueNet                       = 0.0
+        var revenueTaxable                   = 0.0
+        var revenueLiving                    = 0.0
+        var fromDate                         = ""
+        var insurance                        = 0.0
         
-        switch income {
-            case let .salary(_, _, _, fromDate1, healthInsurance):
-                revenueBrut    = adult.workBrutIncome
-                revenueTaxable = adult.workTaxableIncome
-                revenueLiving  = adult.workLivingIncome
-                revenueNet     = adult.workNetIncome
-                fromDate       = fromDate1.stringMediumDate
-                insurance      = healthInsurance
-            case let .turnOver(_, incomeLossInsurance):
-                revenueBrut    = adult.workBrutIncome
-                revenueTaxable = adult.workTaxableIncome
-                revenueLiving  = adult.workLivingIncome
-                revenueNet     = adult.workNetIncome
-                insurance      = incomeLossInsurance
-            case .none:
-                revenueBrut    = 0
-                revenueTaxable = 0
-                revenueLiving  = 0
-                revenueNet     = 0
-                insurance      = 0
+        // MARK: - Initializers
+        
+        init() {
         }
         
-        return Section {
+        init(from adult: Adult) {
+            hasUnemployementAllocationPeriod = adult.hasUnemployementAllocationPeriod
+            unemployementAllocation          = adult.unemployementAllocation
+            pension                          = adult.pension
+            income                           = adult.workIncome
+            switch income {
+                case let .salary(_, _, _, fromDate1, healthInsurance):
+                    revenueBrut    = adult.workBrutIncome
+                    revenueTaxable = adult.workTaxableIncome
+                    revenueLiving  = adult.workLivingIncome
+                    revenueNet     = adult.workNetIncome
+                    fromDate       = fromDate1.stringMediumDate
+                    insurance      = healthInsurance
+                case let .turnOver(_, incomeLossInsurance):
+                    revenueBrut    = adult.workBrutIncome
+                    revenueTaxable = adult.workTaxableIncome
+                    revenueLiving  = adult.workLivingIncome
+                    revenueNet     = adult.workNetIncome
+                    insurance      = incomeLossInsurance
+                case .none: // nil
+                    revenueBrut    = 0
+                    revenueTaxable = 0
+                    revenueLiving  = 0
+                    revenueNet     = 0
+                    insurance      = 0
+            }
+        }
+    }
+    
+    // MARK: - Properties
+    
+    @EnvironmentObject var member : Person
+    @State var viewModel = ViewModel()
+
+    var body: some View {
+        Section {
             DisclosureGroup (
                 content: {
-                    if income?.pickerString == "Salaire" {
-                        AmountView(label  : "Salaire brut", amount : revenueBrut)
-                        AmountView(label  : "Salaire net de feuille de paye", amount : revenueNet)
-                        AmountView(label  : "Coût de la mutuelle (protec. sup.)", amount : insurance)
-                        AmountView(label  : "Salaire net moins mutuelle facultative (à vivre)", amount : revenueLiving)
-                        AmountView(label  : "Salaire imposable (après abattement)", amount : revenueTaxable)
+                    if viewModel.income?.pickerString == "Salaire" {
+                        AmountView(label  : "Salaire brut", amount : viewModel.revenueBrut)
+                        AmountView(label  : "Salaire net de feuille de paye", amount : viewModel.revenueNet)
+                        AmountView(label  : "Coût de la mutuelle (protec. sup.)", amount : viewModel.insurance)
+                        AmountView(label  : "Salaire net moins mutuelle facultative (à vivre)", amount : viewModel.revenueLiving)
+                        AmountView(label  : "Salaire imposable (après abattement)", amount : viewModel.revenueTaxable)
                         HStack {
                             Text("Date d'embauche")
                             Spacer()
-                            Text(fromDate)
+                            Text(viewModel.fromDate)
                         }
                     } else {
-                        AmountView(label  : "BNC", amount : revenueBrut)
-                        AmountView(label  : "BNC net de charges sociales", amount : revenueNet)
-                        AmountView(label  : "Coût des assurances", amount : insurance)
-                        AmountView(label  : "BNC net de charges sociales et d'assurances (à vivre)", amount : revenueLiving)
-                        AmountView(label  : "BNC imposable (après abattement)", amount : revenueTaxable)
+                        AmountView(label  : "BNC", amount : viewModel.revenueBrut)
+                        AmountView(label  : "BNC net de charges sociales", amount : viewModel.revenueNet)
+                        AmountView(label  : "Coût des assurances", amount : viewModel.insurance)
+                        AmountView(label  : "BNC net de charges sociales et d'assurances (à vivre)", amount : viewModel.revenueLiving)
+                        AmountView(label  : "BNC imposable (après abattement)", amount : viewModel.revenueTaxable)
                         
                     }
                     // allocation chomage
-                    if adult.hasUnemployementAllocationPeriod {
+                    if viewModel.hasUnemployementAllocationPeriod {
                         NavigationLink(destination: UnemployementDetailView().environmentObject(self.member)) {
                             AmountView(label  : "Allocation chômage annuelle nette",
-                                       amount : adult.unemployementAllocation!.net).foregroundColor(.blue)
+                                       amount : viewModel.unemployementAllocation!.net)
+                                .foregroundColor(.blue)
                         }
                     }
                     // pension de retraite
                     NavigationLink(destination: RetirementDetailView().environmentObject(self.member)) {
                         AmountView(label  : "Pension de retraite annuelle nette",
-                                   amount : adult.pension.net).foregroundColor(.blue)
+                                   amount : viewModel.pension.net)
+                            .foregroundColor(.blue)
                     }
                 },
                 label: {
                     Text("REVENUS").font(.headline)
                 })
         }
+        .onAppear(perform: onAppear)
+    }
+
+    // MARK: - Methods
+    
+    func onAppear() {
+        let adult = member as! Adult
+        viewModel = ViewModel(from: adult)
     }
 }
 

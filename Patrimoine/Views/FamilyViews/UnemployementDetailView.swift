@@ -12,26 +12,42 @@ struct UnemployementDetailView: View {
 
     // MARK: - View Model
     
-    class ViewModel: ObservableObject {
-        @Published var allocationReducedBrut : Double = 0
-        @Published var allocationReducedNet  : Double = 0
-        @Published var allocationSupraLegale : Bool   = false
-        @Published var allocationBrut        : Double = 0
-        @Published var allocationNet         : Double = 0
-        @Published var totalAllocationNet    : Double = 0
-        @Published var durationInMonth       : Int    = 0
-        @Published var percentReduc          : Double = 0
-        @Published var afterMonth            : Int?
-        @Published var compensationBrut      : Double = 0
-        @Published var compensationNet       : Double = 0
-        @Published var compensationTaxable   : Double = 0
-        @Published var compensationNbMonth   : Double = 0
+    struct ViewModel {
+        var allocationReducedBrut : Double = 0
+        var allocationReducedNet  : Double = 0
+        var allocationSupraLegale : Bool   = false
+        var allocationBrut        : Double = 0
+        var allocationNet         : Double = 0
+        var totalAllocationNet    : Double = 0
+        var durationInMonth       : Int    = 0
+        var percentReduc          : Double = 0
+        var afterMonth            : Int?
+        var compensationBrut      : Double = 0
+        var compensationNet       : Double = 0
+        var compensationTaxable   : Double = 0
+        var compensationNbMonth   : Double = 0
+        
+        // MARK: - Initializers
+        
+        init() {
+        }
+        
+        init(from adult: Adult) {
+            durationInMonth                               = adult.unemployementAllocationDuration!
+            (allocationBrut, allocationNet)               = adult.unemployementAllocation!
+            (percentReduc, afterMonth)                    = adult.unemployementAllocationReduction!
+            (compensationNbMonth, compensationBrut,
+             compensationNet, compensationTaxable)        = adult.layoffCompensation!
+            allocationSupraLegale                         = (adult.layoffCompensationBonified != nil)
+            (allocationReducedBrut, allocationReducedNet) = adult.unemployementReducedAllocation!
+            totalAllocationNet                            = adult.unemployementTotalAllocation!.net
+        }
     }
     
     // MARK: - Properties
     
     @EnvironmentObject var member : Person
-    @ObservedObject var viewModel = ViewModel()
+    @State var viewModel = ViewModel()
     
     var body: some View {
         Form {
@@ -80,14 +96,7 @@ struct UnemployementDetailView: View {
     
     func onAppear() {
         let adult = member as! Adult
-        viewModel.durationInMonth                                         = adult.unemployementAllocationDuration!
-        (viewModel.allocationBrut, viewModel.allocationNet)               = adult.unemployementAllocation!
-        (viewModel.percentReduc, viewModel.afterMonth)                    = adult.unemployementAllocationReduction!
-        (viewModel.compensationNbMonth, viewModel.compensationBrut,
-         viewModel.compensationNet, viewModel.compensationTaxable)        = adult.layoffCompensation!
-        viewModel.allocationSupraLegale                                   = (adult.layoffCompensationBonified != nil)
-        (viewModel.allocationReducedBrut, viewModel.allocationReducedNet) = adult.unemployementReducedAllocation!
-        viewModel.totalAllocationNet                                      = adult.unemployementTotalAllocation!.net
+        viewModel = ViewModel(from: adult)
     }
 }
 

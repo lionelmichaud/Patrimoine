@@ -23,10 +23,10 @@ public enum WorkIncomeType: PickableIdentifiableEnum {
     
     public static var salaryId: Int {
         WorkIncomeType.salary(brutSalary      : 0,
-                                  taxableSalary   : 0,
-                                  netSalary       : 0,
-                                  fromDate        : Date.now,
-                                  healthInsurance : 0).id
+                              taxableSalary   : 0,
+                              netSalary       : 0,
+                              fromDate        : Date.now,
+                              healthInsurance : 0).id
     }
     
     public static var turnOverId: Int {
