@@ -19,12 +19,12 @@ struct MemberEditView: View {
     
     @State var showingSheet = false
     // Person
-    @ObservedObject var personViewModel = PersonViewModel()
+    @StateObject var personViewModel: PersonViewModel
     // Child
     @State private var ageUniversity   = ScenarioCst.minAgeUniversity
     @State private var ageIndependance = ScenarioCst.minAgeIndependance
     // Adult
-    @ObservedObject var adultViewModel = AdultViewModel()
+    @StateObject var adultViewModel = AdultViewModel()
     
     var body: some View {
         VStack() {
@@ -72,96 +72,37 @@ struct MemberEditView: View {
     /// - Parameter member: le membre de la famille
     init(withInitialValueFrom member: Person) {
         self.member = member
-        // Person
-        personViewModel.deathAge = member.ageOfDeath
+        // Initialize Person ViewModel
+        _personViewModel = StateObject(wrappedValue: PersonViewModel(member: member))
+        
         // Child
         if let child = member as? Child {
             _ageUniversity   = State(initialValue: child.ageOfUniversity)
             _ageIndependance = State(initialValue: child.ageOfIndependence)
         }
-        // Adult
+
+        // Initialize Adult ViewModel
         if let adult = member as? Adult {
-            adultViewModel.dateRetirement            = adult.dateOfRetirement
-            adultViewModel.causeOfRetirement         = adult.causeOfRetirement
-            adultViewModel.hasAllocationSupraLegale  = adult.layoffCompensationBonified != nil
-            adultViewModel.allocationSupraLegale     = adult.layoffCompensationBonified ?? 0.0
-            adultViewModel.nbYearOfDepend            = adult.nbOfYearOfDependency
-            adultViewModel.ageAgircPension           = adult.ageOfAgircPensionLiquidComp.year!
-            adultViewModel.trimAgircPension          = adult.ageOfAgircPensionLiquidComp.month! / 3
-            adultViewModel.agePension                = adult.ageOfPensionLiquidComp.year!
-            adultViewModel.trimPension               = adult.ageOfPensionLiquidComp.month! / 3
-            adultViewModel.lastKnownPensionSituation = adult.lastKnownPensionSituation
-            adultViewModel.lastKnownAgircSituation = adult.lastKnownAgircPensionSituation
-            switch adult.workIncome {
-                case let .salary(brutSalary, taxableSalary, netSalary, fromDate, healthInsurance):
-                    adultViewModel.revenueBrut    = brutSalary
-                    adultViewModel.revenueTaxable = taxableSalary
-                    adultViewModel.revenueNet     = netSalary
-                    adultViewModel.fromDate       = fromDate
-                    adultViewModel.insurance      = healthInsurance
-                    adultViewModel.revIndex = WorkIncomeType.salaryId
-                case let .turnOver(BNC, incomeLossInsurance):
-                    adultViewModel.revenueBrut = BNC
-                    adultViewModel.revenueNet  = BNC
-                    adultViewModel.insurance = incomeLossInsurance
-                    adultViewModel.revIndex  = WorkIncomeType.turnOverId
-                case .none:
-                    adultViewModel.revenueBrut    = 0
-                    adultViewModel.revenueTaxable = 0
-                    adultViewModel.revenueNet     = 0
-                    adultViewModel.insurance      = 0
-                    adultViewModel.revIndex       = 0
-            }
+            _adultViewModel = StateObject(wrappedValue: AdultViewModel(adult: adult))
         }
     }
     
     /// Applique les modifications: recopie le ViewModel dans les propriétés d'un membre existant
     func applyChanges() {
-        member.ageOfDeath = personViewModel.deathAge
-        if let adult = member as? Adult {
-            adult.dateOfRetirement     = adultViewModel.dateRetirement
-            adult.causeOfRetirement    = adultViewModel.causeOfRetirement
-            if (adultViewModel.causeOfRetirement == Unemployment.Cause.demission) {
-                // pas d'indemnité de licenciement en cas de démission
-                adult.layoffCompensationBonified = nil
-            } else {
-                if adultViewModel.hasAllocationSupraLegale {
-                    // indemnité supra-légale de licenciement accordée par l'employeur
-                    adult.layoffCompensationBonified = adultViewModel.allocationSupraLegale
-                } else {
-                    // pas d'indemnité supra-légale de licenciement
-                    adult.layoffCompensationBonified = nil
-                }
-            }
-            
-            adult.setAgeOfPensionLiquidComp(year  : adultViewModel.agePension,
-                                            month : adultViewModel.trimPension * 3)
-            adult.setAgeOfAgircPensionLiquidComp(year  : adultViewModel.ageAgircPension,
-                                                 month : adultViewModel.trimAgircPension * 3)
-            adult.lastKnownPensionSituation = adultViewModel.lastKnownPensionSituation
-            adult.lastKnownAgircPensionSituation = adultViewModel.lastKnownAgircSituation
-            
-            if adultViewModel.revIndex == WorkIncomeType.salaryId {
-                adult.workIncome =
-                    WorkIncomeType.salary(brutSalary      : adultViewModel.revenueBrut,
-                                          taxableSalary   : adultViewModel.revenueTaxable,
-                                          netSalary       : adultViewModel.revenueNet,
-                                          fromDate        : adultViewModel.fromDate,
-                                          healthInsurance : adultViewModel.insurance)
-            } else {
-                adult.workIncome =
-                    WorkIncomeType.turnOver(BNC                 : adultViewModel.revenueBrut,
-                                            incomeLossInsurance : adultViewModel.insurance)
-            }
-            
-            adult.nbOfYearOfDependency = adultViewModel.nbYearOfDepend
-            
-        }
+        // Update Person from ViewModel
+        personViewModel.updateFromModelView(member: member)
+        
+        // Child
         if let child = member as? Child {
-            child.ageOfUniversity = ageUniversity
+            child.ageOfUniversity   = ageUniversity
             child.ageOfIndependence = ageIndependance
         }
         
+        // Update Adult from ViewModel
+        if let adult = member as? Adult {
+            adultViewModel.updateFromModelView(adult: adult)
+        }
+
         // mettre à jour le nombre d'enfant de chaque parent de la famille
         family.aMemberIsUpdated()
         

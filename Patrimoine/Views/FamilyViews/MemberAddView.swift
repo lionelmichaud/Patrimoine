@@ -17,6 +17,27 @@ class PersonViewModel: ObservableObject {
     @Published var seniority  = Seniority.enfant
     @Published var birthDate  = Date()
     @Published var deathAge   = 81
+    
+    // MARK: -  Initializers of ModelView from Model
+    
+    init(member: Person) {
+        deathAge = member.ageOfDeath
+    }
+    
+    // MARK: -  Methods
+    
+    func updateFromModelView(member: Person) {
+        member.ageOfDeath = deathAge
+    }
+    
+    init() {
+//        familyName = ""
+//        givenName  = ""
+//        sexe       = Sexe.male
+//        seniority  = Seniority.enfant
+//        birthDate  = Date()
+//        deathAge   = 81
+    }
 }
 
 // MARK: -  Adult View Model
@@ -40,6 +61,83 @@ class AdultViewModel: ObservableObject {
     @Published var insurance                 = 0.0
     @Published var lastKnownPensionSituation = RegimeGeneralSituation()
     @Published var lastKnownAgircSituation   = RegimeAgircSituation()
+    
+    // MARK: -  Initializers of ModelView from Model
+    
+    init(adult: Adult) {
+        dateRetirement            = adult.dateOfRetirement
+        causeOfRetirement         = adult.causeOfRetirement
+        hasAllocationSupraLegale  = adult.layoffCompensationBonified != nil
+        allocationSupraLegale     = adult.layoffCompensationBonified ?? 0.0
+        nbYearOfDepend            = adult.nbOfYearOfDependency
+        ageAgircPension           = adult.ageOfAgircPensionLiquidComp.year!
+        trimAgircPension          = adult.ageOfAgircPensionLiquidComp.month! / 3
+        agePension                = adult.ageOfPensionLiquidComp.year!
+        trimPension               = adult.ageOfPensionLiquidComp.month! / 3
+        lastKnownPensionSituation = adult.lastKnownPensionSituation
+        lastKnownAgircSituation = adult.lastKnownAgircPensionSituation
+        switch adult.workIncome {
+            case let .salary(brutSalary, taxableSalary, netSalary, fromDate, healthInsurance):
+                revenueBrut    = brutSalary
+                revenueTaxable = taxableSalary
+                revenueNet     = netSalary
+                self.fromDate  = fromDate
+                insurance      = healthInsurance
+                revIndex = WorkIncomeType.salaryId
+            case let .turnOver(BNC, incomeLossInsurance):
+                revenueBrut = BNC
+                revenueNet  = BNC
+                insurance = incomeLossInsurance
+                revIndex  = WorkIncomeType.turnOverId
+            case .none:
+                revenueBrut    = 0
+                revenueTaxable = 0
+                revenueNet     = 0
+                insurance      = 0
+                revIndex       = 0
+        }
+    }
+    
+    init() {
+    }
+    
+    func updateFromModelView(adult: Adult) {
+        adult.dateOfRetirement     = dateRetirement
+        adult.causeOfRetirement    = causeOfRetirement
+        if (causeOfRetirement == Unemployment.Cause.demission) {
+            // pas d'indemnité de licenciement en cas de démission
+            adult.layoffCompensationBonified = nil
+        } else {
+            if hasAllocationSupraLegale {
+                // indemnité supra-légale de licenciement accordée par l'employeur
+                adult.layoffCompensationBonified = allocationSupraLegale
+            } else {
+                // pas d'indemnité supra-légale de licenciement
+                adult.layoffCompensationBonified = nil
+            }
+        }
+        
+        adult.setAgeOfPensionLiquidComp(year  : agePension,
+                                        month : trimPension * 3)
+        adult.setAgeOfAgircPensionLiquidComp(year  : ageAgircPension,
+                                             month : trimAgircPension * 3)
+        adult.lastKnownPensionSituation = lastKnownPensionSituation
+        adult.lastKnownAgircPensionSituation = lastKnownAgircSituation
+        
+        if revIndex == WorkIncomeType.salaryId {
+            adult.workIncome =
+                WorkIncomeType.salary(brutSalary      : revenueBrut,
+                                      taxableSalary   : revenueTaxable,
+                                      netSalary       : revenueNet,
+                                      fromDate        : fromDate,
+                                      healthInsurance : insurance)
+        } else {
+            adult.workIncome =
+                WorkIncomeType.turnOver(BNC                 : revenueBrut,
+                                        incomeLossInsurance : insurance)
+        }
+        adult.nbOfYearOfDependency = nbYearOfDepend
+    }
 }
 
 // MARK: - Saisie du nouveau membre de la famille
@@ -53,12 +151,12 @@ struct MemberAddView: View {
     @Environment(\.presentationMode) var presentationMode
     @State private var alertItem : AlertItem?
     // Person
-    @ObservedObject var personViewModel = PersonViewModel()
+    @StateObject var personViewModel = PersonViewModel()
     // Child
     @State private var ageUniversity   = ScenarioCst.minAgeUniversity
     @State private var ageIndependance = ScenarioCst.minAgeIndependance
     // Adult
-    @ObservedObject var adultViewModel = AdultViewModel()
+    @StateObject var adultViewModel = AdultViewModel()
     
     var body: some View {
         VStack() {
@@ -119,56 +217,19 @@ struct MemberAddView: View {
         
         switch personViewModel.seniority {
             case .adult  :
-                // creation du nouveau membre
+                // creation du nouveau membre Adult
                 let newMember = Adult(sexe       : personViewModel.sexe,
                                       givenName  : personViewModel.givenName,
                                       familyName : personViewModel.familyName.uppercased(),
                                       birthDate  : personViewModel.birthDate,
                                       ageOfDeath : personViewModel.deathAge)
-                newMember.dateOfRetirement     = adultViewModel.dateRetirement
-                newMember.causeOfRetirement    = adultViewModel.causeOfRetirement
-                if (adultViewModel.causeOfRetirement == Unemployment.Cause.demission) {
-                    // pas d'indemnité de licenciement en cas de démission
-                    newMember.layoffCompensationBonified = nil
-                } else {
-                    if adultViewModel.hasAllocationSupraLegale {
-                        // indemnité supra-légale de licenciement accordée par l'employeur
-                        newMember.layoffCompensationBonified = adultViewModel.allocationSupraLegale
-                    } else {
-                        // pas d'indemnité supra-légale de licenciement
-                        newMember.layoffCompensationBonified = nil
-                    }
-                }
-                
-                newMember.setAgeOfPensionLiquidComp(year  : adultViewModel.agePension,
-                                                    month : adultViewModel.trimPension * 3)
-                newMember.setAgeOfAgircPensionLiquidComp(year  : adultViewModel.ageAgircPension,
-                                                         month : adultViewModel.trimAgircPension * 3)
-                newMember.lastKnownPensionSituation = adultViewModel.lastKnownPensionSituation
-                newMember.lastKnownAgircPensionSituation = adultViewModel.lastKnownAgircSituation
-                
-                if adultViewModel.revIndex == WorkIncomeType.salaryId {
-                    newMember.workIncome =
-                        WorkIncomeType.salary(brutSalary      : adultViewModel.revenueBrut,
-                                              taxableSalary   : adultViewModel.revenueTaxable,
-                                              netSalary       : adultViewModel.revenueNet,
-                                              fromDate        : adultViewModel.fromDate,
-                                              healthInsurance : adultViewModel.insurance)
-                } else {
-                    newMember.workIncome =
-                        WorkIncomeType.turnOver(BNC                 : adultViewModel.revenueBrut,
-                                                incomeLossInsurance : adultViewModel.insurance)
-                }
-                
-                newMember.nbOfYearOfDependency = adultViewModel.nbYearOfDepend
+                adultViewModel.updateFromModelView(adult: newMember)
                 
                 // ajout du nouveau membre à la famille
                 family.addMember(newMember)
-            // debug
-            //print(family)
             
             case .enfant :
-                // creation du nouveau membre
+                // creation du nouveau membre Enfant
                 let newMember = Child(sexe       : personViewModel.sexe,
                                       givenName  : personViewModel.givenName,
                                       familyName : personViewModel.familyName.uppercased(),
@@ -178,9 +239,6 @@ struct MemberAddView: View {
                 newMember.ageOfIndependence = ageIndependance
                 // ajout du nouveau membre à la famille
                 family.addMember(newMember)
-            // debug
-            //print(family)
-            
         }
         
         self.presentationMode.wrappedValue.dismiss()
