@@ -128,7 +128,7 @@ fileprivate struct ScenarioSection: View {
                             Text("\(adult.nbOfYearOfDependency) ans à partir de \(String(adult.yearOfDependency))")
                         }
                     }
-                    NavigationLink(destination: PersonLifeLineView(withInitialValueFrom: self.member)) {
+                    NavigationLink(destination: PersonLifeLineView(from: self.member)) {
                         Text("Ligne de vie").foregroundColor(.blue)
                     }
                 },
@@ -239,7 +239,7 @@ fileprivate struct ChildDetailView: View {
                 Spacer()
                 Text("\(child.ageOfIndependence) ans en \(String(child.dateOfIndependence.year))")
             }
-            NavigationLink(destination: PersonLifeLineView(withInitialValueFrom: self.member)) {
+            NavigationLink(destination: PersonLifeLineView(from: self.member)) {
                 Text("Ligne de vie")
             }
         }

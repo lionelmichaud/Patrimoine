@@ -73,7 +73,7 @@ struct MemberEditView: View {
     init(withInitialValueFrom member: Person) {
         self.member = member
         // Initialize Person ViewModel
-        _personViewModel = StateObject(wrappedValue: PersonViewModel(member: member))
+        _personViewModel = StateObject(wrappedValue: PersonViewModel(from: member))
         
         // Child
         if let child = member as? Child {
@@ -83,7 +83,7 @@ struct MemberEditView: View {
 
         // Initialize Adult ViewModel
         if let adult = member as? Adult {
-            _adultViewModel = StateObject(wrappedValue: AdultViewModel(adult: adult))
+            _adultViewModel = StateObject(wrappedValue: AdultViewModel(from: adult))
         }
     }
     

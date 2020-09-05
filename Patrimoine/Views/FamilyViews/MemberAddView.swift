@@ -20,7 +20,7 @@ class PersonViewModel: ObservableObject {
     
     // MARK: -  Initializers of ModelView from Model
     
-    init(member: Person) {
+    init(from member: Person) {
         deathAge = member.ageOfDeath
     }
     
@@ -64,7 +64,7 @@ class AdultViewModel: ObservableObject {
     
     // MARK: -  Initializers of ModelView from Model
     
-    init(adult: Adult) {
+    init(from adult: Adult) {
         dateRetirement            = adult.dateOfRetirement
         causeOfRetirement         = adult.causeOfRetirement
         hasAllocationSupraLegale  = adult.layoffCompensationBonified != nil
