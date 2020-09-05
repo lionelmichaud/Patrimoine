@@ -125,7 +125,7 @@ final class Adult: Person {
                                                 from      : fromDate,
                                                 to        : dateOfRetirement).year!
                 // base: salaire brut
-                return Unemployment.model.indemniteLicenciement.compensation(
+                return Unemployment.model.indemniteLicenciement.layoffCompensationConvention(
                     actualCompensationBrut : layoffCompensationBonified,
                     causeOfRetirement      : causeOfRetirement,
                     yearlyWorkIncomeBrut   : workBrutIncome,

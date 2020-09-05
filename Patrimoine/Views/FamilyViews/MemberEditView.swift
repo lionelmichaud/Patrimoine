@@ -80,7 +80,7 @@ struct MemberEditView: View {
             _ageUniversity   = State(initialValue: child.ageOfUniversity)
             _ageIndependance = State(initialValue: child.ageOfIndependence)
         }
-
+        
         // Initialize Adult ViewModel
         if let adult = member as? Adult {
             _adultViewModel = StateObject(wrappedValue: AdultViewModel(from: adult))
@@ -102,7 +102,7 @@ struct MemberEditView: View {
         if let adult = member as? Adult {
             adultViewModel.updateFromModelView(adult: adult)
         }
-
+        
         // mettre à jour le nombre d'enfant de chaque parent de la famille
         family.aMemberIsUpdated()
         
@@ -114,15 +114,37 @@ struct MemberEditView: View {
     }
 }
 
-// MARK: - Saisie adulte
+// MARK: - Saisie Adult
 struct AdultEditView : View {
     @ObservedObject var personViewModel        : PersonViewModel
     @ObservedObject var adultViewModel         : AdultViewModel
     @State private var compenstationSupraLegal : Bool = false
     @State private var alertItem               : AlertItem?
     
-    fileprivate func scenarioView() -> some View {
-        return Section(header: Text("SCENARIO").font(.subheadline)) {
+    var body: some View {
+        Group {
+            // Section scénario
+            ScenarioSection(personViewModel: personViewModel)
+            
+            // Section activité
+            ActivitySection(adultViewModel: adultViewModel)
+            
+            // Section retraite
+            RetirementEditView(personViewModel : personViewModel,
+                              adultViewModel  : adultViewModel)
+            
+            // Section dépendance
+            DepedanceSection(adultViewModel  : adultViewModel)
+        }
+    }
+}
+
+// MARK: - Saisie Adult / Section Scenario
+fileprivate struct ScenarioSection: View {
+    @ObservedObject var personViewModel: PersonViewModel
+    
+    var body: some View {
+        Section(header: Text("SCENARIO").font(.subheadline)) {
             Stepper(value: $personViewModel.deathAge, in: Date().year - personViewModel.birthDate.year ... 100) {
                 HStack {
                     Text("Age de décès estimé ")
@@ -132,84 +154,85 @@ struct AdultEditView : View {
             }
         }
     }
+}
+
+// MARK: - Saisie Adult / Section Activité
+struct ActivitySection: View {
+    @ObservedObject var adultViewModel: AdultViewModel
     
     var body: some View {
-        Group {
-            scenarioView()
-            // activité
-            Section(header: Text("ACTIVITE")) {
-                RevenueEditView(revIndex       : $adultViewModel.revIndex,
-                                revenueBrut    : $adultViewModel.revenueBrut,
-                                revenueNet     : $adultViewModel.revenueNet,
-                                revenueTaxable : $adultViewModel.revenueTaxable,
-                                fromDate       : $adultViewModel.fromDate,
-                                insurance      : $adultViewModel.insurance)
-                DatePicker(selection           : $adultViewModel.dateRetirement,
-                           displayedComponents : .date,
-                           label               : { HStack { Text("Date de cessation d'activité"); Spacer() } })
-//                    .onChange(of: adultViewModel.dateRetirement) { newState in
-//                        if (newState > (self.member as! Adult).dateOfAgircPensionLiquid) ||
-//                            (newState > (self.member as! Adult).dateOfPensionLiquid) {
-//                            self.alertItem = AlertItem(title         : Text("La date de cessation d'activité est postérieure à la date de liquiditaion d'une pension de retraite"),
-//                                                       dismissButton : .default(Text("OK")))
-//                        }
-//                    }
-//                    .alert(item: $alertItem) { alertItem in myAlert(alertItem: alertItem) }
-                CasePicker(pickedCase: $adultViewModel.causeOfRetirement, label: "Cause").pickerStyle(SegmentedPickerStyle())
-                if (adultViewModel.causeOfRetirement != Unemployment.Cause.demission) {
-                    Toggle(isOn: $adultViewModel.hasAllocationSupraLegale, label: { Text("Indemnité de licenciement supra-légale") })
-                    if adultViewModel.hasAllocationSupraLegale {
-                        AmountEditView(label: "Montant brut", amount: $adultViewModel.allocationSupraLegale).padding(.leading)
-                    }
-                }
-            }
-            // retraite
-            RetirementEditView(personViewModel : personViewModel,
-                               adultViewModel  : adultViewModel)
-            // dépendance
-            Section(header:Text("DEPENDANCE")) {
-                Stepper(value: $adultViewModel.nbYearOfDepend, in: 0 ... 15) {
-                    HStack {
-                        Text("Nombre d'année de dépendance ")
-                        Spacer()
-                        Text("\(adultViewModel.nbYearOfDepend) ans").foregroundColor(.secondary)
-                    }
+        Section(header: Text("ACTIVITE")) {
+            RevenueEditView(adultViewModel: adultViewModel)
+            EndOfWorkingPeriodEditView(adultViewModel: adultViewModel)
+        }
+    }
+}
+
+// MARK: - Saisie Adult / Section Dépendance
+struct DepedanceSection: View {
+    @ObservedObject var adultViewModel: AdultViewModel
+    
+    var body: some View {
+        Section(header:Text("DEPENDANCE")) {
+            Stepper(value: $adultViewModel.nbYearOfDepend, in: 0 ... 15) {
+                HStack {
+                    Text("Nombre d'année de dépendance ")
+                    Spacer()
+                    Text("\(adultViewModel.nbYearOfDepend) ans").foregroundColor(.secondary)
                 }
             }
         }
     }
 }
 
-// MARK: - Saisie des revenus
+// MARK: - Saisie Adult / Section Activité / Saisie des revenus
 fileprivate struct RevenueEditView : View {
-    @Binding var revIndex       : Int
-    @Binding var revenueBrut    : Double
-    @Binding var revenueNet     : Double
-    @Binding var revenueTaxable : Double
-    @Binding var fromDate       : Date
-    @Binding var insurance      : Double
+    @ObservedObject var adultViewModel: AdultViewModel
     
     var body: some View {
-        let salary = revIndex == WorkIncomeType.salaryId
+        let salary = adultViewModel.revIndex == WorkIncomeType.salaryId
         
         return Group {
-            CaseWithAssociatedValuePicker<WorkIncomeType>(caseIndex: $revIndex, label: "")
+            CaseWithAssociatedValuePicker<WorkIncomeType>(caseIndex: $adultViewModel.revIndex, label: "")
                 .pickerStyle(SegmentedPickerStyle())
             if salary {
-                AmountEditView(label: "Salaire brut", amount: $revenueBrut)
-                AmountEditView(label: "Salaire net de feuille de paye", amount: $revenueNet)
-                AmountEditView(label: "Salaire imposable", amount: $revenueTaxable)
-                AmountEditView(label: "Coût de la mutuelle (protec. sup.)", amount: $insurance)
-                DatePicker(selection           : $fromDate,
+                AmountEditView(label: "Salaire brut", amount: $adultViewModel.revenueBrut)
+                AmountEditView(label: "Salaire net de feuille de paye", amount: $adultViewModel.revenueNet)
+                AmountEditView(label: "Salaire imposable", amount: $adultViewModel.revenueTaxable)
+                AmountEditView(label: "Coût de la mutuelle (protec. sup.)", amount: $adultViewModel.insurance)
+                DatePicker(selection           : $adultViewModel.fromDate,
                            in                  : 50.years.ago!...Date.now,
                            displayedComponents : .date,
                            label               : { HStack {Text("Date d'embauche"); Spacer() } })
             } else {
-                AmountEditView(label: "BNC", amount: $revenueBrut)
-                AmountEditView(label: "Charges sociales", amount: $insurance)
+                AmountEditView(label: "BNC", amount: $adultViewModel.revenueBrut)
+                AmountEditView(label: "Charges sociales", amount: $adultViewModel.insurance)
             }
-            if salary {
-                
+        }
+    }
+}
+
+// MARK: - Saisie Adult / Section Activité / Saisie fin de période d'activité professionnelle
+fileprivate struct EndOfWorkingPeriodEditView: View {
+    @ObservedObject var adultViewModel: AdultViewModel
+    
+    var body: some View {
+        DatePicker(selection           : $adultViewModel.dateRetirement,
+                   displayedComponents : .date,
+                   label               : { HStack { Text("Date de cessation d'activité"); Spacer() } })
+        //                    .onChange(of: adultViewModel.dateRetirement) { newState in
+        //                        if (newState > (self.member as! Adult).dateOfAgircPensionLiquid) ||
+        //                            (newState > (self.member as! Adult).dateOfPensionLiquid) {
+        //                            self.alertItem = AlertItem(title         : Text("La date de cessation d'activité est postérieure à la date de liquiditaion d'une pension de retraite"),
+        //                                                       dismissButton : .default(Text("OK")))
+        //                        }
+        //                    }
+        //                    .alert(item: $alertItem) { alertItem in myAlert(alertItem: alertItem) }
+        CasePicker(pickedCase: $adultViewModel.causeOfRetirement, label: "Cause").pickerStyle(SegmentedPickerStyle())
+        if (adultViewModel.causeOfRetirement != Unemployment.Cause.demission) {
+            Toggle(isOn: $adultViewModel.hasAllocationSupraLegale, label: { Text("Indemnité de licenciement supra-légale") })
+            if adultViewModel.hasAllocationSupraLegale {
+                AmountEditView(label: "Montant brut", amount: $adultViewModel.allocationSupraLegale).padding(.leading)
             }
         }
     }
@@ -262,12 +285,7 @@ struct MemberEditView_Previews: PreviewProvider {
                 .environmentObject(family)
                 .environmentObject(aMember)
             Form {
-                RevenueEditView(revIndex       : .constant(1),
-                                revenueBrut    : .constant(100000.0),
-                                revenueNet     : .constant(85000.0),
-                                revenueTaxable : .constant(90000.0),
-                                fromDate       : .constant(Date.now),
-                                insurance      : .constant(5678.2))
+                RevenueEditView(adultViewModel: AdultViewModel())
             }
         }
     }

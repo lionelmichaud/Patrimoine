@@ -19,7 +19,7 @@ struct Unemployment: Codable {
         case ruptureConventionnelleIndividuelle = "Rupture individuelle"
         case ruptureConventionnelleCollective   = "Rupture collective"
         case planSauvegardeEmploi               = "PSE"
-
+        
         // methods
         
         var pickerString: String {
@@ -28,8 +28,8 @@ struct Unemployment: Codable {
     }
     
     struct Model: Codable {
-        var indemniteLicenciement : IndemniteLicenciement
-        var allocationChomage     : AllocationChomage
+        var indemniteLicenciement : LayoffCompensation
+        var allocationChomage     : UnemploymentCompensation
     }
     
     // properties
@@ -53,7 +53,7 @@ struct Unemployment: Codable {
 // https://www.juritravail.com/Actualite/respecter-salaire-minimum/Id/221441
 // https://www.service-public.fr/particuliers/vosdroits/F408
 // https://www.service-public.fr/particuliers/vosdroits/F987
-struct IndemniteLicenciement: Codable {
+struct LayoffCompensation: Codable {
     
     // nested types
     
@@ -99,8 +99,8 @@ struct IndemniteLicenciement: Codable {
     ///   - nbYearsSeniority: nombre d'année d'ancienneté au moment du licenciement
     ///   - grid: grille à utiliser
     /// - Returns: nombre de mois de salaire de l'indemnité de licenciement selon la grille
-    func compensationInMonth(nbYearsSeniority years : Int,
-                              grid                   : [SliceBase]) -> Double {
+    func layoffCompensationInMonth(nbYearsSeniority years : Int,
+                                   grid                   : [SliceBase]) -> Double {
         var decompte = years
         let nbMonth: Double = grid.reduce(0.0) { m, slice in
             guard decompte > 0 else { return m }
@@ -115,23 +115,31 @@ struct IndemniteLicenciement: Codable {
         return nbMonth
     }
     
-    /// Calcul du nombre de mois de salaire de l'indemnité de licenciement
+    /// Calcul du nombre de mois de salaire de l'indemnité de licenciement selon le Code du Travail (Légal)
+    /// - Parameter nbYearsSeniority: nombre d'année d'ancienneté au moment du licenciement
+    /// - Returns: nombre de mois de salaire de l'indemnité de licenciement selon le Code du Travail (Légal)
+    func layoffCompensationLegalInMonth(nbYearsSeniority years : Int) -> Double {
+        layoffCompensationInMonth(nbYearsSeniority: years,
+                                  grid: model.legalGrid)
+    }
+    
+    /// Calcul du nombre de mois de salaire de l'indemnité de licenciement selon la Convention de la Métalurgie
     /// - Parameters:
     ///   - age: age au moment du licenciement
     ///   - nbYearsSeniority: nombre d'année d'ancienneté au moment du licenciement
-    /// - Returns: nombre de mois de salaire de l'indemnité de licenciement
-    func compensationInMonth(age                    : Int,
-                              nbYearsSeniority years : Int) -> Double {
-        let allocLegale      = compensationInMonth(nbYearsSeniority: years,
-                                                   grid: model.legalGrid)
-        var allocMetallurgie = compensationInMonth(nbYearsSeniority: years,
-                                                   grid: model.metallurgieGrid)
+    /// - Returns: nombre de mois de salaire de l'indemnité de licenciement selon la Convention de la Métalurgie
+    func layoffCompensationConventionInMonth(age                    : Int,
+                                             nbYearsSeniority years : Int) -> Double {
+        let allocLegale      = layoffCompensationInMonth(nbYearsSeniority: years,
+                                                         grid: model.legalGrid)
+        var allocMetallurgie = layoffCompensationInMonth(nbYearsSeniority: years,
+                                                         grid: model.metallurgieGrid)
         // majoration fonction de l'age
-        guard let slice1 = model.correctionAgeGrid.last(where: { $0.age <= age }) else {
+        guard let sliceAge = model.correctionAgeGrid.last(where: { $0.age <= age }) else {
             fatalError()
         }
         // majoration fonction de l'ancienneté
-        guard let slice2 = slice1.correctionAncienneteGrid.last(where: { $0.anciennete <= years }) else {
+        guard let slice2 = sliceAge.correctionAncienneteGrid.last(where: { $0.anciennete <= years }) else {
             fatalError()
         }
         // application de la majoration
@@ -144,32 +152,46 @@ struct IndemniteLicenciement: Codable {
         return max(allocMetallurgie, allocLegale)
     }
     
-    /// Calcul de l'indemnité de licenciement
+    /// Calcul de l'indemnité de licenciement selon le Code du travail (Légale)
     /// - Parameters:
-    ///   - yearlyWorkIncome: dernier salaire annuel
+    ///   - yearlyWorkIncomeBrut: dernier salaire annuel brut
+    ///   - nbYearsSeniority: nombre d'année d'ancienneté au moment du licenciement
+    /// - Returns: montant de l'indemnité de licenciement selon le Code du travail (Légale)
+    func layoffCompensationLegal(yearlyWorkIncomeBrut   : Double,
+                                 nbYearsSeniority years : Int) -> Double {
+        let nbMonth = layoffCompensationLegalInMonth(nbYearsSeniority : years)
+        // indemnité brute légale basée sur le dernier salaire brut
+        return nbMonth * yearlyWorkIncomeBrut / 12.0
+    }
+
+    /// Calcul de l'indemnité de licenciement selon la Convention de la Métalurgie
+    /// - Parameters:
+    ///   - actualCompensationBrut: indemnité licenciement brutte
+    ///   - causeOfRetirement: cause de la cessation d'activité
+    ///   - yearlyWorkIncomeBrut: dernier salaire annuel brut
     ///   - age: age au moment du licenciement
     ///   - nbYearsSeniority: nombre d'année d'ancienneté au moment du licenciement
-    /// - Returns: montant de l'indemnité de licenciement
-    func compensation(actualCompensationBrut : Double? = nil,
-                      causeOfRetirement      : Unemployment.Cause,
-                      yearlyWorkIncomeBrut   : Double,
-                      age                    : Int,
-                      nbYearsSeniority years : Int) -> (nbMonth: Double, brut: Double, net: Double, taxable: Double) {
+    /// - Returns: montant de l'indemnité de licenciement selon la Convention de la Métalurgie
+    func layoffCompensationConvention(actualCompensationBrut : Double? = nil,
+                                      causeOfRetirement      : Unemployment.Cause,
+                                      yearlyWorkIncomeBrut   : Double,
+                                      age                    : Int,
+                                      nbYearsSeniority years : Int) -> (nbMonth: Double, brut: Double, net: Double, taxable: Double) {
         var taxable      : Double
         var irppDiscount : Double
-        let nbMonth = compensationInMonth(age              : age,
-                                          nbYearsSeniority : years)
+        let nbMonth = layoffCompensationConventionInMonth(age              : age,
+                                                          nbYearsSeniority : years)
         // indemnité brute conventionnelle basée sur le dernier salaire brut
-        let brutConventionnel = nbMonth / 12.0 * yearlyWorkIncomeBrut
+        let brutConventionnel = nbMonth * yearlyWorkIncomeBrut / 12.0
         // indemnité réelle perçue (peut être plus élevée)
         let brutReel          = actualCompensationBrut ?? brutConventionnel
-
+        
         // fraction de l'indemnité taxable à l'IRPP
         switch causeOfRetirement {
             case .planSauvegardeEmploi, .ruptureConventionnelleCollective :
                 // exonération totale de l'IRPP
                 irppDiscount = brutReel
-            
+                
             case .licenciement, .ruptureConventionnelleIndividuelle :
                 // Exonération partielle de l'IRPP :
                 // 1 x le montant de l'indemnité légale ou conventionnelle
@@ -184,19 +206,18 @@ struct IndemniteLicenciement: Codable {
                 // maximum des 3
                 irppDiscount = max(discount1, discount2, discount3)
                 irppDiscount = min(irppDiscount, brutReel)
-            
+                
             case .demission :
                 // pas d'exonération de l'IRPP
                 irppDiscount = 0
         }
         taxable = brutReel - irppDiscount
-
+        
         // indemnité nette de charges sociales
         let net = Fiscal.model.layOffTaxes.net(compensationConventional : brutConventionnel,
                                                compensationBrut         : brutReel,
                                                compensationTaxable      : &taxable,
                                                irppDiscount             : irppDiscount)
-        
         return (nbMonth : nbMonth,
                 brut    : brutReel,
                 net     : net,
@@ -205,18 +226,31 @@ struct IndemniteLicenciement: Codable {
 }
 
 // MARK: - Allocation chomage
+// https://www.service-public.fr/particuliers/vosdroits/F14860
+// https://www.unedic.org/indemnisation/vos-questions-sur-indemnisation-assurance-chomage/pendant-combien-de-temps-puis-je-etre-indemnisee
+// https://www.unedic.org/indemnisation/vos-questions-sur-indemnisation-assurance-chomage/comment-est-calculee-mon-allocation-chomage
+// https://www.legisocial.fr/actualites-sociales/1097-le-nouveau-regime-differe-specifique-dindemnisation-pole-emploi-est-en-vigueur.html
 // https://www.cadremploi.fr/editorial/conseils/droit-du-travail/detail/article/demission-legitime-et-allocations-chomage.html
+// https://www.cadremploi.fr/editorial/conseils/droit-du-travail/detail/article/ce-que-les-cadres-doivent-savoir-sur-la-nouvelle-convention-dassurance-chomage0.html
+// https://www.cadremploi.fr/editorial/conseils/droit-du-travail/detail/article/allocations-chomage-combien-toucheriez-vous.html
 
-struct AllocationChomage: Codable {
-
+struct UnemploymentCompensation: Codable {
+    
     // nested types
     
     struct DurationSlice: Codable {
-        var fromAge             : Int
-        var maxDuration         : Int // nb de mois d'indemnisation
-        var reduction           : Double // % de dégressivité
-        var reductionAfter      : Int // nd de mois d'indemnisation avant dégressivité
-        var reductionSeuilAlloc : Double // € d'allocation min pour dégressivité
+        let fromAge             : Int
+        let maxDuration         : Int // nb de mois d'indemnisation
+        let reduction           : Double // % de dégressivité après le délai de reductionAfter
+        let reductionAfter      : Int // nd de mois d'indemnisation avant dégressivité
+        let reductionSeuilAlloc : Double // € d'allocation SJR min pour se voir appliqué la dégressivité
+    }
+    
+    struct DelayModel: Codable {
+        let delaiAttente                        : Int // 7 // L'ARE ne peut pas être versée avant la fin d'un délai d'attente, fixé à 7 jours
+        let ratioDiffereSpecifique              : Double // 94,4 // nombre de jours obtenu en divisant le montant de l'indemnité prise en compte par 94,4
+        let maxDiffereSpecifique                : Int // 150 // le différé ne doit pas dépasser 150 jours calendaires (5 mois)
+        let maxDiffereSpecifiqueLicenciementEco : Int // 75 // ou, en cas de licenciement pour motif économique, 75 jours calendaires.
     }
     
     struct AmountModel: Codable {
@@ -230,6 +264,7 @@ struct AllocationChomage: Codable {
     
     struct Model: Codable {
         let durationGrid : [DurationSlice]
+        let delayModel   : DelayModel
         let amountModel  : AmountModel
     }
     
@@ -249,11 +284,30 @@ struct AllocationChomage: Codable {
         return slice.maxDuration
     }
     
-    /// Période de carence avant réduction de l'allocation journalière
+    /// Différé spécifique d'indemnisation (ne réduit pas la durée totale d'indemnisation)
+    /// - Returns: durée en nombre de jours du Différé spécifique d'indemnisation
+    /// - Parameters:
+    ///   - SJR: Salaire Journalier de Référence
+    ///   - compensationSupralegal: indemnités de rupture de contrat en plus des indemnités d'origine légale
+    ///   - causeOfRetirement: cause de la cessation d'activité
+    ///  - Note: Lorsque vous percevez des indemnités de rupture de contrat en plus des indemnités d'origine légale,
+    ///           un différé spécifique d'indemnisation est appliqué sur ces sommes.
+    ///           - Ne diminue pas la durée totale d'indemnisation.
+    ///           - Repousse uniquement le point de départ.
+    func DiffereSpecifique(SJR                    : Double,
+                           compensationSupralegal : Double,
+                           causeOfRetirement      : Unemployment.Cause) -> Int {
+        let delay = (compensationSupralegal / model.delayModel.ratioDiffereSpecifique).rounded(.up)
+        // plafonnemment différent selon la cause de licenciement
+        let plafond = causeOfRetirement == .planSauvegardeEmploi ? model.delayModel.maxDiffereSpecifiqueLicenciementEco : model.delayModel.maxDiffereSpecifique
+        return min(Int(delay), plafond)
+    }
+    
+    /// Période avant réduction de l'allocation journalière
     /// - Parameters:
     ///   - age: age au moment du licenciement
     ///   - SJR: Salaire Journalier de Référence
-    /// - Returns: Période de carence avant réduction de l'allocation journalière en mois
+    /// - Returns: Période avant réduction de l'allocation journalière en mois
     func reductionAfter(age: Int, SJR: Double) -> Int? {
         guard let slice = model.durationGrid.last(where: { $0.fromAge <= age }) else {
             fatalError()
@@ -267,13 +321,13 @@ struct AllocationChomage: Codable {
         }
     }
     
-    /// Réduction de l'allocation journalière
+    /// Coefficient de réduction de l'allocation journalière
     /// - Parameters:
     ///   - age: age au moment du licenciement
     ///   - daylyAlloc: allocation journalière
     /// - Returns: Coefficient de réduction de l'allocation journalière et durée de carence avant réduction
     func reduction(age: Int, daylyAlloc: Double) ->
-        (percentReduc: Double, afterMonth: Int?) {
+    (percentReduc: Double, afterMonth: Int?) {
         guard let slice = model.durationGrid.last(where: { $0.fromAge <= age }) else {
             fatalError()
         }
@@ -296,7 +350,7 @@ struct AllocationChomage: Codable {
                           model.amountModel.maxAllocationEuro)
         let brut    = alloc.clamp(low  : model.amountModel.minAllocation,
                                   high : plafond)
-
+        
         // nette de charges sociales
         let net = Fiscal.model.socialTaxesOnAllocationChomage.net(brut : brut,
                                                                   SJR  : SJR)

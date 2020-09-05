@@ -58,7 +58,7 @@ struct MemberDetailView: View {
     }
 }
 
-// MARK: - Adult View
+// MARK: - MemberDetailView / Adult View
 
 fileprivate struct AdultDetailView: View {
     var body: some View {
@@ -71,6 +71,8 @@ fileprivate struct AdultDetailView: View {
         }
     }
 }
+
+// MARK: - MemberDetailView / Adult View / Section Scenario
 
 fileprivate struct ScenarioSection: View {
     @EnvironmentObject var member : Person
@@ -138,6 +140,8 @@ fileprivate struct ScenarioSection: View {
         }
     }
 }
+
+// MARK: - MemberDetailView / Adult View / Section Revenus
 
 fileprivate struct RevenuSection: View {
     
