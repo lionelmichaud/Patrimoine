@@ -276,6 +276,25 @@ struct PercentView: View {
     }
 }
 
+// MARK: - Affichage d'un text "text"
+struct LabeledTextView: View {
+    let label   : String
+    let text    : String
+    
+    var body: some View {
+        HStack {
+            Text(label)
+            Spacer()
+            Text(text)
+        }
+    }
+    
+    init(label: String, text : String, comment: String? = nil) {
+        self.label   = label
+        self.text    = text
+    }
+}
+
 // MARK: - Saisie d'un intervalle de Dates
 struct DateRangeEditView: View {
     let fromLabel         : String

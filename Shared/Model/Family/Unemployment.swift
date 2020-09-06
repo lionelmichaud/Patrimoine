@@ -164,26 +164,31 @@ struct LayoffCompensation: Codable {
         return nbMonth * yearlyWorkIncomeBrut / 12.0
     }
 
-    /// Calcul de l'indemnité de licenciement selon la Convention de la Métalurgie
+    /// Calcul de l'indemnité de licenciement selon la Convention de la Métalurgie ou Supra-convention
     /// - Parameters:
-    ///   - actualCompensationBrut: indemnité licenciement brutte
+    ///   - actualCompensationBrut: indemnité licenciement brute si > convention collective
     ///   - causeOfRetirement: cause de la cessation d'activité
     ///   - yearlyWorkIncomeBrut: dernier salaire annuel brut
     ///   - age: age au moment du licenciement
     ///   - nbYearsSeniority: nombre d'année d'ancienneté au moment du licenciement
-    /// - Returns: montant de l'indemnité de licenciement selon la Convention de la Métalurgie
-    func layoffCompensationConvention(actualCompensationBrut : Double? = nil,
-                                      causeOfRetirement      : Unemployment.Cause,
-                                      yearlyWorkIncomeBrut   : Double,
-                                      age                    : Int,
-                                      nbYearsSeniority years : Int) -> (nbMonth: Double, brut: Double, net: Double, taxable: Double) {
+    /// - Returns: montant de l'indemnité de licenciement selon la Convention de la Métalurgie ou Supra-convention
+    func layoffCompensation(actualCompensationBrut : Double? = nil,
+                            causeOfRetirement      : Unemployment.Cause,
+                            yearlyWorkIncomeBrut   : Double,
+                            age                    : Int,
+                            nbYearsSeniority years : Int)
+    -> (nbMonth : Double,
+        brut    : Double,
+        net     : Double,
+        taxable : Double) {
+        
         var taxable      : Double
         var irppDiscount : Double
         let nbMonth = layoffCompensationConventionInMonth(age              : age,
                                                           nbYearsSeniority : years)
         // indemnité brute conventionnelle basée sur le dernier salaire brut
         let brutConventionnel = nbMonth * yearlyWorkIncomeBrut / 12.0
-        // indemnité réelle perçue (peut être plus élevée)
+        // indemnité réelle perçue (peut être plus élevée que l'indemnité conventionnelle)
         let brutReel          = actualCompensationBrut ?? brutConventionnel
         
         // fraction de l'indemnité taxable à l'IRPP
@@ -290,16 +295,20 @@ struct UnemploymentCompensation: Codable {
     ///   - SJR: Salaire Journalier de Référence
     ///   - compensationSupralegal: indemnités de rupture de contrat en plus des indemnités d'origine légale
     ///   - causeOfRetirement: cause de la cessation d'activité
+    /// - Returns: Différé spécifique d'indemnisation en jours
     ///  - Note: Lorsque vous percevez des indemnités de rupture de contrat en plus des indemnités d'origine légale,
     ///           un différé spécifique d'indemnisation est appliqué sur ces sommes.
     ///           - Ne diminue pas la durée totale d'indemnisation.
     ///           - Repousse uniquement le point de départ.
-    func DiffereSpecifique(SJR                    : Double,
+    func differeSpecifique(SJR                    : Double,
                            compensationSupralegal : Double,
                            causeOfRetirement      : Unemployment.Cause) -> Int {
         let delay = (compensationSupralegal / model.delayModel.ratioDiffereSpecifique).rounded(.up)
+        print("delay = \(delay)")
         // plafonnemment différent selon la cause de licenciement
         let plafond = causeOfRetirement == .planSauvegardeEmploi ? model.delayModel.maxDiffereSpecifiqueLicenciementEco : model.delayModel.maxDiffereSpecifique
+        print("plafon = \(plafond)")
+        print("retenu = \(min(Int(delay), plafond))")
         return min(Int(delay), plafond)
     }
     
@@ -341,7 +350,10 @@ struct UnemploymentCompensation: Codable {
         }
     }
     
-    func daylyAllocBeforeReduction(SJR: Double) -> (brut: Double, net: Double) {
+    func daylyAllocBeforeReduction(SJR: Double)
+    -> (brut: Double,
+        net : Double) {
+        
         // brute avant charges sociales
         let alloc1  = SJR * model.amountModel.case1Rate / 100.0 + model.amountModel.case1Fix
         let alloc2  = SJR * model.amountModel.case2Rate / 100.0

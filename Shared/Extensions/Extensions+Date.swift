@@ -293,6 +293,6 @@ func numberOfDays(from: Date, to: Date) -> DateComponents {
     Date.calendar.dateComponents([.day], from: from, to: to)
 }
 
-func numberOf(component: Calendar.Component, from: Date, to: Date) -> DateComponents {
+func numberOf(_ component: Calendar.Component, from: Date, to: Date) -> DateComponents {
     Date.calendar.dateComponents([component], from: from, to: to)
 }

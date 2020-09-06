@@ -230,9 +230,9 @@ fileprivate struct EndOfWorkingPeriodEditView: View {
         //                    .alert(item: $alertItem) { alertItem in myAlert(alertItem: alertItem) }
         CasePicker(pickedCase: $adultViewModel.causeOfRetirement, label: "Cause").pickerStyle(SegmentedPickerStyle())
         if (adultViewModel.causeOfRetirement != Unemployment.Cause.demission) {
-            Toggle(isOn: $adultViewModel.hasAllocationSupraLegale, label: { Text("Indemnité de licenciement supra-légale") })
+            Toggle(isOn: $adultViewModel.hasAllocationSupraLegale, label: { Text("Indemnité de licenciement non conventionnelle (supra convention)") })
             if adultViewModel.hasAllocationSupraLegale {
-                AmountEditView(label: "Montant brut", amount: $adultViewModel.allocationSupraLegale).padding(.leading)
+                AmountEditView(label: "Montant total brut", amount: $adultViewModel.allocationSupraLegale).padding(.leading)
             }
         }
     }

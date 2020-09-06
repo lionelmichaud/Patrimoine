@@ -16,7 +16,7 @@ struct PersonLifeLineView: View {
         @Published var steps      : [AnyView]                        = []
         @Published var indicators : [StepperIndicationType<AnyView>] = []
         @Published var pitStops   : [PitStopStep]                    = []
-        let spacing  : CGFloat = 50
+        let spacing  : CGFloat = 40
         let radius   : CGFloat = 45
         let fontSize : CGFloat = 14
 
@@ -30,26 +30,34 @@ struct PersonLifeLineView: View {
                 case is Adult:
                     let adult = member as! Adult
                     // cessation d'activité
-                    steps.append(TextView(text: adult.dateOfRetirement.stringShortDayMonth + ": Cessation d'activité à l'age de \(adult.age(atDate: adult.dateOfRetirement).year!) ans \(adult.age(atDate: adult.dateOfRetirement).month!) mois",
+                    steps.append(TextView(text: adult.dateOfRetirement.stringShortDayMonth + ": Cessation d'activité (\(adult.causeOfRetirement.displayString)) à l'age de \(adult.age(atDate: adult.dateOfRetirement).year!) ans \(adult.age(atDate: adult.dateOfRetirement).month!) mois",
                                                     font: .system(size: fontSize, weight: .semibold)).padding(.leading).eraseToAnyView())
                     indicators.append(StepperIndicationType.custom(NumberedCircleView(text: String(adult.dateOfRetirement.year), width: radius).eraseToAnyView()))
                     pitStops.append(PitStopStep(view: TextView(text:"Aucun revenu").eraseToAnyView(), lineOptions: PitStopLineOptions.custom(1, Colors.teal.rawValue)))
                     // période d'allocation chomage éventuelle
                     if adult.hasUnemployementAllocationPeriod {
-                        if adult.dateOfStartOfAllocationReduction != nil {
-                            steps.append(TextView(text: adult.dateOfStartOfAllocationReduction!.stringShortDayMonth + ": Début de réduction de l'allocation chômage à l'age de \(adult.age(atDate: adult.dateOfStartOfAllocationReduction!).year!) ans \(adult.age(atDate: adult.dateOfStartOfAllocationReduction!).month!) mois",
-                                                            font: .system(size: fontSize, weight: .semibold)).padding(.leading).eraseToAnyView())
-                            indicators.append(StepperIndicationType.custom(NumberedCircleView(text: String(adult.dateOfStartOfAllocationReduction!.year), width: radius).eraseToAnyView()))
+                        if let date = adult.dateOfStartOfUnemployementAllocation {
+                            steps.append(TextView(text: date.stringShortDayMonth + ": Début de la période d'allocation chômage à l'age de \(adult.age(atDate: date).year!) ans \(adult.age(atDate: date).month!) mois",
+                                                  font: .system(size: fontSize, weight: .semibold)).padding(.leading).eraseToAnyView())
+                            indicators.append(StepperIndicationType.custom(NumberedCircleView(text: String(date.year), width: radius).eraseToAnyView()))
                             pitStops.append(PitStopStep(view: TextView(text:"Allocation chômage").eraseToAnyView(), lineOptions: PitStopLineOptions.custom(1, Colors.teal.rawValue)))
                         }
-                        steps.append(TextView(text: adult.dateOfEndOfUnemployementAllocation!.stringShortDayMonth + ": Fin de période d'allocation chômage à l'age de \(adult.age(atDate: adult.dateOfEndOfUnemployementAllocation!).year!) ans \(adult.age(atDate: adult.dateOfEndOfUnemployementAllocation!).month!) mois",
-                                                        font: .system(size: fontSize, weight: .semibold)).padding(.leading).eraseToAnyView())
-                        indicators.append(StepperIndicationType.custom(NumberedCircleView(text: String(adult.dateOfEndOfUnemployementAllocation!.year), width: radius).eraseToAnyView()))
-                        pitStops.append(PitStopStep(view: TextView(text:"Allocation chômage").eraseToAnyView(), lineOptions: PitStopLineOptions.custom(1, Colors.teal.rawValue)))
+                        if let date = adult.dateOfStartOfAllocationReduction {
+                            steps.append(TextView(text: date.stringShortDayMonth + ": Début de réduction de l'allocation chômage à l'age de \(adult.age(atDate: date).year!) ans \(adult.age(atDate: date).month!) mois",
+                                                  font: .system(size: fontSize, weight: .semibold)).padding(.leading).eraseToAnyView())
+                            indicators.append(StepperIndicationType.custom(NumberedCircleView(text: String(date.year), width: radius).eraseToAnyView()))
+                            pitStops.append(PitStopStep(view: TextView(text:"Allocation chômage").eraseToAnyView(), lineOptions: PitStopLineOptions.custom(1, Colors.teal.rawValue)))
+                        }
+                        if let date = adult.dateOfEndOfUnemployementAllocation {
+                            steps.append(TextView(text: date.stringShortDayMonth + ": Fin de période d'allocation chômage à l'age de \(adult.age(atDate: date).year!) ans \(adult.age(atDate: date).month!) mois",
+                                                  font: .system(size: fontSize, weight: .semibold)).padding(.leading).eraseToAnyView())
+                            indicators.append(StepperIndicationType.custom(NumberedCircleView(text: String(date.year), width: radius).eraseToAnyView()))
+                            pitStops.append(PitStopStep(view: TextView(text:"Allocation chômage").eraseToAnyView(), lineOptions: PitStopLineOptions.custom(1, Colors.teal.rawValue)))
+                        }
                     }
                     // liquidation de pension complémentaire
                     steps.append(TextView(text: adult.dateOfAgircPensionLiquid.stringShortDayMonth + ": Liquidation de la pension complémentaire à l'age de \(adult.ageOfAgircPensionLiquidComp.year!) ans \(adult.ageOfAgircPensionLiquidComp.month!) mois",
-                                                    font: .system(size: fontSize, weight: .semibold)).padding(.leading).eraseToAnyView())
+                                          font: .system(size: fontSize, weight: .semibold)).padding(.leading).eraseToAnyView())
                     indicators.append(StepperIndicationType.custom(NumberedCircleView(text: String(adult.dateOfAgircPensionLiquid.year), width: radius).eraseToAnyView()))
                     pitStops.append(PitStopStep(view: TextView(text:"Pension complémentaire").eraseToAnyView(), lineOptions: PitStopLineOptions.custom(1, Colors.teal.rawValue)))
                     // liquidation de pension de base

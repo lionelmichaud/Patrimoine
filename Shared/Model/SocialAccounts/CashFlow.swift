@@ -175,18 +175,18 @@ struct CashFlowLine {
                 }
                 totalPensionDiscount += discount
                 
-                /// allocation chomage
-                let alocation = adult.unemployementAllocation(during: year)
-                revenues.perCategory[.unemployAlloc]?.credits.values.append((name: name, value: alocation.net.rounded()))
-                revenues.perCategory[.unemployAlloc]?.taxablesIrpp.values.append((name: name,
-                                                                                  value: alocation.taxable.rounded()))
-
                 /// indemnité de licenciement
                 let compensation = adult.layoffCompensation(during: year)
                 revenues.perCategory[.layoffCompensation]?.credits.values.append((name: name,
                                                                                   value: compensation.net.rounded()))
                 revenues.perCategory[.layoffCompensation]?.taxablesIrpp.values.append((name: name,
                                                                                        value: compensation.taxable.rounded()))
+                /// allocation chomage
+                let alocation = adult.unemployementAllocation(during: year)
+                revenues.perCategory[.unemployAlloc]?.credits.values.append((name: name, value: alocation.net.rounded()))
+                revenues.perCategory[.unemployAlloc]?.taxablesIrpp.values.append((name: name,
+                                                                                  value: alocation.taxable.rounded()))
+
             }
         }
     }

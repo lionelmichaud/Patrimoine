@@ -15,19 +15,19 @@ final class Adult: Person {
     
     private enum CodingKeys : String, CodingKey {
         case nb_Of_Child_Birth,
-        date_Of_Retirement,
-        cause_Retirement,
-        layoff_Compensation_Bonified,
-        age_Of_Pension_Liquid,
-        regime_General_Situation,
-        age_Of_Agirc_Pension_Liquid,
-        regime_Agirc_Situation,
-        nb_Of_Year_Of_Dependency,
-        work_Income
+             date_Of_Retirement,
+             cause_Retirement,
+             layoff_Compensation_Bonified,
+             age_Of_Pension_Liquid,
+             regime_General_Situation,
+             age_Of_Agirc_Pension_Liquid,
+             regime_Agirc_Situation,
+             nb_Of_Year_Of_Dependency,
+             work_Income
     }
     
     // MARK: - properties
-
+    
     // nombre d'enfants
     @Published var nbOfChildBirth: Int = 0
     
@@ -71,7 +71,7 @@ final class Adult: Person {
                 return Fiscal.model.incomeTaxes.taxableIncome(from: workIncome!)
         }
     }
-
+    
     /// ACTIVITE: date et cause de cessation d'activité
     @Published var causeOfRetirement: Unemployment.Cause = .demission
     @Published var dateOfRetirement : Date = Date.distantFuture
@@ -84,7 +84,7 @@ final class Adult: Person {
     var displayDateOfRetirement     : String { // computed
         mediumDateFormatter.string(from: dateOfRetirement)
     } // computed
-
+    
     /// CHOMAGE
     var SJR: Double { // computed
         guard let workIncome = workIncome else {
@@ -111,7 +111,49 @@ final class Adult: Person {
                 return Unemployment.canReceiveAllocation(for: causeOfRetirement)
         }
     } // computed
-    @Published var layoffCompensationBonified : Double? // indemnité supra-légale accordée par l'entreprise
+    @Published var layoffCompensationBonified : Double? // indemnité accordée par l'entreprise > légal (supra-légale)
+    var layoffCompensationBrutLegal           : Double? { // computed
+        guard hasUnemployementAllocationPeriod else {
+            return nil
+        }
+        guard let workIncome = workIncome else {
+            return nil
+        }
+        switch workIncome {
+            case .salary(_, _, _, let fromDate, _):
+                let nbYearsSeniority = numberOf(.year,
+                                                from : fromDate,
+                                                to   : dateOfRetirement).year!
+                return Unemployment.model.indemniteLicenciement.layoffCompensationLegal(
+                    yearlyWorkIncomeBrut : workBrutIncome,
+                    nbYearsSeniority     : nbYearsSeniority)
+            default:
+                fatalError()
+        }
+    } // computed
+    var layoffCompensationBrutConvention      : Double? { // computed
+        guard hasUnemployementAllocationPeriod else {
+            return nil
+        }
+        guard let workIncome = workIncome else {
+            return nil
+        }
+        switch workIncome {
+            case .salary(_, _, _, let fromDate, _):
+                let nbYearsSeniority = numberOf(.year,
+                                                from : fromDate,
+                                                to   : dateOfRetirement).year!
+                // base: salaire brut
+                return Unemployment.model.indemniteLicenciement.layoffCompensation(
+                    actualCompensationBrut : nil,
+                    causeOfRetirement      : causeOfRetirement,
+                    yearlyWorkIncomeBrut   : workBrutIncome,
+                    age                    : age(atDate: dateOfRetirement).year!,
+                    nbYearsSeniority       : nbYearsSeniority).brut
+            default:
+                fatalError()
+        }
+    } // computed
     var layoffCompensation                    : (nbMonth: Double, brut: Double, net: Double, taxable: Double)? { // computed
         guard hasUnemployementAllocationPeriod else {
             return nil
@@ -121,11 +163,11 @@ final class Adult: Person {
         }
         switch workIncome {
             case .salary(_, _, _, let fromDate, _):
-                let nbYearsSeniority = numberOf(component : .year,
-                                                from      : fromDate,
-                                                to        : dateOfRetirement).year!
+                let nbYearsSeniority = numberOf(.year,
+                                                from : fromDate,
+                                                to   : dateOfRetirement).year!
                 // base: salaire brut
-                return Unemployment.model.indemniteLicenciement.layoffCompensationConvention(
+                return Unemployment.model.indemniteLicenciement.layoffCompensation(
                     actualCompensationBrut : layoffCompensationBonified,
                     causeOfRetirement      : causeOfRetirement,
                     yearlyWorkIncomeBrut   : workBrutIncome,
@@ -135,27 +177,53 @@ final class Adult: Person {
                 fatalError()
         }
     } // computed
+    var unemployementAllocationDiffere        : Int? { // en jours
+        guard hasUnemployementAllocationPeriod else {
+            return nil
+        }
+        guard let compensationSupralegal = layoffCompensation?.brut - layoffCompensationBrutLegal else {
+            return nil
+        }
+        Swift.print("supralégal = \(compensationSupralegal)")
+        return Unemployment.model.allocationChomage.differeSpecifique(
+            SJR                    : SJR,
+            compensationSupralegal : compensationSupralegal,
+            causeOfRetirement      : causeOfRetirement)
+    } // computed
     var unemployementAllocationDuration       : Int? { // en mois
         guard hasUnemployementAllocationPeriod else {
             return nil
         }
         return Unemployment.model.allocationChomage.durationInMonth(age: age(atDate: dateOfRetirement).year!)
     } // computed
+    var dateOfStartOfUnemployementAllocation  : Date? { // computed
+        guard hasUnemployementAllocationPeriod else {
+            return nil
+        }
+        return unemployementAllocationDiffere!.days.from(dateOfRetirement)!
+    } // computed
     var dateOfStartOfAllocationReduction      : Date? { // computed
         guard hasUnemployementAllocationPeriod else {
             return nil
         }
-        guard let reductionAfter = Unemployment.model.allocationChomage.reductionAfter(age: age(atDate: dateOfRetirement).year!,
-                                                                                       SJR: SJR) else {
-           return nil
+        guard let reductionAfter = Unemployment.model.allocationChomage.reductionAfter(
+                age: age(atDate: dateOfRetirement).year!,
+                SJR: SJR) else {
+            return nil
         }
-        return  reductionAfter.months.from(dateOfRetirement)!
+        guard let dateOfStart = dateOfStartOfUnemployementAllocation else {
+            return nil
+        }
+        return  reductionAfter.months.from(dateOfStart)!
     } // computed
     var dateOfEndOfUnemployementAllocation    : Date? { // computed
         guard hasUnemployementAllocationPeriod else {
             return nil
         }
-        return unemployementAllocationDuration!.months.from(dateOfRetirement)!
+        guard let dateOfStart = dateOfStartOfUnemployementAllocation else {
+            return nil
+        }
+        return unemployementAllocationDuration!.months.from(dateOfStart)!
     } // computed
     var unemployementAllocation               : (brut: Double, net: Double)? { // computed
         guard hasUnemployementAllocationPeriod else {
@@ -194,7 +262,7 @@ final class Adult: Person {
         return Unemployment.model.allocationChomage.reduction(age        : age(atDate: dateOfRetirement).year!,
                                                               daylyAlloc : unemployementAllocation!.brut / 365)
     } // computed
-
+    
     /// RETRAITE: date de demande de liquidation de pension régime général
     var dateOfPensionLiquid              : Date { // computed
         Date.calendar.date(from: dateOfPensionLiquidComp)!
@@ -251,7 +319,7 @@ final class Adult: Person {
             return (0, 0)
         }
     } // computed
-
+    
     /// RETRAITE: pension
     var pension: (brut: Double, net: Double, taxable: Double) { // computed
         let pensionGeneral = pensionRegimeGeneral
@@ -273,7 +341,7 @@ final class Adult: Person {
     
     override var description: String {
         return super.description +
-        """
+            """
         age of retirement:  \(ageOfRetirementComp)
         date of retirement: \(dateOfRetirement.stringMediumDate)
         age of AGIRC pension liquidation:  \(ageOfAgircPensionLiquidComp)
@@ -288,7 +356,7 @@ final class Adult: Person {
     }
     
     // MARK: - initialization
-
+    
     required init(from decoder: Decoder) throws {
         // Get our container for this subclass' coding keys
         let container =
@@ -347,7 +415,7 @@ final class Adult: Person {
     }
     
     // MARK: - methods
-
+    
     override func encode(to encoder: Encoder) throws {
         try super.encode(to: encoder)
         
@@ -371,19 +439,19 @@ final class Adult: Person {
         switch event {
             case .debutEtude:
                 return nil
-            
+                
             case .independance:
                 return nil
-            
+                
             case .dependence:
                 return yearOfDependency
-            
+                
             case .deces:
                 return super.yearOf(event: event)
-            
+                
             case .cessationActivite:
                 return dateOfRetirement.year
-            
+                
             case .liquidationPension:
                 return dateOfPensionLiquid.year
             // TODO: ajouter la liquidation de la pension complémentaire
@@ -426,10 +494,11 @@ final class Adult: Person {
         guard isRetired(during: year) else {
             return false
         }
-        guard let endDate = dateOfEndOfUnemployementAllocation else {
+        guard let startDate = dateOfStartOfUnemployementAllocation,
+              let endDate   = dateOfEndOfUnemployementAllocation else {
             return false
         }
-        return year <= endDate.year
+        return (startDate.year...endDate.year).contains(year)
     }
     
     /// true si est vivant à la fin de l'année et année égale ou postérieur à l'année de liquidation de la pension du régime général
@@ -478,7 +547,7 @@ final class Adult: Person {
             return (0, 0)
         }
     }
-
+    
     func pensionRegimeAgirc(during year: Int)
     -> (brut: Double, net: Double) {
         if let pensionAgirc =
@@ -496,7 +565,7 @@ final class Adult: Person {
             return (0, 0)
         }
     }
-
+    
     /// Calcul de la pension de retraite
     /// - Parameter year: année
     /// - Returns: pension brute, nette de charges sociales, taxable à l'IRPP
@@ -581,7 +650,7 @@ final class Adult: Person {
         let firstYearDay = firstDayOf(year : year)
         let lastYearDay  = lastDayOf(year  : year)
         let alloc        = unemployementAllocation!
-        let dateDebAlloc = dateOfRetirement
+        let dateDebAlloc = dateOfStartOfUnemployementAllocation!
         let dateFinAlloc = dateOfEndOfUnemployementAllocation!
         if let dateReducAlloc = dateOfStartOfAllocationReduction {
             // reduction d'allocation après un certaine date
@@ -607,9 +676,9 @@ final class Adult: Person {
             // pas de réduction d'allocation
             var nbDays: Int
             // nombre de jours d'allocation dans l'année
-            if year == dateOfRetirement.year {
+            if year == dateDebAlloc.year {
                 // première année d'allocation
-                nbDays = 365 - dateOfRetirement.dayOfYear!
+                nbDays = 365 - dateDebAlloc.dayOfYear!
             } else if year == dateFinAlloc.year {
                 // dernière année d'allocation
                 nbDays = dateFinAlloc.dayOfYear!

@@ -66,14 +66,6 @@
         }
     },
     
-    "delayModel" :
-    {
-        "delaiAttente"                        : 7,
-        "ratioDiffereSpecifique"              : 94.4,
-        "maxDiffereSpecifique"                : 150,
-        "maxDiffereSpecifiqueLicenciementEco" : 75
-    },
-    
     "allocationChomage" :
     {
         "model" :
@@ -108,6 +100,15 @@
                     "reductionSeuilAlloc" : 84.33
                 }
             ],
+            
+            "delayModel" :
+            {
+                "delaiAttente"                        : 7,
+                "ratioDiffereSpecifique"              : 94.4,
+                "maxDiffereSpecifique"                : 150,
+                "maxDiffereSpecifiqueLicenciementEco" : 75
+            },
+            
             "amountModel" :
             {
                 "case1Rate"          : 40.4,
