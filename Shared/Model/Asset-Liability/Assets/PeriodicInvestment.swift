@@ -17,7 +17,7 @@ struct PeriodicInvestement: Identifiable, Codable, NameableAndValueable {
     
     // properties
     
-    let id = UUID()
+    var id              = UUID()
     var name            : String
     var type            : InvestementType
     var yearlyPayement  : Double
@@ -119,18 +119,6 @@ struct PeriodicInvestement: Identifiable, Codable, NameableAndValueable {
 }
 
 // MARK: Extensions
-extension PeriodicInvestement : Hashable {
-    static func == (l: PeriodicInvestement, r: PeriodicInvestement) -> Bool {
-        var b = (l.name == r.name) && (l.type == r.type) && (l.yearlyPayement == r.yearlyPayement)
-        b = b && (l.firstYear == r.firstYear) && (l.initialValue == r.initialValue)
-        b = b && (l.initialInterest == r.initialInterest) && (l.interestRate == r.interestRate)
-        b = b && (l.lastYear == r.lastYear)
-        return b
-    }
-    func hash(into hasher: inout Hasher) {
-        hasher.combine(id)
-    }
-}
 extension PeriodicInvestement: Comparable {
     static func < (lhs: PeriodicInvestement, rhs: PeriodicInvestement) -> Bool {
         return (lhs.name < rhs.name)

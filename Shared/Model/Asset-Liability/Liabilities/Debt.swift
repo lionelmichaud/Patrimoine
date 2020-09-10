@@ -16,7 +16,7 @@ struct Debt: Codable, Identifiable, NameableAndValueable {
     
     // properties
     
-    let id = UUID()
+    var id    = UUID()
     var name  : String
     var value : Double
     
@@ -45,14 +45,6 @@ struct Debt: Codable, Identifiable, NameableAndValueable {
 }
 
 // MARK: Extensions
-extension Debt: Hashable {
-    static func == (l: Debt, r: Debt) -> Bool {
-        (l.name == r.name) && (l.value == r.value)
-    }
-    func hash(into hasher: inout Hasher) {
-        hasher.combine(id)
-    }
-}
 extension Debt: Comparable {
     static func < (lhs: Debt, rhs: Debt) -> Bool {
         (lhs.name < rhs.name)

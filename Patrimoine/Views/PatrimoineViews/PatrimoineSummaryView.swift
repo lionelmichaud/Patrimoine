@@ -18,7 +18,7 @@ struct PatrimoineSummaryView: View {
         VStack {
             // évaluation annuelle du patrimoine
             HStack {
-                Text("Evaluation en ") + Text(String(Int(uiState.expenseViewState.evalDate)))
+                Text("Evaluation fin ") + Text(String(Int(uiState.expenseViewState.evalDate)))
                 Slider(value : $uiState.expenseViewState.evalDate,
                        in    : minDate.double() ... maxDate.double(),
                        step  : 1,

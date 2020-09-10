@@ -39,20 +39,22 @@ struct ExpenseDetailedView: View {
             // plage de temps
             TimeSpanEditView(timeSpan: $localItem.timeSpan)
         }
-            .textFieldStyle(RoundedBorderTextFieldStyle())
-            .navigationBarTitle(Text("Dépense " + category.displayString),
-                                displayMode: .inline)
-            .navigationBarItems(
-                leading: Button(
-                    action : duplicate,
-                    label  : { Text("Dupliquer")} )
-                        .disabled(index == nil),
-                trailing: Button(
-                    action : applyChanges,
-                    label  : { Text("Sauver")} )
-                        .disabled(!changeOccured())
-            )
-            .alert(item: $alertItem, content: myAlert) 
+        .textFieldStyle(RoundedBorderTextFieldStyle())
+        .navigationBarTitle(Text("Dépense " + category.displayString),
+                            displayMode: .inline)
+        .navigationBarItems(
+            leading: Button(
+                action : duplicate,
+                label  : { Text("Dupliquer")} )
+                .capsuleButtonStyle()
+                .disabled((index == nil) || changeOccured()),
+            trailing: Button(
+                action : applyChanges,
+                label  : { Text("Sauver")} )
+                .capsuleButtonStyle()
+                .disabled(!changeOccured())
+        )
+        .alert(item: $alertItem, content: myAlert)
     }
     
     init(category: LifeExpenseCategory, item: LifeExpense?, family: Family) {
@@ -68,9 +70,10 @@ struct ExpenseDetailedView: View {
     }
     
     func duplicate() {
-        if index != nil {
-            family.expenses.perCategory[self.category]?.add(localItem)
-        }
+        // générer un nouvel identifiant pour la copie
+        localItem.id = UUID()
+        localItem.name += "-copie"
+        family.expenses.perCategory[self.category]?.add(localItem)
     }
     
     // sauvegarder les changements
@@ -88,7 +91,7 @@ struct ExpenseDetailedView: View {
         if let index = index {
             // modifier un éléménet existant
             family.expenses.perCategory[self.category]?.update(with: localItem,
-                                                              at  : index)
+                                                               at  : index)
         } else {
             // créer un nouvel élément
             family.expenses.perCategory[self.category]?.add(localItem)
@@ -97,7 +100,7 @@ struct ExpenseDetailedView: View {
         // remettre à zéro la simulation et sa vue
         simulation.reset(withPatrimoine: patrimoine)
         uiState.resetSimulation()
-
+        
         self.presentationMode.wrappedValue.dismiss()
     }
     
@@ -111,7 +114,7 @@ struct ExpenseDetailedView_Previews: PreviewProvider {
     static var simulation = Simulation()
     static var patrimoine = Patrimoin()
     static var uiState    = UIState()
-
+    
     static var previews: some View {
         ExpenseDetailedView(category : .autre,
                             item     : LifeExpense(name    : "Test",

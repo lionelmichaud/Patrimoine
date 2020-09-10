@@ -23,7 +23,6 @@ struct LiabilityView: View {
             if !uiState.patrimoineViewState.liabViewState.colapseLiab {
                     LoanView()
                     DebtView()
-//                }
             }
         }
     }

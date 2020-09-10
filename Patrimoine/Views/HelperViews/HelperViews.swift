@@ -459,6 +459,7 @@ struct MenuContentView: View {
     var body: some View {
         // filtre des séries à (dé)sélectionner
         VStack {
+            // Barre de titre
             HStack {
                 Button(
                     action: {
@@ -482,7 +483,7 @@ struct MenuContentView: View {
                         }
                     }).capsuleButtonStyle()
             }.padding(.horizontal)
-            
+            // menu
             List (0 ..< itemSelection.count) { idx in
                 HStack {
                     Text(self.itemSelection[idx].label).font(.caption)

@@ -11,7 +11,7 @@ import SwiftUI
 struct RealEstateDetailedView: View {
     @EnvironmentObject var simulation : Simulation
     @EnvironmentObject var uiState    : UIState
-
+    
     var item: RealEstateAsset?
     // commun
     @EnvironmentObject var patrimoine: Patrimoin
@@ -105,10 +105,12 @@ struct RealEstateDetailedView: View {
             leading: Button(
                 action : duplicate,
                 label  : { Text("Dupliquer")} )
-                .disabled(index == nil),
+                .capsuleButtonStyle()
+                .disabled((index == nil) || changeOccured()),
             trailing: Button(
                 action: applyChanges,
                 label: { Text("Sauver") } )
+                .capsuleButtonStyle()
                 .disabled(!changeOccured())
         )
     }
@@ -126,9 +128,10 @@ struct RealEstateDetailedView: View {
     }
     
     func duplicate() {
-        if index != nil {
-            patrimoine.assets.realEstates.add(localItem)
-        }
+        // générer un nouvel identifiant pour la copie
+        localItem.id = UUID()
+        localItem.name += "-copie"
+        patrimoine.assets.realEstates.add(localItem)
     }
     
     // sauvegarder les changements
@@ -144,7 +147,7 @@ struct RealEstateDetailedView: View {
         // remettre à zéro la simulation et sa vue
         simulation.reset(withPatrimoine: patrimoine)
         uiState.resetSimulation()
-
+        
         //patrimoine.assets.realEstates.storeItemsToFile()
         self.presentationMode.wrappedValue.dismiss()
     }
@@ -156,7 +159,7 @@ struct RealEstateDetailedView: View {
 
 struct RealEstateDetailedView_Previews: PreviewProvider {
     static var patrimoine  = Patrimoin()
-
+    
     static var previews: some View {
         return
             NavigationView() {

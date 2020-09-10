@@ -17,7 +17,7 @@ struct NamedValueTable {
     var name: String
     var values = [(name: String, value: Double)]()
     var total: Double {
-        return values.reduce(.zero, {result, element in result + element.value})
+        values.reduce(.zero, {result, element in result + element.value})
     }
     // tableau des noms
     var headersArray: [String] {

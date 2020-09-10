@@ -18,7 +18,7 @@ struct FreeInvestement: Identifiable, Codable, NameableAndValueable {
     // nested types
     
     /// Situation annuelle de l'investissement
-    struct State: Codable {
+    struct State: Codable, Equatable {
         var year       : Int
         var interest   : Double // portion of interests included in the Value
         var investment : Double // portion of investment included in the Value
@@ -27,7 +27,7 @@ struct FreeInvestement: Identifiable, Codable, NameableAndValueable {
     
     // properties
     
-    let id = UUID()
+    var id                 = UUID()
     var name               : String
     let type               : InvestementType // type de l'investissement
     let interestRate       : Double // % fixe avant charges sociales si prélevées à la source annuellement
@@ -204,19 +204,6 @@ struct FreeInvestement: Identifiable, Codable, NameableAndValueable {
 }
 
 // MARK: Extensions
-extension FreeInvestement: Hashable {
-    static func == (l: FreeInvestement, r: FreeInvestement) -> Bool {
-        var b = (l.name == r.name) && (l.type == r.type) && (l.interestRate == r.interestRate)
-        b = b && (l.initialState.year       == r.initialState.year)       && (l.initialState.interest == r.initialState.interest)
-        b = b && (l.initialState.investment == r.initialState.investment) && (l.initialState.value    == r.initialState.value)
-        b = b && (l.currentState.year       == r.currentState.year)       && (l.currentState.interest == r.currentState.interest)
-        b = b && (l.currentState.investment == r.currentState.investment) && (l.currentState.value    == r.currentState.value)
-        return b
-    }
-    func hash(into hasher: inout Hasher) {
-        hasher.combine(id)
-    }
-}
 extension FreeInvestement: Comparable {
     static func < (lhs: FreeInvestement, rhs: FreeInvestement) -> Bool {
         return (lhs.name < rhs.name)

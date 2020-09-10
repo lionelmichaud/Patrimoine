@@ -3,33 +3,13 @@
     "items" : [
         {
             "id" : "282CC28F-0BC2-4323-AEA3-1FD3FD6E0EBF",
-            "name" : "Immorente1",
+            "name" : "Selectipierre2",
             "buyingDate" : "2020-04-23T21:53:04Z",
-            "buyingPrice" : 38000,
+            "buyingPrice" : 9900,
             "willBeSold" : true,
             "sellingDate" : "2022-04-23T21:53:04Z",
-            "revaluatRate" : 10,
-            "interestRate" : 10
-        },
-        {
-            "id" : "282CC28F-0BC2-4323-AEA3-1FD3FD6E0EBF",
-            "name" : "Primoval",
-            "buyingDate" : "2020-04-23T21:53:04Z",
-            "buyingPrice" : 40000,
-            "willBeSold" : false,
-            "sellingDate" : "2022-04-23T21:53:04Z",
-            "revaluatRate" : 10,
-            "interestRate" : 10
-        },
-        {
-            "id" : "282CC28F-0BC2-4323-AEA3-1FD3FD6E0EBF",
-            "name" : "Immorente2",
-            "buyingDate" : "2020-04-23T21:53:04Z",
-            "buyingPrice" : 58000,
-            "willBeSold" : true,
-            "sellingDate" : "2022-04-23T21:53:04Z",
-            "revaluatRate" : 10,
-            "interestRate" : 10
+            "revaluatRate" : 1.0,
+            "interestRate" : 3.56
         }
     ]
 }

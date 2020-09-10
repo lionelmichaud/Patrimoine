@@ -91,12 +91,13 @@ struct SciCashFlowLine {
         
         // pour chaque SCPI
         for scpi in sci.scpis.items.sorted(by:<) {
-            // populate SCPI revenues and social taxes
+            // populate SCPI revenues de la SCI, nets de charges sociales et avant IS
             let yearlyRevenue = scpi.yearlyRevenue(atEndOf: year)
             let name          = scpi.name
-            // revenus inscrit en compte courant avant prélèvements sociaux et IRPP
+            // revenus inscrit en compte courant après prélèvements sociaux et avant IS
+            // car dans le cas d'une SCI, le revenu remboursable aux actionnaires c'est le net de charges sociales
             revenues.sciDividends.values.append((name : name,
-                                                 value: yearlyRevenue.revenue.rounded()))
+                                                 value: yearlyRevenue.taxableIrpp.rounded()))
             // populate SCPI sale revenue: produit net de charges sociales et d'impôt sur la plus-value
             // FIXME: vérifier si c'est net où brut dans le cas d'une SCI
             let liquidatedValue = scpi.liquidatedValue(year)

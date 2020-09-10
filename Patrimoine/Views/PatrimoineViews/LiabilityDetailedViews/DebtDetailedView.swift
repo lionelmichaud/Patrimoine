@@ -42,6 +42,11 @@ struct DebtDetailedView: View {
         .navigationTitle("Dette")
         .navigationBarTitleDisplayMode(.inline)
             .navigationBarItems(
+                leading: Button(
+                    action : duplicate,
+                    label  : { Text("Dupliquer")} )
+                    .capsuleButtonStyle()
+                    .disabled((index == nil) || changeOccured()),
                 trailing: Button(
                     action: applyChanges,
                     label: {
@@ -61,6 +66,13 @@ struct DebtDetailedView: View {
         } else {
             index = nil
         }
+    }
+    
+    func duplicate() {
+        // générer un nouvel identifiant pour la copie
+        localItem.id = UUID()
+        localItem.name += "-copie"
+        patrimoine.liabilities.debts.add(localItem)
     }
     
     // sauvegarder les changements

@@ -11,7 +11,7 @@ import SwiftUI
 struct PeriodicInvestDetailedView: View {
     @EnvironmentObject var simulation : Simulation
     @EnvironmentObject var uiState    : UIState
-
+    
     var item: PeriodicInvestement?
     // commun
     @EnvironmentObject var patrimoine: Patrimoin
@@ -63,10 +63,12 @@ struct PeriodicInvestDetailedView: View {
             leading: Button(
                 action : duplicate,
                 label  : { Text("Dupliquer")} )
-                    .disabled(index == nil),
+                .capsuleButtonStyle()
+                .disabled((index == nil) || changeOccured()),
             trailing: Button(
                 action: applyChanges,
                 label: { Text("Sauver") } )
+                .capsuleButtonStyle()
                 .disabled(!changeOccured())
         )
     }
@@ -84,9 +86,10 @@ struct PeriodicInvestDetailedView: View {
     }
     
     func duplicate() {
-        if index != nil {
-            patrimoine.assets.periodicInvests.add(localItem)
-        }
+        // générer un nouvel identifiant pour la copie
+        localItem.id = UUID()
+        localItem.name += "-copie"
+        patrimoine.assets.periodicInvests.add(localItem)
     }
     
     // sauvegarder les changements
@@ -102,7 +105,7 @@ struct PeriodicInvestDetailedView: View {
         // remettre à zéro la simulation et sa vue
         simulation.reset(withPatrimoine: patrimoine)
         uiState.resetSimulation()
-
+        
         self.presentationMode.wrappedValue.dismiss()
     }
     
@@ -113,7 +116,7 @@ struct PeriodicInvestDetailedView: View {
 
 struct PeriodicInvestDetailedView_Previews: PreviewProvider {
     static var patrimoine  = Patrimoin()
-
+    
     static var previews: some View {
         return
             Group {
@@ -122,7 +125,7 @@ struct PeriodicInvestDetailedView_Previews: PreviewProvider {
                         .environmentObject(patrimoine)
                 }
                 .previewDisplayName("PeriodicInvestDetailedView")
-
-        }
+                
+            }
     }
 }

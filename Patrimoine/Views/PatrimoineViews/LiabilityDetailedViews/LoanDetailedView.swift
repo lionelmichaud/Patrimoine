@@ -24,7 +24,8 @@ struct LoanDetailedView: View {
                                         firstYear: Date.now.year,
                                         lastYear: Date.now.year,
                                         initialValue: 0,
-                                        interestRate: 0)
+                                        interestRate: 0,
+                                        monthlyInsurance: 0)
     var body: some View {
         Form {
             HStack{
@@ -42,19 +43,22 @@ struct LoanDetailedView: View {
                 YearPicker(title     : "Dernière année (inclue)",
                            inRange   : max(localItem.firstYear, Date.now.year - 20) ... Date.now.year + 50,
                            selection : $localItem.lastYear)
-                HStack {
-                    Text("Durée du prêt")
-                    Spacer()
-                    Text("\(localItem.lastYear - localItem.firstYear + 1) ans")
-                }
+                LabeledTextView(label: "Durée du prêt",
+                                text : "\(localItem.lastYear - localItem.firstYear + 1) ans")
+                    .foregroundColor(.secondary)
             }
             Section(header: Text("CONDITIONS")) {
                 PercentEditView(label   : "Taux d'intérêt annuel",
                                 percent : $localItem.interestRate)
-                AmountView(label  : "Remboursement annuel",
+                AmountEditView(label  : "Montant mensuel de l'assurance",
+                               amount : $localItem.monthlyInsurance)
+                AmountView(label  : "Remboursement annuel (de janvier \(localItem.firstYear) à décembre \(localItem.lastYear))",
                            amount : localItem.yearlyPayement(localItem.firstYear))
                     .foregroundColor(.secondary)
-                AmountView(label  : "Remboursement restant (31/12)",
+                AmountView(label  : "Remboursement mensuel (de janvier \(localItem.firstYear) à décembre \(localItem.lastYear))",
+                           amount : localItem.yearlyPayement(localItem.firstYear)/12.0)
+                    .foregroundColor(.secondary)
+                AmountView(label  : "Remboursement restant (au 31/12/\(Date.now.year))",
                            amount : localItem.value (atEndOf: Date.now.year))
                     .foregroundColor(.secondary)
                 AmountView(label  : "Remboursement total",
@@ -74,6 +78,11 @@ struct LoanDetailedView: View {
         .navigationTitle("Emprunt")
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarItems(
+            leading: Button(
+                action : duplicate,
+                label  : { Text("Dupliquer")} )
+                .capsuleButtonStyle()
+                .disabled((index == nil) || changeOccured()),
             trailing: Button(
                 action: applyChanges,
                 label: {
@@ -93,6 +102,13 @@ struct LoanDetailedView: View {
         } else {
             index = nil
         }
+    }
+    
+    func duplicate() {
+        // générer un nouvel identifiant pour la copie
+        localItem.id = UUID()
+        localItem.name += "-copie"
+        patrimoine.liabilities.loans.add(localItem)
     }
     
     // sauvegarder les changements

@@ -296,7 +296,7 @@ struct UnemploymentCompensation: Codable {
     ///   - compensationSupralegal: indemnités de rupture de contrat en plus des indemnités d'origine légale
     ///   - causeOfRetirement: cause de la cessation d'activité
     /// - Returns: Différé spécifique d'indemnisation en jours
-    ///  - Note: Lorsque vous percevez des indemnités de rupture de contrat en plus des indemnités d'origine légale,
+    /// - Note: Lorsque vous percevez des indemnités de rupture de contrat en plus des indemnités d'origine légale,
     ///           un différé spécifique d'indemnisation est appliqué sur ces sommes.
     ///           - Ne diminue pas la durée totale d'indemnisation.
     ///           - Repousse uniquement le point de départ.

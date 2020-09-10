@@ -15,8 +15,8 @@ struct RealEstateAsset: Identifiable, Codable, NameableAndValueable {
     
     // properties
     
-    let id = UUID()
-    var name: String
+    var id   = UUID()
+    var name : String
     // achat
     var buyingDate           : Date {
         willSet {
@@ -226,21 +226,6 @@ struct RealEstateAsset: Identifiable, Codable, NameableAndValueable {
 }
 
 // MARK: Extensions
-extension RealEstateAsset : Hashable {
-    static func == (l: RealEstateAsset, r: RealEstateAsset) -> Bool {
-        var b = (l.name == r.name) && (l.buyingDate == r.buyingDate) && (l.buyingPrice == r.buyingPrice)
-        b = b && (l.yearlyTaxeHabitation == r.yearlyTaxeHabitation) && (l.yearlyTaxeFonciere == r.yearlyTaxeFonciere)
-        b = b && (l.willBeSold == r.willBeSold) && (l.sellingDate == r.sellingDate) && (l.sellingNetPrice == r.sellingNetPrice)
-        b = b && (l.willBeInhabited == r.willBeInhabited) && (l.inhabitedFromDate == r.inhabitedFromDate)
-        b = b && (l.inhabitedToDate == r.inhabitedToDate) && (l.willBeRented == r.willBeRented)
-        b = b && (l.rentalFromDate == r.rentalFromDate) && (l.rentalToDate == r.rentalToDate)
-        b = b && (l.monthlyRentAfterCharges == r.monthlyRentAfterCharges)
-        return b
-    }
-    func hash(into hasher: inout Hasher) {
-        hasher.combine(id)
-    }
-}
 extension RealEstateAsset: Comparable {
     static func < (lhs: RealEstateAsset, rhs: RealEstateAsset) -> Bool {
         return (lhs.name < rhs.name)

@@ -17,21 +17,21 @@ struct PersonPickerView: View {
         if event.isAdultEvent {
             // événement pour adulte seulement
             return Picker(selection: $name, label: Text("Personne")) {
-                ForEach(family.members.filter {$0 is Adult}, id: \.self) { person in
+                ForEach(family.members.filter {$0 is Adult}) { person in
                     Row(member: person)
                 }
             }
         } else if event.isChildEvent {
             // événement pour enfant seulement
             return Picker(selection: $name, label: Text("Personne")) {
-                ForEach(family.members.filter {$0 is Child}, id: \.self) { person in
+                ForEach(family.members.filter {$0 is Child}) { person in
                     Row(member: person)
                 }
             }
         } else {
             // événement pour les deux
             return Picker(selection: $name, label: Text("Personne")) {
-                ForEach(family.members, id: \.self) { person in
+                ForEach(family.members) { person in
                     Row(member: person)
                 }
             }

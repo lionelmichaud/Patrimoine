@@ -1,7 +1,7 @@
 {
     "items" : [
         {
-            "id"           : "6C98AC79-6F7E-4F75-8800-A2231A3DB39F",
+            "id"           : "817D4F52-3764-44A5-9B5B-93E7EBB405B8",
             "value"        : 5000,
             "proportional" : true,
             "name"         : "Alimentation adultes",
@@ -22,7 +22,7 @@
             }
         },
         {
-            "id"           : "6C98AC79-6F7E-4F75-8800-A2231A3DB39G",
+            "id"           : "817D4F52-3764-44A5-9B5B-93E7EBB405B9",
             "value"        : 5000,
             "proportional" : false,
             "name"         : "Alimentation enfants",

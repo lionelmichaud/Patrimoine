@@ -109,7 +109,7 @@ class Person : ObservableObject, Identifiable, CustomStringConvertible, Codable 
     
     // MARK: - Properties
     
-    let id = UUID()
+    let id                    = UUID()
     let sexe                  : Sexe
     var name                  : PersonNameComponents
     var birthDate             : Date
@@ -240,12 +240,12 @@ class Person : ObservableObject, Identifiable, CustomStringConvertible, Codable 
 }
 
 // MARK: Extensions
-extension Person : Hashable {
-    static func == (l: Person, r: Person) -> Bool { (l.id == r.id) }
-    func hash(into hasher: inout Hasher) { hasher.combine(id) }
-}
-
 extension Person: Comparable {
+    static func == (lhs: Person, rhs: Person) -> Bool {
+        lhs.birthDate == rhs.birthDate
+
+    }
+    
     static func < (lhs: Person, rhs: Person) -> Bool {
         // trier par date de naissance croissante
         lhs.birthDate < rhs.birthDate

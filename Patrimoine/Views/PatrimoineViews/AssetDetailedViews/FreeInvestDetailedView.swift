@@ -12,7 +12,7 @@ import Combine
 struct FreeInvestDetailedView: View {
     @EnvironmentObject var simulation : Simulation
     @EnvironmentObject var uiState    : UIState
-
+    
     var item: FreeInvestement?
     // commun
     @EnvironmentObject var patrimoine: Patrimoin
@@ -58,10 +58,12 @@ struct FreeInvestDetailedView: View {
             leading: Button(
                 action : duplicate,
                 label  : { Text("Dupliquer")} )
-                    .disabled(index == nil),
+                .capsuleButtonStyle()
+                .disabled((index == nil) || changeOccured()),
             trailing: Button(
                 action: applyChanges,
                 label: { Text("Sauver") } )
+                .capsuleButtonStyle()
                 .disabled(!changeOccured())
         )
     }
@@ -85,15 +87,13 @@ struct FreeInvestDetailedView: View {
     }
     
     func duplicate() {
-        if index != nil {
-            let localItem = FreeInvestement(year            : initialYear,
-                                            name            : initialName,
-                                            type            : investType,
-                                            rate            : initialrate,
-                                            initialValue    : initialValue,
-                                            initialInterest : initialInterest)
-            patrimoine.assets.freeInvests.add(localItem)
-        }
+        let localItem = FreeInvestement(year            : initialYear,
+                                        name            : initialName + "-copie",
+                                        type            : investType,
+                                        rate            : initialrate,
+                                        initialValue    : initialValue,
+                                        initialInterest : initialInterest)
+        patrimoine.assets.freeInvests.add(localItem)
     }
     
     // sauvegarder les changements
@@ -117,7 +117,7 @@ struct FreeInvestDetailedView: View {
         // remettre à zéro la simulation et sa vue
         simulation.reset(withPatrimoine: patrimoine)
         uiState.resetSimulation()
-
+        
         self.presentationMode.wrappedValue.dismiss()
     }
     
@@ -128,7 +128,7 @@ struct FreeInvestDetailedView: View {
 
 struct FreeInvestDetailedView_Previews: PreviewProvider {
     static var patrimoine  = Patrimoin()
-
+    
     static var previews: some View {
         return
             Group {
@@ -137,6 +137,6 @@ struct FreeInvestDetailedView_Previews: PreviewProvider {
                         .environmentObject(patrimoine)
                 }
                 .previewDisplayName("FreeInvestDetailedView")
-        }
+            }
     }
 }

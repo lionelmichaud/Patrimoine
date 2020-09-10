@@ -126,7 +126,7 @@ struct LifeExpense: Identifiable, Codable, Hashable, NameableAndValueable {
     
     // MARK: - Properties
     
-    let id = UUID()
+    var id           = UUID()
     var name         : String = ""
     var value        : Double = 0.0
     var proportional : Bool   = false

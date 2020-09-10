@@ -17,17 +17,17 @@ struct SCPI: Identifiable, Codable, NameableAndValueable {
     
     // properties
     
-    let id = UUID()
-    var name        : String
+    var id           = UUID()
+    var name         : String
     // achat
-    var buyingDate  : Date
-    var buyingPrice : Double
+    var buyingDate   : Date
+    var buyingPrice  : Double
     // rendement
-    var interestRate: Double // %
-    var revaluatRate: Double // %
+    var interestRate : Double // %
+    var revaluatRate : Double // %
     // vente
-    var willBeSold  : Bool   = false
-    var sellingDate : Date   = 100.years.fromNow!
+    var willBeSold   : Bool = false
+    var sellingDate  : Date = 100.years.fromNow!
 
     // initialization
     
@@ -49,7 +49,7 @@ struct SCPI: Identifiable, Codable, NameableAndValueable {
     /// Revenus annuels
     /// - Parameter year: fin de l'année
     /// - Parameter revenue: revenus inscrit en compte courant avant prélèvements sociaux et IRPP
-    /// - Parameter taxableIrpp: part des revenus inscrit en compte courant imposable à l'IRPP
+    /// - Parameter taxableIrpp: part des revenus inscrit en compte courant imposable à l'IRPP (après charges sociales)
     func yearlyRevenue (atEndOf year: Int) -> (revenue: Double, taxableIrpp: Double, socialTaxes: Double) {
         let revenue     = (isOwned(before: year) ? buyingPrice * interestRate / 100.0 : 0.0)
         let taxableIrpp = Fiscal.model.socialTaxesOnFinancialRevenu.net(revenue)
@@ -89,23 +89,22 @@ struct SCPI: Identifiable, Codable, NameableAndValueable {
      - Parameter irpp: impôt sur le revenu payé sur sur la plus-value
      **/
     func liquidatedValue (_ year: Int) ->
-        (revenue: Double, capitalGain: Double, netRevenue: Double, socialTaxes: Double, irpp: Double) {
-            if year == sellingDate.year {
-                let detentionDuration = sellingDate.year - buyingDate.year
-                let currentValue      = value(atEndOf: sellingDate.year)
-                let capitalGain       = currentValue - buyingPrice
-                let socialTaxes       = Fiscal.model.socialTaxesOnEstateCapitalGain.socialTaxes (capitalGain: max(capitalGain,0.0),
-                                                                                        detentionDuration: detentionDuration)
-                let irpp              = Fiscal.model.irppOnEstateCapitalGain.irpp (capitalGain: max(capitalGain,0.0),
-                                                                          detentionDuration: detentionDuration)
-                return (revenue     : currentValue,
-                        capitalGain : capitalGain,
-                        netRevenue  : currentValue - socialTaxes - irpp,
-                        socialTaxes : socialTaxes,
-                        irpp        : irpp)
-            } else {
-                return (0, 0, 0, 0, 0)
-            }
+    (revenue: Double, capitalGain: Double, netRevenue: Double, socialTaxes: Double, irpp: Double) {
+        guard (willBeSold && year == sellingDate.year) else {
+            return (0,0,0,0,0)
+        }
+        let detentionDuration = sellingDate.year - buyingDate.year
+        let currentValue      = value(atEndOf: sellingDate.year)
+        let capitalGain       = currentValue - buyingPrice
+        let socialTaxes       = Fiscal.model.socialTaxesOnEstateCapitalGain.socialTaxes (capitalGain: max(capitalGain,0.0),
+                                                                                         detentionDuration: detentionDuration)
+        let irpp              = Fiscal.model.irppOnEstateCapitalGain.irpp (capitalGain: max(capitalGain,0.0),
+                                                                           detentionDuration: detentionDuration)
+        return (revenue     : currentValue,
+                capitalGain : capitalGain,
+                netRevenue  : currentValue - socialTaxes - irpp,
+                socialTaxes : socialTaxes,
+                irpp        : irpp)
     }
     
     func print() {
@@ -119,18 +118,6 @@ struct SCPI: Identifiable, Codable, NameableAndValueable {
 }
 
 // MARK: Extensions
-extension SCPI : Hashable {
-    static func == (l: SCPI, r: SCPI) -> Bool {
-        var b = (l.name == r.name) && (l.buyingDate == r.buyingDate) && (l.sellingDate == r.sellingDate)
-        b = b && (l.buyingPrice == r.buyingPrice) && (l.interestRate == r.interestRate)
-        b = b && (l.revaluatRate == r.revaluatRate) && (l.willBeSold == r.willBeSold)
-        return b
-    }
-    func hash(into hasher: inout Hasher) {
-        hasher.combine(id)
-    }
-}
-
 extension SCPI: Comparable {
     static func < (lhs: SCPI, rhs: SCPI) -> Bool {
         return (lhs.name < rhs.name)

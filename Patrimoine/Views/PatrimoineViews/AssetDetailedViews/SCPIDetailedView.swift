@@ -46,10 +46,10 @@ struct SCPIDetailedView: View {
             Section(header: Text("RENDEMENT")) {
                 PercentEditView(label: "Taux de rendement annuel brut",
                                 percent: $localItem.interestRate)
-                AmountView(label: "Revenu annuel brut",
+                AmountView(label: "Revenu annuel brut (avant prélèvements sociaux et IRPP)",
                            amount: localItem.yearlyRevenue(atEndOf: Date.now.year).revenue)
                     .foregroundColor(.secondary)
-                AmountView(label: "Revenu annuel net de charges",
+                AmountView(label: "Revenu annuel net de charges sociales (remboursable par une SCI)",
                            amount: localItem.yearlyRevenue(atEndOf: Date.now.year).taxableIrpp)
                     .foregroundColor(.secondary)
                 AmountView(label: "Charges sociales",
@@ -77,7 +77,6 @@ struct SCPIDetailedView: View {
                     .padding(.leading)
                 }
             }
-            
         }
         .textFieldStyle(RoundedBorderTextFieldStyle())
         //.onAppear(perform: onAppear)
@@ -87,16 +86,17 @@ struct SCPIDetailedView: View {
             leading: Button(
                 action : duplicate,
                 label  : { Text("Dupliquer")} )
-                .disabled(index == nil),
+                .capsuleButtonStyle()
+                .disabled((index == nil) || changeOccured()),
             trailing: Button(
                 action: applyChanges,
                 label: { Text("Sauver") } )
+                .capsuleButtonStyle()
                 .disabled(!changeOccured())
         )
     }
     
     init(item       : SCPI?,
-         //patrimoine : Patrimoine,
          updateItem : @escaping (SCPI, Int) -> (),
          addItem    : @escaping (SCPI) -> (),
          firstIndex : (SCPI) -> Int?) {
@@ -116,9 +116,10 @@ struct SCPIDetailedView: View {
     }
     
     func duplicate() {
-        if index != nil {
-            addItem(localItem)
-        }
+        // générer un nouvel identifiant pour la copie
+        localItem.id = UUID()
+        localItem.name += "-copie"
+        addItem(localItem)
     }
     
     // sauvegarder les changements

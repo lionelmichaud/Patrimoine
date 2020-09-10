@@ -6,9 +6,12 @@
 //  Copyright © 2020 Lionel MICHAUD. All rights reserved.
 //
 
+import os
 import SwiftUI
 import Charts // https://github.com/danielgindi/Charts.git
 import Disk // https://github.com/saoudrizwan/Disk.git
+
+fileprivate let customLog = Logger(subsystem: "me.michaud.lionel.Patrimoine", category: "UI.CashFlowChartView")
 
 // MARK: - Cash Flow Charts Views
 
@@ -242,15 +245,21 @@ struct CashFlowStackedBarChartView: UIViewRepresentable {
     
     // methods
     
+    /// Vérifie si une ou plusieurs catégories ont étées secltionnées dans la liste du menu
+    /// - Returns: retourne TRUE si une seule catégorie sélectionnée
     func onlyOneCategorySelected () -> Bool {
         let count = itemSelection.reduce(.zero, { result, element in result + (element.selected ? 1 : 0) } )
         return count == 1
     }
     
+    /// Retourne le nom de la première catégorie sélectionnée dans la liste du menu
+    /// - Returns: nom de la première catégorie sélectionnée dans la liste du menu
     func firstCategorySelected () -> String? {
         if let foundSelection = itemSelection.first(where: { $0.selected }) {
+            print("catégorie= \(foundSelection.label)")
             return foundSelection.label
         } else {
+            customLog.log(level: .error, "firstCategorySelected/foundSelection = false : catégorie non trouvée dans le menu")
             return nil
         }
     }
@@ -296,6 +305,7 @@ struct CashFlowStackedBarChartView: UIViewRepresentable {
             if let categoryName = firstCategorySelected() {
                 aDataSet = socialAccounts.getCashFlowCategoryStackedBarChartDataSet(categoryName: categoryName)
             } else {
+                customLog.log(level: .error, "CashFlowStackedBarChartView : aDataSet = nil => graphique vide")
                 aDataSet = nil
             }
         } else {
