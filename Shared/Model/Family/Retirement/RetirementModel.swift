@@ -24,7 +24,7 @@ struct Pension: Codable {
 
     static var model: Model =
         Bundle.main.decode(Model.self,
-                           from                 : "PensionModel.json",
+                           from                 : "RetirementModelConfig.json",
                            dateDecodingStrategy : .iso8601,
                            keyDecodingStrategy  : .useDefaultKeys)
 }

@@ -30,7 +30,7 @@ struct Fiscal: Codable {
     
     static var model: Model  =
         Bundle.main.decode(Model.self,
-                           from                 : "FiscalModel.json",
+                           from                 : "FiscalModelConfig.json",
                            dateDecodingStrategy : .iso8601,
                            keyDecodingStrategy  : .useDefaultKeys)
 }

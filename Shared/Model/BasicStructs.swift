@@ -10,7 +10,7 @@ import Foundation
 
 // MARK: - Table nommée de couples (nom, valeur)
 
-struct NamedValueTable {
+    struct NamedValueTable {
     
     // properties
     

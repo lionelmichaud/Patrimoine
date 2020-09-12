@@ -36,7 +36,7 @@ struct Unemployment: Codable {
     
     static var model: Model =
         Bundle.main.decode(Model.self,
-                           from                 : "AllocChomageModel.json",
+                           from                 : "UnemploymentModelConfig.json",
                            dateDecodingStrategy : .iso8601,
                            keyDecodingStrategy  : .useDefaultKeys)
     // methods
