@@ -28,52 +28,50 @@ struct CashFlowLine {
         }
     }
     
-    // MARK: - agrégat des dépenses de vie valorisées
-    struct ValuedLifeExpenses {
+    // MARK: - NamedValueTable avec résumé global
+    struct NamedValueTableWithSummary {
         
         // properties
-        
-        var namedValueTable = NamedValueTable(name: "LIFE EXPENSES")
-        var summaryValueTable: NamedValueTable {
-            var table = NamedValueTable(name: "Dépenses")
-            table.values.append((name  : "Dépenses",
+        let name              : String
+        var namedValueTable   : NamedValueTable
+        var summaryValueTable : NamedValueTable {
+            var table = NamedValueTable(name: name)
+            table.values.append((name  : name,
                                  value : namedValueTable.total))
             return table
         }
-    }
-    
-    // MARK: - agrégat des remboursements d'emprunt valorisées
-    struct ValuedLoanPayments {
         
-        // properties
-        
-        var namedValueTable = NamedValueTable(name: "LOAN PAYMENTS")
-        var summaryValueTable: NamedValueTable {
-            var table = NamedValueTable(name: "Remb. dette")
-            table.values.append((name  : "Remb. dette",
-                                 value : namedValueTable.total))
-            return table
+        // initializer
+        internal init(name: String) {
+            self.name = name
+            self.namedValueTable = NamedValueTable(name: name)
         }
     }
     
     // MARK: - properties
     
-    let year: Int
-    var ages          = Ages()
-    var revenues      = ValuedRevenues()
-    var taxes         = ValuedTaxes()
-    var lifeExpenses  = ValuedLifeExpenses()
-    var debtPayements = ValuedLoanPayments()
+    let year            : Int
+    var ages            = Ages()
+    // revenus
     var taxableIrppRevenueDelayedToNextYear = Debt(name: "REVENU IMPOSABLE REPORTE A L'ANNEE SUIVANTE", note: "", value: 0)
-    let sciCashFlowLine : SciCashFlowLine // les comptes annuels de la SCI
+    var revenues        = ValuedRevenues()
     var sumOfrevenues   : Double {
         revenues.totalCredited + sciCashFlowLine.netCashFlow
     }
+    // dépenses
+    var taxes           = ValuedTaxes()
+    var lifeExpenses    = NamedValueTableWithSummary(name: "Dépenses")
+    var debtPayements   = NamedValueTableWithSummary(name: "Remb dette")
+    var investPayements = NamedValueTableWithSummary(name: "Investissements")
     var sumOfExpenses: Double {
         taxes.total +
             lifeExpenses.namedValueTable.total +
-            debtPayements.namedValueTable.total
+            debtPayements.namedValueTable.total +
+            investPayements.namedValueTable.total
     }
+    // les comptes annuels de la SCI
+    let sciCashFlowLine : SciCashFlowLine
+    // solde net
     var netCashFlow: Double {
         sumOfrevenues - sumOfExpenses
     }
@@ -275,8 +273,11 @@ struct CashFlowLine {
                     revenues.perCategory[.financials]?.taxablesIrpp.values.append((name: name,
                                                                                    value: liquidatedValue.taxableIrppInterests.rounded()))
             }
-            // prélèvements sociaux
+            // populate prélèvements sociaux
             taxes.perCategory[.socialTaxes]?.values.append((name: name, value: liquidatedValue.socialTaxes.rounded()))
+
+            // populate versements
+            
         }
     }
     

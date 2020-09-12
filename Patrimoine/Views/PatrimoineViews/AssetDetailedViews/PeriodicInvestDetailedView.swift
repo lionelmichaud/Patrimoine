@@ -32,8 +32,10 @@ struct PeriodicInvestDetailedView: View {
             // acquisition
             Section(header: Text("TYPE")) {
                 TypeInvestEditView(investType: $localItem.type)
-                AmountEditView(label: "Versement annuel",
+                AmountEditView(label: "Versement annuel - net de frais",
                                amount: $localItem.yearlyPayement)
+                AmountEditView(label: "Frais annuels sur versements",
+                               amount: $localItem.yearlyCost)
             }
             Section(header: Text("INITIALISATION")) {
                 YearPicker(title: "Année de départ",
@@ -48,6 +50,12 @@ struct PeriodicInvestDetailedView: View {
                 YearPicker(title: "Année de liquidation",
                            inRange: localItem.firstYear...localItem.firstYear + 100,
                            selection: $localItem.lastYear)
+                AmountView(label: "Valeure liquidative avant charges sociales et IRPP",
+                           amount: liquidatedValue())
+                    .foregroundColor(.secondary)
+                AmountView(label: "Valeure liquidative après charges sociales et IRPP",
+                           amount: liquidatedValueAfterSocialTaxes())
+                    .foregroundColor(.secondary)
             }
             Section(header: Text("RENTABILITE")) {
                 PercentEditView(label: "Rendement",
@@ -110,6 +118,17 @@ struct PeriodicInvestDetailedView: View {
     func changeOccured() -> Bool {
         return localItem != item
     }
+    
+    func liquidatedValue() -> Double {
+        let liquidationDate = self.localItem.lastYear
+        let liquidatedValue = self.localItem.liquidatedValue(atEndOf: liquidationDate)
+        return liquidatedValue.revenue
+    }
+   func liquidatedValueAfterSocialTaxes() -> Double {
+        let liquidationDate = self.localItem.lastYear
+        let liquidatedValue = self.localItem.liquidatedValue(atEndOf: liquidationDate)
+        return liquidatedValue.revenue - liquidatedValue.socialTaxes
+    }
 }
 
 struct PeriodicInvestDetailedView_Previews: PreviewProvider {
@@ -118,12 +137,11 @@ struct PeriodicInvestDetailedView_Previews: PreviewProvider {
     static var previews: some View {
         return
             Group {
-                NavigationView() {
+//                NavigationView() {
                     PeriodicInvestDetailedView(item: patrimoine.assets.periodicInvests[0], patrimoine: patrimoine)
                         .environmentObject(patrimoine)
                 }
                 .previewDisplayName("PeriodicInvestDetailedView")
-                
-            }
+//            }
     }
 }

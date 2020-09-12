@@ -11,17 +11,19 @@ import Foundation
 typealias PeriodicInvestmentArray = ItemArray<PeriodicInvestement>
 
 // MARK: - Placement à versements périodiques, fixes, annuels et à taux fixe
+
 /// Placement à versements périodiques, fixes, annuels et à taux fixe
 /// Tous les intérêts sont capitalisés
 struct PeriodicInvestement: Identifiable, Codable, NameableAndValueable {
     
-    // properties
+    // MARK: - Properties
     
     var id              = UUID()
     var name            : String
     var note            : String
     var type            : InvestementType
-    var yearlyPayement  : Double
+    var yearlyPayement  : Double // versements nets de frais
+    var yearlyCost      : Double // Frais sur versements
     // Ouverture
     var firstYear       : Int // au 31 décembre
     var initialValue    : Double
@@ -41,7 +43,7 @@ struct PeriodicInvestement: Identifiable, Codable, NameableAndValueable {
     // liquidation
     var lastYear        : Int // au 31 décembre
 
-    // initialization
+    // MARK: - Initializers
     
     init(name            : String,
          note            : String,
@@ -51,7 +53,8 @@ struct PeriodicInvestement: Identifiable, Codable, NameableAndValueable {
          rate            : Double,
          initialValue    : Double = 0.0,
          initialInterest : Double = 0.0,
-         yearlyPayement  : Double = 0.0) {
+         yearlyPayement  : Double = 0.0,
+         yearlyCost      : Double = 0.0) {
         self.name            = name
         self.note            = note
         self.type            = type
@@ -61,10 +64,20 @@ struct PeriodicInvestement: Identifiable, Codable, NameableAndValueable {
         self.initialValue    = initialValue
         self.initialInterest = initialInterest
         self.yearlyPayement  = yearlyPayement
+        self.yearlyCost      = yearlyCost
     }
     
-    // methods
+    // MARK: - Methods
     
+    /// Versement annuel
+    /// - Parameter year: année
+    /// - Returns: versement, frais de souscription inclus
+    func yearlyTotalPayement(atEndOf year: Int) -> Double {
+        guard (firstYear...lastYear).contains(year) else {
+            return 0
+        }
+        return yearlyPayement + yearlyCost
+    }
     /// Valeur capitalisée à la date spécifiée
     /// - Parameter year: fin de l'année
     func value (atEndOf year: Int) -> Double {
@@ -76,6 +89,7 @@ struct PeriodicInvestement: Identifiable, Codable, NameableAndValueable {
                           nbPeriod     : year - firstYear,
                           initialValue : initialValue)
     }
+    
     /// Intérêts capitalisés à la date spécifiée
     /// - Parameter year: fin de l'année
     func cumulatedInterests(atEndOf year: Int) -> Double {
@@ -84,12 +98,21 @@ struct PeriodicInvestement: Identifiable, Codable, NameableAndValueable {
         }
         return initialInterest + value(atEndOf: year) - (initialValue + yearlyPayement * Double(year - firstYear))
     }
-    // valeur liquidative à la date de liquidation
-    // revenue :          produit de la vente
-    // interests :        intérêts bruts avant prélèvements sociaux et IRPP
-    // netInterests :     intérêts nets de prélèvements sociaux
-    // taxableInterests : intérêts nets de prélèvements sociaux et taxables à l'IRPP
-    func liquidatedValue (atEndOf year: Int) -> (revenue: Double, interests: Double, netInterests: Double, taxableIrppInterests: Double, socialTaxes: Double) {
+    
+    /// valeur liquidative à la date de liquidation
+    /// - Parameter year: fin de l'année
+    /// - Returns:
+    /// revenue : produit de la vente
+    /// interests : intérêts bruts avant prélèvements sociaux et IRPP
+    /// netInterests : intérêts nets de prélèvements sociaux
+    /// taxableInterests : intérêts nets de prélèvements sociaux et taxables à l'IRPP
+    /// socialTaxes : prélèvements sociaux
+    func liquidatedValue (atEndOf year: Int)
+    -> (revenue              : Double,
+        interests            : Double,
+        netInterests         : Double,
+        taxableIrppInterests : Double,
+        socialTaxes          : Double) {
         guard year == lastYear else {
             return (0.0, 0.0, 0.0, 0.0, 0.0)
         }
@@ -111,6 +134,7 @@ struct PeriodicInvestement: Identifiable, Codable, NameableAndValueable {
         return (revenue: value(atEndOf: year), interests: cumulatedInterest, netInterests: netInterests,
                 taxableIrppInterests: taxableInterests, socialTaxes: cumulatedInterest - netInterests)
     }
+    
     func print() {
         Swift.print("    ", name)
         Swift.print("       type", type)
@@ -121,7 +145,8 @@ struct PeriodicInvestement: Identifiable, Codable, NameableAndValueable {
     }
 }
 
-// MARK: Extensions
+// MARK: - Extensions
+
 extension PeriodicInvestement: Comparable {
     static func < (lhs: PeriodicInvestement, rhs: PeriodicInvestement) -> Bool {
         return (lhs.name < rhs.name)

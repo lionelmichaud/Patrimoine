@@ -8,7 +8,12 @@
 
 import Foundation
 
+// MARK: - agrégat des taxes
+
 struct ValuedTaxes {
+
+    // properties
+    
     let name = "TAXES"
     var perCategory: [TaxeCategory: NamedValueTable] = [:]
     var familyQuotient: Double = 0.0
@@ -18,9 +23,9 @@ struct ValuedTaxes {
         perCategory.reduce(.zero, { result, element in result + element.value.total } )
     }
     
-    /// tableau des noms de catégories et valeurs total des revenus de cette catégorie
+    /// tableau des noms de catégories et valeurs total des taxes de cette catégorie
     var namedValueTable: NamedValueTable {
-        var table = NamedValueTable(name: "REVENUS")
+        var table = NamedValueTable(name: name)
         
         // itérer sur l'enum pour préserver l'ordre
         for category in TaxeCategory.allCases {

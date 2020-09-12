@@ -8,7 +8,7 @@
 
 import Foundation
 
-// MARK: - agrégat de revenus pour une catégories donnée
+// MARK: - agrégat des revenus hors SCI
 
 struct ValuedRevenues {
     
@@ -33,7 +33,7 @@ struct ValuedRevenues {
     
     /// tableau des noms de catégories et valeurs total des revenus de cette catégorie
     var namedValueTable: NamedValueTable {
-        var table = NamedValueTable(name: "REVENUS")
+        var table = NamedValueTable(name: name)
         
         // itérer sur l'enum pour préserver l'ordre
         for category in RevenueCategory.allCases {
