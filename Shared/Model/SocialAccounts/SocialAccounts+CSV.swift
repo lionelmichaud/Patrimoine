@@ -169,7 +169,19 @@ extension SocialAccounts {
             let rowsTotal = cashFlowArray.map { "\($0.debtPayements.namedValueTable.total.roundedString); " }
             rows = zip(rows, rowsTotal).map(+)
         }
-        
+
+        func buildInvestsTableCSV(firstLine: CashFlowLine) {
+            let investsNames = firstLine.investPayements.namedValueTable.headerCSV
+            heading += "\(investsNames); TOTAL INVEST \n"
+            
+            // For every element , extract the values as a comma-separated string.
+            let rowsInvest = cashFlowArray.map { "\($0.investPayements.namedValueTable.valuesCSV)" }
+            rows = zip(rows, rowsInvest).map(+)
+            
+            let rowsTotal = cashFlowArray.map { "\($0.investPayements.namedValueTable.total.roundedString); " }
+            rows = zip(rows, rowsTotal).map(+)
+        }
+
         // si la table est vide alors quitter
         guard !cashFlowArray.isEmpty else {
             #if DEBUG
@@ -195,6 +207,9 @@ extension SocialAccounts {
         
         // construire la partie Dettes du tableau
         buildDebtsTableCSV(firstLine: firstLine)
+        
+        // construire la partie Investissements du tableau
+        buildInvestsTableCSV(firstLine: firstLine)
         
         // Turn all of the rows into one big string
         let csvString = heading + rows.joined(separator: "\n")

@@ -250,10 +250,12 @@ struct CashFlowLine {
         // pour chaque investissement financier periodique
         for periodicInvestement in patrimoine.assets.periodicInvests.items.sorted(by:<) {
             let liquidatedValue = periodicInvestement.liquidatedValue(atEndOf: year)
+            let yearlyPayement  = periodicInvestement.yearlyTotalPayement(atEndOf: year)
             let name            = periodicInvestement.name
             // produit de la liquidation inscrit en compte courant avant prélèvements sociaux et IRPP
-            revenues.perCategory[.financials]?.credits.values.append((name: name,
-                                                                      value: liquidatedValue.revenue.rounded()))
+            revenues.perCategory[.financials]?.credits.values.append(
+                (name: name,
+                 value: liquidatedValue.revenue.rounded()))
             // populate taxable interests
             switch periodicInvestement.type {
                 case .lifeInsurance( _):
@@ -262,21 +264,29 @@ struct CashFlowLine {
                     taxableInterests = max(0.0, liquidatedValue.taxableIrppInterests - lifeInsuranceRebate)
                     lifeInsuranceRebate -= (liquidatedValue.taxableIrppInterests - taxableInterests)
                     // part des produit de la liquidation inscrit en compte courant imposable à l'IRPP
-                    revenues.perCategory[.financials]?.taxablesIrpp.values.append((name: name,
-                                                                                   value: taxableInterests.rounded()))
+                    revenues.perCategory[.financials]?.taxablesIrpp.values.append(
+                        (name: name,
+                         value: taxableInterests.rounded()))
                 case .pea:
                     // part des produit de la liquidation inscrit en compte courant imposable à l'IRPP
-                    revenues.perCategory[.financials]?.taxablesIrpp.values.append((name: name,
-                                                                                   value: liquidatedValue.taxableIrppInterests.rounded()))
+                    revenues.perCategory[.financials]?.taxablesIrpp.values.append(
+                        (name: name,
+                         value: liquidatedValue.taxableIrppInterests.rounded()))
                 case .other:
                     // part des produit de la liquidation inscrit en compte courant imposable à l'IRPP
-                    revenues.perCategory[.financials]?.taxablesIrpp.values.append((name: name,
-                                                                                   value: liquidatedValue.taxableIrppInterests.rounded()))
+                    revenues.perCategory[.financials]?.taxablesIrpp.values.append(
+                        (name: name,
+                         value: liquidatedValue.taxableIrppInterests.rounded()))
             }
             // populate prélèvements sociaux
-            taxes.perCategory[.socialTaxes]?.values.append((name: name, value: liquidatedValue.socialTaxes.rounded()))
-
+            taxes.perCategory[.socialTaxes]?.values.append(
+                (name: name,
+                 value: liquidatedValue.socialTaxes.rounded()))
+            
             // populate versements
+            investPayements.namedValueTable.values.append(
+                (name : name,
+                 value: yearlyPayement.rounded()))
             
         }
     }
@@ -334,6 +344,8 @@ struct CashFlowLine {
         lifeExpenses.namedValueTable.print(level: 1)
         // remboursements d'emprunts
         debtPayements.namedValueTable.print(level: 1)
+        // versement investissements
+        investPayements.namedValueTable.print(level: 1)
         // net cash flow
         Swift.print(StringCst.header + "NET CASH FLOW:", netCashFlow)
         // revenu imposable à l'IRPP reporté à l'année suivante

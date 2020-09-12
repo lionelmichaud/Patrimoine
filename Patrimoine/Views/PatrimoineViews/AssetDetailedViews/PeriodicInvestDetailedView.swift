@@ -46,6 +46,10 @@ struct PeriodicInvestDetailedView: View {
                 AmountEditView(label: "Intérêts initiaux",
                                amount: $localItem.initialInterest)
             }
+            Section(header: Text("RENTABILITE")) {
+                PercentEditView(label: "Rendement",
+                                percent: $localItem.interestRate)
+            }
             Section(header: Text("LIQUIDATION")) {
                 YearPicker(title: "Année de liquidation",
                            inRange: localItem.firstYear...localItem.firstYear + 100,
@@ -56,10 +60,6 @@ struct PeriodicInvestDetailedView: View {
                 AmountView(label: "Valeure liquidative après charges sociales et IRPP",
                            amount: liquidatedValueAfterSocialTaxes())
                     .foregroundColor(.secondary)
-            }
-            Section(header: Text("RENTABILITE")) {
-                PercentEditView(label: "Rendement",
-                                percent: $localItem.interestRate)
             }
         }
         .textFieldStyle(RoundedBorderTextFieldStyle())
