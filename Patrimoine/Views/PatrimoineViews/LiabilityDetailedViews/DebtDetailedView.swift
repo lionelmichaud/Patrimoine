@@ -16,7 +16,7 @@ struct DebtDetailedView: View {
     // commun
     @EnvironmentObject var patrimoine: Patrimoin
     @Environment(\.presentationMode) var presentationMode
-    @State private var alertData: AlertData? = nil
+    @State private var alertItem: AlertItem?
     @State private var index: Int?
     
     // à adapter
@@ -31,10 +31,7 @@ struct DebtDetailedView: View {
                                amount : $localItem.value)
             }
         }
-        .alert(item: $alertData) { alertData in
-            Alert(title: Text(alertData.title),
-                  message: Text(alertData.message))
-        }
+        .alert(item: $alertItem, content: myAlert)
         .textFieldStyle(RoundedBorderTextFieldStyle())
         .navigationTitle("Dette")
         .navigationBarTitleDisplayMode(.inline)
@@ -98,8 +95,9 @@ struct DebtDetailedView: View {
     
     func isValid() -> Bool {
         if localItem.value > 0 {
-            self.alertData = AlertData(title: "Erreur",
-                                       message: "Le montant de la dette doit être négatif")
+            self.alertItem = AlertItem(title         : Text("Erreur"),
+                                       message       : Text("Le montant emprunté doit être négatif"),
+                                       dismissButton : .default(Text("OK")))
             return false
         } else {
             return true

@@ -55,13 +55,6 @@ import Foundation
 }
 
 /// <#Description#>
-struct AlertData: Identifiable {
-    var id = UUID() // Conform to Identifiable
-    let title: String
-    let message: String
-}
-
-/// <#Description#>
 /// - Parameters:
 ///   - name: <#name description#>
 ///   - itemSelection: <#itemSelection description#>
