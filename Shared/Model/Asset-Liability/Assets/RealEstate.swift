@@ -15,8 +15,9 @@ struct RealEstateAsset: Identifiable, Codable, NameableAndValueable {
     
     // properties
     
-    var id   = UUID()
-    var name : String
+    var id                   = UUID()
+    var name                 : String
+    var note                 : String
     // achat
     var buyingDate           : Date {
         willSet {

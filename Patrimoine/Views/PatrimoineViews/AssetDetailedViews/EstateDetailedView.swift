@@ -18,7 +18,8 @@ struct RealEstateDetailedView: View {
     @Environment(\.presentationMode) var presentationMode
     @State private var index: Int?
     // à adapter
-    @State private var localItem = RealEstateAsset(name : "",
+    @State private var localItem = RealEstateAsset(name                 : "",
+                                                   note                 : "",
                                                    buyingDate           : Date.now,
                                                    buyingPrice          : 0,
                                                    yearlyTaxeHabitation : 0,
@@ -26,11 +27,8 @@ struct RealEstateDetailedView: View {
     
     var body: some View {
         Form {
-            HStack{
-                Text("Nom")
-                    .frame(width: 70, alignment: .leading)
-                TextField("obligatoire", text: $localItem.name)
-            }
+            LabeledTextField(label: "Nom", defaultText: "obligatoire", text: $localItem.name)
+            LabeledTextEditor(label: "Note", text: $localItem.note)
             // acquisition
             Section(header: Text("ACQUISITION")) {
                 DatePicker(selection: $localItem.buyingDate,

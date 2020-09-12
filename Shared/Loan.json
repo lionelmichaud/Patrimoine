@@ -2,19 +2,21 @@
     "items" : [
         {
             "id"               : "EF5C7C12-6283-492B-BFF7-0F1903D31E98",
+            "name"             : "Emprunt immo 1",
+            "note"             : "Actualisé le 11/09/2020",
             "firstYear"        : 2005,
             "lastYear"         : 2020,
             "loanedValue"      : -96000,
-            "name"             : "Emprunt immo 1",
             "interestRate"     : 1.0,
             "monthlyInsurance" : 35.36
         },
         {
             "id"               : "0F5011DB-C627-4390-BD09-3A53C6193583",
+            "name"             : "Emprunt immo 2",
+            "note"             : "Actualisé le 11/09/2020",
             "firstYear"        : 2005,
             "lastYear"         : 2020,
             "loanedValue"      : -25000,
-            "name"             : "Emprunt immo 2",
             "interestRate"     : 0.87,
             "monthlyInsurance" : 8.13
         }

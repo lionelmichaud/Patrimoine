@@ -19,6 +19,7 @@ struct PeriodicInvestement: Identifiable, Codable, NameableAndValueable {
     
     var id              = UUID()
     var name            : String
+    var note            : String
     var type            : InvestementType
     var yearlyPayement  : Double
     // Ouverture
@@ -43,14 +44,16 @@ struct PeriodicInvestement: Identifiable, Codable, NameableAndValueable {
     // initialization
     
     init(name            : String,
-                type            : InvestementType,
-                firstYear       : Int,
-                lastYear        : Int,
-                rate            : Double,
-                initialValue    : Double = 0.0,
-                initialInterest : Double = 0.0,
-                yearlyPayement  : Double = 0.0) {
+         note            : String,
+         type            : InvestementType,
+         firstYear       : Int,
+         lastYear        : Int,
+         rate            : Double,
+         initialValue    : Double = 0.0,
+         initialInterest : Double = 0.0,
+         yearlyPayement  : Double = 0.0) {
         self.name            = name
+        self.note            = note
         self.type            = type
         self.firstYear       = firstYear
         self.lastYear        = lastYear

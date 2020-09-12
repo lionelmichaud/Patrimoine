@@ -57,13 +57,7 @@ struct ContentWithAlertView: View {
                 Text("SHOW ALERT 2")
             })
 
-        }.alert(item: $alertItem) { alertItem in
-            guard let primaryButton = alertItem.primaryButton, let secondaryButton = alertItem.secondaryButton else{
-                return Alert(title: alertItem.title, message: alertItem.message, dismissButton: alertItem.dismissButton)
-            }
-            return Alert(title: alertItem.title, message: alertItem.message, primaryButton: primaryButton, secondaryButton: secondaryButton)
-        }
-
+        }.alert(item: $alertItem, content: myAlert)
     }
 }
 

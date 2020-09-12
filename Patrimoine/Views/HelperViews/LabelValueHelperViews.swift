@@ -23,14 +23,14 @@ struct LabeledValueRowView: View {
                 Button(action: {
                     self.colapse.toggle()
                 },
-                       label: {
-                        Image(systemName: "chevron.right.2")
-                            .foregroundColor(.accentColor)
-                            //.imageScale(.large)
-                            .rotationEffect(.degrees(colapse ? 0 : 90))
-                            //.scaleEffect(colapse ? 1 : 1.5)
-                            //.padding()
-                            .animation(.easeInOut)
+                label: {
+                    Image(systemName: "chevron.right.2")
+                        .foregroundColor(.accentColor)
+                        //.imageScale(.large)
+                        .rotationEffect(.degrees(colapse ? 0 : 90))
+                        //.scaleEffect(colapse ? 1 : 1.5)
+                        //.padding()
+                        .animation(.easeInOut)
                 } )
                 Text(label)
                     .font(Font.system(size: ListTheme[indentLevel].labelFontSize,
@@ -53,12 +53,12 @@ struct LabeledValueRowView: View {
                 .font(Font.system(size: ListTheme[indentLevel].valueFontSize,
                                   design: Font.Design.default))
         }
-            .padding(EdgeInsets(top: 0,
-                                leading: ListTheme[indentLevel].indent,
-                                bottom: 0,
-                                trailing: 0))
-            .listRowBackground(ListTheme.rowsBaseColor.opacity(header ? ListTheme[indentLevel].opacity:0.0))
-            
+        .padding(EdgeInsets(top: 0,
+                            leading: ListTheme[indentLevel].indent,
+                            bottom: 0,
+                            trailing: 0))
+        .listRowBackground(ListTheme.rowsBaseColor.opacity(header ? ListTheme[indentLevel].opacity:0.0))
+        
     }
 }
 
@@ -72,12 +72,12 @@ struct AmountEditView: View {
         let textValueBinding = Binding<String>(
             get: {
                 self.textAmount
-                },
+            },
             set: {
                 self.textAmount = $0
                 // actualiser la valeur numérique
                 self.amount = Double($0) ?? 0
-                })
+            })
         
         return HStack {
             Text(label)
@@ -95,7 +95,7 @@ struct AmountEditView: View {
                     if filtered != newValue {
                         self.textAmount = filtered
                     }
-            }
+                }
             Text("€")
         }
         .textFieldStyle(RoundedBorderTextFieldStyle())
@@ -167,7 +167,7 @@ struct IntegerEditView: View {
                     if filtered != newValue {
                         self.textAmount = filtered
                     }
-            }
+                }
         }
         .textFieldStyle(RoundedBorderTextFieldStyle())
     }
@@ -186,7 +186,7 @@ struct IntegerView: View {
     let integer : Int
     let weight  : Font.Weight
     let comment : String?
-
+    
     var body: some View {
         HStack {
             Text(label)
@@ -230,15 +230,15 @@ struct PercentEditView: View {
                       text: textValueBinding)
                 //.textFieldStyle(RoundedBorderTextFieldStyle())
                 .frame(maxWidth: 50)
-                .keyboardType(.numbersAndPunctuation)
+                .keyboardType(.decimalPad)
                 .multilineTextAlignment(.trailing)
                 .onReceive(Just(textPercent)) { newValue in
                     // filtrer les caractères non numériques
-                    let filtered = newValue.filter { "0123456789".contains($0) }
+                    let filtered = newValue.filter { "0123456789.,".contains($0) }
                     if filtered != newValue {
                         self.textPercent = filtered
                     }
-            }
+                }
             Text("%")
         }
         .textFieldStyle(RoundedBorderTextFieldStyle())
@@ -247,9 +247,9 @@ struct PercentEditView: View {
     init(label: String, percent: Binding<Double>) {
         self.label  = label
         _percent     = percent
-        _textPercent = State(initialValue: percent.wrappedValue.roundedString)
-        //        print("amount: \(self.amount)")
-        //        print("text: \(self.textAmount)")
+        _textPercent = State(initialValue: percent.wrappedValue.percentString(digit: 2))
+        //        print("amount: \(percent.wrappedValue)")
+        //        print("text: '\(textPercent)'")
     }
 }
 
@@ -258,17 +258,17 @@ struct PercentView: View {
     let label   : String
     let percent : Double
     let comment : String?
-
+    
     var body: some View {
         HStack {
             Text(label)
             Spacer()
             if comment != nil { Text(comment!).foregroundColor(.secondary) }
             Text(percentFormatter.string(from: percent as NSNumber) ?? "??")
-                .frame(maxWidth: 100, alignment: .trailing)
+                .frame(maxWidth: 150, alignment: .trailing)
         }
     }
-
+    
     init(label: String, percent : Double, comment: String? = nil) {
         self.label   = label
         self.percent = percent
@@ -276,10 +276,61 @@ struct PercentView: View {
     }
 }
 
+// MARK: - Saisie d'un text "TextEditor"
+struct LabeledTextEditor : View {
+    let label         : String
+    let labelWidth    : Int
+    @Binding var text : String
+    
+    var body: some View {
+        HStack{
+            Text(label)
+                .frame(width: CGFloat(labelWidth), alignment: .leading)
+            TextEditor(text: $text)
+                .border(Color("borderTextColor"), width: 1)
+        }
+    }
+    
+    init(label       : String,
+         labelWidth  : Int = 70,
+         text        : Binding<String>) {
+        self.label       = label
+        self.labelWidth  = labelWidth > 0 ? labelWidth : 70
+        self._text       = text
+    }
+}
+
+// MARK: - Saisie d'un text "TextField"
+struct LabeledTextField : View {
+    let label         : String
+    let labelWidth    : Int
+    let defaultText   : String?
+    @Binding var text : String
+    
+    var body: some View {
+        HStack{
+            Text(label)
+                .frame(width: CGFloat(labelWidth), alignment: .leading)
+            TextField(defaultText ?? "", text: $text)
+        }
+    }
+    
+    init(label       : String,
+         labelWidth  : Int = 70,
+         defaultText : String?  = nil,
+         text        : Binding<String>) {
+        self.label       = label
+        self.labelWidth  = labelWidth > 0 ? labelWidth : 70
+        self.defaultText = defaultText
+        self._text       = text
+    }
+    
+}
+
 // MARK: - Affichage d'un text "text"
-struct LabeledTextView: View {
-    let label   : String
-    let text    : String
+struct LabeledText: View {
+    let label : String
+    let text  : String
     
     var body: some View {
         HStack {
@@ -363,6 +414,17 @@ struct TestView: View {
     }
 }
 
+struct TextView_Previews: View {
+    var body: some View {
+        Group {
+            LabeledText(label: "Label", text: "Text", comment: "Comment")
+                .previewDisplayName("LabeledText")
+            LabeledTextField(label: "Label", labelWidth: 70, defaultText: "Obligatoire", text: .constant("text"))
+                .previewDisplayName("LabeledTextField")
+            LabeledTextEditor(label: "Label", labelWidth: 70, text: .constant("text"))
+        }
+    }
+}
 struct LabelValueHelpersView_Previews: PreviewProvider {
     static var previews: some View {
         Group {
@@ -382,7 +444,7 @@ struct LabelValueHelpersView_Previews: PreviewProvider {
                 .previewLayout(PreviewLayout.sizeThatFits)
                 .padding([.bottom, .top])
                 .previewDisplayName("PercentView")
-            PercentEditView(label: "Label", percent: .constant(4.3))
+            PercentEditView(label: "Label", percent: .constant(4.9))
                 .previewLayout(PreviewLayout.sizeThatFits)
                 .padding([.bottom, .top])
                 .previewDisplayName("PercentEditView")
@@ -402,6 +464,62 @@ struct LabelValueHelpersView_Previews: PreviewProvider {
                 .previewLayout(PreviewLayout.sizeThatFits)
                 .padding([.bottom, .top])
                 .previewDisplayName("DateRangeEditView")
+            TextView_Previews()
         }
+    }
+}
+
+// MARK: - Library Views
+
+struct LabelValueHelpersView_Library: LibraryContentProvider {
+    @LibraryContentBuilder
+    var views: [LibraryItem] {
+        let integer = 4
+        let percent = 4.0
+        let amount = 1000.0
+        LibraryItem(IntegerView(label: "Label", integer: integer),
+                    title: "Integer View",
+                    category: .control,
+                    matchingSignature: "intview")
+        LibraryItem(IntegerEditView(label: "Label", integer: .constant(4)),
+                    title: "Integer Edit View",
+                    category: .control,
+                    matchingSignature: "inteditview")
+        LibraryItem(PercentView(label: "Label", percent: percent),
+                    title: "Percent View",
+                    category: .control,
+                    matchingSignature: "pctview")
+        LibraryItem(PercentEditView(label: "Label", percent: .constant(4.9)),
+                    title: "Percent Edit View",
+                    category: .control,
+                    matchingSignature: "pcteditview")
+        LibraryItem(AmountView(label: "Label", amount: amount),
+                    title: "Amount View",
+                    category: .control,
+                    matchingSignature: "amountview")
+        LibraryItem(AmountEditView(label: "Label", amount: .constant(1234.3)),
+                    title: "Amount Edit View",
+                    category: .control,
+                    matchingSignature: "amounteditview")
+        LibraryItem(LabeledText(label: "Label", text: "Text", comment: "Comment"),
+                    title: "Labeled Text",
+                    category: .control,
+                    matchingSignature: "labeltext")
+        LibraryItem(LabeledTextField(label: "Label", labelWidth: 70, defaultText: "Obligatoire", text: .constant("text")),
+                    title: "Labeled TextField",
+                    category: .control,
+                    matchingSignature: "labeltextfield")
+        LibraryItem(LabeledTextEditor(label: "Label", labelWidth: 70, text: .constant("text")),
+                    title: "Labeled TextEditor",
+                    category: .control,
+                    matchingSignature: "labeltexteditor")
+        LibraryItem(DateRangeEditView(fromLabel: "Label1",
+                                      fromDate: .constant(Date.now),
+                                      toLabel: "Label2",
+                                      toDate: .constant(Date.now),
+                                      in: 1.months.ago!...3.years.fromNow!),
+                    title: "Date Range Edit View",
+                    category: .control,
+                    matchingSignature: "daterange")
     }
 }

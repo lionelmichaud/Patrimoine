@@ -2,8 +2,9 @@
     "fileNamePrefix" : "",
     "items" : [
         {
-            "id" : "817D4F52-3764-44A5-9B5B-93E7EBB405B8",
-            "name" : "Impôts",
+            "id"    : "817D4F52-3764-44A5-9B5B-93E7EBB405B8",
+            "name"  : "IRPP et Impôts locaux",
+            "note"  : "Actualisé le 11/09/2020",
             "value" : -16000
         }
     ]

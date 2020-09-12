@@ -19,6 +19,7 @@ struct PeriodicInvestDetailedView: View {
     @State private var index: Int?
     // à adapter
     @State private var localItem = PeriodicInvestement(name      : "",
+                                                       note      : "",
                                                        type      : .other,
                                                        firstYear : Date.now.year,
                                                        lastYear  : Date.now.year + 100,
@@ -26,11 +27,8 @@ struct PeriodicInvestDetailedView: View {
     
     var body: some View {
         Form {
-            HStack{
-                Text("Nom")
-                    .frame(width: 70, alignment: .leading)
-                TextField("obligatoire", text: $localItem.name)
-            }
+            LabeledTextField(label: "Nom", defaultText: "obligatoire", text: $localItem.name)
+            LabeledTextEditor(label: "Note", text: $localItem.note)
             // acquisition
             Section(header: Text("TYPE")) {
                 TypeInvestEditView(investType: $localItem.type)

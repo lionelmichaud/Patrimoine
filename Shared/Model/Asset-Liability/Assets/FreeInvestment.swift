@@ -29,6 +29,7 @@ struct FreeInvestement: Identifiable, Codable, NameableAndValueable {
     
     var id                 = UUID()
     var name               : String
+    var note               : String
     let type               : InvestementType // type de l'investissement
     let interestRate       : Double // % fixe avant charges sociales si prélevées à la source annuellement
     var interestRateNet    : Double { // % fixe après charges sociales si prélevées à la source annuellement
@@ -52,11 +53,13 @@ struct FreeInvestement: Identifiable, Codable, NameableAndValueable {
     
     init(year            : Int,
          name            : String,
+         note            : String,
          type            : InvestementType,
          rate            : Double,
          initialValue    : Double = 0.0,
          initialInterest : Double = 0.0) {
         self.name         = name
+        self.note         = note
         self.type         = type
         self.interestRate = rate
         self.initialState = State(year       : year,

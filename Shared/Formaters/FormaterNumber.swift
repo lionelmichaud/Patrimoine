@@ -43,12 +43,38 @@ var percentFormatter: NumberFormatter = {
     numFormatter.maximumIntegerDigits = 3
     numFormatter.minimumFractionDigits = 2
     numFormatter.maximumFractionDigits = 2
-    numFormatter.positivePrefix = "+"
+    //numFormatter.positivePrefix = "+"
+    return numFormatter
+}()
+
+var decimalFormatter: NumberFormatter = {
+    let numFormatter = NumberFormatter()
+    numFormatter.locale = Locale(identifier: "fr_FR") // French Locale (fr_FR)
+    numFormatter.isLenient = true
+    numFormatter.numberStyle = .decimal
+    numFormatter.minimumIntegerDigits = 1
+    numFormatter.minimumFractionDigits = 2
+    numFormatter.maximumFractionDigits = 2
+    //numFormatter.positivePrefix = "+"
     return numFormatter
 }()
 
 extension Double {
     var euroString: String {
         valueEuroFormatter.string(from: self as NSNumber) ?? ""
+    }
+    func percentString(digit: Int = 0) -> String {
+        guard digit >= 0 else {
+            return "??"
+        }
+        let numFormatter = NumberFormatter()
+        numFormatter.locale = Locale(identifier: "fr_FR") // French Locale (fr_FR)
+        numFormatter.isLenient = true
+        numFormatter.numberStyle = .decimal
+        numFormatter.minimumIntegerDigits = 1
+        numFormatter.maximumIntegerDigits = 3
+        numFormatter.minimumFractionDigits = 0
+        numFormatter.maximumFractionDigits = digit
+        return numFormatter.string(from: self as NSNumber) ?? ""
     }
 }

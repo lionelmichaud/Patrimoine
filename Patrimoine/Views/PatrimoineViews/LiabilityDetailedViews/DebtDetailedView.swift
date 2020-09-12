@@ -20,14 +20,11 @@ struct DebtDetailedView: View {
     @State private var index: Int?
     
     // à adapter
-    @State private var localItem = Debt(name: "", value: 0)
+    @State private var localItem = Debt(name: "", note: "", value: 0)
     var body: some View {
         Form {
-            HStack{
-                Text("Nom")
-                    .frame(width: 70, alignment: .leading)
-                TextField("obligatoire", text: $localItem.name)
-            }
+            LabeledTextField(label: "Nom", defaultText: "obligatoire", text: $localItem.name)
+            LabeledTextEditor(label: "Note", text: $localItem.note)
             // acquisition
             Section(header: Text("CARCTERISTIQUES")) {
                 AmountEditView(label  : "Montant emprunté",

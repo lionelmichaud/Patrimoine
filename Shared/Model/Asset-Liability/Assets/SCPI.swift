@@ -19,6 +19,7 @@ struct SCPI: Identifiable, Codable, NameableAndValueable {
     
     var id           = UUID()
     var name         : String
+    var note         : String
     // achat
     var buyingDate   : Date
     var buyingPrice  : Double

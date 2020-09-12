@@ -82,33 +82,33 @@ fileprivate struct ScenarioSection: View {
         return Section {
             DisclosureGroup (
                 content: {
-                    LabeledTextView(label: "Age de décès estimé",
+                    LabeledText(label: "Age de décès estimé",
                                     text : "\(member.ageOfDeath) ans en \(String(member.yearOfDeath))")
-                    LabeledTextView(label: "Cessation d'activité",
+                    LabeledText(label: "Cessation d'activité",
                                     text : "\(adult.age(atDate: adult.dateOfRetirement).year!) ans \(adult.age(atDate: adult.dateOfRetirement).month!) mois au \(mediumDateFormatter.string(from: adult.dateOfRetirement))")
-                    LabeledTextView(label: "Cause",
+                    LabeledText(label: "Cause",
                                     text : adult.causeOfRetirement.displayString)
                         .padding(.leading)
                     if adult.hasUnemployementAllocationPeriod {
                         if let date = adult.dateOfStartOfUnemployementAllocation {
-                            LabeledTextView(label: "Début de la période d'allocation chômage",
+                            LabeledText(label: "Début de la période d'allocation chômage",
                                             text : "\(adult.age(atDate: date).year!) ans \(adult.age(atDate: date).month!) mois au \(mediumDateFormatter.string(from: date))")
                                 .padding(.leading)
                         }
                         if let date = adult.dateOfStartOfAllocationReduction {
-                            LabeledTextView(label: "Début de la période de réduction d'allocation chômage",
+                            LabeledText(label: "Début de la période de réduction d'allocation chômage",
                                             text : "\(adult.age(atDate: date).year!) ans \(adult.age(atDate: date).month!) mois au \(mediumDateFormatter.string(from: date))")
                                 .padding(.leading)
                         }
                         if let date = adult.dateOfEndOfUnemployementAllocation {
-                            LabeledTextView(label: "Fin de la période d'allocation chômage",
+                            LabeledText(label: "Fin de la période d'allocation chômage",
                                             text : "\(adult.age(atDate: date).year!) ans \(adult.age(atDate: date).month!) mois au \(mediumDateFormatter.string(from: date))")
                                 .padding(.leading)
                         }
                     }
-                    LabeledTextView(label: "Liquidation de pension - régime complém.",
+                    LabeledText(label: "Liquidation de pension - régime complém.",
                                     text : "\(adult.ageOfAgircPensionLiquidComp.year!) ans \(adult.ageOfAgircPensionLiquidComp.month!) mois fin \(monthMediumFormatter.string(from: adult.dateOfAgircPensionLiquid)) \(String(adult.dateOfAgircPensionLiquid.year))")
-                    LabeledTextView(label: "Liquidation de pension - régime général",
+                    LabeledText(label: "Liquidation de pension - régime général",
                                     text : "\(adult.ageOfPensionLiquidComp.year!) ans \(adult.ageOfPensionLiquidComp.month!) mois fin \(monthMediumFormatter.string(from: adult.dateOfPensionLiquid)) \(String(adult.dateOfPensionLiquid.year))")
                     HStack {
                         Text("Dépendance")

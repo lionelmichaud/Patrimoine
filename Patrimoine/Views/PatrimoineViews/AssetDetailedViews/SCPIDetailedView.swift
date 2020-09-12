@@ -21,7 +21,8 @@ struct SCPIDetailedView: View {
     @Environment(\.presentationMode) var presentationMode
     @State private var index: Int?
     // à adapter
-    @State private var localItem = SCPI(name : "",
+    @State private var localItem = SCPI(name         : "",
+                                        note         : "",
                                         buyingDate   : Date.now,
                                         buyingPrice  : 0,
                                         interestRate : 0,
@@ -29,11 +30,9 @@ struct SCPIDetailedView: View {
     
     var body: some View {
         Form {
-            HStack{
-                Text("Nom")
-                    .frame(width: 70, alignment: .leading)
-                TextField("obligatoire", text: $localItem.name)
-            }
+            LabeledTextField(label: "Nom", defaultText: "obligatoire", text: $localItem.name)
+            LabeledTextEditor(label: "Note", text: $localItem.note)
+            
             // acquisition
             Section(header: Text("ACQUISITION")) {
                 DatePicker(selection: $localItem.buyingDate,
@@ -150,14 +149,14 @@ struct SCPIDetailedView_Previews: PreviewProvider {
     static var previews: some View {
         return
             Group {
-                NavigationView() {
+//                NavigationView() {
                     SCPIDetailedView(item       : patrimoine.assets.scpis[0],
                                      //patrimoine     : patrimoine,
                                      updateItem : { (localItem, index) in patrimoine.assets.scpis.update(with: localItem, at: index) },
                                      addItem    : { (localItem) in patrimoine.assets.scpis.add(localItem) },
                                      firstIndex : { (localItem) in patrimoine.assets.scpis.items.firstIndex(of: localItem) })
                         .environmentObject(patrimoine)
-                }
+//                }
                 .previewDisplayName("SCPIDetailedView")
             }
     }

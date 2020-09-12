@@ -18,6 +18,7 @@ struct Loan: Codable, Identifiable, NameableAndValueable {
     
     var id                = UUID()
     var name              : String
+    var note              : String
     var firstYear         : Int // au 31 décembre
     var lastYear          : Int // au 31 décembre
     var loanedValue       : Double // negative number
@@ -42,12 +43,14 @@ struct Loan: Codable, Identifiable, NameableAndValueable {
     // initialization
     
     init(name             : String,
+         note             : String,
          firstYear        : Int,
          lastYear         : Int,
          initialValue     : Double,
          interestRate     : Double,
          monthlyInsurance : Double) {
         self.name             = name
+        self.note             = note
         self.firstYear        = firstYear
         self.lastYear         = lastYear
         self.loanedValue      = initialValue

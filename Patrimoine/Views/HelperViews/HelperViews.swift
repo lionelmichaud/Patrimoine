@@ -593,3 +593,29 @@ struct HelperViews_Previews: PreviewProvider {
         }
     }
 }
+
+// MARK: - Library Modifiers
+
+struct ButtonModifiers_Library: LibraryContentProvider {
+    @LibraryContentBuilder
+    func modifiers(base: Button<ContentView>) -> [LibraryItem] {
+        LibraryItem (base.roundedRectButtonStyle(color: .blue, width: 200),
+                     title: "Rounded Rect Button",
+                     category: .control,
+                     matchingSignature: "roundrectbutton")
+        LibraryItem (base.capsuleButtonStyle(color: Color("buttonBackgroundColor")),
+                     title: "Capsule Rect Button",
+                     category: .control,
+                     matchingSignature: "capsulebutton")
+    }
+}
+
+struct ToggleModifiers_Library: LibraryContentProvider {
+    @LibraryContentBuilder
+    func modifiers(base: Toggle<ContentView>) -> [LibraryItem] {
+        LibraryItem (base.toggleStyle(CheckboxToggleStyle(size:.large)),
+                     title: "Toggle Check Box",
+                     category: .control,
+                     matchingSignature: "checkbox")
+    }
+}

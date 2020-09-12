@@ -2,12 +2,13 @@
     "fileNamePrefix" : "",
     "items" : [
         {
-            "id" : "282CC28F-0BC2-4323-AEA3-1FD3FD6E0EBF",
-            "name" : "Selectipierre2",
-            "buyingDate" : "2020-04-23T21:53:04Z",
-            "buyingPrice" : 9900,
-            "willBeSold" : true,
-            "sellingDate" : "2022-04-23T21:53:04Z",
+            "id"           : "282CC28F-0BC2-4323-AEA3-1FD3FD6E0EBF",
+            "name"         : "Selectipierre2",
+            "note"         : "Actualisé le 11/09/2020",
+            "buyingDate"   : "2020-04-23T21  :53  :04Z",
+            "buyingPrice"  : 11000,
+            "willBeSold"   : false,
+            "sellingDate"  : "2022-04-23T21 :53 :04Z",
             "revaluatRate" : 1.0,
             "interestRate" : 3.56
         }

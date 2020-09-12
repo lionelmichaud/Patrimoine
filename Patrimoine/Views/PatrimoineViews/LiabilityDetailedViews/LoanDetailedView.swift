@@ -20,19 +20,17 @@ struct LoanDetailedView: View {
     @State private var index: Int?
     
     // à adapter
-    @State private var localItem = Loan(name: "",
-                                        firstYear: Date.now.year,
-                                        lastYear: Date.now.year,
-                                        initialValue: 0,
-                                        interestRate: 0,
-                                        monthlyInsurance: 0)
+    @State private var localItem = Loan(name             : "",
+                                        note             : "",
+                                        firstYear        : Date.now.year,
+                                        lastYear         : Date.now.year,
+                                        initialValue     : 0,
+                                        interestRate     : 0,
+                                        monthlyInsurance : 0)
     var body: some View {
         Form {
-            HStack{
-                Text("Nom")
-                    .frame(width: 70, alignment: .leading)
-                TextField("obligatoire", text: $localItem.name)
-            }
+            LabeledTextField(label: "Nom", defaultText: "obligatoire", text: $localItem.name)
+            LabeledTextEditor(label: "Note", text: $localItem.note)
             // acquisition
             Section(header: Text("CARCTERISTIQUES")) {
                 AmountEditView(label  : "Montant emprunté",
@@ -43,7 +41,7 @@ struct LoanDetailedView: View {
                 YearPicker(title     : "Dernière année (inclue)",
                            inRange   : max(localItem.firstYear, Date.now.year - 20) ... Date.now.year + 50,
                            selection : $localItem.lastYear)
-                LabeledTextView(label: "Durée du prêt",
+                LabeledText(label: "Durée du prêt",
                                 text : "\(localItem.lastYear - localItem.firstYear + 1) ans")
                     .foregroundColor(.secondary)
             }

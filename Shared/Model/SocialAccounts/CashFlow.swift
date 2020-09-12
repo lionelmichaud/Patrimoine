@@ -64,7 +64,7 @@ struct CashFlowLine {
     var taxes         = ValuedTaxes()
     var lifeExpenses  = ValuedLifeExpenses()
     var debtPayements = ValuedLoanPayments()
-    var taxableIrppRevenueDelayedToNextYear = Debt(name: "REVENU IMPOSABLE REPORTE A L'ANNEE SUIVANTE", value: 0)
+    var taxableIrppRevenueDelayedToNextYear = Debt(name: "REVENU IMPOSABLE REPORTE A L'ANNEE SUIVANTE", note: "", value: 0)
     let sciCashFlowLine : SciCashFlowLine // les comptes annuels de la SCI
     var sumOfrevenues   : Double {
         revenues.totalCredited + sciCashFlowLine.netCashFlow

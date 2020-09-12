@@ -189,8 +189,8 @@ struct MemberAddView: View {
                             personViewModel.seniority = .enfant
                         }
                     }
-                    .alert(item: $alertItem) { alertItem in myAlert(alertItem: alertItem) }
-                
+                    .alert(item: $alertItem, content: myAlert)
+
                 if formIsValid() {
                     if personViewModel.seniority == .adult {
                         AdultEditView(personViewModel: personViewModel,

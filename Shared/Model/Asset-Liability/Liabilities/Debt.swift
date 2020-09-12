@@ -18,6 +18,7 @@ struct Debt: Codable, Identifiable, NameableAndValueable {
     
     var id    = UUID()
     var name  : String
+    var note  : String
     var value : Double
     
     // initialization

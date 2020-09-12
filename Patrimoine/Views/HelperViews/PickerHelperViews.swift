@@ -46,7 +46,7 @@ struct CaseWithAssociatedValuePicker<T: PickableIdentifiableEnum>: View where T.
     
     var body: some View {
         Picker(selection: $caseIndex, label: Text(label)) {
-            ForEach(T.allCases ) { enu in
+            ForEach(T.allCases) { enu in
                 Text(enu.pickerString).tag(enu.id)
             }
         }
@@ -81,5 +81,35 @@ struct PickerHelperViews_Previews: PreviewProvider {
                 .padding([.bottom, .top])
                 .previewDisplayName("CasePicker<TestEnum>")
         }
+    }
+}
+
+// MARK: - Library Views
+
+struct PickersView_Library: LibraryContentProvider {
+    enum TestEnum: Int, PickableEnum {
+        case un, deux, trois
+        var pickerString: String {
+            switch self {
+                case .un:
+                    return "Un"
+                case .deux:
+                    return "Deux"
+                case .trois:
+                    return "Trois"
+            }
+        }
+    }
+
+    @LibraryContentBuilder
+    var views: [LibraryItem] {
+        LibraryItem(YearPicker(title: "Année", inRange: 2010...2025, selection: .constant(2020)),
+                    title: "Year Picker",
+                    category: .control,
+                    matchingSignature: "yearpicker")
+        LibraryItem(CasePicker(pickedCase: .constant(TestEnum.deux), label: "Enum"),
+                    title: "Enum Picker",
+                    category: .control,
+                    matchingSignature: "enumpicker")
     }
 }

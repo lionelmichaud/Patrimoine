@@ -20,6 +20,7 @@ struct FreeInvestDetailedView: View {
     @State private var index: Int?
     // à adapter
     @State private var initialName     : String = ""
+    @State private var initialNote     : String = ""
     @State private var initialrate     : Double = 0.0
     @State private var initialYear     : Int    = Date.now.year
     @State private var initialInterest : Double = 0.0
@@ -28,11 +29,8 @@ struct FreeInvestDetailedView: View {
     
     var body: some View {
         Form {
-            HStack{
-                Text("Nom")
-                    .frame(width: 70, alignment: .leading)
-                TextField("obligatoire", text: $initialName)
-            }
+            LabeledTextField(label: "Nom", defaultText: "obligatoire", text: $initialName)
+            LabeledTextEditor(label: "Note", text: $initialNote)
             // acquisition
             Section(header: Text("TYPE")) {
                 TypeInvestEditView(investType: $investType)
@@ -75,6 +73,7 @@ struct FreeInvestDetailedView: View {
             _index     = State(initialValue: patrimoine.assets.freeInvests.items.firstIndex(of: initialItemValue))
             // specific
             _initialName     = State(initialValue: initialItemValue.name)
+            _initialNote     = State(initialValue: initialItemValue.note)
             _investType      = State(initialValue: initialItemValue.type)
             _initialrate     = State(initialValue: initialItemValue.interestRate)
             _initialYear     = State(initialValue: initialItemValue.initialState.year)
@@ -89,6 +88,7 @@ struct FreeInvestDetailedView: View {
     func duplicate() {
         let localItem = FreeInvestement(year            : initialYear,
                                         name            : initialName + "-copie",
+                                        note            : initialNote,
                                         type            : investType,
                                         rate            : initialrate,
                                         initialValue    : initialValue,
@@ -101,6 +101,7 @@ struct FreeInvestDetailedView: View {
         // construire l'item nouveau ou modifier à partir des valeurs saisies
         let localItem = FreeInvestement(year            : initialYear,
                                         name            : initialName,
+                                        note            : initialNote,
                                         type            : investType,
                                         rate            : initialrate,
                                         initialValue    : initialValue,
