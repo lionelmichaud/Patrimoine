@@ -30,6 +30,7 @@ struct PatrimoineView: View {
                 .environment(\.horizontalSizeClass, .regular)
 
             }
+            .onAppear(perform: { self.patrimoine.resetFreeInvestementCurrentValue() })
             .navigationTitle("Patrimoine")
             .navigationBarItems(
                 leading: EditButton())

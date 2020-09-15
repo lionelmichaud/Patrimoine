@@ -1,10 +1,23 @@
 {
+    "version" :
+    {
+        "version" : "0.1",
+        "date"    : "2020-09-12T23:00:00+01:00",
+        "comment" : null
+    },
+
     "PASS" : 41136,
     
     "irppOnEstateCapitalGain" :
     {
         "model" :
         {
+            "version" :
+            {
+                "version" : "0.1",
+                "date"    : "2020-09-12T23:00:00+01:00",
+                "comment" : null
+            },
             "irpp" : 19.0,
             "exoGrid" : [
                 {
@@ -30,6 +43,12 @@
     {
         "model" :
         {
+            "version" :
+            {
+                "version" : "0.1",
+                "date"    : "2020-09-12T23:00:00+01:00",
+                "comment" : null
+            },
             "CRDS"         : 0.5,
             "CSG"          : 9.2,
             "prelevSocial" : 7.5,
@@ -62,6 +81,12 @@
     {
         "model" :
         {
+            "version" :
+            {
+                "version" : "0.1",
+                "date"    : "2020-09-12T23:00:00+01:00",
+                "comment" : null
+            },
             "rebate"            : 10.0,
             "minRebate"         :  393.0,
             "maxRebate"         : 3850.0,
@@ -77,6 +102,12 @@
     {
         "model":
         {
+            "version" :
+            {
+                "version" : "0.1",
+                "date"    : "2020-09-12T23:00:00+01:00",
+                "comment" : null
+            },
             "CRDS"         : 0.5,
             "CSG"          : 9.2,
             "prelevSocial" : 7.5
@@ -87,6 +118,12 @@
     {
         "model" :
         {
+            "version" :
+            {
+                "version" : "0.1",
+                "date"    : "2020-09-12T23:00:00+01:00",
+                "comment" : null
+            },
             "URSSAF" : 24
         }
     },
@@ -95,6 +132,12 @@
     {
         "model":
         {
+            "version" :
+            {
+                "version" : "0.1",
+                "date"    : "2020-09-12T23:00:00+01:00",
+                "comment" : null
+            },
             "seuilCsgCrds"  : 50.0,
             "CRDS"          : 0.5,
             "CSG"           : 6.2,
@@ -106,6 +149,12 @@
     {
         "model":
         {
+            "version" :
+            {
+                "version" : "0.1",
+                "date"    : "2020-09-12T23:00:00+01:00",
+                "comment" : null
+            },
             "socialTaxes" :
             {
                 "maxRebateCoef" : 2.0,
@@ -123,6 +172,12 @@
     {
         "model" :
         {
+            "version" :
+            {
+                "version" : "0.1",
+                "date"    : "2020-09-12T23:00:00+01:00",
+                "comment" : null
+            },
             "rebatePerPerson" : 4800.0
         }
     },
@@ -131,6 +186,12 @@
     {
         "model" :
         {
+            "version" :
+            {
+                "version" : "0.1",
+                "date"    : "2020-09-12T23:00:00+01:00",
+                "comment" : null
+            },
             "turnOverRebate" : 34.0,
             "salaryRebate"   : 10.0,
             "minRebate"      :   441.0,
@@ -165,6 +226,12 @@
     {
         "model" :
         {
+            "version" :
+            {
+                "version" : "0.1",
+                "date"    : "2020-09-12T23:00:00+01:00",
+                "comment" : null
+            },
             "rate" : 15.0
         }
     }

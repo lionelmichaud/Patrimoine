@@ -12,4 +12,5 @@ extension Double {
     var roundedString: String {
         String(format: "%.f", self.rounded())
     }
+
 }

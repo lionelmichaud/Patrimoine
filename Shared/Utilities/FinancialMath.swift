@@ -8,6 +8,10 @@
 // https://gist.github.com/glaucocustodio/58f86d7e5f184f7b6f2c
 
 import Foundation
+import os
+
+fileprivate let customLog = Logger(subsystem: "me.michaud.lionel.Patrimoine", category: "FinancialMath")
+
 
 /// Valeur future d'un investissement à capital initial et versements périodiques
 /// - Parameter payement: versement périodique
@@ -22,6 +26,10 @@ public func futurValue (payement     : Double,
                         interestRate : Double,
                         nbPeriod     : Int,
                         initialValue : Double = 0.0) -> Double {
+    guard nbPeriod.isPOZ else {
+        customLog.log(level: .fault, "futurValue/nbPeriod < 0 = \(nbPeriod, privacy: .public)")
+        fatalError("futurValue/nbPeriod < 0 = \(nbPeriod)")
+    }
     let a = initialValue * pow((1+interestRate), Double(nbPeriod))
     let b = (interestRate == 0.0 ? payement * Double(nbPeriod) :
         payement * (pow((1+interestRate),Double(nbPeriod)) - 1) / interestRate)
@@ -63,6 +71,10 @@ func residualValue(loanedValue  : Double,
                    firstYear    : Int,
                    lastYear     : Int,
                    currentYear  : Int) -> Double {
+    guard lastYear >= firstYear else {
+        customLog.log(level: .fault, "lastYear \(lastYear, privacy: .public) < firstYear \(firstYear, privacy: .public)")
+        fatalError("lastYear \(lastYear) < firstYear \(firstYear)")
+    }
     //Swift.print("currentYear = \(currentYear)")
     let nbPeriod = (lastYear - firstYear + 1)
     //Swift.print("nbPeriod = \(nbPeriod)")

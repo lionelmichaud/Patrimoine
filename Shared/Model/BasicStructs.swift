@@ -54,11 +54,27 @@ import Foundation
     }
 }
 
-/// <#Description#>
+/// retourne true si la liste d'items contient l'item sélectionné
 /// - Parameters:
-///   - name: <#name description#>
-///   - itemSelection: <#itemSelection description#>
-/// - Returns: <#description#>
+///   - name: nom de l'item recherché
+///   - itemSelection: liste d'item
+/// - Returns: true si la liste d'items contient l'item sélectionné
 func selectionContains(_ name: String, itemSelection: [(label: String, selected: Bool)]) -> Bool {
     itemSelection.contains(where: { (label: String, selected: Bool) in (label == name && selected) })
+}
+
+struct Version: Codable {
+    let version : String?
+    let date    : Date?
+    let comment : String?
+    var major   : Int? {
+        return nil
+    }
+    var minor    : Int? {
+        return nil
+    }
+    static func toVersion(major: Int,
+                          minor: Int) -> String {
+        return String(major) + "." + String(minor)
+    }
 }

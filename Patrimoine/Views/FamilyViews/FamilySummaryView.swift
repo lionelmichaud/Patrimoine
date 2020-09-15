@@ -39,8 +39,8 @@ struct FamilySummaryView: View {
         }
         .navigationTitle("Résumé")
         .navigationBarTitleDisplayMode(.inline)
-        .onAppear(perform: { computeCurrentYearCashFlow() })
-        .onDisappear(perform: { self.patrimoine.resetFreeInvestementCurrentValue() })
+        .onAppear(perform: computeCurrentYearCashFlow)
+        .onDisappear(perform: self.patrimoine.resetFreeInvestementCurrentValue)
     }
 }
 

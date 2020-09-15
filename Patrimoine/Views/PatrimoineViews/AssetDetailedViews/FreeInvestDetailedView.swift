@@ -41,7 +41,7 @@ struct FreeInvestDetailedView: View {
                            selection: $initialYear)
                 AmountEditView(label: "Valeure initiale",
                                amount: $initialValue)
-                AmountEditView(label: "Plus-values initiales",
+                AmountEditView(label: "dont Plus-values initiales",
                                amount: $initialInterest)
             }
             Section(header: Text("RENTABILITE")) {
@@ -70,7 +70,7 @@ struct FreeInvestDetailedView: View {
         self.item = item
         if let initialItemValue = item {
             // modification d'un élément existant
-            _index     = State(initialValue: patrimoine.assets.freeInvests.items.firstIndex(of: initialItemValue))
+            _index = State(initialValue: patrimoine.assets.freeInvests.items.firstIndex(of: initialItemValue))
             // specific
             _initialName     = State(initialValue: initialItemValue.name)
             _initialNote     = State(initialValue: initialItemValue.note)

@@ -594,6 +594,16 @@ struct HelperViews_Previews: PreviewProvider {
     }
 }
 
+// Button(iconName: "play.fill") {
+extension Button where Label == Image {
+    init(iconName: String, action: @escaping () -> Void) {
+        self.init(action: action) {
+            Image(systemName: iconName)
+        }
+    }
+}
+
+
 // MARK: - Library Modifiers
 
 struct ButtonModifiers_Library: LibraryContentProvider {

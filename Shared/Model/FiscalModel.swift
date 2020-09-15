@@ -12,7 +12,8 @@ struct Fiscal: Codable {
     
     // nested types
     
-    struct Model: Codable {
+    struct Model: Codable, Versionable {
+        var version                        : Version
         var PASS                           : Double // Plafond Annuel de la Sécurité Sociale
         var irppOnEstateCapitalGain        : IrppOnRealEstateCapitalGain
         var socialTaxesOnEstateCapitalGain : SocialTaxesOnRealEstateCapitalGain
@@ -48,7 +49,8 @@ struct IrppOnRealEstateCapitalGain: Codable {
         let prevDiscount : Double // % cumul des tranches précédentes
     }
     
-    struct Model: Codable {
+    struct Model: Codable, Versionable {
+        var version : Version
         let exoGrid : [ExonerationSlice]
         let irpp    : Double // 19.0 // %
     }
@@ -103,7 +105,8 @@ struct SocialTaxesOnRealEstateCapitalGain: Codable {
     //         ExonerationSlice(floor: 30, discountRate: 0.00, prevDiscount: (21-5)*1.65 + (22-21)*1.6 + (30-22)*9.0)]
     //static let detentionDurationExonartion : Int = 30 // ans
     
-    struct Model: Codable {
+    struct Model: Codable, Versionable {
+        var version      : Version
         let exoGrid      : [ExonerationSlice]
         let CRDS         : Double // 0.5 // %
         let CSG          : Double // 9.2 // %
@@ -148,7 +151,8 @@ struct PensionTaxes: Codable {
     
     // nested types
     
-    struct Model: Codable {
+    struct Model: Codable, Versionable {
+        var version           : Version
         let rebate            : Double // 10.0 // %
         let minRebate         : Double // 393   // € par déclarant
         let maxRebate         : Double // 3_850 // € par foyer fiscal
@@ -212,7 +216,8 @@ struct SocialTaxesOnFinancialRevenu: Codable {
     
     // nested types
     
-    struct Model: Codable {
+    struct Model: Codable, Versionable {
+        var version      : Version
         let CRDS         : Double // 0.5 // %
         let CSG          : Double // 9.2 // %
         let prelevSocial : Double // 7.5  // %
@@ -252,7 +257,8 @@ struct SocialTaxesOnTurnover: Codable {
     
     // nested types
     
-    struct Model: Codable {
+    struct Model: Codable, Versionable {
+        var version: Version
         let URSSAF : Double // 24 // %
         var total  : Double {
             URSSAF // %
@@ -298,7 +304,8 @@ struct LayOffTaxes: Codable {
             rateDeductible + rateNonDeductible
         }
     }
-    struct Model: Codable {
+    struct Model: Codable, Versionable {
+        var version     : Version
         let socialTaxes : SocialTaxes
         let csgCrds     : CsgCrds
     }
@@ -351,7 +358,8 @@ struct SocialTaxesOnAllocationChomage: Codable {
     
     // nested types
     
-    struct Model: Codable {
+    struct Model: Codable, Versionable {
+        var version      : Version
         let seuilCsgCrds : Double // 50.0 // €, pas cotisation en deça
         let CRDS         : Double // 0.5 * 0.9825 // %
         let CSG          : Double // 6.2 // %
@@ -396,7 +404,8 @@ struct LifeInsuranceTaxes: Codable {
     
     // nested types
     
-    struct Model: Codable {
+    struct Model: Codable, Versionable {
+        var version        : Version
         let rebatePerPerson: Double // 4800.0 // euros
     }
     
@@ -418,7 +427,8 @@ struct IncomeTaxes: Codable {
         let disc  : Double // euro
     }
     
-    struct Model: Codable {
+    struct Model: Codable, Versionable {
+        var version        : Version
         let irppGrid       : [IrppSlice]
         let turnOverRebate : Double // 34.0 // %
         let salaryRebate   : Double // 10.0 // %
@@ -499,8 +509,9 @@ struct CompanyProfitTaxes: Codable {
     
     // nested types
     
-    struct Model: Codable {
-        let rate: Double // 15.0 // %
+    struct Model: Codable, Versionable {
+        var version : Version
+        let rate    : Double // 15.0 // %
     }
     
     // properties

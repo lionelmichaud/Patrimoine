@@ -41,8 +41,6 @@ extension PickableEnum {
 protocol PickableIdentifiableEnum: PickableEnum, Identifiable {
 }
 
-protocol isVersionned {
-    static var version : String? { get set }
-    static var date    : Date? { get set }
-    
+protocol Versionable {
+    var version : Version { get set }
 }

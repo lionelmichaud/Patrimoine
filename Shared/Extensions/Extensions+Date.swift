@@ -296,3 +296,11 @@ func numberOfDays(from: Date, to: Date) -> DateComponents {
 func numberOf(_ component: Calendar.Component, from: Date, to: Date) -> DateComponents {
     Date.calendar.dateComponents([component], from: from, to: to)
 }
+
+extension Date {
+    func toString(format: String) -> String {
+        let df = DateFormatter()
+        df.dateFormat = format
+        return df.string(from: self)
+    }
+}

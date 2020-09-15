@@ -18,8 +18,8 @@ struct PatrimoineSummaryView: View {
         VStack {
             // évaluation annuelle du patrimoine
             HStack {
-                Text("Evaluation fin ") + Text(String(Int(uiState.expenseViewState.evalDate)))
-                Slider(value : $uiState.expenseViewState.evalDate,
+                Text("Evaluation fin ") + Text(String(Int(uiState.patrimoineViewState.evalDate)))
+                Slider(value : $uiState.patrimoineViewState.evalDate,
                        in    : minDate.double() ... maxDate.double(),
                        step  : 1,
                        onEditingChanged: {_ in
@@ -29,20 +29,20 @@ struct PatrimoineSummaryView: View {
             
             // tableau
             Form {
-                Section(header: header("", year: Int(uiState.expenseViewState.evalDate))) {
+                Section(header: header("", year: Int(uiState.patrimoineViewState.evalDate))) {
                     HStack {
                         Text("Actif Net").fontWeight(.bold)
                         Spacer()
-                        Text(patrimoine.value(atEndOf: Int(uiState.expenseViewState.evalDate)).euroString)
+                        Text(patrimoine.value(atEndOf: Int(uiState.patrimoineViewState.evalDate)).euroString)
                     }
                 }
                 .listRowBackground(ListTheme.rowsBaseColor)
-                Section(header: header("ACTIF", year: Int(uiState.expenseViewState.evalDate))) {
+                Section(header: header("ACTIF", year: Int(uiState.patrimoineViewState.evalDate))) {
                     Group {
                         // (0) Immobilier
                         ListTableRowView(label       : "Immobilier",
-                                         value       : patrimoine.assets.realEstates.value(atEndOf: Int(uiState.expenseViewState.evalDate)) +
-                                            patrimoine.assets.scpis.value(atEndOf: Int(uiState.expenseViewState.evalDate)),
+                                         value       : patrimoine.assets.realEstates.value(atEndOf: Int(uiState.patrimoineViewState.evalDate)) +
+                                            patrimoine.assets.scpis.value(atEndOf: Int(uiState.patrimoineViewState.evalDate)),
                                          indentLevel : 0,
                                          header      : true)
                         //      (1) Immeuble
@@ -52,7 +52,7 @@ struct PatrimoineSummaryView: View {
                                          header      : true)
                         ForEach(patrimoine.assets.realEstates.items) { item in
                             ListTableRowView(label       : item.name,
-                                             value       : item.value(atEndOf: Int(self.uiState.expenseViewState.evalDate)),
+                                             value       : item.value(atEndOf: Int(self.uiState.patrimoineViewState.evalDate)),
                                              indentLevel : 2,
                                              header      : false)
                         }
@@ -63,7 +63,7 @@ struct PatrimoineSummaryView: View {
                                          header      : true)
                         ForEach(patrimoine.assets.scpis.items) { item in
                             ListTableRowView(label       : item.name,
-                                             value       : item.value(atEndOf: Int(self.uiState.expenseViewState.evalDate)),
+                                             value       : item.value(atEndOf: Int(self.uiState.patrimoineViewState.evalDate)),
                                              indentLevel : 2,
                                              header      : false)
                         }
@@ -71,29 +71,29 @@ struct PatrimoineSummaryView: View {
                     Group {
                         // (0) Financier
                         ListTableRowView(label       : "Financier",
-                                         value       : patrimoine.assets.periodicInvests.value(atEndOf: Int(uiState.expenseViewState.evalDate)) +
-                                            patrimoine.assets.freeInvests.value(atEndOf: Int(uiState.expenseViewState.evalDate)),
+                                         value       : patrimoine.assets.periodicInvests.value(atEndOf: Int(uiState.patrimoineViewState.evalDate)) +
+                                            patrimoine.assets.freeInvests.value(atEndOf: Int(uiState.patrimoineViewState.evalDate)),
                                          indentLevel : 0,
                                          header      : true)
                         //      (1) Invest Périodique
                         ListTableRowView(label       : "Invest Périodique",
-                                         value       : patrimoine.assets.periodicInvests.value(atEndOf: Int(uiState.expenseViewState.evalDate)),
+                                         value       : patrimoine.assets.periodicInvests.value(atEndOf: Int(uiState.patrimoineViewState.evalDate)),
                                          indentLevel : 1,
                                          header      : true)
                         ForEach(patrimoine.assets.periodicInvests.items) { item in
                             ListTableRowView(label       : item.name,
-                                             value       : item.value(atEndOf: Int(self.uiState.expenseViewState.evalDate)),
+                                             value       : item.value(atEndOf: Int(self.uiState.patrimoineViewState.evalDate)),
                                              indentLevel : 2,
                                              header      : false)
                         }
                         //      (1) Investissement Libre
                         ListTableRowView(label       : "Investissement Libre",
-                                         value       : patrimoine.assets.freeInvests.value(atEndOf: Int(uiState.expenseViewState.evalDate)),
+                                         value       : patrimoine.assets.freeInvests.value(atEndOf: Int(uiState.patrimoineViewState.evalDate)),
                                          indentLevel : 1,
                                          header      : true)
                         ForEach(patrimoine.assets.freeInvests.items) { item in
                             ListTableRowView(label       : item.name,
-                                             value       : item.value(atEndOf: Int(self.uiState.expenseViewState.evalDate)),
+                                             value       : item.value(atEndOf: Int(self.uiState.patrimoineViewState.evalDate)),
                                              indentLevel : 2,
                                              header      : false)
                         }
@@ -101,34 +101,34 @@ struct PatrimoineSummaryView: View {
                     Group {
                         // (0) SCI
                         ListTableRowView(label       : "SCI",
-                                         value       : patrimoine.assets.sci.scpis.value(atEndOf       : Int(uiState.expenseViewState.evalDate)) +
+                                         value       : patrimoine.assets.sci.scpis.value(atEndOf       : Int(uiState.patrimoineViewState.evalDate)) +
                                             patrimoine.assets.sci.bankAccount,
                                          indentLevel : 0,
                                          header      : true)
                         //      (1) SCPI
                         ListTableRowView(label       : "SCPI",
-                                         value       : patrimoine.assets.sci.scpis.value(atEndOf       : Int(uiState.expenseViewState.evalDate)),
+                                         value       : patrimoine.assets.sci.scpis.value(atEndOf       : Int(uiState.patrimoineViewState.evalDate)),
                                          indentLevel : 1,
                                          header      : true)
                         ForEach(patrimoine.assets.sci.scpis.items) { item in
                             ListTableRowView(label       : item.name,
-                                             value       : item.value(atEndOf: Int(self.uiState.expenseViewState.evalDate)),
+                                             value       : item.value(atEndOf: Int(self.uiState.patrimoineViewState.evalDate)),
                                              indentLevel : 2,
                                              header      : false)
                         }
                         
                     }
                 }
-                Section(header: header("PASSIF", year: Int(uiState.expenseViewState.evalDate))) {
+                Section(header: header("PASSIF", year: Int(uiState.patrimoineViewState.evalDate))) {
                     Group {
                         // (0) Emprunts
                         ListTableRowView(label       : "Emprunt",
-                                         value       : patrimoine.liabilities.loans.value(atEndOf: Int(uiState.expenseViewState.evalDate)),
+                                         value       : patrimoine.liabilities.loans.value(atEndOf: Int(uiState.patrimoineViewState.evalDate)),
                                          indentLevel : 0,
                                          header      : true)
                         ForEach(patrimoine.liabilities.loans.items) { item in
                             ListTableRowView(label       : item.name,
-                                             value       : item.value(atEndOf: Int(self.uiState.expenseViewState.evalDate)),
+                                             value       : item.value(atEndOf: Int(self.uiState.patrimoineViewState.evalDate)),
                                              indentLevel : 2,
                                              header      : false)
                         }
@@ -137,12 +137,12 @@ struct PatrimoineSummaryView: View {
                     Group {
                         // (0) Dettes
                         ListTableRowView(label       : "Dette",
-                                         value       : patrimoine.liabilities.debts.value(atEndOf: Int(uiState.expenseViewState.evalDate)),
+                                         value       : patrimoine.liabilities.debts.value(atEndOf: Int(uiState.patrimoineViewState.evalDate)),
                                          indentLevel : 0,
                                          header      : true)
                         ForEach(patrimoine.liabilities.debts.items) { item in
                             ListTableRowView(label       : item.name,
-                                             value       : item.value(atEndOf: Int(self.uiState.expenseViewState.evalDate)),
+                                             value       : item.value(atEndOf: Int(self.uiState.patrimoineViewState.evalDate)),
                                              indentLevel : 2,
                                              header      : false)
                         }

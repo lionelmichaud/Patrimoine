@@ -7,6 +7,9 @@
 //
 
 import Foundation
+import os
+
+fileprivate let customLog = Logger(subsystem: "me.michaud.lionel.Patrimoine", category: "Model.FreeInvestement")
 
 typealias FreeInvestmentArray = ItemArray<FreeInvestement>
 
@@ -27,12 +30,12 @@ struct FreeInvestement: Identifiable, Codable, NameableAndValueable {
     
     // properties
     
-    var id                 = UUID()
-    var name               : String
-    var note               : String
-    let type               : InvestementType // type de l'investissement
-    let interestRate       : Double // % fixe avant charges sociales si prélevées à la source annuellement
-    var interestRateNet    : Double { // % fixe après charges sociales si prélevées à la source annuellement
+    var id                   = UUID()
+    var name                 : String
+    var note                 : String
+    let type                 : InvestementType // type de l'investissement
+    let interestRate         : Double // % fixe avant charges sociales si prélevées à la source annuellement
+    var interestRateNet      : Double { // % fixe après charges sociales si prélevées à la source annuellement
         switch type {
             case .lifeInsurance(let periodicSocialTaxes):
                 // si assurance vie: le taux net est le taux brut - charges sociales si celles-ci sont prélèvées à la source anuellement
@@ -42,10 +45,14 @@ struct FreeInvestement: Identifiable, Codable, NameableAndValueable {
                 return interestRate
         }
     }
-    let initialState       : State // constitution initiale du capital
-    var currentState       : State // constitution du capital à l'instant présent
-    var cumulatedInterests : Double { currentState.interest } // intérêts cumulés au cours du temps jusqu'à à l'instant présent
-    var yearlyInterest     : Double { // intérêts anuels du capital accumulé à l'instant présent
+    var initialState         : State {// dernière constitution du capital connue
+        didSet {
+            resetCurrentState()
+        }
+    }
+    private var currentState : State // constitution du capital à l'instant présent
+    var cumulatedInterests   : Double { currentState.interest } // intérêts cumulés au cours du temps jusqu'à à l'instant présent
+    var yearlyInterest       : Double { // intérêts anuels du capital accumulé à l'instant présent
         currentState.value * interestRateNet / 100.0
     }
     
@@ -80,12 +87,14 @@ struct FreeInvestement: Identifiable, Codable, NameableAndValueable {
     
     /// somme des versements + somme des intérêts
     func value(atEndOf year: Int) -> Double {
+//        Swift.print("year: \(year)")
+//        Swift.print(description)
         guard year == self.currentState.year else {
-            // TODO: - revaloriser les intérêts par extraoplation à partir de la dernière année simulée
+            // revaloriser la valeur par extrapolation à partir de la situation initiale
             return futurValue(payement     : 0,
                               interestRate : interestRateNet/100,
-                              nbPeriod     : year - currentState.year,
-                              initialValue : currentState.value)
+                              nbPeriod     : year - initialState.year,
+                              initialValue : initialState.value)
             //return initialState.value
         }
         // valeur de la dernière année simulée
@@ -98,14 +107,21 @@ struct FreeInvestement: Identifiable, Codable, NameableAndValueable {
         currentState.investment += amount
     }
     
-    // Pour obtenir un retrait netAmount NET de charges sociales
-    // netAmount:           retrait net de charges sociales souhaité
-    // revenue:             retrait net de charges sociales réellement obtenu (= netAmount si le capital est suffisant, moins sinon)
-    // interests:           intérêts bruts avant charges sociales
-    // netInterests:        intérêts nets de charges sociales
-    // taxableInterests:    part des netInterests imposable à l'IRPP
-    // socialTaxes:         charges sociales sur les intérêts
-    mutating func remove(netAmount: Double) -> (revenue: Double, interests: Double, netInterests: Double, taxableInterests: Double, socialTaxes: Double) {
+    //
+    /// Pour obtenir un retrait netAmount NET de charges sociales
+    /// - Parameter netAmount: retrait net de charges sociales souhaité
+    /// - Returns:
+    /// revenue:             retrait net de charges sociales réellement obtenu (= netAmount si le capital est suffisant, moins sinon)
+    /// interests:           intérêts bruts avant charges sociales
+    /// netInterests:        intérêts nets de charges sociales
+    /// taxableInterests:    part des netInterests imposable à l'IRPP
+    /// socialTaxes:         charges sociales sur les intérêts
+    mutating func remove(netAmount: Double)
+    -> (revenue: Double,
+        interests: Double,
+        netInterests: Double,
+        taxableInterests: Double,
+        socialTaxes: Double) {
         guard currentState.value != 0.0 else {
             // le compte est vide: on ne retire rien
             return (revenue: 0, interests: 0, netInterests: 0, taxableInterests: 0, socialTaxes: 0)
@@ -188,12 +204,39 @@ struct FreeInvestement: Identifiable, Codable, NameableAndValueable {
     
     /// Capitaliser les intérêts d'une année: à faire une fois par an et apparaissent dans l'année courante
     mutating func capitalize(atEndOf year: Int) {
+        Swift.print("\(name)")
+        Swift.print("  year \(currentState.year)")
+        Swift.print("  interest = \(currentState.interest.euroString), invest = \(currentState.investment.euroString), total = \(currentState.value)")
+
         currentState.interest += yearlyInterest
         currentState.year = year
+
+        Swift.print("  year \(currentState.year)")
+        Swift.print("  interest = \(currentState.interest.euroString), invest = \(currentState.investment.euroString), total = \(currentState.value)")
     }
     
     /// Remettre la valeur courante à la valeur initiale
-    mutating func resetCurrentValue() {
+    mutating func resetCurrentState() {
+        // calculer la valeur de currentState à la date de fin d'année passée
+        let estimationYear = Date.now.year - 1
+        if estimationYear == initialState.year {
+            currentState = initialState
+        } else if estimationYear > initialState.year {
+            // revaloriser la valeure par extrapolation à partir de la situation initiale
+            let futurVal = futurValue(payement     : 0,
+                                      interestRate : interestRateNet/100,
+                                      nbPeriod     : estimationYear - initialState.year,
+                                      initialValue : initialState.value)
+            currentState.year       = estimationYear
+            currentState.investment = initialState.investment
+            currentState.interest   = initialState.interest + (futurVal - initialState.value)
+        } else {
+            // on ne remonte pas le temps
+            customLog.log(level: .fault,
+                          "didSet: estimationYear (\(estimationYear, privacy: .public)) < initialState.year")
+            fatalError("didSet: estimationYear (\(estimationYear)) < initialState.year (\(initialState.year))")
+        }
+        
         currentState = initialState
     }
 
@@ -217,12 +260,13 @@ extension FreeInvestement: CustomStringConvertible {
     var description: String {
         return """
         \(name)
-        valeur:        \(value(atEndOf: Date.now.year).euroString)
-        type:          \(type)
-        year:          \(currentState.year) Value: \(currentState.value.euroString)
-        investement:   \(currentState.investment.euroString) interest: \(currentState.interest.euroString)
-        interest Rate: \(interestRate) %
-        
+          type:          \(type)
+          valeur:        \(value(atEndOf: Date.now.year).euroString)
+          initial state: (year: \(initialState.year), interest: \(initialState.interest.euroString), invest: \(initialState.investment.euroString), Value: \(initialState.value.euroString))
+          current state: (year: \(currentState.year), interest: \(currentState.interest.euroString), invest: \(currentState.investment.euroString), Value: \(currentState.value.euroString))
+          interest Rate: \(interestRate) %
+          yearly interest: \(yearlyInterest.euroString)
+
         """
     }
 }

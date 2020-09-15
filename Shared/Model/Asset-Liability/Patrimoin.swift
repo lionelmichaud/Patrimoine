@@ -21,7 +21,7 @@ final class Patrimoin: ObservableObject {
         var investements = [FreeInvestement]()
         assets.freeInvests.items.forEach {
             var invest = $0
-            invest.resetCurrentValue()
+            invest.resetCurrentState()
             investements.append(invest)
         }
         assets.freeInvests.items = investements
@@ -80,7 +80,7 @@ final class Patrimoin: ObservableObject {
         // si pas d'assurance vie alors investir dans un PEA
         investNetCashFlow(amount: &amount, in: .pea)
         
-        // si pas d'assurance vie alors investir dans un autre placement
+        // si pas d'assurance vie ni de PEA alors investir dans un autre placement
         investNetCashFlow(amount: &amount, in: .other)
     }
     

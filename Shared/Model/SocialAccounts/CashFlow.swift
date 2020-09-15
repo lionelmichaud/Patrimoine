@@ -1,4 +1,7 @@
 import Foundation
+import os
+
+fileprivate let customLog = Logger(subsystem: "me.michaud.lionel.Patrimoine", category: "Model.CashFlow")
 
 enum CashFlowError: Error {
     case notEnoughCash(missingCash: Double)
@@ -85,30 +88,31 @@ struct CashFlowLine {
         self.year = year
         revenues.taxableIrppRevenueDelayedFromLastYear.setValue(to: taxableIrppRevenueDelayedFromLastyear)
         
-        // initialize life insurance yearly rebate on taxes
+        /// initialize life insurance yearly rebate on taxes
         // TODO: mettre à jour le model de défiscalisation Asurance Vie
         var lifeInsuranceRebate = Fiscal.model.lifeInsuranceTaxes.model.rebatePerPerson * family.nbOfAdultAlive(atEndOf: year).double()
         
-        // SCI: calculer le cash flow de la SCI
+        /// SCI: calculer le cash flow de la SCI
         sciCashFlowLine = SciCashFlowLine(withYear : year,
                                           withSCI  : patrimoine.assets.sci)
         
-        // INCOME: populate Ages and Work incomes
+        /// INCOME: populate Ages and Work incomes
         populateIncomes(of: family)
         
-        // REAL ESTATE: populate produit de vente, loyers, taxes sociales et taxes locales des bien immobiliers
+        /// REAL ESTATE: populate produit de vente, loyers, taxes sociales et taxes locales des bien immobiliers
         populateRealEstateCashFlow(of: patrimoine)
         
-        // SCPI: populate produit de vente, dividendes, taxes sociales des SCPI
+        /// SCPI: populate produit de vente, dividendes, taxes sociales des SCPI
         populateScpiCashFlow(of: patrimoine)
         
-        // PERIODIC INVEST: populate revenue, des investissements financiers périodiques
+        /// PERIODIC INVEST: populate revenue, des investissements financiers périodiques
         populatePeriodicInvestmentsCashFlow(of                  : patrimoine,
                                             lifeInsuranceRebate : &lifeInsuranceRebate)
         
         // Note: les intérêts des investissements financiers libres sont capitalisés
+        // => ne génèrent des charges sociales et de l'IRPP qu'au moment de leur liquidation
         
-        // IRPP: calcule de l'impot sur l'ensemble des revenus: IRPP
+        /// IRPP: calcule de l'impot sur l'ensemble des revenus
         taxes.familyQuotient = Fiscal.model.incomeTaxes.familyQuotient(nbAdults   : family.nbOfAdultAlive(atEndOf: year),
                                                                        nbChildren : family.nbOfFiscalChildren(during: year))
         let irpp = Fiscal.model.incomeTaxes.irpp(taxableIncome : revenues.totalTaxableIrpp,
@@ -116,18 +120,20 @@ struct CashFlowLine {
                                                  nbChildren    : family.nbOfFiscalChildren(during: year)).rounded()
         taxes.perCategory[.irpp]?.values.append((name: "IRPP", value: irpp.rounded()))
 
-        // EXPENSES: compute and populate family expenses
+        /// EXPENSES: compute and populate family expenses
         lifeExpenses.namedValueTable.values = family.expenses.namedValueTable(atEndOf: year)
         
-        // LOAN: populate remboursement d'emprunts
+        /// LOAN: populate remboursement d'emprunts
         populateLoanCashFlow(of: patrimoine)
         
-        #if DEBUG
-        Swift.print("Year = \(year), Revenus = \(sumOfrevenues), Expenses = \(sumOfExpenses), Net cash flow = \(netCashFlow)")
-        #endif
+        /// FREE INVEST: populate revenue, des investissements financiers libres et investir/retirer le solde net du cash flow de l'année
         try manageYearlyNetCashFlow(of                  : patrimoine,
                                     lifeInsuranceRebate : &lifeInsuranceRebate,
                                     atEndOf             : year)
+        #if DEBUG
+        Swift.print("Year = \(year), Revenus = \(sumOfrevenues), Expenses = \(sumOfExpenses), Net cash flow = \(netCashFlow)")
+        #endif
+        
     }
     
     // MARK: - methods

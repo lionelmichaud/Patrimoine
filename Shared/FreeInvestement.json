@@ -4,20 +4,172 @@
         {
             "id"           : "4A6940AE-3D5B-4F3E-BB23-CF076F9CA5B0",
             "name"         : "PEA Boursorama",
-            "note"         : "note",
-            "interestRate" : 3,
+            "note"         : "Ouvert le 24/03/2014\nFonds actions",
+            "interestRate" : 3.0,
             "initialState" : {
-                "year"       : 2020,
-                "interest"   : 10000,
-                "investment" : 400000
+                "year"       : 2019,
+                "interest"   : 5293,
+                "investment" : 149899
             },
             "type" : {
                 "PEA" : true
             },
             "currentState" : {
-                "year"       : 2020,
-                "interest"   : 10000,
-                "investment" : 400000
+                "year"       : 0,
+                "interest"   : 0,
+                "investment" : 0
+            }
+        },
+        {
+            "id"           : "4A6940AE-3D5B-4F3E-BB23-CF076F9CA5B1",
+            "name"         : "AV Lionel Boursorama",
+            "note"         : "Ouvert le 04/03/2012\nFonds actions",
+            "interestRate" : 3.0,
+            "initialState" : {
+                "year"       : 2019,
+                "interest"   : 3150,
+                "investment" : 168448
+            },
+            "type" : {
+                "lifeInsurance_taxes" : true
+            },
+            "currentState" : {
+                "year"       : 0,
+                "interest"   : 0,
+                "investment" : 0
+            }
+        },
+        {
+            "id"           : "4A6940AE-3D5B-4F3E-BB23-CF076F9CA5B2",
+            "name"         : "AV Lionel ASAC",
+            "note"         : "Ouvert le 13/01/2006\nFond euro",
+            "interestRate" : 1.5,
+            "initialState" : {
+                "year"       : 2019,
+                "interest"   : 14498,
+                "investment" : 28926
+            },
+            "type" : {
+                "lifeInsurance_taxes" : true
+            },
+            "currentState" : {
+                "year"       : 0,
+                "interest"   : 0,
+                "investment" : 0
+            }
+        },
+       {
+            "id"           : "4A6940AE-3D5B-4F3E-BB23-CF076F9CA5B3",
+            "name"         : "Ass Vie Lionel AFER",
+            "note"         : "Ouvert le 30/06/1999\nFonds actions",
+            "interestRate" : 3.0,
+            "initialState" : {
+                "year"       : 2019,
+                "interest"   : 92526,
+                "investment" : 96805
+            },
+            "type" : {
+                "lifeInsurance_taxes" : true
+            },
+            "currentState" : {
+                "year"       : 0,
+                "interest"   : 0,
+                "investment" : 0
+            }
+        },
+        {
+            "id"           : "4A6940AE-3D5B-4F3E-BB23-CF076F9CA5B4",
+            "name"         : "Ass Vie Vanessa AFER",
+            "note"         : "Ouvert le 30/06/1999\nFonds actions",
+            "interestRate" : 3.0,
+            "initialState" : {
+                "year"       : 2019,
+                "interest"   : 24375,
+                "investment" : 31203
+            },
+            "type" : {
+                "lifeInsurance_taxes" : true
+            },
+            "currentState" : {
+                "year"       : 0,
+                "interest"   : 0,
+                "investment" : 0
+            }
+        },
+        {
+            "id"           : "4A6940AE-3D5B-4F3E-BB23-CF076F9CA5B5",
+            "name"         : "Ass Vie Lionel Conservateur",
+            "note"         : "Ouvert le 30/06/1999",
+            "interestRate" : 3.0,
+            "initialState" : {
+                "year"       : 2019,
+                "interest"   : 0,
+                "investment" : 0
+            },
+            "type" : {
+                "lifeInsurance_taxes" : true
+            },
+            "currentState" : {
+                "year"       : 0,
+                "interest"   : 0,
+                "investment" : 0
+            }
+        },
+        {
+            "id"           : "4A6940AE-3D5B-4F3E-BB23-CF076F9CA5B6",
+            "name"         : "Ass Vie Vanessa Conservateur",
+            "note"         : "Ouvert le 30/06/1999",
+            "interestRate" : 3.0,
+            "initialState" : {
+                "year"       : 2019,
+                "interest"   : 1000,
+                "investment" : 0
+            },
+            "type" : {
+                "lifeInsurance_taxes" : true
+            },
+            "currentState" : {
+                "year"       : 0,
+                "interest"   : 0,
+                "investment" : 0
+            }
+        },
+        {
+            "id"           : "4A6940AE-3D5B-4F3E-BB23-CF076F9CA5B7",
+            "name"         : "Livret A Lionel Boursorama",
+            "note"         : "Ouvert en 2016",
+            "interestRate" : 0.5,
+            "initialState" : {
+                "year"       : 2019,
+                "interest"   : 0,
+                "investment" : 22067
+            },
+            "type" : {
+                "other" : true
+            },
+            "currentState" : {
+                "year"       : 0,
+                "interest"   : 0,
+                "investment" : 0
+            }
+        },
+        {
+            "id"           : "4A6940AE-3D5B-4F3E-BB23-CF076F9CA5B8",
+            "name"         : "LDD Lionel LCL",
+            "note"         : "",
+            "interestRate" : 0.5,
+            "initialState" : {
+                "year"       : 2019,
+                "interest"   : 0,
+                "investment" : 12000
+            },
+            "type" : {
+                "other" : true
+            },
+            "currentState" : {
+                "year"       : 0,
+                "interest"   : 0,
+                "investment" : 0
             }
         }
     ]
