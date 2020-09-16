@@ -31,7 +31,7 @@
             "inhabitedFromDate"       : "2011-06-30T22:00:00Z",
             "inhabitedToDate"         : "2061-12-31T22:00:00Z",
             "yearlyTaxeHabitation"    : 2500,
-            "willBeRented"            : true,
+            "willBeRented"            : false,
             "rentalFromDate"          : "2061-12-31T22:00:00Z",
             "rentalToDate"            : "2100-01-01T00:00:00Z",
             "monthlyRentAfterCharges" : 2000,

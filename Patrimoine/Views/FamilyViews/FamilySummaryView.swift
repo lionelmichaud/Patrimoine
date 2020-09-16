@@ -20,11 +20,13 @@ struct FamilyHeaderView: View {
 }
 
 struct FamilySummaryView: View {
-    @EnvironmentObject var family    : Family
-    @EnvironmentObject var patrimoine: Patrimoin
-    @State private var cashFlow      : CashFlowLine? = nil
+    @EnvironmentObject var family     : Family
+    @EnvironmentObject var patrimoine : Patrimoin
+    @EnvironmentObject var simulation : Simulation
+    @State private var cashFlow       : CashFlowLine? = nil
     
     fileprivate func computeCurrentYearCashFlow() {
+        simulation.reset(withPatrimoine: patrimoine)
         self.cashFlow = try? CashFlowLine(withYear      : Date.now.year,
                                           withFamily    : self.family,
                                           withPatrimoine: self.patrimoine,

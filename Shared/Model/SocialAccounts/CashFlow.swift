@@ -212,7 +212,8 @@ struct CashFlowLine {
                                              value               : yearlyRent.socialTaxes.rounded()))
             
             // produit de la vente inscrit en compte courant: produit net de charges sociales et d'impôt sur la plus-value
-            let liquidatedValue = realEstate.liquidatedValue(year)
+            // le crédit se fait au début de l'année qui suit la vente
+            let liquidatedValue = realEstate.liquidatedValue(year - 1)
             revenues.perCategory[.realEstateSale]?.credits.values.append((name: name,
                                                                           value: liquidatedValue.netRevenue.rounded()))
             
@@ -241,7 +242,8 @@ struct CashFlowLine {
                                              value: yearlyRevenue.socialTaxes.rounded()))
             
             // populate SCPI sale revenue: produit de vente net de charges sociales et d'impôt sur la plus-value
-            let liquidatedValue = scpi.liquidatedValue(year)
+            // le crédit se fait au début de l'année qui suit la vente
+            let liquidatedValue = scpi.liquidatedValue(year - 1)
             revenues.perCategory[.scpiSale]?.credits.values.append((name: name,
                                                                     value: liquidatedValue.netRevenue.rounded()))
         }
@@ -255,7 +257,9 @@ struct CashFlowLine {
                                                                   lifeInsuranceRebate : inout Double) {
         // pour chaque investissement financier periodique
         for periodicInvestement in patrimoine.assets.periodicInvests.items.sorted(by:<) {
-            let liquidatedValue = periodicInvestement.liquidatedValue(atEndOf: year)
+            // le crédit se fait au début de l'année qui suit la vente
+            let liquidatedValue = periodicInvestement.liquidatedValue(atEndOf: year - 1)
+            // on compte quand même les versements de la dernière année
             let yearlyPayement  = periodicInvestement.yearlyTotalPayement(atEndOf: year)
             let name            = periodicInvestement.name
             // produit de la liquidation inscrit en compte courant avant prélèvements sociaux et IRPP

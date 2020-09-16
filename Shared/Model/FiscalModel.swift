@@ -27,7 +27,7 @@ struct Fiscal: Codable {
         var companyProfitTaxes             : CompanyProfitTaxes
     }
     
-    // properties
+    // sstatic properties
     
     static var model: Model  =
         Bundle.main.decode(Model.self,

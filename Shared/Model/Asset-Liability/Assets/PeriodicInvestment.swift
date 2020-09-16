@@ -117,22 +117,25 @@ struct PeriodicInvestement: Identifiable, Codable, NameableAndValueable {
             return (0.0, 0.0, 0.0, 0.0, 0.0)
         }
         let cumulatedInterest = cumulatedInterests(atEndOf: year)
-        var netInterests: Double
-        var taxableInterests: Double
+        var netInterests     : Double
+        var taxableInterests : Double
         switch type {
             case .lifeInsurance(let periodicSocialTaxes):
                 // Si les intérêts sont prélevés au fil de l'eau on les prélève pas à la liquidation
-                netInterests = (periodicSocialTaxes ? cumulatedInterest : Fiscal.model.socialTaxesOnFinancialRevenu.net(cumulatedInterest))
+                netInterests     = (periodicSocialTaxes ? cumulatedInterest : Fiscal.model.socialTaxesOnFinancialRevenu.net(cumulatedInterest))
                 taxableInterests = netInterests
             case .pea:
-                netInterests = Fiscal.model.socialTaxesOnFinancialRevenu.net(cumulatedInterest)
+                netInterests     = Fiscal.model.socialTaxesOnFinancialRevenu.net(cumulatedInterest)
                 taxableInterests = 0.0
             case .other:
-                netInterests = Fiscal.model.socialTaxesOnFinancialRevenu.net(cumulatedInterest)
+                netInterests     = Fiscal.model.socialTaxesOnFinancialRevenu.net(cumulatedInterest)
                 taxableInterests = netInterests
         }
-        return (revenue: value(atEndOf: year), interests: cumulatedInterest, netInterests: netInterests,
-                taxableIrppInterests: taxableInterests, socialTaxes: cumulatedInterest - netInterests)
+        return (revenue              : value(atEndOf: year),
+                interests            : cumulatedInterest,
+                netInterests         : netInterests,
+                taxableIrppInterests : taxableInterests,
+                socialTaxes          : cumulatedInterest - netInterests)
     }
     
     func print() {

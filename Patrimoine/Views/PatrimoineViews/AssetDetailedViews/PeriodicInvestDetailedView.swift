@@ -54,11 +54,23 @@ struct PeriodicInvestDetailedView: View {
                 YearPicker(title: "Année de liquidation",
                            inRange: localItem.firstYear...localItem.firstYear + 100,
                            selection: $localItem.lastYear)
-                AmountView(label: "Valeure liquidative avant charges sociales et IRPP",
+                AmountView(label: "Valeure liquidative avant prélèvements sociaux et IRPP",
                            amount: liquidatedValue())
                     .foregroundColor(.secondary)
-                AmountView(label: "Valeure liquidative après charges sociales et IRPP",
+                AmountView(label: "Prélèvements sociaux",
+                           amount: socialTaxes())
+                    .foregroundColor(.secondary)
+                AmountView(label: "Valeure liquidative net de prélèvements sociaux",
                            amount: liquidatedValueAfterSocialTaxes())
+                    .foregroundColor(.secondary)
+                AmountView(label: "Intérêts cumulés avant prélèvements sociaux",
+                           amount: cumulatedInterests())
+                    .foregroundColor(.secondary)
+                AmountView(label: "Intérêts cumulés après prélèvements sociaux",
+                           amount: netCmulatedInterests())
+                    .foregroundColor(.secondary)
+                AmountView(label: "Intérêts cumulés taxables à l'IRPP",
+                           amount: netCmulatedInterests())
                     .foregroundColor(.secondary)
             }
         }
@@ -121,10 +133,25 @@ struct PeriodicInvestDetailedView: View {
     
     func liquidatedValue() -> Double {
         let liquidationDate = self.localItem.lastYear
-        let liquidatedValue = self.localItem.liquidatedValue(atEndOf: liquidationDate)
-        return liquidatedValue.revenue
+        return self.localItem.value(atEndOf: liquidationDate)
     }
-   func liquidatedValueAfterSocialTaxes() -> Double {
+    func cumulatedInterests() -> Double {
+        let liquidationDate = self.localItem.lastYear
+        return self.localItem.cumulatedInterests(atEndOf: liquidationDate)
+    }
+    func netCmulatedInterests() -> Double {
+        let liquidationDate = self.localItem.lastYear
+        return self.localItem.liquidatedValue(atEndOf: liquidationDate).netInterests
+    }
+    func taxableCmulatedInterests() -> Double {
+        let liquidationDate = self.localItem.lastYear
+        return self.localItem.liquidatedValue(atEndOf: liquidationDate).taxableIrppInterests
+    }
+    func socialTaxes() -> Double {
+        let liquidationDate = self.localItem.lastYear
+        return self.localItem.liquidatedValue(atEndOf: liquidationDate).socialTaxes
+    }
+    func liquidatedValueAfterSocialTaxes() -> Double {
         let liquidationDate = self.localItem.lastYear
         let liquidatedValue = self.localItem.liquidatedValue(atEndOf: liquidationDate)
         return liquidatedValue.revenue - liquidatedValue.socialTaxes

@@ -8,7 +8,46 @@
 
 import Foundation
 
-/// une simulation contient: les scénarios, les résultats de simulation
+// MARK: - Type mode de simulation
+
+enum SimulationModeEnum: Int, PickableEnum, Codable, Hashable {
+    case deterministic
+    case random
+    
+    // properties
+    
+    var id: Int {
+        return self.rawValue
+    }
+    
+    var pickerString: String {
+        switch self {
+            case .deterministic:
+                return "Déterministe"
+            case .random:
+                return "Aléatoire"
+        }
+    }
+}
+
+// MARK: - Singleton mode de simulation
+
+let simulationMode = SimulationMode.shared
+
+struct SimulationMode {
+    static let shared = SimulationMode()
+    
+    // properties
+    
+    let mode: SimulationModeEnum
+    
+    // initializer
+    
+    private init() { self.mode = .deterministic }
+}
+
+// MARK: - Simulation: une simulation contient: les scénarios, les résultats de simulation
+
 final class Simulation: ObservableObject {
     @Published var socialAccounts = SocialAccounts()
     @Published var title          = "Simulation"
