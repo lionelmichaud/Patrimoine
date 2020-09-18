@@ -55,3 +55,14 @@ extension Array {
         }
     }
 }
+
+extension Array {
+    func isSorted(_ isOrderedBefore: (Element, Element) -> Bool) -> Bool {
+        for i in 1..<self.count {
+            if !isOrderedBefore(self[i-1], self[i]) {
+                return false
+            }
+        }
+        return true
+    }
+}

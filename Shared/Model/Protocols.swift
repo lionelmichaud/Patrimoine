@@ -44,3 +44,7 @@ protocol PickableIdentifiableEnum: PickableEnum, Identifiable {
 protocol Versionable {
     var version : Version { get set }
 }
+
+protocol Randomizer {
+    mutating func random() -> Double
+}

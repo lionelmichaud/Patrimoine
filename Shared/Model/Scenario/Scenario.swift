@@ -23,14 +23,6 @@ struct Scenario: Identifiable, Codable, Equatable {
     var dateCreated  : Date
     var dateModified : Date
     
-    static func == (lhs: Scenario, rhs: Scenario) -> Bool {
-        return lhs.id == rhs.id &&
-            lhs.name == rhs.name &&
-            lhs.description == rhs.description &&
-            lhs.dateCreated == rhs.dateCreated &&
-            lhs.dateModified == rhs.dateModified
-    }
-
     // liste des noms des fichiers JSON à charger pour initialiser une simulation
     //  - la famille : ses actifs, passifs, revenus, dépenses,
     //                 certains choix comme louer, vendre...
