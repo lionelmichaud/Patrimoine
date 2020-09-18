@@ -11,6 +11,7 @@ import os
 
 fileprivate let customLog = Logger(subsystem: "me.michaud.lionel.Patrimoine", category: "Model.Distributions")
 
+// MARK: - Loie de distribution Gamma
 
 struct LoiGammaNormal: Codable, Randomizer {
     let min   : Double
@@ -18,10 +19,13 @@ struct LoiGammaNormal: Codable, Randomizer {
     let alpha : Double
     let beta  : Double
     
+    /// Retourne une valeur aléatoire
     func random() -> Double {
         (min - max) / 2.0
     }
 }
+
+// MARK: - Loie de distribution discrete
 
 struct LoiDiscrete: Codable, Randomizer {
     let x  : [Double] // valeurs possibles croissantes pour la variable aléatoire
@@ -29,6 +33,7 @@ struct LoiDiscrete: Codable, Randomizer {
     var pc : [Double]? // probabilité cumulée d'occurence (dernier                  = 100%)
     
     /// Vérifie la validité des données lues en fichier JSON
+    /// Si invalide FatalError
     func checkValidity() {
         // valeurs possibles croissantes pour la variable aléatoire
         guard !x.isEmpty else {

@@ -3,12 +3,12 @@
     "items" : [
         {
             "id"           : "4A6940AE-3D5B-4F3E-BB23-CF076F9CA5B0",
-            "name"         : "PEA Boursorama",
+            "name"         : "PEA Bourso",
             "note"         : "Ouvert le 24/03/2014\nFonds actions",
             "interestRate" : 3.0,
             "initialState" : {
                 "year"       : 2019,
-                "interest"   : 5293,
+                "interest"   : 6373,
                 "investment" : 149899
             },
             "type" : {
@@ -22,12 +22,12 @@
         },
         {
             "id"           : "4A6940AE-3D5B-4F3E-BB23-CF076F9CA5B1",
-            "name"         : "AV Lionel Boursorama",
+            "name"         : "AV Lionel Bourso",
             "note"         : "Ouvert le 04/03/2012\nFonds actions",
             "interestRate" : 3.0,
             "initialState" : {
                 "year"       : 2019,
-                "interest"   : 3150,
+                "interest"   : 4685,
                 "investment" : 168448
             },
             "type" : {
@@ -58,9 +58,9 @@
                 "investment" : 0
             }
         },
-       {
+        {
             "id"           : "4A6940AE-3D5B-4F3E-BB23-CF076F9CA5B3",
-            "name"         : "Ass Vie Lionel AFER",
+            "name"         : "AV Lionel AFER",
             "note"         : "Ouvert le 30/06/1999\nFonds actions",
             "interestRate" : 3.0,
             "initialState" : {
@@ -79,7 +79,26 @@
         },
         {
             "id"           : "4A6940AE-3D5B-4F3E-BB23-CF076F9CA5B4",
-            "name"         : "Ass Vie Vanessa AFER",
+            "name"         : "AV Lionel Conserv",
+            "note"         : "Ouvert le 29/04/2010\nFond € à 60%",
+            "interestRate" : 2.25,
+            "initialState" : {
+                "year"       : 2019,
+                "interest"   : 40395,
+                "investment" : 120099
+            },
+            "type" : {
+                "lifeInsurance_taxes" : true
+            },
+            "currentState" : {
+                "year"       : 0,
+                "interest"   : 0,
+                "investment" : 0
+            }
+        },
+        {
+            "id"           : "4A6940AE-3D5B-4F3E-BB23-CF076F9CA5B5",
+            "name"         : "AV Vanessa AFER",
             "note"         : "Ouvert le 30/06/1999\nFonds actions",
             "interestRate" : 3.0,
             "initialState" : {
@@ -97,33 +116,14 @@
             }
         },
         {
-            "id"           : "4A6940AE-3D5B-4F3E-BB23-CF076F9CA5B5",
-            "name"         : "Ass Vie Lionel Conservateur",
-            "note"         : "Ouvert le 30/06/1999",
-            "interestRate" : 3.0,
-            "initialState" : {
-                "year"       : 2019,
-                "interest"   : 0,
-                "investment" : 0
-            },
-            "type" : {
-                "lifeInsurance_taxes" : true
-            },
-            "currentState" : {
-                "year"       : 0,
-                "interest"   : 0,
-                "investment" : 0
-            }
-        },
-        {
             "id"           : "4A6940AE-3D5B-4F3E-BB23-CF076F9CA5B6",
-            "name"         : "Ass Vie Vanessa Conservateur",
-            "note"         : "Ouvert le 30/06/1999",
-            "interestRate" : 3.0,
+            "name"         : "AV Vanessa Conserv",
+            "note"         : "Ouvert le 30/06/1999\nFond € à 60%",
+            "interestRate" : 2.25,
             "initialState" : {
                 "year"       : 2019,
-                "interest"   : 1000,
-                "investment" : 0
+                "interest"   : 2591,
+                "investment" : 6265
             },
             "type" : {
                 "lifeInsurance_taxes" : true
@@ -136,7 +136,7 @@
         },
         {
             "id"           : "4A6940AE-3D5B-4F3E-BB23-CF076F9CA5B7",
-            "name"         : "Livret A Lionel Boursorama",
+            "name"         : "Livret A Lionel Bourso",
             "note"         : "Ouvert en 2016",
             "interestRate" : 0.5,
             "initialState" : {

@@ -31,8 +31,9 @@ public func futurValue (payement     : Double,
         fatalError("futurValue/nbPeriod < 0 = \(nbPeriod)")
     }
     let a = initialValue * pow((1+interestRate), Double(nbPeriod))
-    let b = (interestRate == 0.0 ? payement * Double(nbPeriod) :
-        payement * (pow((1+interestRate),Double(nbPeriod)) - 1) / interestRate)
+    let b = (interestRate == 0.0 ?
+                payement * Double(nbPeriod) :
+                payement * (pow((1+interestRate),Double(nbPeriod)) - 1) / interestRate)
     return a + b
 }
 

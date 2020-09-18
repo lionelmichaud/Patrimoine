@@ -36,12 +36,12 @@ struct FreeInvestDetailedView: View {
                 TypeInvestEditView(investType: $investType)
             }
             Section(header: Text("INITIALISATION")) {
-                YearPicker(title: "Année initiale",
+                YearPicker(title: "Année d'actualisation",
                            inRange: Date.now.year - 20...Date.now.year + 100,
                            selection: $initialYear)
-                AmountEditView(label: "Valeure initiale",
+                AmountEditView(label: "Valeure actualisée",
                                amount: $initialValue)
-                AmountEditView(label: "dont Plus-values initiales",
+                AmountEditView(label: "dont Plus-values",
                                amount: $initialInterest)
             }
             Section(header: Text("RENTABILITE")) {

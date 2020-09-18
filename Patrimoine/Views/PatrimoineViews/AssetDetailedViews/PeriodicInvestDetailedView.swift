@@ -38,7 +38,7 @@ struct PeriodicInvestDetailedView: View {
                                amount: $localItem.yearlyCost)
             }
             Section(header: Text("INITIALISATION")) {
-                YearPicker(title: "Année de départ",
+                YearPicker(title: "Année de départ (fin d'année)",
                            inRange: Date.now.year - 20...Date.now.year + 100,
                            selection: $localItem.firstYear)
                 AmountEditView(label: "Valeure initiale",
@@ -51,7 +51,7 @@ struct PeriodicInvestDetailedView: View {
                                 percent: $localItem.interestRate)
             }
             Section(header: Text("LIQUIDATION")) {
-                YearPicker(title: "Année de liquidation",
+                YearPicker(title: "Année de liquidation (fin d'année)",
                            inRange: localItem.firstYear...localItem.firstYear + 100,
                            selection: $localItem.lastYear)
                 AmountView(label: "Valeure liquidative avant prélèvements sociaux et IRPP",
