@@ -2,6 +2,44 @@
     "fileNamePrefix" : "",
     "items" : [
         {
+            "id"           : "4A6940AE-3D5B-4F3E-BB23-DF076F9CA5B0",
+            "name"         : "PERCO",
+            "note"         : "Fiscalité proche PEA\nFonds actions",
+            "interestRate" : 3.0,
+            "initialState" : {
+                "year"       : 2019,
+                "interest"   : 0,
+                "investment" : 32856
+            },
+            "type" : {
+                "PEA" : true
+            },
+            "currentState" : {
+                "year"       : 0,
+                "interest"   : 0,
+                "investment" : 0
+            }
+        },
+        {
+            "id"           : "4A6940AE-3D5B-4F3E-BB23-EF076F9CA5B0",
+            "name"         : "PEE",
+            "note"         : "Fiscalité proche PEA\nFonds actions",
+            "interestRate" : 3.0,
+            "initialState" : {
+                "year"       : 2019,
+                "interest"   : 10726,
+                "investment" : 29717
+            },
+            "type" : {
+                "PEA" : true
+            },
+            "currentState" : {
+                "year"       : 0,
+                "interest"   : 0,
+                "investment" : 0
+            }
+        },
+       {
             "id"           : "4A6940AE-3D5B-4F3E-BB23-CF076F9CA5B0",
             "name"         : "PEA Bourso",
             "note"         : "Ouvert le 24/03/2014\nFonds actions",
