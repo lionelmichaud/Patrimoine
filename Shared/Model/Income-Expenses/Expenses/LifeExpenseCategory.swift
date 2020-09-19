@@ -12,10 +12,18 @@ import Foundation
 
 /// Catégories de dépenses
 enum LifeExpenseCategory: Int, PickableEnum, Codable, Hashable {
-    case vie
-    case autre
-    case vetement
-
+    case abonnements
+    case vehicules
+    case autres
+    case cadeaux
+    case educationFamille
+    case logement
+    case loisirs
+    case sante
+    case services
+    case vieQuotidienne
+    case voyageTransport
+    
     // properties
     
     var id: Int {
@@ -24,26 +32,36 @@ enum LifeExpenseCategory: Int, PickableEnum, Codable, Hashable {
     
     var displayString: String {
         switch self {
-            case .vie:
-                return "Vie"
-            case .vetement:
-                return "Vêtement"
-            case .autre:
-                return "Autre"
+            case .abonnements:
+                return "Abonnements"
+            case .vehicules:
+                return "Véhicules"
+            case .autres:
+                return "Autres"
+            case .cadeaux:
+                return "Cadeaux"
+            case .educationFamille:
+                return "Education Famille"
+            case .logement:
+                return "Logement"
+            case .loisirs:
+                return "Loisirs"
+            case .sante:
+                return "Santé"
+            case .services:
+                return "Services"
+            case .vieQuotidienne:
+                return "Vie Quotidienne"
+            case .voyageTransport:
+                return "Voyage Transport"
         }
     }
     
     var pickerString: String {
-        switch self {
-            case .vie:
-                return "Vie"
-            case .vetement:
-                return "Vetement"
-            case .autre:
-                return "Autre"
-        }
+        displayString
+        
     }
-
+    
     // type methods
     
     /// Cherche l'Enum correspondant au nom de la catégorie

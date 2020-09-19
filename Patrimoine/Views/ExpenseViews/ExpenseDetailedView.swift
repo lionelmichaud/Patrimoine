@@ -119,7 +119,7 @@ struct ExpenseDetailedView_Previews: PreviewProvider {
     static var uiState    = UIState()
     
     static var previews: some View {
-        ExpenseDetailedView(category : .autre,
+        ExpenseDetailedView(category : .autres,
                             item     : LifeExpense(name    : "Test",
                                                    timeSpan: .permanent,
                                                    value   : 1234.0),
