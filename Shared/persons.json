@@ -17,7 +17,7 @@
             "salary_healthInsurance" : 700
         },
         "nb_Of_Child_Birth"       : 0,
-        "age_Of_Death"           : 91,
+        "age_Of_Death"           : 81,
         "nb_Of_Year_Of_Dependency" : 0,
         "age_Of_Pension_Liquid" : {
             "year"  : 62,
@@ -83,7 +83,7 @@
             "turnOver_incomeLossInsurance" : 1680
         },
         "nb_Of_Child_Birth"       : 2,
-        "age_Of_Death"           : 96,
+        "age_Of_Death"           : 86,
         "nb_Of_Year_Of_Dependency" : 0,
         "age_Of_Pension_Liquid" : {
             "year" : 62,

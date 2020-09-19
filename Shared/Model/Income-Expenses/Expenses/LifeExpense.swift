@@ -19,8 +19,9 @@ struct LifeExpenses: Codable {
     
     // initialization
     
-    /// Lire toutes les dépenses dans des fichiers au format JSON..
+    /// Lire toutes les dépenses dans des fichiers au format JSON.
     /// Un fichier par catégorie de dépense.
+    /// nom du fichier "Category_LifeExpense.json"
     init() {
         for category in LifeExpenseCategory.allCases {
             perCategory[category] = ExpenseArray(fileNamePrefix: category.pickerString + "_")

@@ -125,11 +125,14 @@ struct ExpenseListInCategory: View {
         simulation.reset(withPatrimoine: patrimoine)
         uiState.resetSimulation()
         // supprimer la dépense
-        family.expenses.perCategory[self.category]?.delete(at: offsets)
+        family.expenses.perCategory[self.category]?.delete(at             : offsets,
+                                                           fileNamePrefix : self.category.pickerString + "_")
     }
     
-    func move(from source: IndexSet, to destination: Int) {
-        family.expenses.perCategory[self.category]?.move(from: source, to: destination)
+    func move(from source    : IndexSet, to destination : Int) {
+        family.expenses.perCategory[self.category]?.move(from           : source,
+                                                         to             : destination,
+                                                         fileNamePrefix : self.category.pickerString + "_")
     }
 }
 

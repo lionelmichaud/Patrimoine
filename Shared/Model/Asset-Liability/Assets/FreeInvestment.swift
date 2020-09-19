@@ -204,15 +204,8 @@ struct FreeInvestement: Identifiable, Codable, NameableAndValueable {
     
     /// Capitaliser les intérêts d'une année: à faire une fois par an et apparaissent dans l'année courante
     mutating func capitalize(atEndOf year: Int) {
-        Swift.print("\(name)")
-        Swift.print("  year \(currentState.year)")
-        Swift.print("  interest = \(currentState.interest.euroString), invest = \(currentState.investment.euroString), total = \(currentState.value)")
-
         currentState.interest += yearlyInterest
         currentState.year = year
-
-        Swift.print("  year \(currentState.year)")
-        Swift.print("  interest = \(currentState.interest.euroString), invest = \(currentState.investment.euroString), total = \(currentState.value)")
     }
     
     /// Remettre la valeur courante à la valeur initiale

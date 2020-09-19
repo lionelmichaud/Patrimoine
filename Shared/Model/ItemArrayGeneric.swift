@@ -30,32 +30,38 @@ struct ItemArray<E: Codable>: Codable where E: NameableAndValueable, E: Identifi
                                   keyDecodingStrategy  : .useDefaultKeys)
     }
     
-    func storeItemsToFile() {
+    func storeItemsToFile(fileNamePrefix: String = "") {
         // encode to JSON file
         Bundle.main.encode(self,
-                           to                   : fileNamePrefix + String(describing: E.self) + ".json",
+                           to                   : fileNamePrefix + self.fileNamePrefix + String(describing: E.self) + ".json",
                            dateEncodingStrategy : .iso8601,
                            keyEncodingStrategy  : .useDefaultKeys)
     }
     
-    mutating func move(from indexes: IndexSet, to destination: Int) {
+    mutating func move(from indexes   : IndexSet,
+                       to destination : Int,
+                       fileNamePrefix : String = "") {
         items.move(fromOffsets: indexes, toOffset: destination)
-        self.storeItemsToFile()
+        self.storeItemsToFile(fileNamePrefix: fileNamePrefix)
     }
     
-    mutating func delete(at offsets: IndexSet) {
+    mutating func delete(at offsets     : IndexSet,
+                         fileNamePrefix : String = "") {
         items.remove(atOffsets: offsets)
-        self.storeItemsToFile()
+        self.storeItemsToFile(fileNamePrefix: fileNamePrefix)
     }
     
-    mutating func add(_ item: E) {
+    mutating func add(_ item         : E,
+                      fileNamePrefix : String = "") {
         items.append(item)
-        self.storeItemsToFile()
+        self.storeItemsToFile(fileNamePrefix: fileNamePrefix)
     }
     
-    mutating func update(with item: E, at index: Int) {
+    mutating func update(with item      : E,
+                         at index       : Int,
+                         fileNamePrefix : String = "") {
         items[index] = item
-        self.storeItemsToFile()
+        self.storeItemsToFile(fileNamePrefix: fileNamePrefix)
     }
     
     func value(atEndOf: Int) -> Double {

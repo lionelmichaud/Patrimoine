@@ -34,7 +34,7 @@ struct ExpenseDetailedView: View {
             AmountEditView(label: "Montant annuel",
                            amount: $localItem.value)
             // proportionnalité de la dépense aux nb de membres de la famille
-            Toggle("Proportionnel au nombre de membres de la famille",
+            Toggle("Proportionnel au nombre de membres à charge de la famille",
                    isOn: $localItem.proportional)
             // plage de temps
             TimeSpanEditView(timeSpan: $localItem.timeSpan)
@@ -73,7 +73,8 @@ struct ExpenseDetailedView: View {
         // générer un nouvel identifiant pour la copie
         localItem.id = UUID()
         localItem.name += "-copie"
-        family.expenses.perCategory[self.category]?.add(localItem)
+        family.expenses.perCategory[self.category]?.add(localItem,
+                                                        fileNamePrefix : self.category.pickerString + "_")
     }
     
     // sauvegarder les changements
@@ -90,11 +91,13 @@ struct ExpenseDetailedView: View {
         }
         if let index = index {
             // modifier un éléménet existant
-            family.expenses.perCategory[self.category]?.update(with: localItem,
-                                                               at  : index)
+            family.expenses.perCategory[self.category]?.update(with           : localItem,
+                                                               at             : index,
+                                                               fileNamePrefix : self.category.pickerString + "_")
         } else {
             // créer un nouvel élément
-            family.expenses.perCategory[self.category]?.add(localItem)
+            family.expenses.perCategory[self.category]?.add(localItem,
+                                                            fileNamePrefix : self.category.pickerString + "_")
         }
         
         // remettre à zéro la simulation et sa vue

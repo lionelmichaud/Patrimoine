@@ -8,7 +8,7 @@
 import SwiftUI
 
 @main
-struct FrutaApp: App {
+struct PatrimoineApp: App {
     
     // MARK: - Properties
     

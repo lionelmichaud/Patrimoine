@@ -2,21 +2,21 @@
     "items" : [
         {
             "id" : "45325B0E-331D-481F-9C34-57C088289753",
-            "value" : 1000,
+            "value" : 0,
             "proportional" : false,
             "name" : "Depuis",
             "timeSpan" : {
                 "starting_from" :
                 {
                     "fixedYear": 2028,
-                    "event"    : null,
-                    "name"     : ""
+                    "event"    : "Fin d'activité proffesionelle",
+                    "name"     : "M. Lionel MICHAUD"
                 }
             }
         },
         {
             "id" : "B4EFF395-7A51-47AB-AD29-E7461ECB9ADA",
-            "value" : 1000,
+            "value" : 0,
             "proportional" : false,
             "name" : "Jusqu'à",
             "timeSpan" : {
@@ -30,7 +30,7 @@
         },
         {
             "id" : "562EE2A1-4FF5-450D-8BAE-3E8B803928DA",
-            "value" : 2000,
+            "value" : 0,
             "proportional" : false,
             "name" : "De...à...",
             "timeSpan" : {
@@ -38,7 +38,7 @@
                 {
                     "fixedYear": 2024,
                     "event"    : "Liquidation de pension",
-                    "name"     : ""
+                    "name"     : "M. Lionel MICHAUD"
                 },
                 "spanning_to" :
                 {
@@ -50,7 +50,7 @@
         },
         {
             "id" : "662EE2A1-4FF5-450D-8BAE-3E8B803928DA",
-            "value" : 3000,
+            "value" : 0,
             "proportional" : false,
             "name" : "Exceptionnelle",
             "timeSpan" : {
@@ -59,7 +59,7 @@
         },
         {
             "id" : "680924FC-ABD5-4587-BA4B-4DDD6F7F04D5",
-            "value" : 45000,
+            "value" : 0,
             "proportional" : false,
             "name" : "Périodique",
             "timeSpan" : {
@@ -79,5 +79,5 @@
             }
         }
     ],
-    "fileNamePrefix" : "Autre_"
+    "fileNamePrefix" : ""
 }

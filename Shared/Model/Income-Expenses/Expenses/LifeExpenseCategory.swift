@@ -12,7 +12,7 @@ import Foundation
 
 /// Catégories de dépenses
 enum LifeExpenseCategory: Int, PickableEnum, Codable, Hashable {
-    case alimentation
+    case vie
     case autre
     case vetement
 
@@ -24,8 +24,8 @@ enum LifeExpenseCategory: Int, PickableEnum, Codable, Hashable {
     
     var displayString: String {
         switch self {
-            case .alimentation:
-                return "Alimentation"
+            case .vie:
+                return "Vie"
             case .vetement:
                 return "Vêtement"
             case .autre:
@@ -35,8 +35,8 @@ enum LifeExpenseCategory: Int, PickableEnum, Codable, Hashable {
     
     var pickerString: String {
         switch self {
-            case .alimentation:
-                return "Alimentation"
+            case .vie:
+                return "Vie"
             case .vetement:
                 return "Vetement"
             case .autre:
