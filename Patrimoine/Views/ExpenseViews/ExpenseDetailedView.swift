@@ -14,7 +14,7 @@ struct ExpenseDetailedView: View {
     @EnvironmentObject var patrimoine : Patrimoin
     @EnvironmentObject var uiState    : UIState
     @Environment(\.presentationMode) var presentationMode
-    private var item             : LifeExpense?
+    private var originalItem     : LifeExpense?
     private let category         : LifeExpenseCategory
     @State private var alertItem : AlertItem?
     @State private var index     : Int?
@@ -30,12 +30,15 @@ struct ExpenseDetailedView: View {
                     .frame(width: 70, alignment: .leading)
                 TextField("obligatoire", text: $localItem.name)
             }
+            
             // montant de la dépense
             AmountEditView(label: "Montant annuel",
                            amount: $localItem.value)
+            
             // proportionnalité de la dépense aux nb de membres de la famille
             Toggle("Proportionnel au nombre de membres à charge de la famille",
                    isOn: $localItem.proportional)
+            
             // plage de temps
             TimeSpanEditView(timeSpan: $localItem.timeSpan)
         }
@@ -58,13 +61,14 @@ struct ExpenseDetailedView: View {
     }
     
     init(category: LifeExpenseCategory, item: LifeExpense?, family: Family) {
-        self.item     = item
-        self.category = category
+        self.originalItem = item
+        self.category     = category
         if let initialItemValue = item {
             // modification d'un élément existant
             _localItem = State(initialValue: initialItemValue)
             _index     = State(initialValue: family.expenses.perCategory[category]?.items.firstIndex(of: initialItemValue))
         } else {
+            // création d'un nouvel élément
             index = nil
         }
     }
@@ -73,8 +77,11 @@ struct ExpenseDetailedView: View {
         // générer un nouvel identifiant pour la copie
         localItem.id = UUID()
         localItem.name += "-copie"
+        // revenir à l'élement avant duplication
         family.expenses.perCategory[self.category]?.add(localItem,
                                                         fileNamePrefix : self.category.pickerString + "_")
+        // revenir à l'élement avant duplication
+        localItem = originalItem!
     }
     
     // sauvegarder les changements
@@ -108,7 +115,7 @@ struct ExpenseDetailedView: View {
     }
     
     func changeOccured() -> Bool {
-        return localItem != item
+        return localItem != originalItem
     }
 }
 

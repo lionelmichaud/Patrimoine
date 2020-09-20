@@ -73,14 +73,14 @@ struct BalanceSheetLine {
 	
 	// methods
 	
-    mutating func appendToAssets(_ asset          : NamableValuable,
+    mutating func appendToAssets(_ asset          : NameableValuable,
                                  _ year           : Int,
                                  _ withNamePrefix : String = "") {
 		assets.values.append((name  : withNamePrefix + asset.name,
                               value : asset.value(atEndOf: year).rounded()))
 	}
     
-    mutating func appendToLiabilities(_ liability      : NamableValuable,
+    mutating func appendToLiabilities(_ liability      : NameableValuable,
                                       _ year           : Int,
                                       _ withNamePrefix : String = "") {
 		liabilities.values.append((name  : withNamePrefix + liability.name,

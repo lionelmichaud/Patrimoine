@@ -11,12 +11,12 @@ import os
 
 fileprivate let customLog = Logger(subsystem: "me.michaud.lionel.Patrimoine", category: "Model.FreeInvestement")
 
-typealias FreeInvestmentArray = ArrayOfNamedValuedItem<FreeInvestement>
+typealias FreeInvestmentArray = ItemArray<FreeInvestement>
 
 // MARK: - Placement à versement et retrait variable et à taux fixe
 /// Placement à versement et retrait libres et à taux fixe
 /// Les intérêts sont capitalisés lors de l'appel à capitalize()
-struct FreeInvestement: Identifiable, Codable, NamableValuable {
+struct FreeInvestement: Identifiable, Codable, NameableValuable {
     
     // nested types
     

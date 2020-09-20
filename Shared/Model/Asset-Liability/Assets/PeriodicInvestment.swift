@@ -8,7 +8,7 @@
 
 import Foundation
 
-struct PeriodicInvestementArray: NamableValuableItemArray {
+struct PeriodicInvestementArray: NameableValuableArray {
     var items             = [PeriodicInvestement]()
     var fileNamePrefix    : String
     
@@ -20,15 +20,13 @@ struct PeriodicInvestementArray: NamableValuableItemArray {
     }
     
 }
-
-
 //typealias PeriodicInvestmentArray = ArrayOfNamedValuedItem<PeriodicInvestement>
 
 // MARK: - Placement à versements périodiques, fixes, annuels et à taux fixe
 
 /// Placement à versements périodiques, fixes, annuels et à taux fixe
 /// Tous les intérêts sont capitalisés
-struct PeriodicInvestement: Identifiable, Codable, NamableValuable {
+struct PeriodicInvestement: Identifiable, Codable, NameableValuable {
     
     // MARK: - Properties
     

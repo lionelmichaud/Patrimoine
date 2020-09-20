@@ -8,11 +8,11 @@
 
 import Foundation
 
-typealias LoanArray = ArrayOfNamedValuedItem<Loan>
+typealias LoanArray = ItemArray<Loan>
 
 // MARK: - Emprunt à remboursement constant, périodique, annuel et à taux fixe
 /// Emprunt à remboursement constant, périodique, annuel et à taux fixe
-struct Loan: Codable, Identifiable, NamableValuable {
+struct Loan: Codable, Identifiable, NameableValuable {
     
     // properties
     

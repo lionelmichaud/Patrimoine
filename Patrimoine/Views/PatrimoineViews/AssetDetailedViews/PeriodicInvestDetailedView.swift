@@ -12,7 +12,7 @@ struct PeriodicInvestDetailedView: View {
     @EnvironmentObject var simulation : Simulation
     @EnvironmentObject var uiState    : UIState
     
-    var item: PeriodicInvestement?
+    private var originalItem: PeriodicInvestement?
     // commun
     @EnvironmentObject var patrimoine: Patrimoin
     @Environment(\.presentationMode) var presentationMode
@@ -92,13 +92,14 @@ struct PeriodicInvestDetailedView: View {
     }
     
     init(item: PeriodicInvestement?, patrimoine: Patrimoin) {
-        self.item = item
+        self.originalItem = item
         if let initialItemValue = item {
             // modification d'un élément existant
             _localItem = State(initialValue: initialItemValue)
             _index     = State(initialValue: patrimoine.assets.periodicInvests.items.firstIndex(of: initialItemValue))
             // specific
         } else {
+            // création d'un nouvel élément
             index = nil
         }
     }
@@ -107,7 +108,10 @@ struct PeriodicInvestDetailedView: View {
         // générer un nouvel identifiant pour la copie
         localItem.id = UUID()
         localItem.name += "-copie"
+        // revenir à l'élement avant duplication
         patrimoine.assets.periodicInvests.add(localItem)
+        // revenir à l'élement avant duplication
+        localItem = originalItem!
     }
     
     // sauvegarder les changements
@@ -128,7 +132,7 @@ struct PeriodicInvestDetailedView: View {
     }
     
     func changeOccured() -> Bool {
-        return localItem != item
+        return localItem != originalItem
     }
     
     func liquidatedValue() -> Double {
