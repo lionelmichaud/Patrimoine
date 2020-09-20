@@ -8,10 +8,10 @@
 
 import Foundation
 
-typealias ScpiArray = ArrayOfNamedValuedItem<SCPI>
+typealias ScpiArray = ItemArray<SCPI>
 
 // MARK: - SCPI à revenus périodiques, annuels et fixes
-struct SCPI: Identifiable, Codable, NamableValuable {
+struct SCPI: Identifiable, Codable, NameableValuable {
     
     static var saleCommission: Double = 10.0 // %
     

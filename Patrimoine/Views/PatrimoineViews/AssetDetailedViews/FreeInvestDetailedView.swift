@@ -13,7 +13,7 @@ struct FreeInvestDetailedView: View {
     @EnvironmentObject var simulation : Simulation
     @EnvironmentObject var uiState    : UIState
     
-    var item: FreeInvestement?
+    private var originalItem: FreeInvestement?
     // commun
     @EnvironmentObject var patrimoine: Patrimoin
     @Environment(\.presentationMode) var presentationMode
@@ -67,7 +67,7 @@ struct FreeInvestDetailedView: View {
     }
     
     init(item: FreeInvestement?, patrimoine: Patrimoin) {
-        self.item = item
+        self.originalItem = item
         if let initialItemValue = item {
             // modification d'un élément existant
             _index = State(initialValue: patrimoine.assets.freeInvests.items.firstIndex(of: initialItemValue))
@@ -86,14 +86,15 @@ struct FreeInvestDetailedView: View {
     }
     
     func duplicate() {
-        let localItem = FreeInvestement(year            : initialYear,
-                                        name            : initialName + "-copie",
-                                        note            : initialNote,
-                                        type            : investType,
-                                        rate            : initialrate,
-                                        initialValue    : initialValue,
-                                        initialInterest : initialInterest)
-        patrimoine.assets.freeInvests.add(localItem)
+        let copyOfItemWithNewId = FreeInvestement(year            : initialYear,
+                                                  name            : initialName + "-copie",
+                                                  note            : initialNote,
+                                                  type            : investType,
+                                                  rate            : initialrate,
+                                                  initialValue    : initialValue,
+                                                  initialInterest : initialInterest)
+        // revenir à l'élement avant duplication
+        patrimoine.assets.freeInvests.add(copyOfItemWithNewId)
     }
     
     // sauvegarder les changements

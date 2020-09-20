@@ -13,7 +13,7 @@ struct SCPIDetailedView: View {
     @EnvironmentObject var simulation : Simulation
     @EnvironmentObject var uiState    : UIState
     
-    var item: SCPI?
+    private var originalItem: SCPI?
     var updateItem: (_ item: SCPI, _ index: Int) -> ()
     var addItem: (_ item: SCPI) -> ()
     // commun
@@ -103,13 +103,14 @@ struct SCPIDetailedView: View {
         self.updateItem = updateItem
         self.addItem    = addItem
         
-        self.item = item
+        self.originalItem = item
         if let initialItemValue = item {
             // modification d'un élément existant
             _localItem = State(initialValue: initialItemValue)
             _index     = State(initialValue: firstIndex(initialItemValue))
             // specific
         } else {
+            // création d'un nouvel élément
             index = nil
         }
     }
@@ -118,7 +119,10 @@ struct SCPIDetailedView: View {
         // générer un nouvel identifiant pour la copie
         localItem.id = UUID()
         localItem.name += "-copie"
+        // ajouter un élément à la liste
         addItem(localItem)
+        // revenir à l'élement avant duplication
+        localItem = originalItem!
     }
     
     // sauvegarder les changements
@@ -139,7 +143,7 @@ struct SCPIDetailedView: View {
     }
     
     func changeOccured() -> Bool {
-        return localItem != item
+        return localItem != originalItem
     }
 }
 
