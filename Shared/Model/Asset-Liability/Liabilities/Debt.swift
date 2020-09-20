@@ -8,11 +8,11 @@
 
 import Foundation
 
-typealias DebtArray = ItemArray<Debt>
+typealias DebtArray = ArrayOfNamedValuedItem<Debt>
 
 // MARK: - Stock de dette incrémentable ou diminuable
 /// stock de dette incrémentable ou diminuable
-struct Debt: Codable, Identifiable, NameableAndValueable {
+struct Debt: Codable, Identifiable, NamableValuable {
     
     // properties
     

@@ -11,7 +11,7 @@ final class Family: ObservableObject, CustomStringConvertible {
     // structure de la famille
     @Published private(set) var members: [Person] 
     // dépenses
-    @Published var expenses: LifeExpenses
+    @Published var expenses: LifeExpensesDic
     // revenus
     var workNetIncome    : Double { // computed
         var netIcome : Double = 0.0
@@ -60,7 +60,7 @@ final class Family: ObservableObject, CustomStringConvertible {
         // initialiser les membres de la famille à partir du fichier JSON
         self.members  = Family.loadMembersFromFile()
         // initialiser les catégories de dépenses à partir des fichiers JSON
-        self.expenses = LifeExpenses()
+        self.expenses = LifeExpensesDic()
         // injection de family dans la propriété statique de Expense pour lier les évenements à des personnes
         LifeExpense.family = self
         // injection de family dans la propriété statique de Person pour lier les évenements à des personnes

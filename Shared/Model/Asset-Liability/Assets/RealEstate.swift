@@ -8,10 +8,10 @@
 
 import Foundation
 
-typealias RealEstateArray = ItemArray<RealEstateAsset>
+typealias RealEstateArray = ArrayOfNamedValuedItem<RealEstateAsset>
 
 // MARK: - Actif immobilier physique
-struct RealEstateAsset: Identifiable, Codable, NameableAndValueable {
+struct RealEstateAsset: Identifiable, Codable, NamableValuable {
     
     // properties
     

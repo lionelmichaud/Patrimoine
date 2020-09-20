@@ -1,5 +1,18 @@
 {
     "items" : [
+        {
+            "id" : "E641309D-2FE2-41F4-8AC4-4548F7BE8E0F",
+            "value" : 0,
+            "proportional" : false,
+            "name" : "Abonnement téléphone ",
+            "timeSpan" : {
+                "ending_to" : {
+                    "fixedYear" : 0,
+                    "event" : "Décès",
+                    "name" : "M. Lionel MICHAUD"
+                }
+            }
+        }
     ],
     "fileNamePrefix" : ""
 }

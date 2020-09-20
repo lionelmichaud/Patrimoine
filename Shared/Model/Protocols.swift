@@ -9,13 +9,13 @@
 import Foundation
 
 // MARK: Protocol
-protocol NameableAndValueable {
+protocol NamableValuable {
     var name: String { get }
     func value(atEndOf year: Int) -> Double
     func print()
 }
 
-extension Array where Element: NameableAndValueable {
+extension Array where Element: NamableValuable {
     /// Somme de toutes les valeurs d'un Array
     ///
     /// Usage:

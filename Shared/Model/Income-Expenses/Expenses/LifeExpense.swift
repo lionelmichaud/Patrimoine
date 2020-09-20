@@ -11,7 +11,7 @@ import SwiftUI
 
 // MARK: - Dictionnaire de Dépenses par catégorie (un tableau de dépenses par catégorie)
 
-struct LifeExpenses: Codable {
+struct LifeExpensesDic: Codable {
     
     // properties
     
@@ -50,17 +50,8 @@ struct LifeExpenses: Codable {
         return sum
     }
     
-    /// Liste complète à plat de toutes les dépenses, toutes catégories confondues
-    /// - Parameter atEndOf: année de calcul
-    /// - Returns: liste complète à plat de toutes les dépenses
-    func namedValueTable(atEndOf: Int) -> [(name: String, value: Double)] {
-        var table = [(name: String, value: Double)]()
-        perCategory.forEach { (category, expenseArray) in
-            table += expenseArray.namedValueTable(atEndOf: atEndOf)
-        }
-        return table
-    }
-    
+    /// Utiliser pour générer le graphe de la vue de synthèses des dépense
+    /// - Returns: table
     func namedValuedTimeFrameTable()
     -> [(name: String, value: Double, prop: Bool, idx: Int, firstYearDuration: [Int])] {
         var table = [(name: String, value: Double, prop: Bool, idx: Int, firstYearDuration: [Int])]()
@@ -80,9 +71,20 @@ struct LifeExpenses: Codable {
         return table
     }
     
-    /// Liste dles dépenses par catégorie
+    /// Liste complète à plat de toutes les dépenses valorisées, toutes catégories confondues
     /// - Parameter atEndOf: année de calcul
-    /// - Returns: liste des dépenses par catégorie
+    /// - Returns: liste complète à plat de toutes les dépenses
+    func namedValueTable(atEndOf: Int) -> [(name: String, value: Double)] {
+        var table = [(name: String, value: Double)]()
+        perCategory.forEach { (category, expenseArray) in
+            table += expenseArray.namedValueTable(atEndOf: atEndOf)
+        }
+        return table
+    }
+    
+    /// Dictionnaire des dépenses valorisées  par catégorie
+    /// - Parameter atEndOf: année de calcul
+    /// - Returns: dictionnaire des dépenses par catégorie
     func namedValueTable(atEndOf: Int) -> [LifeExpenseCategory: [(name: String, value: Double)]] {
         var dico = [LifeExpenseCategory: [(name: String, value: Double)]]()
         for category in LifeExpenseCategory.allCases {
@@ -93,7 +95,7 @@ struct LifeExpenses: Codable {
         return dico
     }
     
-    /// Liste dles dépenses d'une catégorie donnée
+    /// Liste des dépenses valorisées d'une catégorie donnée
     /// - Parameters:
     ///   - atEndOf: année de calcul
     ///   - inCategory: catégorie de dépenses à prendre
@@ -115,11 +117,11 @@ struct LifeExpenses: Codable {
 
 // MARK: - Tableau de Dépenses
 
-typealias ExpenseArray = ItemArray<LifeExpense>
+typealias ExpenseArray = ArrayOfNamedValuedItem<LifeExpense>
 
 // MARK: - Dépense de la famille
 
-struct LifeExpense: Identifiable, Codable, Hashable, NameableAndValueable {
+struct LifeExpense: Identifiable, Codable, Hashable, NamableValuable {
     
     // MARK: - Static properties
 

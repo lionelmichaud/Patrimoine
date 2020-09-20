@@ -8,10 +8,10 @@
 
 import Foundation
 
-// MARK: - Catégories de dépenses
+// MARK: - Catégories de Dépenses
 
 /// Catégories de dépenses
-enum LifeExpenseCategory: Int, PickableEnum, Codable, Hashable {
+enum LifeExpenseCategory: Int, PickableEnum, Codable {
     case abonnements
     case vehicules
     case autres

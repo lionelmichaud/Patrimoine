@@ -8,13 +8,13 @@
 
 import Foundation
 
-typealias PeriodicInvestmentArray = ItemArray<PeriodicInvestement>
+typealias PeriodicInvestmentArray = ArrayOfNamedValuedItem<PeriodicInvestement>
 
 // MARK: - Placement à versements périodiques, fixes, annuels et à taux fixe
 
 /// Placement à versements périodiques, fixes, annuels et à taux fixe
 /// Tous les intérêts sont capitalisés
-struct PeriodicInvestement: Identifiable, Codable, NameableAndValueable {
+struct PeriodicInvestement: Identifiable, Codable, NamableValuable {
     
     // MARK: - Properties
     
