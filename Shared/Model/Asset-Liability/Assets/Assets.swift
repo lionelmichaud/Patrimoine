@@ -8,7 +8,7 @@
 
 import Foundation
 
-struct DictionaryOfCategorizedValuedNamedItems <ItemCategories, ArrayOfItems: NamableValuableItemArray>
+struct DictionaryCategoryItemArray <ItemCategories, ArrayOfItems: NamableValuableItemArray>
 where ItemCategories: PickableEnum, ItemCategories: Codable {
     
     // properties
@@ -95,7 +95,7 @@ where ItemCategories: PickableEnum, ItemCategories: Codable {
 // MARK: - Actifs de la famille
 
 struct Assets {
-    var periodicInvests = PeriodicInvestmentArray()
+    var periodicInvests = PeriodicInvestementArray()
     var freeInvests     = FreeInvestmentArray()
     var realEstates     = RealEstateArray()
     var scpis           = ScpiArray() // SCPI hors de la SCI

@@ -8,9 +8,7 @@
 
 import Foundation
 
-protocol withAssociatedType {
-    associatedtype Element
-}
+// MARK: - Protocol Dictionnaire [Catégorie : Table d'Item Valuable and Namable]
 
 protocol NamableValuableItemArray: Codable {
     associatedtype Item: Codable, Identifiable, NamableValuable
@@ -46,6 +44,7 @@ protocol NamableValuableItemArray: Codable {
     func print()
 }
 
+// implémntation par défaut
 extension NamableValuableItemArray {
     var currentValue      : Double {
         items.sum(atEndOf : Date.now.year)
@@ -111,21 +110,6 @@ extension NamableValuableItemArray {
         }
     }
 
-}
-
-struct PeriodicInvestementArray: NamableValuableItemArray {
-    typealias Item = PeriodicInvestement
-    
-    var items             = [PeriodicInvestement]()
-    var fileNamePrefix    : String
-    
-    init(fileNamePrefix: String = "") {
-        self = Bundle.main.decode(PeriodicInvestementArray.self,
-                                  from                 : fileNamePrefix + String(describing: Item.self) + ".json",
-                                  dateDecodingStrategy : .iso8601,
-                                  keyDecodingStrategy  : .useDefaultKeys)
-    }
-    
 }
 
 struct ArrayOfNamedValuedItem<E>: Codable where E: Codable, E: Identifiable, E: NamableValuable  {
