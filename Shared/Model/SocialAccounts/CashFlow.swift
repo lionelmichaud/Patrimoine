@@ -16,7 +16,7 @@ struct CashFlowLine {
     // nested types
     
     // MARK: - agrégat des ages
-    struct Ages {
+    struct AgeTable {
         
         // properties
         
@@ -31,30 +31,10 @@ struct CashFlowLine {
         }
     }
     
-    // MARK: - NamedValueTable avec résumé global
-    struct NamedValueTableWithSummary {
-        
-        // properties
-        let name              : String
-        var namedValueTable   : NamedValueTable
-        var summaryValueTable : NamedValueTable {
-            var table = NamedValueTable(name: name)
-            table.values.append((name  : name,
-                                 value : namedValueTable.total))
-            return table
-        }
-        
-        // initializer
-        internal init(name: String) {
-            self.name = name
-            self.namedValueTable = NamedValueTable(name: name)
-        }
-    }
-    
     // MARK: - properties
     
     let year            : Int
-    var ages            = Ages()
+    var ages            = AgeTable()
     // revenus
     var taxableIrppRevenueDelayedToNextYear = Debt(name: "REVENU IMPOSABLE REPORTE A L'ANNEE SUIVANTE", note: "", value: 0)
     var revenues        = ValuedRevenues()

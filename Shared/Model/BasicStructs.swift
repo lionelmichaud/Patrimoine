@@ -6,11 +6,14 @@
 //  Copyright © 2020 Lionel MICHAUD. All rights reserved.
 //
 
+import os
 import Foundation
+
+fileprivate let customLog = Logger(subsystem: "me.michaud.lionel.Patrimoine", category: "BasicStructs")
 
 // MARK: - Table nommée de couples (nom, valeur)
 
-    struct NamedValueTable {
+struct NamedValueTable {
     
     // properties
     
@@ -39,12 +42,12 @@ import Foundation
     
     // methods
     
-    func filtredHeaders(itemSelection: [(label: String, selected: Bool)]) -> [String] {
-        values.filter({ selectionContains($0.name, itemSelection: itemSelection) }).map(\.name)
+    func filtredHeaders(itemSelection: ItemSelectionList) -> [String] {
+        values.filter({ itemSelection.selectionContains($0.name) }).map(\.name)
     }
     
-    func filtredValues(itemSelection: [(label: String, selected: Bool)]) -> [Double] {
-        values.filter({ selectionContains($0.name, itemSelection: itemSelection) }).map(\.value)
+    func filtredValues(itemSelection: ItemSelectionList) -> [Double] {
+        values.filter({ itemSelection.selectionContains($0.name) }).map(\.value)
     }
     
     func print(level: Int = 0) {
@@ -54,13 +57,76 @@ import Foundation
     }
 }
 
-/// retourne true si la liste d'items contient l'item sélectionné
-/// - Parameters:
-///   - name: nom de l'item recherché
-///   - itemSelection: liste d'item
-/// - Returns: true si la liste d'items contient l'item sélectionné
-func selectionContains(_ name: String, itemSelection: [(label: String, selected: Bool)]) -> Bool {
-    itemSelection.contains(where: { (label: String, selected: Bool) in (label == name && selected) })
+// MARK: - NamedValueTable avec résumé global
+struct NamedValueTableWithSummary {
+    
+    // properties
+    let name              : String
+    var namedValueTable   : NamedValueTable
+    var summaryValueTable : NamedValueTable { // un seul élément
+        var table = NamedValueTable(name: name)
+        table.values.append((name  : name,
+                             value : namedValueTable.total))
+        return table
+    }
+    
+    // initializer
+    internal init(name: String) {
+        self.name = name
+        self.namedValueTable = NamedValueTable(name: name)
+    }
+}
+
+
+// MARK: - Liste des items affichés sur un Graph et sélectionnables individuellement
+
+typealias ItemSelection = (label: String, selected: Bool)
+typealias ItemSelectionList = [ItemSelection]
+
+extension ItemSelectionList {
+    /// retourne true si la liste d'items contient l'item sélectionné
+    /// - Parameters:
+    ///   - name: nom de l'item recherché
+    ///   - itemSelection: liste d'item
+    /// - Returns: true si la liste d'items contient l'item sélectionné
+    func selectionContains(_ name: String) -> Bool {
+        self.contains(where: { item in
+            (item.label == name && item.selected)
+        })
+    }
+    
+    /// Vérifie si une ou plusieurs catégories ont étées secltionnées dans la liste du menu
+    /// - Returns: retourne TRUE si une seule catégorie sélectionnée
+    func onlyOneCategorySelected () -> Bool {
+        let count = self.reduce(.zero, { result, element in result + (element.selected ? 1 : 0) } )
+        return count == 1
+    }
+    
+    /// Retourne vrai si toutes les catégories de ls liste sont sélectionnées
+    func allCategoriesSelected() -> Bool {
+        let count = self.reduce(.zero, { result, element in result + (element.selected ? 1 : 0) } )
+        return count == self.count
+    }
+    
+    /// Retourne vrai si aucune des catégories de ls liste n'est sélectionnées
+    func NoneCategorySelected() -> Bool {
+        let count = self.reduce(.zero, { result, element in result + (element.selected ? 1 : 0) } )
+        return count == 0
+    }
+    
+    /// Retourne le nom de la première catégorie sélectionnée dans la liste du menu
+    /// - Returns: nom de la première catégorie sélectionnée dans la liste du menu
+    func firstCategorySelected () -> String? {
+        if let foundSelection = self.first(where: { $0.selected }) {
+            print("catégorie= \(foundSelection.label)")
+            return foundSelection.label
+        } else {
+            customLog.log(level: .error, "firstCategorySelected/foundSelection = false : catégorie non trouvée dans le menu")
+            return nil
+        }
+    }
+    
+    
 }
 
 struct Version: Codable {

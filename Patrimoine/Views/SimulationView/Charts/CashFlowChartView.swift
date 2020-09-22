@@ -85,7 +85,8 @@ struct CashFlowDetailedChartView: View {
                 },
                 label : {
                     HStack {
-                        Image(systemName: "line.horizontal.3.decrease.circle")
+                        Image(systemName: self.uiState.cfChartState.itemSelection.allCategoriesSelected() ?
+                                "line.horizontal.3.decrease.circle" : "line.horizontal.3.decrease.circle.fill")
                         Text("Filtrer")
                     }
                 } ).capsuleButtonStyle(),
@@ -186,19 +187,19 @@ struct CashFlowStackedBarChartView: UIViewRepresentable {
     @Binding var socialAccounts : SocialAccounts
     var title                   : String
     var combination             : SocialAccounts.CashCombination
-    var itemSelection           : [(label: String, selected: Bool)]
+    var itemSelectionList       : ItemSelectionList
 
     // initializers
     
     internal init(socialAccounts : Binding<SocialAccounts>,
                   title          : String,
                   combination    : SocialAccounts.CashCombination,
-                  itemSelection  : [(label: String, selected: Bool)]) {
+                  itemSelection  : ItemSelectionList) {
         CashFlowStackedBarChartView.titleStatic = title
-        self.title           = title
-        self.combination     = combination
-        self.itemSelection   = itemSelection
-        self._socialAccounts = socialAccounts
+        self.title             = title
+        self.combination       = combination
+        self.itemSelectionList = itemSelection
+        self._socialAccounts   = socialAccounts
     }
     
     // type methods
@@ -245,25 +246,6 @@ struct CashFlowStackedBarChartView: UIViewRepresentable {
     
     // methods
     
-    /// Vérifie si une ou plusieurs catégories ont étées secltionnées dans la liste du menu
-    /// - Returns: retourne TRUE si une seule catégorie sélectionnée
-    func onlyOneCategorySelected () -> Bool {
-        let count = itemSelection.reduce(.zero, { result, element in result + (element.selected ? 1 : 0) } )
-        return count == 1
-    }
-    
-    /// Retourne le nom de la première catégorie sélectionnée dans la liste du menu
-    /// - Returns: nom de la première catégorie sélectionnée dans la liste du menu
-    func firstCategorySelected () -> String? {
-        if let foundSelection = itemSelection.first(where: { $0.selected }) {
-            print("catégorie= \(foundSelection.label)")
-            return foundSelection.label
-        } else {
-            customLog.log(level: .error, "firstCategorySelected/foundSelection = false : catégorie non trouvée dans le menu")
-            return nil
-        }
-    }
-    
    /// Création de la vue du Graphique
     /// - Parameter context:
     /// - Returns: Graphique View
@@ -272,8 +254,9 @@ struct CashFlowStackedBarChartView: UIViewRepresentable {
         let chartView = BarChartView(title: "Revenus / Dépenses")
 
         //: ### BarChartData
-        let dataSet = socialAccounts.getCashFlowStackedBarChartDataSet(combination  : combination,
-                                                                       itemSelection: itemSelection)
+        let dataSet = socialAccounts.getCashFlowStackedBarChartDataSet(
+            combination      : combination,
+            itemSelectionList: itemSelectionList)
         
         // ajouter les data au graphique
         let data = BarChartData(dataSet: dataSet)
@@ -300,9 +283,9 @@ struct CashFlowStackedBarChartView: UIViewRepresentable {
         
         //: ### BarChartData
         let aDataSet : BarChartDataSet?
-        if onlyOneCategorySelected() {
+        if itemSelectionList.onlyOneCategorySelected() {
             // il y a un seule catégorie de sélectionnée, afficher le détail
-            if let categoryName = firstCategorySelected() {
+            if let categoryName = itemSelectionList.firstCategorySelected() {
                 aDataSet = socialAccounts.getCashFlowCategoryStackedBarChartDataSet(categoryName: categoryName)
             } else {
                 customLog.log(level: .error, "CashFlowStackedBarChartView : aDataSet = nil => graphique vide")
@@ -310,8 +293,9 @@ struct CashFlowStackedBarChartView: UIViewRepresentable {
             }
         } else {
             // il y a plusieurs catégories sélectionnées, afficher le graphe résumé par catégorie
-            aDataSet = socialAccounts.getCashFlowStackedBarChartDataSet(combination   : combination,
-                                                                        itemSelection : itemSelection)
+            aDataSet = socialAccounts.getCashFlowStackedBarChartDataSet(
+                combination       : combination,
+                itemSelectionList : itemSelectionList)
         }
         
         // ajouter les data au graphique

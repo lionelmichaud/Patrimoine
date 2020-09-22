@@ -6,9 +6,12 @@
 //  Copyright © 2020 Lionel MICHAUD. All rights reserved.
 //
 
+import os
 import SwiftUI
 import Charts // https://github.com/danielgindi/Charts.git
 import Disk // https://github.com/saoudrizwan/Disk.git
+
+fileprivate let customLog = Logger(subsystem: "me.michaud.lionel.Patrimoine", category: "UI.BalanceSheetChartView")
 
 // MARK: - Balance Sheet Charts Views
 
@@ -25,7 +28,13 @@ struct BalanceSheetGlobalChartView: View {
         .navigationTitle("Bilan")
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarItems(trailing: Button(action: saveImage,
-                                             label : { Text("Sauver image") }))
+                                             label : {
+                                                HStack {
+                                                    Image(systemName: "square.and.arrow.down")
+                                                    Text("Image")
+                                                }
+                                             }).capsuleButtonStyle()
+        )
     }
     
     func saveImage() {
@@ -65,9 +74,7 @@ struct BalanceSheetDetailedChartView: View {
                         .frame(width: self.menuWidth)
                         .transition(.move(edge: .leading))
                 }
-                
             }
-            
         }
         .navigationTitle("Bilan")
         .navigationBarTitleDisplayMode(.inline)
@@ -78,7 +85,8 @@ struct BalanceSheetDetailedChartView: View {
                 },
                 label: {
                     HStack {
-                        Image(systemName: "line.horizontal.3.decrease.circle")
+                        Image(systemName: self.uiState.bsChartState.itemSelection.allCategoriesSelected() ?
+                                "line.horizontal.3.decrease.circle" : "line.horizontal.3.decrease.circle.fill")
                         Text("Filtrer")
                     }
                 } ).capsuleButtonStyle(),
@@ -123,7 +131,12 @@ struct BalanceSheetLineChartView: UIViewRepresentable {
             return
         }
         // construire l'image
-        guard let image = BalanceSheetLineChartView.uiView!.getChartImage(transparent: false) else { return }
+        guard let image = BalanceSheetLineChartView.uiView!.getChartImage(transparent: false) else {
+            #if DEBUG
+            print("error: nothing to save")
+            #endif
+            return
+        }
 
         // sauvegarder l'image dans l'album photo
         UIImageWriteToSavedPhotosAlbum(image, nil, nil, nil)
@@ -161,24 +174,34 @@ struct BalanceSheetLineChartView: UIViewRepresentable {
 
 /// Wrapper de BarChartView
 struct BalanceSheetStackedBarChartView: UIViewRepresentable {
-    @Binding var socialAccounts : SocialAccounts
-    var title                   : String
-    var combination             : SocialAccounts.AssetLiabilitiesCombination
-    var itemSelection           : [(label: String, selected: Bool)]
+    
+    // type properties
+    
     static var titleStatic      : String = "image"
     static var uiView           : BarChartView?
     static var snapshotNb       : Int = 0
 
+    // properties
+    
+    @Binding var socialAccounts : SocialAccounts
+    var title                   : String
+    var combination             : SocialAccounts.AssetLiabilitiesCombination
+    var itemSelectionList       : ItemSelectionList
+
+    // initializers
+    
     internal init(socialAccounts : Binding<SocialAccounts>,
                   title          : String,
                   combination    : SocialAccounts.AssetLiabilitiesCombination,
-                  itemSelection  : [(label: String, selected: Bool)]) {
+                  itemSelection  : ItemSelectionList) {
         BalanceSheetStackedBarChartView.titleStatic = title
-        self.title           = title
-        self.combination     = combination
-        self.itemSelection   = itemSelection
-        self._socialAccounts = socialAccounts
+        self.title             = title
+        self.combination       = combination
+        self.itemSelectionList = itemSelection
+        self._socialAccounts   = socialAccounts
     }
+    
+    // type methods
     
     /// Sauvegarde de l'image en fichier  et dans l'album photo au format .PNG
     static func saveImage() {
@@ -189,7 +212,12 @@ struct BalanceSheetStackedBarChartView: UIViewRepresentable {
             return
         }
         // construire l'image
-        guard let image = BalanceSheetStackedBarChartView.uiView!.getChartImage(transparent: false) else { return }
+        guard let image = BalanceSheetStackedBarChartView.uiView!.getChartImage(transparent: false) else {
+            #if DEBUG
+            print("error: nothing to save")
+            #endif
+            return
+        }
 
         // sauvegarder l'image dans l'album photo
         UIImageWriteToSavedPhotosAlbum(image, nil, nil, nil)
@@ -215,23 +243,70 @@ struct BalanceSheetStackedBarChartView: UIViewRepresentable {
         BalanceSheetStackedBarChartView.snapshotNb += 1
     }
     
+    // methods
+    
+    /// Création de la vue du Graphique
+    /// - Parameter context:
+    /// - Returns: Graphique View
     func makeUIView(context: Context) -> BarChartView {
-        let view = socialAccounts.drawBalanceSheetStackedBarChart(combination  : combination,
-                                                       itemSelection: itemSelection)
-        BalanceSheetStackedBarChartView.uiView = view
-        return view
+        // créer et configurer un nouveau bar graph
+        let chartView = BarChartView(title: "Actif / Passif")
+        
+        //: ### BarChartData
+        let dataSet = socialAccounts.getBalanceSheetStackedBarChartDataSet(
+            combination      : combination,
+            itemSelectionList: itemSelectionList)
+        
+        // ajouter les data au graphique
+        let data = BarChartData(dataSet: dataSet)
+        //data.addDataSet(dataSet)
+        data.setValueTextColor(ChartThemes.DarkChartColors.valueColor)
+        data.setValueFont(UIFont(name:"HelveticaNeue-Light", size:12)!)
+        data.setValueFormatter(DefaultValueFormatter(formatter: valueKiloFormatter))
+        
+        // ajouter le dataset au graphique
+        chartView.data = data
+//        chartView.gridBackgroundColor = NSUIColor.black // NSUIColor(red: 240/255.0, green: 240/255.0, blue: 240/255.0, alpha: 1.0) UIColor(red: 230/255, green: 126/255, blue: 34/255, alpha: 1)
+        
+        chartView.animate(yAxisDuration: 0.5, easingOption: .linear)
+        BalanceSheetStackedBarChartView.uiView = chartView
+        return chartView
     }
     
+    /// Mise à jour de la vue du Graphique
+    /// - Parameters:
+    ///   - uiView: Graphique View
+    ///   - context:
     func updateUIView(_ uiView: BarChartView, context: Context) {
         uiView.clear()
         //uiView.data?.clearValues()
-        let dataSet = socialAccounts.getBalanceSheetStackedBarChartDataSet(combination  : combination,
-                                                                           itemSelection: itemSelection)
-        let data = BarChartData(dataSet: dataSet)
+
+        //: ### BarChartData
+        let aDataSet : BarChartDataSet?
+        if itemSelectionList.onlyOneCategorySelected() {
+            // il y a un seule catégorie de sélectionnée, afficher le détail
+            if let categoryName = itemSelectionList.firstCategorySelected() {
+                aDataSet = socialAccounts.getBalanceSheetCategoryStackedBarChartDataSet(categoryName: categoryName)
+            } else {
+                customLog.log(level: .error, "getBalanceSheetCategoryStackedBarChartDataSet : aDataSet = nil => graphique vide")
+                aDataSet = nil
+            }
+        } else {
+            // il y a plusieurs catégories sélectionnées, afficher le graphe résumé par catégorie
+            aDataSet = socialAccounts.getBalanceSheetStackedBarChartDataSet(
+                combination       : combination,
+                itemSelectionList : itemSelectionList)
+        }
+        
+        // ajouter les data au graphique
+        let data = BarChartData(dataSet: ((aDataSet == nil ? BarChartDataSet() : aDataSet)!))
         data.setValueTextColor(#colorLiteral(red: 1, green: 1, blue: 1, alpha: 1))
         data.setValueFont(NSUIFont(name: "HelveticaNeue-Light", size: CGFloat(12.0))!)
         data.setValueFormatter(DefaultValueFormatter(formatter: valueKiloFormatter))
+        
+        // ajouter le dataset au graphique
         uiView.data = data
+        
         uiView.data?.notifyDataChanged()
         uiView.notifyDataSetChanged()
     }
