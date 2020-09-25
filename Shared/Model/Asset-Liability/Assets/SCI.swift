@@ -18,9 +18,9 @@ struct SciCashFlowLine {
         
         // properties
         
-        // dividendes des SCPI de la SCI
+        // dividendes des SCPI de la SCI : nets de charges sociales et avant IS
         var sciDividends = NamedValueTable(name: "SCI-REVENUS DE SCPI")
-        // ventes des SCPI de la SCI
+        // ventes des SCPI de la SCI: produit net de charges sociales et d'impôt sur la plus-value
         var scpiSale     = NamedValueTable(name: "SCI-VENTES SCPI")
         // total de tous les revenus nets de l'année: loyers + ventes de la SCI
         var total: Double { sciDividends.total + scpiSale.total }
@@ -34,11 +34,11 @@ struct SciCashFlowLine {
             [sciDividends.total, scpiSale.total]
         }
         // tableau détaillé des noms
-        var headersDetailedArray: [String] {
-            sciDividends.namesArray + scpiSale.namesArray
+        var namesFlatArray: [String] {
+            sciDividends.namesArray.map {$0 + "(Revenu)"} + scpiSale.namesArray.map {$0 + "(Vente)"}
         }
         // tableau détaillé des valeurs
-        var valuesDetailedArray: [Double] {
+        var valuesFlatArray: [Double] {
             sciDividends.valuesArray + scpiSale.valuesArray
         }
         
@@ -74,12 +74,12 @@ struct SciCashFlowLine {
         return revenues.valuesArray + [-IS]
     }
     // tableau détaillé des noms
-    var namesDetailedArray: [String] {
-        revenues.headersDetailedArray + ["SCI-IS"]
+    var namesFlatArray: [String] {
+        revenues.namesFlatArray + ["SCI-IS"]
     }
     // tableau détaillé des valeurs
-    var valuesDetailedArray: [Double] {
-        revenues.valuesDetailedArray + [-IS]
+    var valuesFlatArray: [Double] {
+        revenues.valuesFlatArray + [-IS]
     }
     
     var summary: NamedValueTable {
@@ -109,7 +109,7 @@ struct SciCashFlowLine {
             // FIXME: vérifier si c'est net où brut dans le cas d'une SCI
             let liquidatedValue = scpi.liquidatedValue(year)
             revenues.scpiSale.namedValues.append((name : name,
-                                                  value: liquidatedValue.revenue.rounded()))
+                                                  value: liquidatedValue.netRevenue.rounded()))
         }
         
         // calcul de l'IS de la SCI

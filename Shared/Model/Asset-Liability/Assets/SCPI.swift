@@ -51,10 +51,15 @@ struct SCPI: Identifiable, Codable, NameableValuable {
     /// - Parameter year: fin de l'année
     /// - Parameter revenue: revenus inscrit en compte courant avant prélèvements sociaux et IRPP
     /// - Parameter taxableIrpp: part des revenus inscrit en compte courant imposable à l'IRPP (après charges sociales)
-    func yearlyRevenue (atEndOf year: Int) -> (revenue: Double, taxableIrpp: Double, socialTaxes: Double) {
+    func yearlyRevenue (atEndOf year: Int)
+    -> (revenue    : Double,
+        taxableIrpp: Double,
+        socialTaxes: Double) {
         let revenue     = (isOwned(before: year) ? buyingPrice * interestRate / 100.0 : 0.0)
         let taxableIrpp = Fiscal.model.socialTaxesOnFinancialRevenu.net(revenue)
-        return (revenue: revenue, taxableIrpp: taxableIrpp, socialTaxes: revenue - taxableIrpp)
+        return (revenue    : revenue,
+                taxableIrpp: taxableIrpp,
+                socialTaxes: revenue - taxableIrpp)
     }
     
     /// true si l'année est postérieure à l'année de vente
@@ -89,8 +94,12 @@ struct SCPI: Identifiable, Codable, NameableValuable {
      - Parameter socialTaxes: charges sociales payées sur sur la plus-value
      - Parameter irpp: impôt sur le revenu payé sur sur la plus-value
      **/
-    func liquidatedValue (_ year: Int) ->
-    (revenue: Double, capitalGain: Double, netRevenue: Double, socialTaxes: Double, irpp: Double) {
+    func liquidatedValue (_ year: Int)
+    -> (revenue    : Double,
+        capitalGain: Double,
+        netRevenue : Double,
+        socialTaxes: Double,
+        irpp       : Double) {
         guard (willBeSold && year == sellingDate.year) else {
             return (0,0,0,0,0)
         }

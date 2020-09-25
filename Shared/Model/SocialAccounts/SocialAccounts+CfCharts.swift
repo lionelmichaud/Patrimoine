@@ -353,20 +353,12 @@ extension SocialAccounts {
         } else if let found = firstLine.sciCashFlowLine.summary.namedValues.first(where: { $0.name == categoryName } ) {
             /// rechercher la catégorie dans les revenus de la SCI
             customLog.log(level: .info, "Catégorie trouvée dans sciCashFlowLine : \(found.name)")
-            var labelsInRevenus = firstLine.sciCashFlowLine.revenues.sciDividends.namesArray
-            labelsInRevenus = labelsInRevenus.map {$0 + "(Revenu)"}
-            var labelsInSales = firstLine.sciCashFlowLine.revenues.scpiSale.namesArray
-            labelsInSales = labelsInSales.map {$0 + "(Vente)"}
-            var labelsInCategory = labelsInRevenus + labelsInSales
-            // ajouter l'IS de la SCI
-            labelsInCategory.append("IS")
+            let labelsInCategory = firstLine.sciCashFlowLine.namesFlatArray
             print("  legende : ", labelsInCategory)
             
             // valeurs des dettes
             dataEntries = cashFlowArray.map { // pour chaque année
-                var y = $0.sciCashFlowLine.revenues.sciDividends.valuesArray
-                y += $0.sciCashFlowLine.revenues.scpiSale.valuesArray
-                y.append(-$0.sciCashFlowLine.IS)
+                let y = $0.sciCashFlowLine.valuesFlatArray
                 return BarChartDataEntry(x       : $0.year.double(),
                                          yValues : y)
             }

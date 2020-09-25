@@ -45,16 +45,16 @@ struct ValuedRevenues {
         return table
     }
     
-    /// tableau détaillé des noms des revenus: concaténation des catégories
-    var namesDetailedArray: [String] {
+    /// tableau détaillé des noms des revenus: concaténation à plat des catégories
+    var namesFlatArray: [String] {
         var headers: [String] = [ ]
         perCategory.forEach { element in
             headers += element.value.credits.namesArray
         }
         return headers
     }
-    /// tableau détaillé des valeurs des revenus: concaténation des catégories
-    var valuesDetailedArray: [Double] {
+    /// tableau détaillé des valeurs des revenus: concaténation à plat des catégories
+    var valuesFlatArray: [Double] {
         var values: [Double] = [ ]
         perCategory.forEach { element in
             values += element.value.credits.valuesArray
@@ -74,6 +74,22 @@ struct ValuedRevenues {
     
     // MARK: - Methods
 
+    func headersCSV(_ inCategory: RevenueCategory) -> String? {
+        perCategory[inCategory]?.credits.headerCSV
+    }
+    
+    func valuesCSV(_ inCategory: RevenueCategory) -> String? {
+        perCategory[inCategory]?.credits.valuesCSV
+    }
+    
+    func namesArray(_ inCategory: RevenueCategory) -> [String]? {
+        perCategory[inCategory]?.credits.namesArray
+    }
+    
+    func valuesArray(_ inCategory: RevenueCategory) -> [Double]? {
+        perCategory[inCategory]?.credits.valuesArray
+    }
+    
     func summaryFiltredNames(with itemSelectionList: ItemSelectionList) -> [String] {
         summary.filtredNames(with : itemSelectionList)
     }
@@ -102,19 +118,27 @@ struct ValuedRevenues {
 
 struct RevenuesInCategory {
     
-    // properties
-    
+    // MARK: - Properties
+
     /// nom de la catégorie de revenus
     var name: String // category.displayString
     
     /// table des revenus versés en compte courant avant taxes, prélèvements sociaux et impots
-    var credits      = NamedValueTable(name: "PERCU")
+    var credits: NamedValueTable
     
     /// table des fractions de revenus versés en compte courant qui est imposable à l'IRPP
-    var taxablesIrpp = NamedValueTable(name: "TAXABLE")
+    var taxablesIrpp: NamedValueTable
     
-    // methods
+    // MARK: - Initializers
+
+    init(name: String) {
+        self.name         = name
+        self.credits      = NamedValueTable(name: name + " PERCU")
+        self.taxablesIrpp = NamedValueTable(name: name + " TAXABLE")
+    }
     
+    // MARK: - Methods
+
     func print(level: Int = 0) {
         let h = String(repeating: StringCst.header, count: level)
         Swift.print(h + name)

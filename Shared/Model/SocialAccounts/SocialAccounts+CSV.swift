@@ -23,10 +23,7 @@ extension SocialAccounts {
                 heading += firstLine.assets.headersCSV(category)! + "; "
                 // valeurs
                 // values: For every element , extract the values as a comma-separated string.
-//                rows = zip(rows, balanceArray.map { "\($0.assets.perCategory[category]!.valuesCSV); " }).map(+)
                 rows = zip(rows, balanceArray.map { "\($0.assets.valuesCSV(category)!); " }).map(+)
-                print(" ----- après \(category) -------")
-                print(rows)
             }
             // total
             // heading
@@ -55,7 +52,7 @@ extension SocialAccounts {
         
         func builNetTableCSV(firstline: BalanceSheetLine) {
             // heading
-            heading += "ACTIF NET \n"
+            heading += "ACTIF NET"
             // valeurs
             let rowsTotal = balanceArray.map { "\($0.net.roundedString)" }
             rows = zip(rows, rowsTotal).map(+)
@@ -85,10 +82,10 @@ extension SocialAccounts {
         builNetTableCSV(firstline: firstLine)
         
         // Turn all of the rows into one big string
-        let csvString = heading + rows.joined(separator: "\n")
+        let csvString = heading + "\n" + rows.joined(separator: "\n")
         
-        print(SocialAccounts.balanceSheetFileUrl ?? "nil")
-        print(csvString)
+        //        print(SocialAccounts.balanceSheetFileUrl ?? "nil")
+        //        print(csvString)
         
         #if DEBUG
         // sauvegarder le fichier dans le répertoire Bundle/csv
@@ -127,34 +124,23 @@ extension SocialAccounts {
         var rows    = [String]()
         
         func buildRevenusTableCSV(firstLine: CashFlowLine) {
-            let personsNames                = firstLine.ages.persons.map(\.name).joined(separator: "; ")
-            let revenusWorkIncomeNames      = firstLine.revenues.perCategory[.workIncomes]?.credits.headerCSV
-            let revenusFinancialNames       = firstLine.revenues.perCategory[.financials]?.credits.headerCSV
-            let revenusScpiNames            = firstLine.revenues.perCategory[.scpis]?.credits.headerCSV
-            let revenusrealEstateRentsNames = firstLine.revenues.perCategory[.realEstateRents]?.credits.headerCSV
-            let revenusScpiSaleNames        = firstLine.revenues.perCategory[.scpiSale]?.credits.headerCSV
-            let revenusRealEstateSaleNames  = firstLine.revenues.perCategory[.realEstateSale]?.credits.headerCSV
-            heading = "YEAR; \(personsNames); \(revenusWorkIncomeNames ?? ""); \(revenusFinancialNames ?? ""); \(revenusScpiNames ?? ""); \(revenusrealEstateRentsNames ?? ""); \(revenusScpiSaleNames ?? ""); \(revenusRealEstateSaleNames ?? ""); \(firstLine.revenues.taxableIrppRevenueDelayedFromLastYear.name);"
-            
-            // For every element , extract the values as a comma-separated string.
-            // - Ages: year, age, age...
-            let rowsOfAges = cashFlowArray.map { "\($0.year); \($0.ages.persons.map { (person: (name: String, age: Int)) -> String in String(person.age) }.joined(separator: "; ")); "
+            // pour chaque catégorie
+            RevenueCategory.allCases.forEach { category in
+                // heading
+                heading += firstLine.revenues.headersCSV(category)! + "; "
+                // valeurs
+                // values: For every element , extract the values as a comma-separated string.
+                rows = zip(rows, cashFlowArray.map { "\($0.revenues.valuesCSV(category)!); " }).map(+)
             }
-            // - Revenues.workIncomes: credits, credits, credits...
-            let rowsRevenusWorkIncome      = cashFlowArray.map { "\($0.revenues.perCategory[.workIncomes]?.credits.valuesCSV ?? ""); " }
-            let rowsRevenusFinancial       = cashFlowArray.map { "\($0.revenues.perCategory[.financials]?.credits.valuesCSV ?? ""); " }
-            let rowsRevenusScpi            = cashFlowArray.map { "\($0.revenues.perCategory[.scpis]?.credits.valuesCSV ?? ""); " }
-            let rowsRevenusRealEstateRents = cashFlowArray.map { "\($0.revenues.perCategory[.realEstateRents]?.credits.valuesCSV ?? ""); " }
-            let rowsRevenusScpiSale        = cashFlowArray.map { "\($0.revenues.perCategory[.scpiSale]?.credits.valuesCSV ?? ""); " }
-            let rowsRevenusRealEstateSale  = cashFlowArray.map { "\($0.revenues.perCategory[.realEstateSale]?.credits.valuesCSV ?? ""); " }
-            let rowsRevenusReporte         = cashFlowArray.map { "\($0.revenues.taxableIrppRevenueDelayedFromLastYear.value(atEndOf :0).roundedString); " }
-            
-            rows = zip(rowsOfAges, rowsRevenusWorkIncome).map(+)
-            rows = zip(rows, rowsRevenusFinancial).map(+)
-            rows = zip(rows, rowsRevenusScpi).map(+)
-            rows = zip(rows, rowsRevenusRealEstateRents).map(+)
-            rows = zip(rows, rowsRevenusScpiSale).map(+)
-            rows = zip(rows, rowsRevenusRealEstateSale).map(+)
+            // total
+            // heading
+            heading += "REVENU PERCU TOTAL; "
+            // valeurs
+            let rowsTotal = cashFlowArray.map { "\($0.revenues.totalCredited.roundedString); " }
+            rows = zip(rows, rowsTotal).map(+)
+                        
+            heading += "\(firstLine.revenues.taxableIrppRevenueDelayedFromLastYear.name);"
+            let rowsRevenusReporte = cashFlowArray.map { "\($0.revenues.taxableIrppRevenueDelayedFromLastYear.value(atEndOf :0).roundedString); " }
             rows = zip(rows, rowsRevenusReporte).map(+)
         }
         
@@ -240,27 +226,34 @@ extension SocialAccounts {
         // ligne de titre du tableau: utiliser la première ligne de la table de bilan
         let firstLine = cashFlowArray.first!
         
+        // Année et Ages
+        let personsNames = firstLine.ages.persons.map( { "Age " + $0.name } ).joined(separator: "; ")
+        heading = "YEAR; \(personsNames);"
+        rows = cashFlowArray.map {
+            "\($0.year); \($0.ages.persons.map( { String($0.age) } ).joined(separator: "; ")); "
+        }
+        
         // construire la partie Revenus du tableau
         buildRevenusTableCSV(firstLine: firstLine)
         
         // construire la partie SCI du tableau
-        buildSciTableCSV(firstLine: firstLine)
+                buildSciTableCSV(firstLine: firstLine)
         
         // construire la partie Dépenses de vie du tableau
-        buildLifeExpensesTableCSV(firstLine: firstLine)
+        //        buildLifeExpensesTableCSV(firstLine: firstLine)
         
         // construire la partie Taxes du tableau
-        buildTaxesTableCSV(firstLine: firstLine)
+        //        buildTaxesTableCSV(firstLine: firstLine)
         
         // construire la partie Dettes du tableau
-        buildDebtsTableCSV(firstLine: firstLine)
+        //        buildDebtsTableCSV(firstLine: firstLine)
         
         // construire la partie Investissements du tableau
-        buildInvestsTableCSV(firstLine: firstLine)
+        //        buildInvestsTableCSV(firstLine: firstLine)
         
         // Turn all of the rows into one big string
-        let csvString = heading + rows.joined(separator: "\n")
-        print(csvString)
+        let csvString = heading + "\n" + rows.joined(separator: "\n")
+        //        print(csvString)
         
         #if DEBUG
         // sauvegarder le fichier dans le répertoire Bundle/csv
