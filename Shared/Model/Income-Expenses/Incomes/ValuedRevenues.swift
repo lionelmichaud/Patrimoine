@@ -12,9 +12,9 @@ import Foundation
 
 struct ValuedRevenues {
     
-    // properties
-    
-    let name = "REVENUS HORS SCI"
+    // MARK: - Properties
+
+    let name : String
     var perCategory: [RevenueCategory: RevenuesInCategory] = [:]
     
     /// revenus imposable de l'année précédente et reporté à l'année courante
@@ -28,28 +28,28 @@ struct ValuedRevenues {
     var totalTaxableIrpp: Double {
         // ne pas oublier les revenus en report d'imposition
         perCategory.reduce(.zero, { result, element in result + element.value.taxablesIrpp.total } )
-        + taxableIrppRevenueDelayedFromLastYear.value(atEndOf: 0)
+            + taxableIrppRevenueDelayedFromLastYear.value(atEndOf: 0)
     }
     
     /// tableau des noms de catégories et valeurs total des revenus de cette catégorie
-    var namedValueTable: NamedValueTable {
+    var summary: NamedValueTable {
         var table = NamedValueTable(name: name)
         
         // itérer sur l'enum pour préserver l'ordre
         for category in RevenueCategory.allCases {
             if let element = perCategory[category] {
-                table.values.append((name  : element.name,
-                                     value : element.credits.total))
+                table.namedValues.append((name  : element.name,
+                                          value : element.credits.total))
             }
         }
         return table
     }
     
     /// tableau détaillé des noms des revenus: concaténation des catégories
-    var headersDetailedArray: [String] {
+    var namesDetailedArray: [String] {
         var headers: [String] = [ ]
         perCategory.forEach { element in
-            headers += element.value.credits.headersArray
+            headers += element.value.credits.namesArray
         }
         return headers
     }
@@ -62,16 +62,25 @@ struct ValuedRevenues {
         return values
     }
     
-    // initialization
-    
+    // MARK: - Initializers
+
     /// Initializer toutes les catéogires (avec des tables vides de revenu)
-    init() {
+    init(name: String) {
+        self.name = name
         for category in RevenueCategory.allCases {
             perCategory[category] = RevenuesInCategory(name: category.displayString)
         }
     }
+    
+    // MARK: - Methods
 
-    // methods
+    func summaryFiltredNames(with itemSelectionList: ItemSelectionList) -> [String] {
+        summary.filtredNames(with : itemSelectionList)
+    }
+    
+    func summaryFiltredValues(with itemSelectionList: ItemSelectionList) -> [Double] {
+        summary.filtredValues(with : itemSelectionList)
+    }
     
     func print(level: Int = 0) {
         let h = String(repeating: StringCst.header, count: level)
@@ -80,7 +89,7 @@ struct ValuedRevenues {
         for category in RevenueCategory.allCases {
             perCategory[category]?.print(level: level)
         }
-
+        
         // revenus imposable de l'année précédente et reporté à l'année courante
         taxableIrppRevenueDelayedFromLastYear.print()
         
@@ -116,6 +125,6 @@ struct RevenuesInCategory {
     func print() {
         print(level: 0)
     }
-
+    
 }
 

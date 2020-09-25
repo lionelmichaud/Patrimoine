@@ -70,8 +70,8 @@ struct ItemArray<E>: Codable where E: Codable, E: Identifiable, E: NameableValua
         items.sum(atEndOf: atEndOf)
     }
     
-    func namedValueTable(atEndOf: Int) -> [(name: String, value: Double)] {
-        var table = [(name: String, value: Double)]()
+    func namedValueTable(atEndOf: Int) -> NamedValueArray {
+        var table = NamedValueArray()
         for item in items {
             table.append((name: item.name, value: item.value(atEndOf: atEndOf)))
         }

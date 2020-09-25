@@ -37,12 +37,12 @@ struct CashFlowLine {
     var ages            = AgeTable()
     // revenus
     var taxableIrppRevenueDelayedToNextYear = Debt(name: "REVENU IMPOSABLE REPORTE A L'ANNEE SUIVANTE", note: "", value: 0)
-    var revenues        = ValuedRevenues()
+    var revenues        = ValuedRevenues(name: "REVENUS HORS SCI")
     var sumOfrevenues   : Double {
         revenues.totalCredited + sciCashFlowLine.netCashFlow
     }
     // dépenses
-    var taxes           = ValuedTaxes()
+    var taxes           = ValuedTaxes(name: "TAXES")
     var lifeExpenses    = NamedValueTableWithSummary(name: "Dépenses")
     var debtPayements   = NamedValueTableWithSummary(name: "Remb dette")
     var investPayements = NamedValueTableWithSummary(name: "Investissements")
@@ -98,10 +98,10 @@ struct CashFlowLine {
         let irpp = Fiscal.model.incomeTaxes.irpp(taxableIncome : revenues.totalTaxableIrpp,
                                                  nbAdults      : family.nbOfAdultAlive(atEndOf: year),
                                                  nbChildren    : family.nbOfFiscalChildren(during: year)).rounded()
-        taxes.perCategory[.irpp]?.values.append((name: "IRPP", value: irpp.rounded()))
-
+        taxes.perCategory[.irpp]?.namedValues.append((name: "IRPP", value: irpp.rounded()))
+        
         /// EXPENSES: compute and populate family expenses
-        lifeExpenses.namedValueTable.values = family.expenses.namedValueTable(atEndOf: year)
+        lifeExpenses.namedValueTable.namedValues = family.expenses.namedValueTable(atEndOf: year)
         
         /// LOAN: populate remboursement d'emprunts
         populateLoanCashFlow(of: patrimoine)
@@ -133,43 +133,43 @@ struct CashFlowLine {
                 /// revenus du travail
                 let workIncome = adult.workIncome(during: year)
                 // revenus du travail inscrit en compte avant IRPP (net charges sociales, de dépenses de mutuelle ou d'assurance perte d'emploi)
-                revenues.perCategory[.workIncomes]?.credits.values.append((name: name,
-                                                                           value: workIncome.net.rounded()))
+                revenues.perCategory[.workIncomes]?.credits.namedValues.append((name: name,
+                                                                                value: workIncome.net.rounded()))
                 // part des revenus du travail inscrite en compte qui est imposable à l'IRPP
-                revenues.perCategory[.workIncomes]?.taxablesIrpp.values.append((name: name,
-                                                                                value: workIncome.taxableIrpp.rounded()))
+                revenues.perCategory[.workIncomes]?.taxablesIrpp.namedValues.append((name: name,
+                                                                                     value: workIncome.taxableIrpp.rounded()))
                 
                 /// pension de retraite
                 let pension  = adult.pension(during: year)
                 // pension inscrit en compte avant IRPP (net de charges sociales)
-                revenues.perCategory[.pensions]?.credits.values.append((name: name,
-                                                                        value: pension.net.rounded()))
+                revenues.perCategory[.pensions]?.credits.namedValues.append((name: name,
+                                                                             value: pension.net.rounded()))
                 // part de la pension inscrite en compte qui est imposable à l'IRPP
                 let relicat = Fiscal.model.pensionTaxes.model.maxRebate - totalPensionDiscount
                 var discount = pension.net - pension.taxable
                 if relicat >= discount {
                     // l'abattement est suffisant pour cette personne
-                    revenues.perCategory[.pensions]?.taxablesIrpp.values.append((name: name,
-                                                                                 value: pension.taxable.rounded()))
+                    revenues.perCategory[.pensions]?.taxablesIrpp.namedValues.append((name: name,
+                                                                                      value: pension.taxable.rounded()))
                 } else {
                     discount = relicat
-                    revenues.perCategory[.pensions]?.taxablesIrpp.values.append((name: name,
-                                                                                 value: (pension.net - discount).rounded()))
+                    revenues.perCategory[.pensions]?.taxablesIrpp.namedValues.append((name: name,
+                                                                                      value: (pension.net - discount).rounded()))
                 }
                 totalPensionDiscount += discount
                 
                 /// indemnité de licenciement
                 let compensation = adult.layoffCompensation(during: year)
-                revenues.perCategory[.layoffCompensation]?.credits.values.append((name: name,
-                                                                                  value: compensation.net.rounded()))
-                revenues.perCategory[.layoffCompensation]?.taxablesIrpp.values.append((name: name,
-                                                                                       value: compensation.taxable.rounded()))
+                revenues.perCategory[.layoffCompensation]?.credits.namedValues.append((name: name,
+                                                                                       value: compensation.net.rounded()))
+                revenues.perCategory[.layoffCompensation]?.taxablesIrpp.namedValues.append((name: name,
+                                                                                            value: compensation.taxable.rounded()))
                 /// allocation chomage
                 let alocation = adult.unemployementAllocation(during: year)
-                revenues.perCategory[.unemployAlloc]?.credits.values.append((name: name, value: alocation.net.rounded()))
-                revenues.perCategory[.unemployAlloc]?.taxablesIrpp.values.append((name: name,
-                                                                                  value: alocation.taxable.rounded()))
-
+                revenues.perCategory[.unemployAlloc]?.credits.namedValues.append((name: name, value: alocation.net.rounded()))
+                revenues.perCategory[.unemployAlloc]?.taxablesIrpp.namedValues.append((name: name,
+                                                                                       value: alocation.taxable.rounded()))
+                
             }
         }
     }
@@ -182,25 +182,25 @@ struct CashFlowLine {
             let yearlyRent = realEstate.yearlyRent(during: year)
             let name       = realEstate.name
             // loyers inscrit en compte courant avant prélèvements sociaux et IRPP
-            revenues.perCategory[.realEstateRents]?.credits.values.append((name: name,
-                                                                           value: yearlyRent.revenue.rounded()))
+            revenues.perCategory[.realEstateRents]?.credits.namedValues.append((name: name,
+                                                                                value: yearlyRent.revenue.rounded()))
             // part des loyers inscrit en compte courant imposable à l'IRPP - idem ci-dessus car même base
-            revenues.perCategory[.realEstateRents]?.taxablesIrpp.values.append((name: name,
-                                                                                value: yearlyRent.taxableIrpp.rounded()))
+            revenues.perCategory[.realEstateRents]?.taxablesIrpp.namedValues.append((name: name,
+                                                                                     value: yearlyRent.taxableIrpp.rounded()))
             // prélèvements sociaux payés sur le loyer
-            taxes.perCategory[.socialTaxes]?.values.append((name : name,
-                                             value               : yearlyRent.socialTaxes.rounded()))
+            taxes.perCategory[.socialTaxes]?.namedValues.append((name : name,
+                                                                 value               : yearlyRent.socialTaxes.rounded()))
             
             // produit de la vente inscrit en compte courant: produit net de charges sociales et d'impôt sur la plus-value
             // le crédit se fait au début de l'année qui suit la vente
             let liquidatedValue = realEstate.liquidatedValue(year - 1)
-            revenues.perCategory[.realEstateSale]?.credits.values.append((name: name,
-                                                                          value: liquidatedValue.netRevenue.rounded()))
+            revenues.perCategory[.realEstateSale]?.credits.namedValues.append((name: name,
+                                                                               value: liquidatedValue.netRevenue.rounded()))
             
             // impôts locaux
             let yearlyLocaltaxes = realEstate.yearlyLocalTaxes(during: year)
-            taxes.perCategory[.localTaxes]?.values.append((name: name,
-                                            value: yearlyLocaltaxes.rounded()))
+            taxes.perCategory[.localTaxes]?.namedValues.append((name: name,
+                                                                value: yearlyLocaltaxes.rounded()))
         }
     }
     
@@ -212,20 +212,20 @@ struct CashFlowLine {
             let yearlyRevenue = scpi.yearlyRevenue(atEndOf: year)
             let name          = scpi.name
             // dividendes inscrit en compte courant avant prélèvements sociaux et IRPP
-            revenues.perCategory[.scpis]?.credits.values.append((name: name,
-                                                                 value: yearlyRevenue.revenue.rounded()))
+            revenues.perCategory[.scpis]?.credits.namedValues.append((name: name,
+                                                                      value: yearlyRevenue.revenue.rounded()))
             // part des dividendes inscrit en compte courant imposable à l'IRPP
-            revenues.perCategory[.scpis]?.taxablesIrpp.values.append((name: name,
-                                                                      value: yearlyRevenue.taxableIrpp.rounded()))
+            revenues.perCategory[.scpis]?.taxablesIrpp.namedValues.append((name: name,
+                                                                           value: yearlyRevenue.taxableIrpp.rounded()))
             // prélèvements sociaux payés sur les dividendes de SCPI
-            taxes.perCategory[.socialTaxes]?.values.append((name: name,
-                                             value: yearlyRevenue.socialTaxes.rounded()))
+            taxes.perCategory[.socialTaxes]?.namedValues.append((name: name,
+                                                                 value: yearlyRevenue.socialTaxes.rounded()))
             
             // populate SCPI sale revenue: produit de vente net de charges sociales et d'impôt sur la plus-value
             // le crédit se fait au début de l'année qui suit la vente
             let liquidatedValue = scpi.liquidatedValue(year - 1)
-            revenues.perCategory[.scpiSale]?.credits.values.append((name: name,
-                                                                    value: liquidatedValue.netRevenue.rounded()))
+            revenues.perCategory[.scpiSale]?.credits.namedValues.append((name: name,
+                                                                         value: liquidatedValue.netRevenue.rounded()))
         }
     }
     
@@ -243,7 +243,7 @@ struct CashFlowLine {
             let yearlyPayement  = periodicInvestement.yearlyTotalPayement(atEndOf: year)
             let name            = periodicInvestement.name
             // produit de la liquidation inscrit en compte courant avant prélèvements sociaux et IRPP
-            revenues.perCategory[.financials]?.credits.values.append(
+            revenues.perCategory[.financials]?.credits.namedValues.append(
                 (name: name,
                  value: liquidatedValue.revenue.rounded()))
             // populate taxable interests
@@ -254,27 +254,27 @@ struct CashFlowLine {
                     taxableInterests = max(0.0, liquidatedValue.taxableIrppInterests - lifeInsuranceRebate)
                     lifeInsuranceRebate -= (liquidatedValue.taxableIrppInterests - taxableInterests)
                     // part des produit de la liquidation inscrit en compte courant imposable à l'IRPP
-                    revenues.perCategory[.financials]?.taxablesIrpp.values.append(
+                    revenues.perCategory[.financials]?.taxablesIrpp.namedValues.append(
                         (name: name,
                          value: taxableInterests.rounded()))
                 case .pea:
                     // part des produit de la liquidation inscrit en compte courant imposable à l'IRPP
-                    revenues.perCategory[.financials]?.taxablesIrpp.values.append(
+                    revenues.perCategory[.financials]?.taxablesIrpp.namedValues.append(
                         (name: name,
                          value: liquidatedValue.taxableIrppInterests.rounded()))
                 case .other:
                     // part des produit de la liquidation inscrit en compte courant imposable à l'IRPP
-                    revenues.perCategory[.financials]?.taxablesIrpp.values.append(
+                    revenues.perCategory[.financials]?.taxablesIrpp.namedValues.append(
                         (name: name,
                          value: liquidatedValue.taxableIrppInterests.rounded()))
             }
             // populate prélèvements sociaux
-            taxes.perCategory[.socialTaxes]?.values.append(
+            taxes.perCategory[.socialTaxes]?.namedValues.append(
                 (name: name,
                  value: liquidatedValue.socialTaxes.rounded()))
             
             // populate versements
-            investPayements.namedValueTable.values.append(
+            investPayements.namedValueTable.namedValues.append(
                 (name : name,
                  value: yearlyPayement.rounded()))
             
@@ -287,8 +287,8 @@ struct CashFlowLine {
         for loan in patrimoine.liabilities.loans.items.sorted(by:<) {
             let yearlyPayement = -loan.yearlyPayement(year)
             let name           = loan.name
-            debtPayements.namedValueTable.values.append((name : name,
-                                                         value: yearlyPayement.rounded()))
+            debtPayements.namedValueTable.namedValues.append((name : name,
+                                                              value: yearlyPayement.rounded()))
         }
     }
     
@@ -314,12 +314,12 @@ struct CashFlowLine {
                                                                              atEndOf             : year,
                                                                              lifeInsuranceRebate : &lifeInsuranceRebate)
             taxableIrppRevenueDelayedToNextYear.add(amount: totalTaxableInterests.rounded())
-
+            
             // capitaliser les intérêts des investissements libres
             patrimoine.capitalizeFreeInvestments(atEndOf: year)
         }
     }
-            
+    
     func print() {
         Swift.print("YEAR:", year)
         // ages

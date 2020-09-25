@@ -11,9 +11,8 @@ import Foundation
 // ligne anuelle de cash flow de la SCI
 struct SciCashFlowLine {
     
-    // nested types
-    
-    // MARK: -
+    // MARK: - Nested types
+
     // revenus de la SCI
     struct Revenues {
         
@@ -27,7 +26,7 @@ struct SciCashFlowLine {
         var total: Double { sciDividends.total + scpiSale.total }
         // total de tous les revenus imposables à l'IS de l'année: loyers + plus-values de la SCI
         // tableau résumé des noms
-        var headersArray: [String] {
+        var namesArray: [String] {
             ["SCI-" + sciDividends.name, "SCI-" + scpiSale.name]
         }
         // tableau résumé des valeurs
@@ -36,7 +35,7 @@ struct SciCashFlowLine {
         }
         // tableau détaillé des noms
         var headersDetailedArray: [String] {
-            sciDividends.headersArray + scpiSale.headersArray
+            sciDividends.namesArray + scpiSale.namesArray
         }
         // tableau détaillé des valeurs
         var valuesDetailedArray: [Double] {
@@ -57,16 +56,17 @@ struct SciCashFlowLine {
         }
     }
     
-    // properties
-    
+    // MARK: - Properties
+
     let year        : Int
     var revenues    = Revenues() // revenus des SCPI de la SCI
     // TODO: Ajouter les dépenses de la SCI déductibles du revenu (comptable, gestion, banque...)
     let IS          : Double // impôts sur les société
     var netCashFlow : Double { revenues.total - IS }
+    
     // tableau résumé des noms
-    var headersArray: [String] {
-        revenues.headersArray + ["SCI-IS"]
+    var namesArray: [String] {
+        revenues.namesArray + ["SCI-IS"]
     }
     // tableau résumé des valeurs
     var valuesArray: [Double] {
@@ -74,7 +74,7 @@ struct SciCashFlowLine {
         return revenues.valuesArray + [-IS]
     }
     // tableau détaillé des noms
-    var headersDetailedArray: [String] {
+    var namesDetailedArray: [String] {
         revenues.headersDetailedArray + ["SCI-IS"]
     }
     // tableau détaillé des valeurs
@@ -82,8 +82,15 @@ struct SciCashFlowLine {
         revenues.valuesDetailedArray + [-IS]
     }
     
-    // initialization
+    var summary: NamedValueTable {
+        var table = NamedValueTable(name: "SCI")
+        table.namedValues.append((name  : "Revenu SCI",
+                                  value : netCashFlow))
+        return table
+    }
     
+    // MARK: - Initializers
+
     init(withYear year: Int, withSCI sci: SCI) {
         self.year = year
         
@@ -96,17 +103,27 @@ struct SciCashFlowLine {
             let name          = scpi.name
             // revenus inscrit en compte courant après prélèvements sociaux et avant IS
             // car dans le cas d'une SCI, le revenu remboursable aux actionnaires c'est le net de charges sociales
-            revenues.sciDividends.values.append((name : name,
-                                                 value: yearlyRevenue.taxableIrpp.rounded()))
+            revenues.sciDividends.namedValues.append((name : name,
+                                                      value: yearlyRevenue.taxableIrpp.rounded()))
             // populate SCPI sale revenue: produit net de charges sociales et d'impôt sur la plus-value
             // FIXME: vérifier si c'est net où brut dans le cas d'une SCI
             let liquidatedValue = scpi.liquidatedValue(year)
-            revenues.scpiSale.values.append((name : name,
-                                             value: liquidatedValue.revenue.rounded()))
+            revenues.scpiSale.namedValues.append((name : name,
+                                                  value: liquidatedValue.revenue.rounded()))
         }
         
         // calcul de l'IS de la SCI
         IS = Fiscal.model.companyProfitTaxes.IS(revenues.total)
+    }
+    
+    // MARK: - Methods
+
+    func summaryFiltredNames(with itemSelectionList: ItemSelectionList) -> [String] {
+        summary.filtredNames(with : itemSelectionList)
+    }
+    
+    func summaryFiltredValues(with itemSelectionList: ItemSelectionList) -> [Double] {
+        summary.filtredValues(with : itemSelectionList)
     }
     
     func print(level: Int = 0) {
@@ -119,25 +136,18 @@ struct SciCashFlowLine {
         // net cash flow
         Swift.print(h + StringCst.header + "NET CASH FLOW:", netCashFlow)
     }
-    
-    var namedValueTable: NamedValueTable {
-        var table = NamedValueTable(name: "SCI")
-        table.values.append((name  : "Revenu SCI",
-                             value : netCashFlow))
-        return table
-    }
 }
 
 // MARK: - Société Civile Immobilière (SCI)
 struct SCI {
     
-    // properties
-    
+    // MARK: - Properties
+
     var scpis       = ScpiArray(fileNamePrefix: "SCI_")
     var bankAccount = 0.0
     
-    // methods
-    
+    // MARK: - Methods
+
     func print() {
         Swift.print("  SCI:")
         // investissement SCPI

@@ -53,8 +53,8 @@ where ItemCategory: PickableEnum, ItemCategory: Codable {
     /// Liste complète à plat de toutes les dépenses valorisées, toutes catégories confondues
     /// - Parameter atEndOf: année de calcul
     /// - Returns: liste complète à plat de toutes les dépenses
-    func namedValueTable(atEndOf: Int) -> [(name: String, value: Double)] {
-        var table = [(name: String, value: Double)]()
+    func namedValueTable(atEndOf: Int) -> NamedValueArray {
+        var table = NamedValueArray()
         perCategory.forEach { (category, expenseArray) in
             table += expenseArray.namedValueTable(atEndOf: atEndOf)
         }
@@ -64,8 +64,8 @@ where ItemCategory: PickableEnum, ItemCategory: Codable {
     /// Dictionnaire des dépenses valorisées  par catégorie
     /// - Parameter atEndOf: année de calcul
     /// - Returns: dictionnaire des dépenses par catégorie
-    func namedValueTable(atEndOf: Int) -> [ItemCategory: [(name: String, value: Double)]] {
-        var dico = [ItemCategory: [(name: String, value: Double)]]()
+    func namedValueTable(atEndOf: Int) -> [ItemCategory: NamedValueArray] {
+        var dico = [ItemCategory: NamedValueArray]()
         for category in ItemCategory.allCases {
             if let exps = perCategory[category] {
                 dico[category] = exps.namedValueTable(atEndOf: atEndOf)
@@ -79,7 +79,7 @@ where ItemCategory: PickableEnum, ItemCategory: Codable {
     ///   - atEndOf: année de calcul
     ///   - inCategory: catégorie de dépenses à prendre
     /// - Returns: liste des dépenses de cette catégorie
-    func namedValueTable(atEndOf: Int, inCategory: ItemCategory) -> [(name: String, value: Double)] {
+    func namedValueTable(atEndOf: Int, inCategory: ItemCategory) -> NamedValueArray {
         if let exps = perCategory[inCategory] {
             return exps.namedValueTable(atEndOf: atEndOf)
         } else {

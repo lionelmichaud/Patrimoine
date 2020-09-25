@@ -13,68 +13,86 @@ fileprivate let customLog = Logger(subsystem: "me.michaud.lionel.Patrimoine", ca
 
 // MARK: - Table nommée de couples (nom, valeur)
 
+typealias NamedValue = (name: String, value: Double)
+typealias NamedValueArray = [NamedValue]
+
 struct NamedValueTable {
     
-    // properties
-    
+    // MARK: - Properties
+
     var name: String
-    var values = [(name: String, value: Double)]()
+    var namedValues = NamedValueArray()
+    
     var total: Double {
-        values.reduce(.zero, {result, element in result + element.value})
+        namedValues.reduce(.zero, {result, element in result + element.value})
     }
-    // tableau des noms
-    var headersArray: [String] {
-        values.map(\.name)
+    /// tableau des noms
+    var namesArray: [String] {
+        namedValues.map(\.name)
     }
-    // tableau des valeurs
+    /// tableau des valeurs
     var valuesArray: [Double] {
-        values.map(\.value)
+        namedValues.map(\.value)
     }
-    // liste des noms CSV
+    /// liste des noms CSV
     var headerCSV: String {
-        headersArray.joined(separator: "; ") + "; " + name
+        namesArray.joined(separator: "; ") + "; " + name
     }
-    // liste des valeurs CSV
+    /// liste des valeurs CSV
     var valuesCSV: String {
-        values.map { (value: (name: String, value: Double)) -> String in value.value.roundedString }
+        namedValues.map { (namedValue: NamedValue) -> String in namedValue.value.roundedString }
             .joined(separator: "; ") + "; " + total.roundedString
     }
     
-    // methods
-    
-    func filtredHeaders(itemSelection: ItemSelectionList) -> [String] {
-        values.filter({ itemSelection.selectionContains($0.name) }).map(\.name)
+    // MARK: - Methods
+
+    func filtredNames(with itemSelectionList: ItemSelectionList) -> [String] {
+        namedValues.filter({ itemSelectionList.selectionContains($0.name) }).map(\.name)
     }
     
-    func filtredValues(itemSelection: ItemSelectionList) -> [Double] {
-        values.filter({ itemSelection.selectionContains($0.name) }).map(\.value)
+    func filtredValues(with itemSelectionList: ItemSelectionList) -> [Double] {
+        namedValues.filter({ itemSelectionList.selectionContains($0.name) }).map(\.value)
     }
     
     func print(level: Int = 0) {
         let h = String(repeating: StringCst.header, count: level)
         Swift.print(h + name)
-        Swift.print(h + StringCst.header + "valeurs: ", values, "total: ", total)
+        Swift.print(h + StringCst.header + "valeurs: ", namedValues, "total: ", total)
     }
 }
 
 // MARK: - NamedValueTable avec résumé global
 struct NamedValueTableWithSummary {
     
-    // properties
+    // MARK: - Properties
+
     let name              : String
     var namedValueTable   : NamedValueTable
-    var summaryValueTable : NamedValueTable { // un seul élément
+    var summary : NamedValueTable { // un seul élément
         var table = NamedValueTable(name: name)
-        table.values.append((name  : name,
+        table.namedValues.append((name  : name,
                              value : namedValueTable.total))
         return table
     }
     
-    // initializer
+    // MARK: - Initializers
+
     internal init(name: String) {
         self.name = name
         self.namedValueTable = NamedValueTable(name: name)
     }
+    
+    // MARK: - Methods
+    
+    func summaryFiltredNames(with itemSelectionList: ItemSelectionList) -> [String] {
+        summary.filtredNames(with: itemSelectionList)
+    }
+    
+    func summaryFiltredValues(with itemSelectionList: ItemSelectionList) -> [Double] {
+        summary.filtredValues(with: itemSelectionList)
+    }
+    
+
 }
 
 

@@ -12,7 +12,6 @@ struct Liabilities {
     var debts = DebtArray()
     var loans = LoanArray()
 
-
     func value(atEndOf year: Int) -> Double {
         loans.items.sum(atEndOf: year) +
         debts.items.sum(atEndOf: year)

@@ -98,8 +98,8 @@ extension LifeExpensesDic {
 //    /// Liste complète à plat de toutes les dépenses valorisées, toutes catégories confondues
 //    /// - Parameter atEndOf: année de calcul
 //    /// - Returns: liste complète à plat de toutes les dépenses
-//    func namedValueTable(atEndOf: Int) -> [(name: String, value: Double)] {
-//        var table = [(name: String, value: Double)]()
+//    func namedValueTable(atEndOf: Int) -> NamedValueArray {
+//        var table = NamedValueArray()
 //        perCategory.forEach { (category, expenseArray) in
 //            table += expenseArray.namedValueTable(atEndOf: atEndOf)
 //        }
@@ -109,8 +109,8 @@ extension LifeExpensesDic {
 //    /// Dictionnaire des dépenses valorisées  par catégorie
 //    /// - Parameter atEndOf: année de calcul
 //    /// - Returns: dictionnaire des dépenses par catégorie
-//    func namedValueTable(atEndOf: Int) -> [LifeExpenseCategory: [(name: String, value: Double)]] {
-//        var dico = [LifeExpenseCategory: [(name: String, value: Double)]]()
+//    func namedValueTable(atEndOf: Int) -> [LifeExpenseCategory: NamedValueArray] {
+//        var dico = [LifeExpenseCategory: NamedValueArray]()
 //        for category in LifeExpenseCategory.allCases {
 //            if let exps = perCategory[category] {
 //                dico[category] = exps.namedValueTable(atEndOf: atEndOf)
@@ -124,7 +124,7 @@ extension LifeExpensesDic {
 //    ///   - atEndOf: année de calcul
 //    ///   - inCategory: catégorie de dépenses à prendre
 //    /// - Returns: liste des dépenses de cette catégorie
-//    func namedValueTable(atEndOf: Int, inCategory: LifeExpenseCategory) -> [(name: String, value: Double)] {
+//    func namedValueTable(atEndOf: Int, inCategory: LifeExpenseCategory) -> NamedValueArray {
 //        if let exps = perCategory[inCategory] {
 //            return exps.namedValueTable(atEndOf: atEndOf)
 //        } else {

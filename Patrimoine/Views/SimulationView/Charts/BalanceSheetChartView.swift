@@ -288,7 +288,8 @@ struct BalanceSheetStackedBarChartView: UIViewRepresentable {
             if let categoryName = itemSelectionList.firstCategorySelected() {
                 aDataSet = socialAccounts.getBalanceSheetCategoryStackedBarChartDataSet(categoryName: categoryName)
             } else {
-                customLog.log(level: .error, "getBalanceSheetCategoryStackedBarChartDataSet : aDataSet = nil => graphique vide")
+                customLog.log(level: .error,
+                              "getBalanceSheetCategoryStackedBarChartDataSet : aDataSet = nil => graphique vide")
                 aDataSet = nil
             }
         } else {

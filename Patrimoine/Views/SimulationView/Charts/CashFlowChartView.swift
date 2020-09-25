@@ -288,7 +288,8 @@ struct CashFlowStackedBarChartView: UIViewRepresentable {
             if let categoryName = itemSelectionList.firstCategorySelected() {
                 aDataSet = socialAccounts.getCashFlowCategoryStackedBarChartDataSet(categoryName: categoryName)
             } else {
-                customLog.log(level: .error, "CashFlowStackedBarChartView : aDataSet = nil => graphique vide")
+                customLog.log(level: .error,
+                              "CashFlowStackedBarChartView : aDataSet = nil => graphique vide")
                 aDataSet = nil
             }
         } else {

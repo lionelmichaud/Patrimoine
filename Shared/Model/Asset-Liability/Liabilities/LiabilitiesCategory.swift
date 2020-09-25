@@ -1,8 +1,8 @@
 //
-//  AssetsCategory.swift
+//  LiabilitiesCategory.swift
 //  Patrimoine
 //
-//  Created by Lionel MICHAUD on 19/09/2020.
+//  Created by Lionel MICHAUD on 25/09/2020.
 //  Copyright © 2020 Lionel MICHAUD. All rights reserved.
 //
 

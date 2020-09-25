@@ -200,11 +200,11 @@ extension SocialAccounts {
         let firstLine   = balanceArray.first!
         switch combination {
             case .assets:
-                return firstLine.assets.values.map({($0.name, true)})
+                return firstLine.assets.summary.namedValues.map({($0.name, true)}) // sélectionné par défaut
             case .liabilities:
-                return firstLine.liabilities.values.map({($0.name, true)})
+                return firstLine.liabilities.namedValues.map({($0.name, true)}) // sélectionné par défaut
             case .both:
-                return firstLine.assets.values.map({($0.name, true)}) + firstLine.liabilities.values.map({($0.name, true)})
+                return getBalanceSheetLegend(.assets) + getBalanceSheetLegend(.liabilities)
         }
     }
     
@@ -218,9 +218,7 @@ extension SocialAccounts {
         itemSelectionList: ItemSelectionList) -> BarChartDataSet? {
         
         // si la table est vide alors quitter
-        guard !balanceArray.isEmpty else {
-            return nil
-        }
+        guard !balanceArray.isEmpty else { return nil }
         
         let firstLine   = balanceArray.first!
         var dataEntries = [ChartDataEntry]()
@@ -230,9 +228,9 @@ extension SocialAccounts {
             case .assets:
                 dataEntries += balanceArray.map { // pour chaque année
                     BarChartDataEntry(x       : $0.year.double(),
-                                      yValues : $0.assets.filtredValues(itemSelection: itemSelectionList))
+                                      yValues : $0.assets.summaryFiltredValues(with: itemSelectionList))
                 }
-                let labels = firstLine.assets.filtredHeaders(itemSelection : itemSelectionList)
+                let labels = firstLine.assets.summaryFiltredNames(with : itemSelectionList)
                 dataSet = BarChartDataSet(entries: dataEntries,
                                           label: (labels.count == 1 ? labels.first : nil))
                 dataSet.stackLabels = labels
@@ -241,9 +239,9 @@ extension SocialAccounts {
             case .liabilities:
                 dataEntries += balanceArray.map { // pour chaque année
                     BarChartDataEntry(x       : $0.year.double(),
-                                      yValues : $0.liabilities.filtredValues(itemSelection: itemSelectionList))
+                                      yValues : $0.liabilities.filtredValues(with: itemSelectionList))
                 }
-                let labels = firstLine.liabilities.filtredHeaders(itemSelection : itemSelectionList)
+                let labels = firstLine.liabilities.filtredNames(with : itemSelectionList)
                 dataSet = BarChartDataSet(entries: dataEntries,
                                           label: (labels.count == 1 ? labels.first : nil))
                 dataSet.stackLabels = labels
@@ -252,16 +250,16 @@ extension SocialAccounts {
             case .both:
                 dataEntries += balanceArray.map {
                     BarChartDataEntry(x       : $0.year.double(),
-                                      yValues : $0.assets.filtredValues(itemSelection: itemSelectionList) +
-                                        $0.liabilities.filtredValues(itemSelection: itemSelectionList))
+                                      yValues : $0.assets.summaryFiltredValues(with: itemSelectionList) +
+                                        $0.liabilities.filtredValues(with: itemSelectionList))
                 }
-                let labels = firstLine.assets.filtredHeaders(itemSelection : itemSelectionList) +
-                    firstLine.liabilities.filtredHeaders(itemSelection : itemSelectionList)
+                let labels = firstLine.assets.summaryFiltredNames(with : itemSelectionList) +
+                    firstLine.liabilities.filtredNames(with : itemSelectionList)
                 dataSet = BarChartDataSet(entries: dataEntries,
                                           label: (labels.count == 1 ? labels.first : nil))
-                dataSet.stackLabels = firstLine.assets.filtredHeaders(itemSelection : itemSelectionList)
+                dataSet.stackLabels = firstLine.assets.summaryFiltredNames(with : itemSelectionList)
                 let numberPositive = dataSet.stackLabels.count
-                dataSet.stackLabels += firstLine.liabilities.filtredHeaders(itemSelection : itemSelectionList)
+                dataSet.stackLabels += firstLine.liabilities.filtredNames(with : itemSelectionList)
                 dataSet.colors = ChartThemes.positiveNegativeColors(numberPositive: numberPositive,
                                                                     numberNegative: dataSet.stackLabels.count - numberPositive)
         }
@@ -282,25 +280,25 @@ extension SocialAccounts {
             return nil
         }
         
-        let firstLine   = cashFlowArray.first!
+        let firstLine   = balanceArray.first!
         var dataEntries = [ChartDataEntry]()
         let dataSet : BarChartDataSet
         
-        if let found = firstLine.revenues.namedValueTable.values.first(where: { $0.name == categoryName } ) {
-            /// rechercher la catégorie dans les revenus
-            customLog.log(level: .info, "Catégorie trouvée dans Revenues : \(found.name)")
-            guard let category = RevenueCategory.category(of: categoryName) else {
+        if let found = firstLine.assets.summary.namedValues.first(where: { $0.name == categoryName }) {
+            /// rechercher les valeurs des taxes
+            customLog.log(level: .info, "Catégorie trouvée dans assets : \(found.name)")
+            guard let category = AssetsCategory.category(of: categoryName) else {
                 return BarChartDataSet()
             }
-            // print("  nom : \(category)")
-            guard let labelsInCategory = firstLine.revenues.perCategory[category]?.credits.headersArray else {
+            print("  nom : \(category)")
+            guard let labelsInCategory = firstLine.assets.namesArray(category) else {
                 return BarChartDataSet()
             }
-            // print("  legende : ", labelsInCategory)
+            print("  legende : ", labelsInCategory)
             
             // valeurs des revenus de la catégorie
-            dataEntries = cashFlowArray.map { // pour chaque année
-                let y = $0.revenues.perCategory[category]?.credits.valuesArray
+            dataEntries = balanceArray.map { // pour chaque année
+                let y = $0.assets.valuesArray(category)
                 return BarChartDataEntry(x       : $0.year.double(),
                                          yValues : y!)
             }
@@ -308,111 +306,9 @@ extension SocialAccounts {
                                       label   : (labelsInCategory.count == 1 ? labelsInCategory.first : nil))
             dataSet.stackLabels = labelsInCategory
             dataSet.colors      = ChartThemes.positiveColors(number : dataSet.stackLabels.count)
-            
-        } else if let found = firstLine.sciCashFlowLine.namedValueTable.values.first(where: { $0.name == categoryName } ) {
-            /// rechercher la catégorie dans les revenus de la SCI
-            customLog.log(level: .info, "Catégorie trouvée dans sciCashFlowLine : \(found.name)")
-            var labelsInRevenus = firstLine.sciCashFlowLine.revenues.sciDividends.headersArray
-            labelsInRevenus = labelsInRevenus.map {$0 + "(Revenu)"}
-            var labelsInSales = firstLine.sciCashFlowLine.revenues.scpiSale.headersArray
-            labelsInSales = labelsInSales.map {$0 + "(Vente)"}
-            var labelsInCategory = labelsInRevenus + labelsInSales
-            // ajouter l'IS de la SCI
-            labelsInCategory.append("IS")
-            print("  legende : ", labelsInCategory)
-            
-            // valeurs des dettes
-            dataEntries = cashFlowArray.map { // pour chaque année
-                var y = $0.sciCashFlowLine.revenues.sciDividends.valuesArray
-                y += $0.sciCashFlowLine.revenues.scpiSale.valuesArray
-                y.append(-$0.sciCashFlowLine.IS)
-                return BarChartDataEntry(x       : $0.year.double(),
-                                         yValues : y)
-            }
-            dataSet = BarChartDataSet(entries : dataEntries,
-                                      label   : (labelsInCategory.count == 1 ? labelsInCategory.first : nil))
-            dataSet.stackLabels = labelsInCategory
-            dataSet.colors      = ChartThemes.positiveColors(number : dataSet.stackLabels.count)
-            
-        } else if let found = firstLine.taxes.namedValueTable.values.first(where: { $0.name == categoryName } ) {
-            /// rechercher les valeurs des taxes
-            customLog.log(level: .info, "Catégorie trouvée dans taxes : \(found.name)")
-            guard let category = TaxeCategory.category(of: categoryName) else {
-                return BarChartDataSet()
-            }
-            print("  nom : \(category)")
-            guard let labelsInCategory = firstLine.taxes.perCategory[category]?.headersArray else {
-                return BarChartDataSet()
-            }
-            print("  legende : ", labelsInCategory)
-            
-            // valeurs des revenus de la catégorie
-            dataEntries = cashFlowArray.map { // pour chaque année
-                let y = $0.taxes.perCategory[category]?.valuesArray
-                return BarChartDataEntry(x       : $0.year.double(),
-                                         yValues : -y!)
-            }
-            dataSet = BarChartDataSet(entries : dataEntries,
-                                      label   : (labelsInCategory.count == 1 ? labelsInCategory.first : nil))
-            dataSet.stackLabels = labelsInCategory
-            dataSet.colors      = ChartThemes.negativeColors(number : dataSet.stackLabels.count)
-            
-        } else if categoryName == firstLine.lifeExpenses.summaryValueTable.name {
-            /// rechercher les valeurs des dépenses
-            customLog.log(level: .info, "Catégorie trouvée dans lifeExpenses : \(categoryName)")
-            let labelsInCategory = firstLine.lifeExpenses.namedValueTable.headersArray
-            print("  legende : ", labelsInCategory)
-            
-            // valeurs des dépenses
-            dataEntries = cashFlowArray.map { // pour chaque année
-                let y = $0.lifeExpenses.namedValueTable.valuesArray
-                return BarChartDataEntry(x       : $0.year.double(),
-                                         yValues : -y)
-            }
-            
-            dataSet = BarChartDataSet(entries : dataEntries,
-                                      label   : (labelsInCategory.count == 1 ? labelsInCategory.first : nil))
-            dataSet.stackLabels = labelsInCategory
-            dataSet.colors      = ChartThemes.negativeColors(number : dataSet.stackLabels.count)
-            
-        } else if categoryName == firstLine.debtPayements.summaryValueTable.name {
-            /// rechercher les valeurs des debtPayements
-            customLog.log(level: .info, "Catégorie trouvée dans debtPayements : \(categoryName)")
-            let labelsInCategory = firstLine.debtPayements.namedValueTable.headersArray
-            print("  legende : ", labelsInCategory)
-            
-            // valeurs des dettes
-            dataEntries = cashFlowArray.map { // pour chaque année
-                let y = $0.debtPayements.namedValueTable.valuesArray
-                return BarChartDataEntry(x       : $0.year.double(),
-                                         yValues : -y)
-            }
-            
-            dataSet = BarChartDataSet(entries : dataEntries,
-                                      label   : (labelsInCategory.count == 1 ? labelsInCategory.first : nil))
-            dataSet.stackLabels = labelsInCategory
-            dataSet.colors      = ChartThemes.negativeColors(number : dataSet.stackLabels.count)
-            
-        } else if categoryName == firstLine.investPayements.summaryValueTable.name {
-            /// rechercher les valeurs des investPayements
-            customLog.log(level: .info, "Catégorie trouvée dans investPayements : \(categoryName)")
-            let labelsInCategory = firstLine.investPayements.namedValueTable.headersArray
-            print("  legende : ", labelsInCategory)
-            
-            // valeurs des investissements
-            dataEntries = cashFlowArray.map { // pour chaque année
-                let y = $0.investPayements.namedValueTable.valuesArray
-                return BarChartDataEntry(x       : $0.year.double(),
-                                         yValues : -y)
-            }
-            
-            dataSet = BarChartDataSet(entries : dataEntries,
-                                      label   : (labelsInCategory.count == 1 ? labelsInCategory.first : nil))
-            dataSet.stackLabels = labelsInCategory
-            dataSet.colors      = ChartThemes.negativeColors(number : dataSet.stackLabels.count)
-            
         } else {
-            customLog.log(level: .error, "Catégorie \(categoryName) NON trouvée dans cashFlowArray.first!")
+            customLog.log(level: .error, "Catégorie \(categoryName) NON trouvée dans balanceArray.first!")
+            assert(true, "Catégorie \(categoryName) NON trouvée dans balanceArray.first!")
             dataSet = BarChartDataSet()
         }
         
