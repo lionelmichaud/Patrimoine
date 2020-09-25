@@ -11,12 +11,9 @@ import Foundation
 // MARK: - Catégories de Actifs
 
 /// Catégories de dépenses
-enum AssetsCategory: Int, PickableEnum, Codable {
-    case periodicInvests
-    case freeInvests
-    case realEstates
-    case scpis
-    case sci
+enum LiabilitiesCategory: Int, PickableEnum, Codable {
+    case debts
+    case loans
     
     // properties
     
@@ -26,16 +23,10 @@ enum AssetsCategory: Int, PickableEnum, Codable {
     
     var pickerString: String {
         switch self {
-            case .periodicInvests:
-                return "Invest. périodique"
-            case .freeInvests:
-                return "Invest. libre"
-            case .realEstates:
-                return "Immobilier"
-            case .scpis:
-                return "SCPI"
-            case .sci:
-                return "SCI"
+            case .debts:
+                return "Dettes"
+            case .loans:
+                return "Emprunts"
         }
     }
     
@@ -44,8 +35,8 @@ enum AssetsCategory: Int, PickableEnum, Codable {
     /// Cherche l'Enum correspondant au nom de la catégorie
     /// - Parameter name: nom de la catégorie (displayString)
     /// - Returns: Enum
-    static func category(of name: String) -> AssetsCategory? {
-        for category in AssetsCategory.allCases {
+    static func category(of name: String) -> LiabilitiesCategory? {
+        for category in LiabilitiesCategory.allCases {
             if category.displayString == name {
                 return category
             }

@@ -34,12 +34,18 @@ extension Array where Element: NameableValuable {
 protocol NameableValuableArray: Codable {
     associatedtype Item: Codable, Identifiable, NameableValuable
     
+    // MARK: - Properties
+    
     var items          : [Item] { get set }
     var fileNamePrefix : String { get set }
     var currentValue   : Double { get }
     subscript(idx: Int) -> Item { get set }
     
+    // MARK: - Initializers
+    
     init(fileNamePrefix: String)
+    
+    // MARK: - Methods
     
     func storeItemsToFile(fileNamePrefix: String)
     
@@ -179,6 +185,7 @@ protocol DictionaryOfNamedValueTable {
     func print(level: Int)
 }
 
+// implémntation par défaut
 extension DictionaryOfNamedValueTable {
     subscript(category: Category) -> NamedValueTable? {
         get {
@@ -238,6 +245,14 @@ extension DictionaryOfNamedValueTable {
     
     // MARK: - Methods
     
+    func headersCSV(_ inCategory: Category) -> String? {
+        perCategory[inCategory]?.headerCSV
+    }
+    
+    func valuesCSV(_ inCategory: Category) -> String? {
+        perCategory[inCategory]?.valuesCSV
+    }
+    
     func namesArray(_ inCategory: Category) -> [String]? {
         perCategory[inCategory]?.namesArray
     }
@@ -266,9 +281,6 @@ extension DictionaryOfNamedValueTable {
         Swift.print(h + StringCst.header + "TOTAL:", total)
     }
 }
-
-
-
 
 // MARK: - Protocol PickableEnum pour Picker d'un Enum
 

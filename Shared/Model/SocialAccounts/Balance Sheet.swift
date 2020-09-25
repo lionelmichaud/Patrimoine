@@ -6,14 +6,14 @@ typealias BalanceSheetArray = [BalanceSheetLine]
 
 struct BalanceSheetLine {
     
-    // properties
+    // MARK: - Properties
     
     // année de début de la simulation
     var year: Int   = 0
     // actifs
     var assets      = ValuedAssets(name: "ACTIF")
     // passifs
-    var liabilities = NamedValueTable(name: "PASSIF")
+    var liabilities = ValuedLiabilities(name: "PASSIF")
     // net
     var net       : Double {
         assets.total + liabilities.total
@@ -29,7 +29,7 @@ struct BalanceSheetLine {
     //        return "\(assetsValues); \(liabilitiesValues)\n"
     //    }
     
-    // initialization
+    // MARK: - Initializers
     
     init(withYear year             : Int,
          withPatrimoine patrimoine : Patrimoin) {
@@ -62,16 +62,16 @@ struct BalanceSheetLine {
         // dettes
         for liability in patrimoine.liabilities.debts.items.sorted(by:<) {
             // populate debt liabilities
-            appendToLiabilities(liability, year)
+            appendToLiabilities(.debts, liability, year)
         }
         // emprunts
         for liability in patrimoine.liabilities.loans.items.sorted(by:<) {
             // populate loan liabilities
-            appendToLiabilities(liability, year)
+            appendToLiabilities(.loans, liability, year)
         }
     }
     
-    // methods
+    // MARK: - Methods
     
     mutating func appendToAssets(_ category       : AssetsCategory,
                                  _ asset          : NameableValuable,
@@ -82,11 +82,13 @@ struct BalanceSheetLine {
              value : asset.value(atEndOf: year).rounded()))
     }
     
-    mutating func appendToLiabilities(_ liability      : NameableValuable,
+    mutating func appendToLiabilities(_ category       : LiabilitiesCategory,
+                                      _ liability      : NameableValuable,
                                       _ year           : Int,
                                       _ withNamePrefix : String = "") {
-        liabilities.namedValues.append((name  : withNamePrefix + liability.name,
-                                        value : liability.value(atEndOf: year).rounded()))
+        liabilities.perCategory[category]?.namedValues.append(
+            (name  : withNamePrefix + liability.name,
+             value : liability.value(atEndOf: year).rounded()))
     }
     
     func print() {

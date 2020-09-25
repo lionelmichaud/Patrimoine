@@ -36,7 +36,7 @@ struct NamedValueTable {
     }
     /// liste des noms CSV
     var headerCSV: String {
-        namesArray.joined(separator: "; ") + "; " + name
+        namesArray.joined(separator: "; ") + "; " + name.uppercased() + " TOTAL"
     }
     /// liste des valeurs CSV
     var valuesCSV: String {

@@ -17,39 +17,47 @@ extension SocialAccounts {
         var rows    = [String]()
         
         func buildAssetsTableCSV(firstLine: BalanceSheetLine) {
+            // pour chaque catégorie
             AssetsCategory.allCases.forEach { category in
                 // heading
-                heading += firstLine.assets.perCategory[category]!.headerCSV + "; "
-                heading += "ACTIF TOTAL; "
-                
+                heading += firstLine.assets.headersCSV(category)! + "; "
+                // valeurs
                 // values: For every element , extract the values as a comma-separated string.
-                AssetsCategory.allCases.forEach { category in
-                    rows = zip(rows, balanceArray.map { "\($0.assets.perCategory[category]!.valuesCSV); " }).map(+)
-                }
-                
-                // total
-                let rowsTotal = balanceArray.map { "\($0.assets.total.roundedString); " }
-                rows = zip(rows, rowsTotal).map(+)
+//                rows = zip(rows, balanceArray.map { "\($0.assets.perCategory[category]!.valuesCSV); " }).map(+)
+                rows = zip(rows, balanceArray.map { "\($0.assets.valuesCSV(category)!); " }).map(+)
+                print(" ----- après \(category) -------")
+                print(rows)
             }
+            // total
+            // heading
+            heading += "ACTIF TOTAL; "
+            // valeurs
+            let rowsTotal = balanceArray.map { "\($0.assets.total.roundedString); " }
+            rows = zip(rows, rowsTotal).map(+)
         }
         
-        func buildDebtsTableCSV(firstline: BalanceSheetLine) {
-            // heading
-            let debtsNames = firstLine.liabilities.headerCSV
-            heading += "\(debtsNames); PASSIF TOTAL; "
-            
-            // values
-            let rowsDebts = balanceArray.map { "\($0.liabilities.valuesCSV); " }
-            rows = zip(rows, rowsDebts).map(+)
-
+        func buildLiabilitiesTableCSV(firstline: BalanceSheetLine) {
+            // pour chaque catégorie
+            LiabilitiesCategory.allCases.forEach { category in
+                // heading
+                heading += firstLine.liabilities.headersCSV(category)! + "; "
+                // valeurs
+                // values: For every element , extract the values as a comma-separated string.
+                rows = zip(rows, balanceArray.map { "\($0.liabilities.valuesCSV(category)!); " }).map(+)
+            }
             // total
+            // heading
+            heading += "PASSIF TOTAL; "
+            // valeurs
             let rowsTotal = balanceArray.map { "\($0.liabilities.total.roundedString); " }
             rows = zip(rows, rowsTotal).map(+)
         }
         
         func builNetTableCSV(firstline: BalanceSheetLine) {
-            heading += "ACTIF NET \n "
-            let rowsTotal = balanceArray.map { "\($0.net.roundedString); " }
+            // heading
+            heading += "ACTIF NET \n"
+            // valeurs
+            let rowsTotal = balanceArray.map { "\($0.net.roundedString)" }
             rows = zip(rows, rowsTotal).map(+)
         }
         
@@ -65,13 +73,13 @@ extension SocialAccounts {
         
         // ligne de titre du tableau: utiliser la première ligne de la table de bilan
         heading = "YEAR; " // + balanceArray.first!.headerCSV
-        rows = balanceArray.map { "\($0.year);" }
+        rows = balanceArray.map { "\($0.year); " }
         
         // construire la partie Actifs du tableau
         buildAssetsTableCSV(firstLine: firstLine)
-
+        
         // construire la partie Passifs du tableau
-        buildDebtsTableCSV(firstline: firstLine)
+        buildLiabilitiesTableCSV(firstline: firstLine)
         
         // ajoute le total Actif Net au bout
         builNetTableCSV(firstline: firstLine)
