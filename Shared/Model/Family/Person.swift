@@ -108,7 +108,8 @@ class Person : ObservableObject, Identifiable, CustomStringConvertible, Codable 
     static let coder = CoderPreservingType()
     
     // MARK: - Properties
-    var test: Double = Economy.model.longTermRate.distribution.random()
+    // retirer
+    var test: Double = Economy.model.longTermRate.value()
 
     let id                    = UUID()
     let sexe                  : Sexe

@@ -16,8 +16,8 @@ struct SciCashFlowLine {
     // revenus de la SCI
     struct Revenues {
         
-        // properties
-        
+        // MARK: - Properties
+
         // dividendes des SCPI de la SCI : nets de charges sociales et avant IS
         var sciDividends = NamedValueTable(name: "SCI-REVENUS DE SCPI")
         // ventes des SCPI de la SCI: produit net de charges sociales et d'impôt sur la plus-value
@@ -42,8 +42,8 @@ struct SciCashFlowLine {
             sciDividends.valuesArray + scpiSale.valuesArray
         }
         
-        // methods
-        
+        // MARK: - Methods
+
         func print(level: Int = 0) {
             let h = String(repeating: StringCst.header, count: level)
             Swift.print(h + "REVENUS SCI:    ")

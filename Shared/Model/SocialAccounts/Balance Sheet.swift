@@ -1,8 +1,121 @@
 import Foundation
+import Disk
+
+// MARK: - Table des Bilans annuels
 
 typealias BalanceSheetArray = [BalanceSheetLine]
 
-// MARK: - Ligne annuelle du bilan
+extension BalanceSheetArray {
+    func storeTableCSV(simulationTitle: String) {
+        var heading = String()
+        var rows    = [String]()
+        
+        func buildAssetsTableCSV(firstLine: BalanceSheetLine) {
+            // pour chaque catégorie
+            AssetsCategory.allCases.forEach { category in
+                // heading
+                heading += firstLine.assets.headersCSV(category)! + "; "
+                // valeurs
+                // values: For every element , extract the values as a comma-separated string.
+                rows = zip(rows, self.map { "\($0.assets.valuesCSV(category)!); " }).map(+)
+            }
+            // total
+            // heading
+            heading += "ACTIF TOTAL; "
+            // valeurs
+            let rowsTotal = self.map { "\($0.assets.total.roundedString); " }
+            rows = zip(rows, rowsTotal).map(+)
+        }
+        
+        func buildLiabilitiesTableCSV(firstline: BalanceSheetLine) {
+            // pour chaque catégorie
+            LiabilitiesCategory.allCases.forEach { category in
+                // heading
+                heading += firstLine.liabilities.headersCSV(category)! + "; "
+                // valeurs
+                // values: For every element , extract the values as a comma-separated string.
+                rows = zip(rows, self.map { "\($0.liabilities.valuesCSV(category)!); " }).map(+)
+            }
+            // total
+            // heading
+            heading += "PASSIF TOTAL; "
+            // valeurs
+            let rowsTotal = self.map { "\($0.liabilities.total.roundedString); " }
+            rows = zip(rows, rowsTotal).map(+)
+        }
+        
+        func builNetTableCSV(firstline: BalanceSheetLine) {
+            // heading
+            heading += "ACTIF NET"
+            // valeurs
+            let rowsTotal = self.map { "\($0.net.roundedString)" }
+            rows = zip(rows, rowsTotal).map(+)
+        }
+        
+        // si la table est vide alors quitter
+        guard !self.isEmpty else {
+            #if DEBUG
+            print("error: nothing to save")
+            #endif
+            return
+        }
+        
+        let firstLine = self.first!
+        
+        // ligne de titre du tableau: utiliser la première ligne de la table de bilan
+        heading = "YEAR; " // + self.first!.headerCSV
+        rows = self.map { "\($0.year); " }
+        
+        // construire la partie Actifs du tableau
+        buildAssetsTableCSV(firstLine: firstLine)
+        
+        // construire la partie Passifs du tableau
+        buildLiabilitiesTableCSV(firstline: firstLine)
+        
+        // ajoute le total Actif Net au bout
+        builNetTableCSV(firstline: firstLine)
+        
+        // Turn all of the rows into one big string
+        let csvString = heading + "\n" + rows.joined(separator: "\n")
+        
+        //        print(SocialAccounts.balanceSheetFileUrl ?? "nil")
+        //        print(csvString)
+        
+        #if DEBUG
+        // sauvegarder le fichier dans le répertoire Bundle/csv
+        do {
+            try csvString.write(to: SocialAccounts.balanceSheetFileUrl!, atomically: true , encoding: .utf8)
+        }
+        catch {
+            print("error creating file: \(error)")
+        }
+        #endif
+        
+        // sauvegarder le fichier dans le répertoire Data/Documents/csv
+        let fileName = "BalanceSheet.csv"
+        do {
+            try Disk.save(Data(csvString.utf8),
+                          to: .documents,
+                          as: Config.csvPath(simulationTitle) + fileName)
+            #if DEBUG
+            Swift.print("saving 'BalanceSheet.csv' to file: ", Config.csvPath(simulationTitle) + fileName)
+            #endif
+            
+        }
+        catch let error as NSError {
+            fatalError("""
+                Domain         : \(error.domain)
+                Code           : \(error.code)
+                Description    : \(error.localizedDescription)
+                Failure Reason : \(error.localizedFailureReason ?? "")
+                Suggestions    : \(error.localizedRecoverySuggestion ?? "")
+                """)
+        }
+    }
+
+}
+
+// MARK: - Ligne de Bilan annuel
 
 struct BalanceSheetLine {
     

@@ -92,7 +92,7 @@ final class Simulation: ObservableObject {
     }
     
     func save() {
-        socialAccounts.storeBalanceSheetTableCSV(simulationTitle: title)
-        socialAccounts.storeCashFlowTableCSV(simulationTitle: title)
+        socialAccounts.balanceArray.storeTableCSV(simulationTitle: title)
+        socialAccounts.cashFlowArray.storeTableCSV(simulationTitle: title)
     }
 }

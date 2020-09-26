@@ -19,7 +19,7 @@ extension Array where Element: AdditiveArithmetic {
     /// - Returns: somme de tous les éléméents du tableau
     ///
     ///  - Note: [Reference](https://stackoverflow.com/questions/24795130/finding-sum-of-elements-in-swift-array)
-    func sum () -> Element {
+    public func sum () -> Element {
         return reduce(.zero, +)
     }
 }

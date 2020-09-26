@@ -68,7 +68,8 @@ struct NamedValueTableWithSummary {
 
     let name              : String
     var namedValueTable   : NamedValueTable
-    var summary : NamedValueTable { // un seul élément
+    
+    var summary           : NamedValueTable { // un seul élément
         var table = NamedValueTable(name: name)
         table.namedValues.append((name  : name,
                              value : namedValueTable.total))
@@ -83,6 +84,15 @@ struct NamedValueTableWithSummary {
     }
     
     // MARK: - Methods
+    
+    /// liste des noms CSV
+    var headerCSV: String {
+        namedValueTable.headerCSV
+    }
+    /// liste des valeurs CSV
+    var valuesCSV: String {
+        namedValueTable.valuesCSV
+    }
     
     func summaryFiltredNames(with itemSelectionList: ItemSelectionList) -> [String] {
         summary.filtredNames(with: itemSelectionList)
