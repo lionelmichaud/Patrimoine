@@ -9,28 +9,31 @@
 import Foundation
 import os
 
+// https://en.wikipedia.org/wiki/Beta_distribution
+
 fileprivate let customLog = Logger(subsystem: "me.michaud.lionel.Patrimoine", category: "Model.Distributions")
 
-// MARK: - Loie de distribution Gamma
+// MARK: - Générateur aléatoire selon une Loie de distribution Gamma
 
-struct LoiGammaNormal: Codable, Randomizer {
+// https://en.wikipedia.org/wiki/Beta_distribution
+struct BetaRandomizer: Codable, Randomizer {
     let min   : Double
     let max   : Double
     let alpha : Double
     let beta  : Double
     
     /// Retourne une valeur aléatoire
-    func random() -> Double {
+    func next() -> Double {
         (min - max) / 2.0
     }
 }
 
-// MARK: - Loie de distribution discrete
+// MARK: - Générateur aléatoire selon une Loie de distribution discrete
 
-struct LoiDiscrete: Codable, Randomizer {
+struct DiscreteRandomizer: Codable, Randomizer {
     let x  : [Double] // valeurs possibles croissantes pour la variable aléatoire
     let p  : [Double] // probabilité d'occurence pour chaque valeur possible (somme = 100%)
-    var pc : [Double]? // probabilité cumulée d'occurence (dernier                  = 100%)
+    var pc : [Double]? // probabilité cumulée d'occurence (dernier = 100%)
     
     /// Vérifie la validité des données lues en fichier JSON
     /// Si invalide FatalError
@@ -70,7 +73,7 @@ struct LoiDiscrete: Codable, Randomizer {
     }
     
     /// Retourne une valeur aléatoire
-    mutating func random() -> Double {
+    mutating func next() -> Double {
         if pc == nil { initializedPc() }
         let rnd = Double.random(in: 0.0 ... 1.0)
         print("rnd = ", rnd)

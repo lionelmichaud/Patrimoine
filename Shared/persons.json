@@ -1,7 +1,7 @@
 [
     {
-        "__preserved_type" : "Patrimoine.Adult.Type",
         "__type_preserving_strategy" : 0,
+        "__preserved_type" : "Adult.Type",
         "name" : {
             "familyName" : "MICHAUD",
             "namePrefix" : "M.",
@@ -69,8 +69,8 @@
     },
     
     {
-        "__preserved_type" : "Patrimoine.Adult.Type",
         "__type_preserving_strategy" : 0,
+        "__preserved_type" : "Adult.Type",
         "name" : {
             "familyName" : "MICHAUD",
             "namePrefix" : "Mme.",
@@ -135,8 +135,8 @@
     },
     
     {
-        "__preserved_type" : "Patrimoine.Child.Type",
         "__type_preserving_strategy" : 0,
+        "__preserved_type" : "Child.Type",
         "name" : {
             "familyName" : "MICHAUD",
             "namePrefix" : "Mme",
@@ -150,8 +150,8 @@
     },
     
     {
-        "__preserved_type" : "Patrimoine.Child.Type",
         "__type_preserving_strategy" : 0,
+        "__preserved_type" : "Child.Type",
         "name" : {
             "familyName" : "MICHAUD",
             "namePrefix" : "M.",

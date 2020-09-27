@@ -163,10 +163,29 @@ struct CashFlowLineChartView: UIViewRepresentable {
     }
     
     func makeUIView(context: Context) -> LineChartView {
-        let view = socialAccounts.drawCashFlowLineChart()
+        // créer et configurer un nouveau graphique
+        let chartView = LineChartView(title: "Revenu / Dépense")
+        
+        // créer les DataSet: LineChartDataSets
+        let dataSets = socialAccounts.getCashFlowLineChartDataSets()
+        
+        // ajouter les DataSet au Chartdata
+        let data = LineChartData(dataSets: dataSets)
+        data.setValueTextColor(ChartThemes.DarkChartColors.valueColor)
+        data.setValueFont(NSUIFont(name: "HelveticaNeue-Light", size: CGFloat(12.0))!)
+        data.setValueFormatter(DefaultValueFormatter(formatter: valueKiloFormatter))
+        
+        // ajouter le Chartdata au ChartView
+        chartView.data = data
+        //chartView.data?.notifyDataChanged()
+        //chartView.notifyDataSetChanged()
+        
+        // animer la transition
+        chartView.animate(yAxisDuration: 0.5, easingOption: .linear)
+        
         // mémoriser la référence de la vue pour sauvegarde d'image ultérieure
-        CashFlowLineChartView.uiView = view
-        return view
+        CashFlowLineChartView.uiView = chartView
+        return chartView
     }
     
     func updateUIView(_ uiView: LineChartView, context: Context) {

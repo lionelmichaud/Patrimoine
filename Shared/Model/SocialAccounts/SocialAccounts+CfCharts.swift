@@ -43,72 +43,10 @@ extension SocialAccounts {
     
     /// Dessiner un graphe à lignes : revenus + dépenses + net
     /// - Returns: UIView
-    func drawCashFlowLineChart() -> LineChartView {
-        let chartView = LineChartView()
-        
+    func getCashFlowLineChartDataSets() -> [LineChartDataSet]? {
         // si la table est vide alors quitter
-        guard !cashFlowArray.isEmpty else {
-            return chartView
-        }
-        
-        //: ### General
-        chartView.pinchZoomEnabled          = true
-        chartView.doubleTapToZoomEnabled    = true
-        chartView.dragEnabled               = true
-        chartView.setScaleEnabled ( true)
-        chartView.drawGridBackgroundEnabled = false
-        chartView.backgroundColor           = ChartThemes.DarkChartColors.backgroundColor
-        chartView.borderColor               = ChartThemes.DarkChartColors.borderColor
-        chartView.borderLineWidth           = 1.0
-        chartView.drawBordersEnabled        = true
-        
-        //: ### xAxis
-        let xAxis = chartView.xAxis
-        xAxis.enabled                  = true
-        xAxis.drawLabelsEnabled        = true
-        xAxis.labelFont                = ChartThemes.ChartDefaults.labelFont
-        xAxis.labelTextColor           = ChartThemes.DarkChartColors.labelTextColor
-        xAxis.labelPosition            = .bottom // .insideChart
-        xAxis.labelRotationAngle       = -90
-        xAxis.granularityEnabled       = true
-        xAxis.granularity              = 1
-        xAxis.labelCount               = 200
-        xAxis.drawGridLinesEnabled     = true
-        xAxis.drawAxisLineEnabled      = true
-        
-        //: ### LeftAxis
-        let leftAxis = chartView.leftAxis
-        leftAxis.enabled               = true
-        leftAxis.labelFont             = ChartThemes.ChartDefaults.labelFont
-        leftAxis.labelTextColor        = ChartThemes.DarkChartColors.labelTextColor
-        leftAxis.valueFormatter        = KiloEuroFormatter()
-        leftAxis.drawGridLinesEnabled  = true
-        leftAxis.drawZeroLineEnabled   = false
-        
-        //: ### RightAxis
-        let rightAxis = chartView.rightAxis
-        rightAxis.enabled              = false
-        rightAxis.labelFont            = ChartThemes.ChartDefaults.labelFont
-        rightAxis.labelTextColor       = #colorLiteral(red     : 1, green     : 0.1474981606, blue     : 0, alpha     : 1)
-        rightAxis.axisMaximum          = 900.0
-        rightAxis.axisMinimum          = -200.0
-        rightAxis.drawGridLinesEnabled = false
-        rightAxis.granularityEnabled   = false
-        
-        //: ### Legend
-        let legend = chartView.legend
-        legend.font                = ChartThemes.ChartDefaults.legendFont
-        legend.textColor           = ChartThemes.DarkChartColors.legendColor
-        legend.form                = .square
-        legend.drawInside          = false
-        legend.orientation         = .horizontal
-        legend.verticalAlignment   = .bottom
-        legend.horizontalAlignment = .left
-        
-        //: ### Description
-        chartView.chartDescription?.text = "Revenu / Dépense"
-        chartView.chartDescription?.enabled = true
-        
+        guard !cashFlowArray.isEmpty else { return nil }
+                
         //: ### ChartDataEntry
         var yVals1 = [ChartDataEntry]()
         var yVals2 = [ChartDataEntry]()
@@ -170,18 +108,7 @@ extension SocialAccounts {
         dataSets.append(set2)
         dataSets.append(set3)
         
-        //: ### LineChartData
-        let data = LineChartData(dataSets: dataSets)
-        data.setValueTextColor(ChartThemes.DarkChartColors.valueColor)
-        data.setValueFont(NSUIFont(name: "HelveticaNeue-Light", size: CGFloat(12.0))!)
-        data.setValueFormatter(DefaultValueFormatter(formatter: valueKiloFormatter))
-        
-        // ajouter les data au graphique
-        chartView.data = data
-        
-        chartView.animate(yAxisDuration: 0.5, easingOption: .linear)
-        
-        return chartView
+        return dataSets
     }
     
     // MARK: - Génération de graphiques - Détail par catégories - CASH FLOW

@@ -13,6 +13,7 @@ import UIKit
 import Charts // https://github.com/danielgindi/Charts.git
 
 // MARK: - Extension de BarChartView pour customizer la configuration des Graph de l'appli
+
 extension BarChartView {
     
     /// Création d'un BarChartView avec une présentation customisée
@@ -89,3 +90,80 @@ extension BarChartView {
         self.marker   = marker
     }
 }
+
+// MARK: - Extension de BarChartView pour customizer la configuration des Graph de l'appli
+
+extension LineChartView {
+    
+    /// Création d'un LineChartView avec une présentation customisée
+    /// - Parameter title: Titre du graphique
+    convenience init (title: String) {
+        self.init()
+        
+        //: ### General
+        self.pinchZoomEnabled          = true
+        self.doubleTapToZoomEnabled    = true
+        self.dragEnabled               = true
+        self.setScaleEnabled (true)
+        self.drawGridBackgroundEnabled = false
+        self.backgroundColor           = ChartThemes.DarkChartColors.backgroundColor
+        self.borderColor               = ChartThemes.DarkChartColors.borderColor
+        self.borderLineWidth           = 1.0
+        self.drawBordersEnabled        = true
+        
+        //: ### xAxis
+        let xAxis = self.xAxis
+        xAxis.enabled                  = true
+        xAxis.drawLabelsEnabled        = true
+        xAxis.labelFont                = ChartThemes.ChartDefaults.labelFont
+        xAxis.labelTextColor           = ChartThemes.DarkChartColors.labelTextColor
+        xAxis.labelPosition            = .bottom // .insideChart
+        xAxis.labelRotationAngle       = -90
+        xAxis.granularityEnabled       = true
+        xAxis.granularity              = 1
+        xAxis.labelCount               = 200
+        //        xAxis.valueFormatter = IndexAxisValueFormatter(values : months)
+        //        xAxis.setLabelCount(months.count, force               : false)
+        xAxis.drawGridLinesEnabled     = true
+        xAxis.drawAxisLineEnabled      = true
+        //        xAxis.axisMinimum    = 0
+        
+        //: ### LeftAxis
+        let leftAxis = self.leftAxis
+        leftAxis.enabled               = true
+        leftAxis.labelFont             = ChartThemes.ChartDefaults.labelFont
+        leftAxis.labelTextColor        = ChartThemes.DarkChartColors.labelTextColor
+        leftAxis.valueFormatter        = KiloEuroFormatter()
+        //        leftAxis.axisMaximum = 200.0
+        //        leftAxis.axisMinimum = 0.0
+        leftAxis.drawGridLinesEnabled  = true
+        leftAxis.drawZeroLineEnabled   = false
+        
+        //: ### RightAxis
+        let rightAxis = self.rightAxis
+        rightAxis.enabled              = false
+        rightAxis.labelFont            = ChartThemes.ChartDefaults.labelFont
+        rightAxis.labelTextColor       = #colorLiteral(red     : 1, green     : 0.1474981606, blue     : 0, alpha     : 1)
+        rightAxis.axisMaximum          = 900.0
+        rightAxis.axisMinimum          = -200.0
+        rightAxis.drawGridLinesEnabled = false
+        rightAxis.granularityEnabled   = false
+        
+        //: ### Legend
+        let legend = self.legend
+        legend.font                = ChartThemes.ChartDefaults.legendFont
+        legend.textColor           = ChartThemes.DarkChartColors.legendColor
+        legend.form                = .square
+        legend.drawInside          = false
+        legend.orientation         = .horizontal
+        legend.verticalAlignment   = .bottom
+        legend.horizontalAlignment = .left
+        
+        //: ### Description
+        self.chartDescription?.text = title
+        self.chartDescription?.enabled = true
+        
+
+    }
+}
+

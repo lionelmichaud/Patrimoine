@@ -8,24 +8,6 @@
 
 import Foundation
 
-// MARK: - Model aléatoire
-
-struct RandomModel<T: Codable>: Codable, Versionable  where T: Randomizer {
-    var version      : Version
-    var distribution : T
-    var defaultValue : Double // valeur par defaut déterministe
-    
-    /// Returns a default value or a  random value dependin on the value of simulationMode.mode
-    mutating func value() -> Double {
-        switch simulationMode.mode {
-            case .deterministic:
-                return defaultValue
-            case .random:
-                return distribution.random()
-        }
-    }
-}
-
 // MARK: - Economy Model
 
 struct Economy {
@@ -34,8 +16,8 @@ struct Economy {
     
     struct Model: Codable, Versionable {
         var version      : Version
-        var inflation    : RandomModel<LoiGammaNormal>
-        var longTermRate : RandomModel<LoiDiscrete>
+        var inflation    : ModelRandomizer<BetaRandomizer>
+        var longTermRate : ModelRandomizer<DiscreteRandomizer>
     }
     
     // static properties

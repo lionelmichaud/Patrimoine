@@ -304,9 +304,3 @@ protocol PickableIdentifiableEnum: PickableEnum, Identifiable { }
 protocol Versionable {
     var version : Version { get set }
 }
-
-// MARK: - Protocol Randomizer pour générer un nombre aléatoire
-
-protocol Randomizer {
-    mutating func random() -> Double
-}

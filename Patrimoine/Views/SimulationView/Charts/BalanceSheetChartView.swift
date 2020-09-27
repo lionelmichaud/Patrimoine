@@ -163,9 +163,29 @@ struct BalanceSheetLineChartView: UIViewRepresentable {
     }
     
     func makeUIView(context: Context) -> LineChartView {
-        let view = socialAccounts.drawBalanceSheetLineChart()
-        BalanceSheetLineChartView.uiView = view
-        return view
+        // créer et configurer un nouveau graphique
+        let chartView = LineChartView(title: "Actif/Passif")
+        
+        // créer les DataSet: LineChartDataSets
+        let dataSets = socialAccounts.getBalanceSheetLineChartDataSets()
+        
+        // ajouter les DataSet au Chartdata
+        let data = LineChartData(dataSets: dataSets)
+        data.setValueTextColor(ChartThemes.DarkChartColors.valueColor)
+        data.setValueFont(NSUIFont(name: "HelveticaNeue-Light", size: CGFloat(12.0))!)
+        data.setValueFormatter(DefaultValueFormatter(formatter: valueKiloFormatter))
+        
+        // ajouter le Chartdata au ChartView
+        chartView.data = data
+        //chartView.data?.notifyDataChanged()
+        //chartView.notifyDataSetChanged()
+
+        // animer la transition
+        chartView.animate(yAxisDuration: 0.5, easingOption: .linear)
+        
+        // mémoriser la référence de la vue pour sauvegarde d'image ultérieure
+        BalanceSheetLineChartView.uiView = chartView
+        return chartView
     }
     
     func updateUIView(_ uiView: LineChartView, context: Context) {
@@ -249,26 +269,28 @@ struct BalanceSheetStackedBarChartView: UIViewRepresentable {
     /// - Parameter context:
     /// - Returns: Graphique View
     func makeUIView(context: Context) -> BarChartView {
-        // créer et configurer un nouveau bar graph
+        // créer et configurer un nouveau bar graphique
         let chartView = BarChartView(title: "Actif / Passif")
         
-        //: ### BarChartData
+        // créer le DataSet: BarChartDataSet
         let dataSet = socialAccounts.getBalanceSheetStackedBarChartDataSet(
             combination      : combination,
             itemSelectionList: itemSelectionList)
         
-        // ajouter les data au graphique
+        // ajouter les DataSet au Chartdata
         let data = BarChartData(dataSet: dataSet)
-        //data.addDataSet(dataSet)
         data.setValueTextColor(ChartThemes.DarkChartColors.valueColor)
         data.setValueFont(UIFont(name:"HelveticaNeue-Light", size:12)!)
         data.setValueFormatter(DefaultValueFormatter(formatter: valueKiloFormatter))
         
-        // ajouter le dataset au graphique
+        // ajouter le Chartdata au ChartView
         chartView.data = data
 //        chartView.gridBackgroundColor = NSUIColor.black // NSUIColor(red: 240/255.0, green: 240/255.0, blue: 240/255.0, alpha: 1.0) UIColor(red: 230/255, green: 126/255, blue: 34/255, alpha: 1)
         
+        // animer la transition
         chartView.animate(yAxisDuration: 0.5, easingOption: .linear)
+        
+        // mémoriser la référence de la vue pour sauvegarde d'image ultérieure
         BalanceSheetStackedBarChartView.uiView = chartView
         return chartView
     }
