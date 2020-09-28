@@ -13,7 +13,7 @@ struct ChartsView: View {
     @EnvironmentObject var uiState    : UIState
 
     enum PushedItem {
-        case bilanSynthese, bilanDetail, cfSynthese, cfDetail
+        case bilanSynthese, bilanDetail, cfSynthese, cfDetail, statistics
     }
     
     var body: some View {
@@ -55,7 +55,7 @@ struct ChartsView: View {
                         NavigationLink(destination: CashFlowGlobalChartView(),
                                        tag         : .cfSynthese,
                                        selection   : $uiState.chartsViewState.selectedItem) {
-                                        Text("Synthèse")
+                            Text("Synthèse")
                         }
                         .isDetailLink(true)
                         .padding(.leading)
@@ -63,7 +63,17 @@ struct ChartsView: View {
                         NavigationLink(destination: CashFlowDetailedChartView(),
                                        tag         : .cfDetail,
                                        selection   : $uiState.chartsViewState.selectedItem) {
-                                        Text("Par catégorie")
+                            Text("Par catégorie")
+                        }
+                        .isDetailLink(true)
+                        .padding(.leading)
+                    }
+
+                    Section(header: Text("Statistics").font(.headline)) {
+                        NavigationLink(destination: StatisticsChartsView(),
+                                       tag         : .statistics,
+                                       selection   : $uiState.chartsViewState.selectedItem) {
+                            Text("Synthèse")
                         }
                         .isDetailLink(true)
                         .padding(.leading)

@@ -62,46 +62,16 @@ extension SocialAccounts {
             ChartDataEntry(x: $0.year.double(), y: $0.net)
         }
         
-        var set1 = LineChartDataSet()
-        var set2 = LineChartDataSet()
-        var set3 = LineChartDataSet()
-        
-        set1 = LineChartDataSet(entries: yVals1, label: "Actif")
-        set1.axisDependency        = .left
-        set1.colors                = [#colorLiteral(red        : 0.4666666687, green        : 0.7647058964, blue        : 0.2666666806, alpha        : 1)]
-        set1.circleColors          = [#colorLiteral(red: 1, green: 1, blue: 1, alpha: 1)]
-        set1.lineWidth             = 2.0
-        set1.circleRadius          = 3.0
-        set1.fillAlpha             = 65 / 255.0
-        set1.fillColor             = #colorLiteral(red      : 0.4666666687, green      : 0.7647058964, blue      : 0.2666666806, alpha      : 1)
-        set1.highlightColor        = #colorLiteral(red : 0.4666666687, green : 0.7647058964, blue : 0.2666666806, alpha : 1)
-        set1.highlightEnabled      = true
-        set1.drawCircleHoleEnabled = false
-        
-        set2 = LineChartDataSet(entries: yVals2, label: "Passif")
-        set2.axisDependency        = .left
-        set2.colors                = [#colorLiteral(red: 1, green: 0.1491314173, blue: 0, alpha: 1)]
-        set2.circleColors          = [#colorLiteral(red: 1, green: 1, blue: 1, alpha: 1)]
-        set2.lineWidth             = 2.0
-        set2.circleRadius          = 3.0
-        set2.fillAlpha             = 65 / 255.0
-        set2.fillColor             = #colorLiteral(red: 1, green: 0.1491314173, blue: 0, alpha: 1)
-        set2.highlightColor        = #colorLiteral(red: 1, green: 0.1491314173, blue: 0, alpha: 1)
-        set2.highlightEnabled      = true
-        set2.drawCircleHoleEnabled = false
-        
-        set3 = LineChartDataSet(entries: yVals3, label: "Net")
-        set3.axisDependency        = .left
-        set3.colors                = [#colorLiteral(red: 1, green: 1, blue: 1, alpha: 1)]
-        set3.circleColors          = [#colorLiteral(red: 1, green: 1, blue: 1, alpha: 1)]
-        set3.lineWidth             = 2.0
-        set3.circleRadius          = 3.0
-        set3.fillAlpha             = 65 / 255.0
-        set3.fillColor             = #colorLiteral(red: 1, green: 1, blue: 1, alpha: 1)
-        set3.highlightColor        = #colorLiteral(red: 1, green: 1, blue: 1, alpha: 1)
-        set3.highlightEnabled      = true
-        set3.drawCircleHoleEnabled = false
-        
+        let set1 = LineChartDataSet(entries: yVals1,
+                                    label: "Actif",
+                                    color: #colorLiteral(red        : 0.4666666687, green        : 0.7647058964, blue        : 0.2666666806, alpha        : 1))
+        let set2 = LineChartDataSet(entries: yVals2,
+                                    label: "Passif",
+                                    color: #colorLiteral(red: 1, green: 0.1491314173, blue: 0, alpha: 1))
+        let set3 = LineChartDataSet(entries: yVals3,
+                                    label: "Net",
+                                    color: #colorLiteral(red: 1, green: 1, blue: 1, alpha: 1))
+
         // ajouter les dataSet au dataSets
         var dataSets = [LineChartDataSet]()
         dataSets.append(set1)
@@ -300,7 +270,7 @@ extension SocialAccounts {
         leftAxis.enabled              = true
         leftAxis.labelFont            = ChartThemes.ChartDefaults.labelFont
         leftAxis.labelTextColor       = #colorLiteral(red     : 0.215686274509804, green     : 0.709803921568627, blue     : 0.898039215686275, alpha     : 1.0)
-        leftAxis.valueFormatter       = KiloEuroFormatter()
+        leftAxis.valueFormatter       = Kilo€Formatter()
         leftAxis.drawGridLinesEnabled = true
         leftAxis.drawZeroLineEnabled  = false
         

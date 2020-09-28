@@ -9,7 +9,7 @@
 import Foundation
 import Charts // https://github.com/danielgindi/Charts.git
 
-class KiloEuroFormatter: NSObject, IAxisValueFormatter, IValueFormatter {
+class Kilo€Formatter: NSObject, IAxisValueFormatter, IValueFormatter {
     let numFormatter: NumberFormatter
 
     override init() {

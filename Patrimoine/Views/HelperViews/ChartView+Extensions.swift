@@ -12,13 +12,33 @@ import UIKit
 #endif
 import Charts // https://github.com/danielgindi/Charts.git
 
+// MARK: - Choix du formatteur de valeur à appliquer sur un axe Y
+
+enum AxisFormatterChoice {
+    case k€
+    case largeValue (appendix: String?)
+    case none
+    
+    func IaxisFormatter() -> Charts.IAxisValueFormatter? {
+        switch self {
+            case .k€:
+                return Kilo€Formatter()
+            case .largeValue (let appendix):
+                return LargeValueFormatter(appendix: appendix)
+            case .none:
+                return nil
+        }
+    }
+}
+
 // MARK: - Extension de BarChartView pour customizer la configuration des Graph de l'appli
 
 extension BarChartView {
     
     /// Création d'un BarChartView avec une présentation customisée
     /// - Parameter title: Titre du graphique
-    convenience init (title: String) {
+    convenience init (title               : String,
+                      axisFormatterChoice : AxisFormatterChoice) {
         self.init()
         
         //: ### General
@@ -59,7 +79,7 @@ extension BarChartView {
         leftAxis.enabled              = true
         leftAxis.labelFont            = ChartThemes.ChartDefaults.labelFont
         leftAxis.labelTextColor       = ChartThemes.DarkChartColors.labelTextColor
-        leftAxis.valueFormatter       = KiloEuroFormatter()
+        leftAxis.valueFormatter       = axisFormatterChoice.IaxisFormatter()
         leftAxis.drawGridLinesEnabled = true
         leftAxis.drawZeroLineEnabled  = false
         
@@ -97,7 +117,8 @@ extension LineChartView {
     
     /// Création d'un LineChartView avec une présentation customisée
     /// - Parameter title: Titre du graphique
-    convenience init (title: String) {
+    convenience init (title               : String,
+                      axisFormatterChoice : AxisFormatterChoice) {
         self.init()
         
         //: ### General
@@ -133,7 +154,7 @@ extension LineChartView {
         leftAxis.enabled               = true
         leftAxis.labelFont             = ChartThemes.ChartDefaults.labelFont
         leftAxis.labelTextColor        = ChartThemes.DarkChartColors.labelTextColor
-        leftAxis.valueFormatter        = KiloEuroFormatter()
+        leftAxis.valueFormatter        = axisFormatterChoice.IaxisFormatter()
         //        leftAxis.axisMaximum = 200.0
         //        leftAxis.axisMinimum = 0.0
         leftAxis.drawGridLinesEnabled  = true
@@ -162,8 +183,25 @@ extension LineChartView {
         //: ### Description
         self.chartDescription?.text = title
         self.chartDescription?.enabled = true
-        
-
     }
 }
 
+// MARK: - Extension de LineChartDataSet pour customizer la configuration du tracé de courbe
+
+extension LineChartDataSet {
+    convenience init (entries : [ChartDataEntry]?,
+                      label   : String,
+                      color   : NSUIColor) {
+        self.init(entries: entries, label: label)
+        self.axisDependency        = .left
+        self.colors                = [color]
+        self.circleColors          = [color]
+        self.lineWidth             = 2.0
+        self.circleRadius          = 3.0
+        self.fillAlpha             = 65 / 255.0
+        self.fillColor             = color
+        self.highlightColor        = color
+        self.highlightEnabled      = true
+        self.drawCircleHoleEnabled = false
+    }
+}
