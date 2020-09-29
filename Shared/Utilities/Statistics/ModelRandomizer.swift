@@ -10,7 +10,9 @@ import Foundation
 
 // MARK: - Model aléatoire
 
-struct ModelRandomizer<R>: Codable, Versionable where R: Codable, R: Randomizer, R.Number == Double {
+struct ModelRandomizer<R: RandomGenerator>: Codable, Versionable
+where R: Codable,
+      R.Number == Double {
     var version      : Version
     var distribution : R
     var defaultValue : Double = 0 // valeur par defaut déterministe

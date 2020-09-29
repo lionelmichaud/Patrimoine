@@ -5,7 +5,7 @@
 //  Created by Lionel MICHAUD on 16/09/2020.
 //  Copyright © 2020 Lionel MICHAUD. All rights reserved.
 //
-
+ 
 import Foundation
 import os
 
@@ -16,7 +16,7 @@ fileprivate let customLog = Logger(subsystem: "me.michaud.lionel.Patrimoine", ca
 // MARK: - Générateur aléatoire selon une Loie de distribution Gamma
 
 // https://en.wikipedia.org/wiki/Beta_distribution
-struct BetaRandomizer: Codable, Randomizer {
+struct BetaRandomGenerator: Codable, RandomGenerator {
     let min   : Double
     let max   : Double
     let alpha : Double
@@ -30,7 +30,7 @@ struct BetaRandomizer: Codable, Randomizer {
 
 // MARK: - Générateur aléatoire selon une Loie de distribution discrete
 
-struct DiscreteRandomizer: Codable, Randomizer {
+struct DiscreteRandomGenerator: Codable, RandomGenerator {
     let x  : [Double] // valeurs possibles croissantes pour la variable aléatoire
     let p  : [Double] // probabilité d'occurence pour chaque valeur possible (somme = 100%)
     var pc : [Double]? // probabilité cumulée d'occurence (dernier = 100%)

@@ -14,14 +14,15 @@ struct BetaDistribution: Distribution {
     
     // MARK: - Properties
     
-    let alpha : Double
-    let beta  : Double
     var minX  : Double?
     var maxX  : Double?
+    
+    let alpha : Double
+    let beta  : Double
 
     // MARK: - Methods
     
-    func pdf(x: Double) -> Double {
+    func pdf(_ x: Double) -> Double {
         var xl = x
         if let minX = minX, let maxX = maxX {
             precondition(x >= minX, "BetaDistribution: X < minX")

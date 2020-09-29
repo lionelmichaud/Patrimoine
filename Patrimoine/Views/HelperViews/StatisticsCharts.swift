@@ -152,10 +152,10 @@ func getBetaGammaLineChartDataSets(minX : Double,
     /// distribution Beta(2,2)
     let alpha1 = 2.0
     let beta1  = 2.0
-    let betaDistrib1 = BetaDistribution(alpha : alpha1,
-                                        beta  : beta1,
-                                        minX  : 0.0,
-                                        maxX  : maxX)
+    let betaDistrib1 = BetaDistribution(minX  : 0.0,
+                                        maxX  : maxX,
+                                        alpha : alpha1,
+                                        beta  : beta1)
     yVals2 = functionSampler(minX: minX, maxX: maxX, nbSamples: nbSamples, f: betaDistrib1.pdf).map {
         ChartDataEntry(x: $0.x, y: $0.y)
     }
@@ -163,10 +163,10 @@ func getBetaGammaLineChartDataSets(minX : Double,
     /// distribution Beta(alpha,beta)
     let alpha2 = alpha
     let beta2  = beta
-    let betaDistrib2 = BetaDistribution(alpha : alpha2,
-                                        beta  : beta2,
-                                        minX  : 0.0,
-                                        maxX  : maxX)
+    let betaDistrib2 = BetaDistribution(minX  : 0.0,
+                                        maxX  : maxX,
+                                        alpha : alpha2,
+                                        beta  : beta2)
     yVals3 = functionSampler(minX: minX, maxX: maxX, nbSamples: nbSamples, f: betaDistrib2.pdf).map {
         ChartDataEntry(x: $0.x, y: $0.y)
     }
