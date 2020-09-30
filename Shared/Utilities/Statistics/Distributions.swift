@@ -26,12 +26,13 @@ struct BetaDistribution: Distribution {
         var xl = x
         if let minX = minX, let maxX = maxX {
             precondition(x >= minX, "BetaDistribution: X < minX")
-            precondition(x <= maxX, "BetaDistribution: X > maxX")
-            xl = (x - minX) / maxX
+            precondition(x <= maxX + 0.0001, "BetaDistribution: X > maxX")
+            xl = (x - minX) / (maxX - minX)
+            return pow((1 - xl), beta - 1.0) * pow(xl, alpha - 1.0) / Patrimoine.beta(a: alpha, b: beta) / (maxX - minX)
         } else {
             precondition(x >= 0.0, "BetaDistribution: X < 0")
             precondition(x <= 1.0, "BetaDistribution: X > 1")
+            return pow((1 - xl), beta - 1.0) * pow(xl, alpha - 1.0) / Patrimoine.beta(a: alpha, b: beta)
         }
-        return pow((1 - xl), beta - 1.0) * pow(xl, alpha - 1.0) / Patrimoine.beta(a: alpha, b: beta)
     }
 }

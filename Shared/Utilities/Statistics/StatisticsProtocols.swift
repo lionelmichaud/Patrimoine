@@ -9,27 +9,6 @@
 import Foundation
 import Numerics
 
-// MARK: - Protocol Randomizer pour générer un nombre aléatoire
-
-protocol RandomGenerator {
-    associatedtype Number: Real
-    
-    // MARK: - Methods
-    
-    mutating func next() -> Number
-    mutating func sequence(of length: Int) -> [Number]
-}
-// implémentation par défaut
-extension RandomGenerator {
-    mutating func sequence(of length: Int) -> [Number] {
-        var seq = [Number]()
-        for _ in 1...length {
-            seq.append(next())
-        }
-        return seq
-    }
-}
-
 // MARK: - Distribution statistique entre minX et maxX
 
 protocol Distribution {
@@ -50,7 +29,7 @@ protocol Distribution {
     
     /// Calcule le maximum de la fonction pdf(x)
     func pdfMax() -> Number
-
+    
     /// Calcul la courbe de Densité de probabilité cumulée
     /// - Parameter length: nombre de points sur la courbe
     func cdfCurve(length: Int) -> Curve
@@ -77,7 +56,7 @@ extension Distribution {
         }
         return maxPdf
     }
-
+    
     func cdfCurve(length: Int) -> Curve {
         let minX = self.minX ?? .zero
         let maxX = self.maxX ?? Number(1)
@@ -86,7 +65,7 @@ extension Distribution {
         var s = Number.zero
         
         var curve = Curve()
-        for i in 0..<length {
+        for i in 0..<length-1 {
             curve.append((x: x(i), y: s))
             // surface du trapèze élémentaire entre deux points x successifs
             let ds = (x(i+1) - x(i)) * (pdf(x(i)) + pdf(x(i+1))) / 2
@@ -95,7 +74,7 @@ extension Distribution {
         }
         return curve
     }
-
+    
     func cdf(x: Number, curve: Curve) -> Number {
         guard let idx = curve.firstIndex(where: { $0.x >= x }) else {
             fatalError("Distribution.cdf: x out of bound")
@@ -107,5 +86,44 @@ extension Distribution {
             return curve[idx].y
         }
     }
-    
 }
+
+// MARK: - Protocol Randomizer pour générer un nombre aléatoire
+
+protocol RandomGenerator {
+    associatedtype Number: Real
+    
+    // MARK: - Methods
+    
+    mutating func next() -> Number
+    mutating func sequence(of length: Int) -> [Number]
+}
+// implémentation par défaut
+extension RandomGenerator {
+    mutating func sequence(of length: Int) -> [Number] {
+        var seq = [Number]()
+        for _ in 1...length {
+            seq.append(next())
+        }
+        return seq
+    }
+}
+// implémentation par défaut uniquement pour les types conformes au protocol Distribution
+extension RandomGenerator where Self: Distribution {
+    mutating func next() -> Number {
+        return Number(2)
+    }
+}
+
+//protocol RandomGeneratorFromDistribution: RandomGenerator {
+//
+//    // MARK: - Methods
+//
+//    mutating func next() -> Number
+//}
+//// implémentation par défaut
+//extension RandomGeneratorFromDistribution {
+//    mutating func next() -> Number {
+//        return Number.zero
+//    }
+//}

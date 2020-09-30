@@ -69,11 +69,11 @@ struct ChartsView: View {
                         .padding(.leading)
                     }
 
-                    Section(header: Text("Statistics").font(.headline)) {
+                    Section(header: Text("Statistiques").font(.headline)) {
                         NavigationLink(destination: StatisticsChartsView(),
                                        tag         : .statistics,
                                        selection   : $uiState.chartsViewState.selectedItem) {
-                            Text("Synthèse")
+                            Text("Assistant distribution")
                         }
                         .isDetailLink(true)
                         .padding(.leading)
