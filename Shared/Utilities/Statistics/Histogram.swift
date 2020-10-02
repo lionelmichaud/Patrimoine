@@ -10,7 +10,10 @@ import Foundation
 import SigmaSwiftStatistics
 
 // MARK: - Bucket
-
+enum DistributionType {
+    case continuous
+    case discrete
+}
 struct Bucket {
     
     // MARK: - Properties
@@ -22,9 +25,9 @@ struct Bucket {
     
     // MARK: - Initializer
     
-    init(Xmin : Double,
-         Xmax : Double,
-         step : Double? = nil) {
+    init(Xmin             : Double,
+         Xmax             : Double,
+         step             : Double?  = nil) {
         self.Xmin = Xmin
         if Xmin == -Double.infinity {
             self.Xmed = step != nil ? Xmax - step! : Xmax
@@ -50,6 +53,10 @@ struct Histogram {
     
     // MARK: - Properties
     
+    // type de sitribution
+    private var distributionType: DistributionType = .continuous
+    ///   - openEnds:true si les premières et derniers case s'étendent à l'infini
+    private var openEnds : Bool = false
     // tableau de tous les échantillons reçus
     private var dataset  = [Double]()
     // cases pour compter les échantillons dans chaque case
@@ -68,8 +75,8 @@ struct Histogram {
     private var Xrange: Double {
         Xmax - Xmin
     } // computed
-    private var bucketNb: Int {
-        buckets.count
+    private var bucketNb: Int { // nombre de cases fermées
+        openEnds ? buckets.count - 2 : buckets.count
     } // computed
     // nombre d'échantillons par case
     var counts: [Int] {
@@ -103,7 +110,14 @@ struct Histogram {
     // densités de probabilité
     var PDF: [Double] { // en %
         precondition(isInitialized , "Histogram.PDF: histogramme non initialisé")
-        let normalizer = dataset.count.double() * Xrange / buckets.count.double()
+        var normalizer: Double
+        switch distributionType {
+            case .discrete:
+                normalizer = dataset.count.double()
+
+            case .continuous:
+                normalizer = dataset.count.double() * Xrange / bucketNb.double()
+        }
         return buckets.map { $0.sampleNb.double() / normalizer }
     } // computed
     // densités de probabilité
@@ -166,18 +180,21 @@ struct Histogram {
     
     /// Initialise les cases de l'histogramme
     /// - Parameters:
+    ///   - distributionType: type de distribution
     ///   - openEnds:true si les premières et derniers case s'étendent à l'infini
     ///   - Xmin: borne inf
     ///   - Xmax: borne sup
     ///   - bucketNb: nombre de cases (incluant les éventuelles cases s'étendant à l'infini)
-    init(openEnds : Bool = true,
-         Xmin     : Double,
-         Xmax     : Double,
-         bucketNb : Int) {
-        initializeBuckets(openEnds : openEnds,
-                          Xmin     : Xmin,
-                          Xmax     : Xmax,
-                          bucketNb : bucketNb)
+    init(distributionType : DistributionType,
+         openEnds         : Bool = true,
+         Xmin             : Double,
+         Xmax             : Double,
+         bucketNb         : Int) {
+        initializeBuckets(distributionType : distributionType,
+                          openEnds         : openEnds,
+                          Xmin             : Xmin,
+                          Xmax             : Xmax,
+                          bucketNb         : bucketNb)
     }
     
     // MARK: - Subscript
@@ -196,19 +213,23 @@ struct Histogram {
     
     /// Initilize les propriétés internes de l'objet
     /// - Parameters:
+    ///   - distributionType: type de distribution
     ///   - openEnds: true si le domaine de X sétend à l'infini
     ///   - Xmin: valeure minimale du domaine de X
     ///   - Xmax: valeure maximale du domaine de X
     ///   - bucketNb: nombre de cases fermées sur le doamine de X
     /// - Warning: bucketNb ne doit as iclure des 2 case s'étendant à l'inifini si openEnds = true
-    mutating func initializeBuckets(openEnds : Bool = true,
-                                    Xmin     : Double,
-                                    Xmax     : Double,
-                                    bucketNb : Int) {
-        precondition(bucketNb >= 1 , "Histogram.init: Pas de case dans l'histogramme pour ranger les échantillons")
+    mutating func initializeBuckets(distributionType : DistributionType,
+                                    openEnds         : Bool = true,
+                                    Xmin             : Double,
+                                    Xmax             : Double,
+                                    bucketNb         : Int) {
+        precondition(bucketNb >= 1 , "Histogram.init: bucketNb < 1: pas de case dans l'histogramme pour ranger les échantillons")
         precondition(Xmax > Xmin , "Histogram.init: Xmax <= Xmin")
-        self.Xmin = Xmin
-        self.Xmax = Xmax
+        self.Xmin             = Xmin
+        self.Xmax             = Xmax
+        self.distributionType = distributionType
+        self.openEnds         = openEnds
 
         // créer les cases
         self.Xstep = (Xmax - Xmin) / bucketNb.double()
@@ -241,10 +262,11 @@ struct Histogram {
     ///   - Xmin: borne inf
     ///   - Xmax: borne sup
     ///   - bucketNb: nombre de cases (incluant les éventuelles cases s'étendant à l'infini)
-    mutating func sort(openEnds : Bool = true,
-                       Xmin     : Double? = nil,
-                       Xmax     : Double? = nil,
-                       bucketNb : Int) {
+    mutating func sort(distributionType : DistributionType,
+                       openEnds         : Bool     = true,
+                       Xmin             : Double?  = nil,
+                       Xmax             : Double?  = nil,
+                       bucketNb         : Int) {
         guard !dataset.isEmpty else {
             // pas d'échantillons à traiter
             return
@@ -254,10 +276,11 @@ struct Histogram {
         
         buckets = [Bucket]()
         xValues = [Double]()
-        initializeBuckets(openEnds : openEnds,
-                          Xmin     : computedXmin,
-                          Xmax     : computedXmax,
-                          bucketNb : bucketNb)
+        initializeBuckets(distributionType : distributionType,
+                          openEnds         : openEnds,
+                          Xmin             : computedXmin,
+                          Xmax             : computedXmax,
+                          bucketNb         : bucketNb)
         
         // ranger les échantillons dans une case
         for data in dataset {

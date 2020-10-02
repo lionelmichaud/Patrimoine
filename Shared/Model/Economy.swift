@@ -16,7 +16,7 @@ struct Economy {
     
     struct Model: Codable, Versionable {
         var version      : Version
-        var inflation    : ModelRandomizer<BetaRandomGenerator>
+        var inflation    : ModelRandomizer<BetaRG>
         var longTermRate : ModelRandomizer<DiscreteRandomGenerator>
     }
     

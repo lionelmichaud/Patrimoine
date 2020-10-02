@@ -45,7 +45,7 @@ struct ChartsView: View {
                         NavigationLink(destination: BalanceSheetDetailedChartView(),
                                        tag         : .bilanDetail,
                                        selection   : $uiState.chartsViewState.selectedItem) {
-                                        Text("Par catégorie")
+                                        Text("Détails")
                         }
                         .isDetailLink(true)
                         .padding(.leading)
@@ -63,7 +63,7 @@ struct ChartsView: View {
                         NavigationLink(destination: CashFlowDetailedChartView(),
                                        tag         : .cfDetail,
                                        selection   : $uiState.chartsViewState.selectedItem) {
-                            Text("Par catégorie")
+                            Text("Détails")
                         }
                         .isDetailLink(true)
                         .padding(.leading)
@@ -73,7 +73,7 @@ struct ChartsView: View {
                         NavigationLink(destination: StatisticsChartsView(),
                                        tag         : .statistics,
                                        selection   : $uiState.chartsViewState.selectedItem) {
-                            Text("Assistant distribution")
+                            Text("Assistant Distributions")
                         }
                         .isDetailLink(true)
                         .padding(.leading)

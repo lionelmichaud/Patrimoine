@@ -60,7 +60,7 @@ extension Distribution {
             
             var curve = Curve()
             for i in 0..<length-1 {
-                curve.append((x: x(i), y: s))
+                curve.append(Point(x: x(i), y: s))
                 // surface du trapèze élémentaire entre deux points x successifs
                 let ds = (x(i+1) - x(i)) * (pdf(x(i)) + pdf(x(i+1))) / 2
                 // intégrale sur [minX, x]
@@ -71,7 +71,9 @@ extension Distribution {
         
         let minX = self.minX ?? Number.zero
         let maxX = self.maxX ?? Number(1)
-        
+
+        precondition(minX < maxX, "Distribution.initialize: minX >= maxX")
+
         // initialiser la valeur de pdfMax
         self.pdfMax = computedPdfMax()
         
@@ -108,6 +110,7 @@ protocol RandomGenerator {
 // implémentation par défaut
 extension RandomGenerator {
     mutating func sequence(of length: Int) -> [Number] {
+        precondition(length >= 1, "RandomGenerator.sequence: length < 1")
         var seq = [Number]()
         for _ in 1...length {
             seq.append(next())
@@ -149,6 +152,8 @@ extension RandomGenerator where Self: Distribution, Number: Randomizable {
         } while true
     }
 }
+
+// MARK: - Protocol de service générateur aléatoire dans un interval
 
 protocol Randomizable: Comparable {
     static func randomized(in range: ClosedRange<Self>) -> Self

@@ -172,3 +172,20 @@ struct Version: Codable {
         return String(major) + "." + String(minor)
     }
 }
+
+struct Point: Codable, ExpressibleByArrayLiteral {
+    typealias ArrayLiteralElement = Double
+    
+    var x: Double
+    var y: Double
+    
+    init(arrayLiteral elements: Double...) {
+        self.x = elements[0]
+        self.y = elements[1]
+    }
+    
+    init(_ x: Double, _ y: Double) {
+        self.x = x
+        self.y = y
+    }
+}
