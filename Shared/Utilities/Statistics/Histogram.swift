@@ -53,82 +53,89 @@ struct Histogram {
     // tableau de tous les échantillons reçus
     private var dataset  = [Double]()
     // cases pour compter les échantillons dans chaque case
-    private var bucketNb : Int = 0
-    // les cases
     private var buckets  = [Bucket]()
+    // largeur en X d'une case
+    private var Xstep: Double = 0.0
     // valeure minimum pour qu'un échantillon soit rangé dans une case
     var Xmin     : Double = 0.0
     // valeure maximum pour qu'un échantillon soit rangé dans une case
     var Xmax     : Double = 0.0
     // valeures centrales des cases
     var xValues  = [Double]()
+    var isInitialized: Bool {
+        buckets.count != 0
+    } // computed
+    private var Xrange: Double {
+        Xmax - Xmin
+    } // computed
+    private var bucketNb: Int {
+        buckets.count
+    } // computed
     // nombre d'échantillons par case
-    var counts  : [Int] {
-        buckets.map { $0.sampleNb }
+    var counts: [Int] {
+        precondition(isInitialized , "Histogram.counts: histogramme non initialisé")
+        return buckets.map { $0.sampleNb }
     } // computed
-    var countsNormalized  : [Int] {
-        let count = dataset.count
-        return buckets.map { $0.sampleNb / count }
-    } // computed
-    var xCountsNormalized : [(x: Double, n: Int)] {
-        guard bucketNb > 0 else {
-            return []
-        }
-        var values = [(x: Double, n: Int)]()
-        let count = dataset.count
-        for i in 0..<bucketNb {
-            values.append((x: xValues[i],
-                           n: buckets[i].sampleNb / count))
-        }
-        return values
-    } // computed
-    // nombre d'échantillons cumulés dela première case à la case courante
-    var cumulatedCounts  : [Int] {
-        guard bucketNb > 0 else {
-            return []
-        }
+    // nombre d'échantillons cumulés de la première case à la case courante
+    var cumulatedCounts: [Int] {
+        precondition(isInitialized , "Histogram.cumulatedCounts: histogramme non initialisé")
         var result = [Int]()
-        let yValues = self.counts
-        for idx in 0..<yValues.count {
+        let bucketsCounts = self.counts
+        for idx in bucketsCounts.indices {
             var sum = 0
             for i in 0...idx {
-                sum += yValues[i]
+                sum += bucketsCounts[i]
             }
             result.append(sum)
         }
         return result
     } // computed
+    // nombre d'échantillons cumulés de la première case à la case courante
     var xCumulatedCounts : [(x: Double, n: Int)] {
-        guard bucketNb > 0 else {
-            return []
-        }
+        precondition(isInitialized , "Histogram.xCumulatedCounts: histogramme non initialisé")
         let yCumulatedValues = self.cumulatedCounts
         var values = [(x: Double, n: Int)]()
-        for i in 0..<bucketNb {
+        for i in yCumulatedValues.indices {
             values.append((x: xValues[i], n: yCumulatedValues[i]))
         }
         return values
     } // computed
-    var cumulatedProbability  : [Double] {
-        guard bucketNb > 0 else {
-            return []
+    // densités de probabilité
+    var PDF: [Double] { // en %
+        precondition(isInitialized , "Histogram.PDF: histogramme non initialisé")
+        let normalizer = dataset.count.double() * Xrange / buckets.count.double()
+        return buckets.map { $0.sampleNb.double() / normalizer }
+    } // computed
+    // densités de probabilité
+    var xPDF: [(x: Double, p: Double)] {
+        precondition(isInitialized , "Histogram.xPDF: histogramme non initialisé")
+        let pdf    = PDF
+        var values = [(x : Double, p : Double)]()
+        for i in pdf.indices {
+            values.append((x: xValues[i],
+                           p: pdf[i]))
         }
+        return values
+    } // computed
+    // densités de probabilité cumulées
+    var CDF: [Double] {
+        precondition(isInitialized , "Histogram.CDF: histogramme non initialisé")
         var result          = [Double]()
         let cumulatedCounts = self.cumulatedCounts
-        for idx in 0..<cumulatedCounts.count {
-            result.append(cumulatedCounts[idx].double() / dataset.count.double())
+        let normalizer      = dataset.count.double()
+        for idx in cumulatedCounts.indices {
+            result.append(cumulatedCounts[idx].double() / normalizer)
         }
         return result
     } // computed
-    var xCumulatedProbability : [(x: Double, p: Double)] {
-        guard bucketNb > 0 else {
-            return []
-        }
-        let cumulatedProbability = self.cumulatedProbability
+    // densités de probabilité cumulées
+    var xCDF: [(x: Double, p: Double)] {
+        precondition(isInitialized , "Histogram.xCDF: histogramme non initialisé")
+        let cdf = self.CDF
         var values = [(x: Double, p: Double)]()
-        for i in 0..<bucketNb {
+        for i in cdf.indices {
             values.append((x: xValues[i],
-                           p: cumulatedProbability[i]))
+                           p: cdf[i]))
         }
         return values
     } // computed
@@ -167,7 +174,10 @@ struct Histogram {
          Xmin     : Double,
          Xmax     : Double,
          bucketNb : Int) {
-        initializeBuckets(openEnds: openEnds, Xmin: Xmin, Xmax: Xmax, bucketNb: bucketNb)
+        initializeBuckets(openEnds : openEnds,
+                          Xmin     : Xmin,
+                          Xmax     : Xmax,
+                          bucketNb : bucketNb)
     }
     
     // MARK: - Subscript
@@ -184,62 +194,70 @@ struct Histogram {
     
     // MARK: - Methods
     
+    /// Initilize les propriétés internes de l'objet
+    /// - Parameters:
+    ///   - openEnds: true si le domaine de X sétend à l'infini
+    ///   - Xmin: valeure minimale du domaine de X
+    ///   - Xmax: valeure maximale du domaine de X
+    ///   - bucketNb: nombre de cases fermées sur le doamine de X
+    /// - Warning: bucketNb ne doit as iclure des 2 case s'étendant à l'inifini si openEnds = true
     mutating func initializeBuckets(openEnds : Bool = true,
                                     Xmin     : Double,
                                     Xmax     : Double,
                                     bucketNb : Int) {
-        guard bucketNb >= 1 else {
-            fatalError("Histogram.init: Pas de case dans l'histogramme pour ranger les échantillons")
-        }
+        precondition(bucketNb >= 1 , "Histogram.init: Pas de case dans l'histogramme pour ranger les échantillons")
+        precondition(Xmax > Xmin , "Histogram.init: Xmax <= Xmin")
         self.Xmin = Xmin
         self.Xmax = Xmax
-        
+
         // créer les cases
-        self.bucketNb = bucketNb
-        let lastClosedBucketIdx  = openEnds ? bucketNb - 2 : bucketNb - 1
-        let nbClosedBucket       = openEnds ? bucketNb - 2 : bucketNb
-        let step = (self.Xmax - self.Xmin) / nbClosedBucket.double()
+        self.Xstep = (Xmax - Xmin) / bucketNb.double()
         
         if openEnds {
             // créer une première case sétendant à l'infini
             buckets.append(Bucket(Xmin: -Double.infinity,
                                   Xmax: self.Xmin,
-                                  step: step / 2))
-            xValues.append(buckets[0].Xmed)
+                                  step: self.Xstep / 2))
+            xValues.append(buckets.last!.Xmed)
         }
         // créer les cases fermées
-        for i in 0..<nbClosedBucket {
-            buckets.append(Bucket(Xmin: self.Xmin + i.double() * step,
-                                  Xmax: self.Xmin + (i.double() + 1) * step))
-            xValues.append(buckets[openEnds ? i+1 : i].Xmed)
+        for i in 0..<bucketNb {
+            buckets.append(Bucket(Xmin: self.Xmin + i.double() * self.Xstep,
+                                  Xmax: self.Xmin + (i.double() + 1) * self.Xstep))
+            xValues.append(buckets.last!.Xmed)
         }
         if openEnds {
             // créer une dernère case sétendant à l'infini
             buckets.append(Bucket(Xmin: self.Xmax,
                                   Xmax: Double.infinity,
-                                  step: step / 2))
-            xValues.append(buckets[lastClosedBucketIdx].Xmed)
+                                  step: self.Xstep / 2))
+            xValues.append(buckets.last!.Xmed)
         }
     }
     
-    mutating func set(openEnds : Bool = true,
-                      Xmin     : Double? = nil,
-                      Xmax     : Double? = nil,
-                      bucketNb : Int) {
+    /// Initialise les cases de l'histogramme et range les échantillons dans les cases
+    /// - Parameters:
+    ///   - openEnds:true si les premières et derniers case s'étendent à l'infini
+    ///   - Xmin: borne inf
+    ///   - Xmax: borne sup
+    ///   - bucketNb: nombre de cases (incluant les éventuelles cases s'étendant à l'infini)
+    mutating func sort(openEnds : Bool = true,
+                       Xmin     : Double? = nil,
+                       Xmax     : Double? = nil,
+                       bucketNb : Int) {
         guard !dataset.isEmpty else {
             // pas d'échantillons à traiter
             return
         }
-        guard bucketNb >= 1 else {
-            fatalError("Pas de case dans l'histogramme pour ranger les échantillons")
-        }
         let computedXmin = Xmin ?? self.min! // minimum de tous les échantillons
         let computedXmax = Xmax ?? self.max!
         
-        initializeBuckets(openEnds: openEnds,
-                          Xmin: computedXmin,
-                          Xmax: computedXmax,
-                          bucketNb: bucketNb)
+        buckets = [Bucket]()
+        xValues = [Double]()
+        initializeBuckets(openEnds : openEnds,
+                          Xmin     : computedXmin,
+                          Xmax     : computedXmax,
+                          bucketNb : bucketNb)
         
         // ranger les échantillons dans une case
         for data in dataset {
@@ -269,18 +287,5 @@ struct Histogram {
     /// - Warning: probability in [0, 1]
     func percentile(probability: Double) -> Double? {
         Sigma.percentile(dataset, percentile: probability)
-        
-        //        guard (0.0 ... 1.0).contains(probability) else {
-        //            return nil
-        //        }
-        //        let sortedData = dataset.sorted(by: <)
-        //        let idx = (probability * sortedData.count.double()).rounded(.down)
-        //        return sortedData[Int(idx)]
-        
-        //        if let idx = cumulatedProbability.firstIndex(where: { $0 >= probability }) {
-        //            return buckets[idx].Xmax
-        //        } else {
-        //            return nil
-        //        }
     }
 }

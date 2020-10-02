@@ -155,6 +155,7 @@ func getBetaGammaLineChartDataSets(minX : Double,
                                maxX  : maxX,
                                alpha : alpha,
                                beta  : beta)
+    betaGenerator.initialize()
     
     /// PDF de la distribution Beta(alpha,beta)
     let yVals1 = functionSampler(minX      : minX,
@@ -166,32 +167,44 @@ func getBetaGammaLineChartDataSets(minX : Double,
     
     /// CDF de la distribution Beta(alpha,beta)
     var yVals2 = [ChartDataEntry]()
-    let betaCdfCurve = betaGenerator.cdfCurve(length: nbSamples)
-    betaCdfCurve.forEach { point in
-        yVals2.append(ChartDataEntry(x: point.x, y: point.y))
+    if let betaCdfCurve = betaGenerator.cdfCurve {
+        betaCdfCurve.forEach { point in
+            yVals2.append(ChartDataEntry(x: point.x, y: point.y))
+        }
     }
 
-    /// Histogramme des tirages aléatoires
-    var yVals3 = [ChartDataEntry]()
+    /// tirages aléatoires selon distribution en Beta et ajout à un histogramme
     let nbRandomSamples = 10000
     let sequence = betaGenerator.sequence(of: nbRandomSamples)
-    var histogram = Histogram(Xmin: minX, Xmax: maxX, bucketNb: 100)
+    var histogram = Histogram(Xmin: minX, Xmax: maxX, bucketNb: 50)
     sequence.forEach {
         histogram.record($0)
     }
-    histogram.xCountsNormalized.forEach {
-        yVals3.append(ChartDataEntry(x: $0.x, y: Double($0.n)))
+    
+    /// PDF des tirages aléatoires
+    var yVals3 = [ChartDataEntry]()
+    histogram.xPDF.forEach {
+        yVals3.append(ChartDataEntry(x: $0.x, y: $0.p))
     }
 
+    /// CDF des tirages aléatoires
+    var yVals4 = [ChartDataEntry]()
+    histogram.xCDF.forEach {
+        yVals4.append(ChartDataEntry(x: $0.x, y: $0.p))
+    }
+    
     let set1 = LineChartDataSet(entries: yVals1,
                                 label: "PDF de Beta (\(alpha), \(beta))",
                                 color: #colorLiteral(red: 1, green: 0.1491314173, blue: 0, alpha: 1))
     let set2 = LineChartDataSet(entries: yVals2,
                                 label: "CDF de Beta (\(alpha), \(beta))",
-                                color: #colorLiteral(red: 1, green: 1, blue: 1, alpha: 1))
+                                color: #colorLiteral(red: 0.1960784346, green: 0.3411764801, blue: 0.1019607857, alpha: 1))
     let set3 = LineChartDataSet(entries: yVals3,
-                                label: "Histogramme des tirages aléatoires",
-                                color: #colorLiteral(red: 0.4666666687, green: 0.7647058964, blue: 0.2666666806, alpha: 1))
+                                label: "PDF des tirages aléatoires",
+                                color: #colorLiteral(red: 0.9411764741, green: 0.4980392158, blue: 0.3529411852, alpha: 1))
+    let set4 = LineChartDataSet(entries: yVals4,
+                                label: "CDF des tirages aléatoires",
+                                color: #colorLiteral(red: 0.721568644, green: 0.8862745166, blue: 0.5921568871, alpha: 1))
 
 
 //    let betaDistrib = BetaDistribution(minX  : minX,
@@ -229,7 +242,8 @@ func getBetaGammaLineChartDataSets(minX : Double,
     dataSets.append(set1)
     dataSets.append(set2)
     dataSets.append(set3)
-    
+    dataSets.append(set4)
+
     return dataSets
 }
 

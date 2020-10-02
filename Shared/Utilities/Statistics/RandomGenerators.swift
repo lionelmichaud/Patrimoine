@@ -33,8 +33,10 @@ struct BetaRG: RandomGenerator, Distribution {
     
     // MARK: - Properties
     
-    var minX  : Double?
-    var maxX  : Double?
+    var minX     : Double?
+    var maxX     : Double?
+    var pdfMax   : Double?
+    var cdfCurve : Curve?
     
     let alpha : Double
     let beta  : Double
