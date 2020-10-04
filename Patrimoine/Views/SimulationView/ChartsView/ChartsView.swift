@@ -68,15 +68,10 @@ struct ChartsView: View {
                         .isDetailLink(true)
                         .padding(.leading)
                     }
-
+                    
                     Section(header: Text("KPI").font(.headline)) {
-                        NavigationLink(destination: KpiView(),
-                                       tag         : .kpi,
-                                       selection   : $uiState.chartsViewState.selectedItem) {
-                            Text("KPI n°1")
-                        }
-                        .isDetailLink(true)
-                        .padding(.leading)
+                        KpiListView()
+                            .padding(.leading)
                     }
 
                     Section(header: Text("Statistiques").font(.headline)) {

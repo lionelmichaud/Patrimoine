@@ -53,7 +53,7 @@ final class Simulation: ObservableObject {
     // MARK: - Properties
     
     @Published var socialAccounts = SocialAccounts()
-    @Published var kpis           = kpiArray()
+    @Published var kpis           = KpiArray()
     @Published var title          = "Simulation"
     @Published var isComputed     = false
     @Published var isSaved        = false
@@ -63,18 +63,42 @@ final class Simulation: ObservableObject {
     // MARK: - Initializers
     
     init() {
+        /// initialiser les KPI
+        let kpiAssetsAtFirstDeath = KPI(name: "Capital au Premier Décès",
+                                        objective: 200_000.0,
+                                        withProbability: 0.98)
+        kpis.append(kpiAssetsAtFirstDeath)
         
+        let kpiAssetsAtLastDeath = KPI(name: "Capital au Dernier Décès",
+                                       objective: 200_000.0,
+                                       withProbability: 0.98)
+        kpis.append(kpiAssetsAtLastDeath)
+        
+        let kpiMinimumCash = KPI(name: "Trésorerie minimale",
+                                 objective: 200_000.0,
+                                 withProbability: 0.98)
+        kpis.append(kpiMinimumCash)
     }
     
     // MARK: - Methods
     
     /// Réinitialiser la simulation
+    ///
+    /// - Note:
+    ///   - les comptes sociaux sont réinitialisés
+    ///   - les KPI sont réinitialisés
+    ///   - les années de début et fin sont réinitialisées à nil
+    ///
     /// - Parameters:
     ///   - family: la famille
     ///   - patrimoine: le patrimoine
+    ///
     func reset(withPatrimoine patrimoine : Patrimoin) {
         // réinitialiser les comptes sociaux du patrimoine de la famille
         socialAccounts.reset(withPatrimoine : patrimoine)
+        // remettre à zéero l'historique des KPI (Histogramme)
+        kpis = kpis.resetCopy()
+        
         firstYear  = nil
         lastYear   = nil
         isComputed = false
@@ -87,6 +111,7 @@ final class Simulation: ObservableObject {
     ///   - family: la famille
     ///   - patrimoine: le patrimoine
     ///   - reportProgress: closure pour indiquer l'avancement de la simulation
+    ///
     func compute(nbOfYears                 : Int,
                  withFamily family         : Family,
                  withPatrimoine patrimoine : Patrimoin) {
@@ -103,6 +128,11 @@ final class Simulation: ObservableObject {
         isSaved    = false
     }
     
+    /// Sauvegrder les résultats de simulation dans des fchier CSV
+    ///
+    /// - un fichier pour le Cash Flow
+    /// - un fichier pour le Bilan
+    ///
     func save() {
         socialAccounts.balanceArray.storeTableCSV(simulationTitle: title)
         socialAccounts.cashFlowArray.storeTableCSV(simulationTitle: title)

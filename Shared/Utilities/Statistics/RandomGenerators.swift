@@ -44,7 +44,8 @@ enum RandomGeneratorEnum: Int, PickableEnum {
 ///         let rnd = randomGenerator.next()
 ///         let sequence = randomGenerator.sequence(of: nbRandomSamples)
 ///
-/// - Reference: https://en.wikipedia.org/wiki/Beta_distribution
+///
+/// - Note: [Reference](https://en.wikipedia.org/wiki/Beta_distribution)
 ///
 struct BetaRandomGenerator: RandomGenerator, Distribution, Codable {
     typealias Number = Double
@@ -88,7 +89,7 @@ struct BetaRandomGenerator: RandomGenerator, Distribution, Codable {
 ///         let rnd = randomGenerator.next()
 ///         let sequence = randomGenerator.sequence(of: nbRandomSamples)
 ///
-/// - Reference: https://en.wikipedia.org/wiki/Uniform_distribution_(continuous)
+/// - Note: [Reference](https://en.wikipedia.org/wiki/Uniform_distribution_(continuous))
 ///
 struct UniformRandomGenerator: RandomGenerator, Codable {
 

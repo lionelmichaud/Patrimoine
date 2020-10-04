@@ -498,9 +498,7 @@ func getBetaGammaLineChartDataSets(minX : Double,
                               Xmin             : minX,
                               Xmax             : maxX,
                               bucketNb         : 50)
-    sequence.forEach {
-        histogram.record($0)
-    }
+    histogram.record(sequence)
     
     /// PDF des tirages aléatoires
     var yVals3 = [ChartDataEntry]()

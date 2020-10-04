@@ -8,14 +8,36 @@
 
 import SwiftUI
 
-struct KpiView: View {
+struct KpiListView : View {
+    @EnvironmentObject var simulation : Simulation
+    @EnvironmentObject var uiState    : UIState
+    
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        ForEach(simulation.kpis) { kpi in
+            NavigationLink(destination : KpiView(kpi: kpi)) {
+                Text(kpi.name)
+            }
+            .isDetailLink(true)
+        }
+    }
+}
+
+struct KpiView: View {
+    @State var kpi: KPI
+    
+    var body: some View {
+        Form {
+            Text("Valeur: \(kpi.value() ?? Double.nan)")
+        }
+        .navigationTitle(kpi.name)
+        .navigationBarTitleDisplayMode(.inline)
     }
 }
 
 struct KpiView_Previews: PreviewProvider {
     static var previews: some View {
-        KpiView()
+        KpiView(kpi: KPI(name: "KPI test",
+                         objective: 1000.0,
+                         withProbability: 0.95))
     }
 }

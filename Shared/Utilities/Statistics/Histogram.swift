@@ -43,14 +43,83 @@ struct Bucket {
     
     // MARK: - Methods
     
+    /// Incrémente le nb d'échantillons de la case
     mutating func record() {
         // incrémente le nombre d'échantillons dans la case
         sampleNb += 1
+    }
+    /// Vide la case
+    mutating func empty() {
+        sampleNb = 0
+    }
+}
+
+typealias BucketsArray = [Bucket]
+extension BucketsArray {
+    /// Ajoute un échantillon à la bonne case
+    /// - Parameter data: échantillon
+    mutating func record(_ data: Double) {
+        // ranger l'échantillon dans une case
+        if let idx = self.firstIndex(where: { data < $0.Xmax }) {
+            // incrémente le nombre d'échantillons dans la case
+            self[idx].record()
+        }
+    }
+    
+    /// Crée une copie avec toutes les cases vides
+    mutating func emptyCopy() -> BucketsArray {
+        self.map {
+            var newBucket = $0
+            newBucket.empty()
+            return newBucket
+        }
     }
 }
 
 // MARK: - Histogram
 
+/// Histogramme d'échantillons
+///
+/// Usage 1:
+/// ```
+///var histogram = Histogram(distributionType : .continuous,
+///                          openEnds         : false,
+///                          Xmin             : minX,
+///                          Xmax             : maxX,
+///                          bucketNb         : 50)
+///
+///// ajoute une séquence d'échantillons à l'histogramme
+///histogram.record(sequence)
+///
+///// récupère la densité de probabiilité
+///let pdf = histogram.xPDF
+///
+///// récupère la densité de probabiilité cumulée
+///let cdf = histogram.xCDF
+/// ```
+///
+/// Usage 2:
+/// ```
+///var histogram = Histogram()
+///
+///// ajoute une séquence d'échantillons à l'histogramme
+///histogram.record(sequence)
+///
+///// trier les échantillons dans les cases:
+///// Note: on eut le faire plusieurs fois de suite avec les mêmes échantillons
+///histogram.sort(distributionType : .continuous,
+///                openEnds         : false,
+///                Xmin             : minX,
+///                Xmax             : maxX,
+///                bucketNb         : 50)
+///
+///// récupère la densité de probabiilité
+///let pdf = histogram.xPDF
+///
+///// récupère la densité de probabiilité cumulée
+///let cdf = histogram.xCDF
+/// ```
+///
 struct Histogram {
     
     // MARK: - Properties
@@ -58,7 +127,7 @@ struct Histogram {
     var name: String
     // type de sitribution
     private var distributionType: DistributionType = .continuous
-    ///   - openEnds:true si les premières et derniers case s'étendent à l'infini
+    // openEnds:true si les premières et derniers case s'étendent à l'infini
     private var openEnds : Bool = false
     // tableau de tous les échantillons reçus
     private var dataset  = [Double]()
@@ -117,7 +186,7 @@ struct Histogram {
         switch distributionType {
             case .discrete:
                 normalizer = dataset.count.double()
-
+                
             case .continuous:
                 normalizer = dataset.count.double() * Xrange / bucketNb.double()
         }
@@ -184,7 +253,7 @@ struct Histogram {
     
     /// Initialise les cases de l'histogramme
     /// - Parameters:
-    ///   - distributionType: type de distribution
+    ///   - distributionType: type de distribution (.continuous, .discrete)
     ///   - openEnds:true si les premières et derniers case s'étendent à l'infini
     ///   - Xmin: borne inf
     ///   - Xmax: borne sup
@@ -225,18 +294,18 @@ struct Histogram {
     ///   - Xmax: valeure maximale du domaine de X
     ///   - bucketNb: nombre de cases fermées sur le doamine de X
     /// - Warning: bucketNb ne doit as iclure des 2 case s'étendant à l'inifini si openEnds = true
-    private mutating func initializeBuckets(distributionType : DistributionType,
-                                            openEnds         : Bool = true,
-                                            Xmin             : Double,
-                                            Xmax             : Double,
-                                            bucketNb         : Int) {
+    fileprivate mutating func initializeBuckets(distributionType : DistributionType,
+                                                openEnds         : Bool = true,
+                                                Xmin             : Double,
+                                                Xmax             : Double,
+                                                bucketNb         : Int) {
         precondition(bucketNb >= 1 , "Histogram.init: bucketNb < 1: pas de case dans l'histogramme pour ranger les échantillons")
         precondition(Xmax > Xmin , "Histogram.init: Xmax <= Xmin")
         self.Xmin             = Xmin
         self.Xmax             = Xmax
         self.distributionType = distributionType
         self.openEnds         = openEnds
-
+        
         // créer les cases
         self.Xstep = (Xmax - Xmin) / bucketNb.double()
         
@@ -263,6 +332,9 @@ struct Histogram {
     }
     
     /// Initialise les cases de l'histogramme et range les échantillons dans les cases
+    ///
+    /// - Warning: les échantillons doivent avoir été enregistrées au préalable
+    ///
     /// - Parameters:
     ///   - openEnds:true si les premières et derniers case s'étendent à l'infini
     ///   - Xmin: borne inf. Si nil alors = min des échantillons
@@ -290,35 +362,62 @@ struct Histogram {
         
         // ranger les échantillons dans une case
         for data in dataset {
-            if let idx = buckets.firstIndex(where: { data < $0.Xmax }) {
-                // incrémente le nombre d'échantillons dans la case
-                buckets[idx].record()
-            }
+            buckets.record(data)
         }
     }
     
     /// Ajoute un échantillon à l'histogramme
     /// - Parameter data: échantillon
     mutating func record(_ data: Double) {
-        // ajoute la valeur au dataset
+        // ajouter la valeur au dataset
         dataset.append(data)
-        
         // ranger l'échantillon dans une case
-        if let idx = buckets.firstIndex(where: { data < $0.Xmax }) {
-            // incrémente le nombre d'échantillons dans la case
-            buckets[idx].record()
-        }
+        buckets.record(data)
     }
     
-    /// Renvoie la borne supérieure de la case (X) telle que P(X) >= probability
-    /// - Parameter probability: probabilité
-    /// - Returns: borne supérieure de la case (X) telle que P(X) >= probability
-    /// - Warning: probability in [0, 1]
-    func percentile(probability: Double) -> Double? {
-        Sigma.percentile(dataset, percentile: probability)
-    }
-    
+    /// Ajoute une séquence d'échantillons à l'histogramme
+    /// - Parameter data: séquence d'échantillons
     mutating func record(_ sequence: [Double]) {
         sequence.forEach { record($0) }
+    }
+    
+    /// Supprimer les échantillons et supprimer les cases
+    mutating func reset() {
+        // vider les échantillons
+        dataset = [Double]()
+        // Supprimer toutes las cases
+        buckets = [Bucket]()
+        xValues = [Double]()
+    }
+    
+    /// Supprimer les échantillons et vider les cases (mais conservées les cases)
+    mutating func resetDataset() {
+        // vider les échantillons
+        dataset = [Double]()
+        buckets = buckets.emptyCopy()
+    }
+    
+    /// Renvoie la valeur X telle que P(X) >= probability
+    /// - Parameter probability: probabilité
+    /// - Returns: X telle que P(X) >= probability
+    /// - Warning: probability in [0, 1]
+    func percentile(for probability: Double) -> Double? {
+        Sigma.percentile(dataset, percentile: probability)
+    }
+
+    /// Renvoie la probabilité P telle que CDF(X) >= P
+    /// - Parameter x: valeure dont il faut rechercher la probabilité
+    /// - Returns: probabilité P telle que CDF(X) >= P
+    /// - Warning: x in [Xmin, Xmax]
+    func probability(for x: Double) -> Double? {
+        guard let idx = xCDF.firstIndex(where: { x <= $0.x }) else {
+            fatalError("Histogram.probability(x): x out of bound")
+        }
+        if idx > 0 {
+            let k = (x - xCDF[idx-1].x) / (xCDF[idx].x - xCDF[idx-1].x)
+            return xCDF[idx-1].p + k * (xCDF[idx].p - xCDF[idx-1].p)
+        } else {
+            return xCDF[idx].p
+        }
     }
 }

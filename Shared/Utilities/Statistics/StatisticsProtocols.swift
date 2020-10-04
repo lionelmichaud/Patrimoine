@@ -128,7 +128,7 @@ extension RandomGenerator where Self: Distribution, Number: Randomizable {
     /// Génération aléatoire par la méthode de Rejection sampling
     /// - Returns: valeur aléatoire suivant la fonction de distribution pdf(x)
     ///
-    ///  - Note: [Reference] https://en.wikipedia.org/wiki/Rejection_sampling
+    ///  - Note: [Reference](https://en.wikipedia.org/wiki/Rejection_sampling)
     mutating func next() -> Number {
         /*
          Rejection sampling works as follows:
