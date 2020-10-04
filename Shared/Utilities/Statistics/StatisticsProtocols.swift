@@ -11,10 +11,14 @@ import Numerics
 
 // MARK: - Protocol Distribution statistique entre minX et maxX
 
+struct PointReal<Number: Real> : Codable where Number: Codable {
+    var x: Number
+    var y: Number
+}
+
 protocol Distribution {
-    associatedtype Number: Real
-    typealias Point = (x: Number, y: Number)
-    typealias Curve = [Point]
+    associatedtype Number: Real, Codable
+    typealias Curve = [PointReal<Number>]
     
     // MARK: - Properties
     
@@ -60,7 +64,7 @@ extension Distribution {
             
             var curve = Curve()
             for i in 0..<length-1 {
-                curve.append(Point(x: x(i), y: s))
+                curve.append(PointReal(x: x(i), y: s))
                 // surface du trapèze élémentaire entre deux points x successifs
                 let ds = (x(i+1) - x(i)) * (pdf(x(i)) + pdf(x(i+1))) / 2
                 // intégrale sur [minX, x]

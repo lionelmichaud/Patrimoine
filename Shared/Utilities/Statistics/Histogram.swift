@@ -9,11 +9,13 @@
 import Foundation
 import SigmaSwiftStatistics
 
-// MARK: - Bucket
 enum DistributionType {
     case continuous
     case discrete
 }
+
+// MARK: - Bucket
+
 struct Bucket {
     
     // MARK: - Properties
@@ -53,6 +55,7 @@ struct Histogram {
     
     // MARK: - Properties
     
+    var name: String
     // type de sitribution
     private var distributionType: DistributionType = .continuous
     ///   - openEnds:true si les premières et derniers case s'étendent à l'infini
@@ -172,10 +175,11 @@ struct Histogram {
     
     // MARK: - Initializer
     
-    init() {
+    init(name: String = "") {
         // Les échantillons seront mémorisés mais pas rangés
         // car les cases ne seront pas initialisées.
         // Il faudra utiliser la fonction "set" pour pour ranger les échantillons après les avoir ajoutés.
+        self.name = name
     }
     
     /// Initialise les cases de l'histogramme
@@ -185,11 +189,13 @@ struct Histogram {
     ///   - Xmin: borne inf
     ///   - Xmax: borne sup
     ///   - bucketNb: nombre de cases (incluant les éventuelles cases s'étendant à l'infini)
-    init(distributionType : DistributionType,
+    init(name             : String = "",
+         distributionType : DistributionType,
          openEnds         : Bool = true,
          Xmin             : Double,
          Xmax             : Double,
          bucketNb         : Int) {
+        self.name = name
         initializeBuckets(distributionType : distributionType,
                           openEnds         : openEnds,
                           Xmin             : Xmin,
@@ -219,11 +225,11 @@ struct Histogram {
     ///   - Xmax: valeure maximale du domaine de X
     ///   - bucketNb: nombre de cases fermées sur le doamine de X
     /// - Warning: bucketNb ne doit as iclure des 2 case s'étendant à l'inifini si openEnds = true
-    mutating func initializeBuckets(distributionType : DistributionType,
-                                    openEnds         : Bool = true,
-                                    Xmin             : Double,
-                                    Xmax             : Double,
-                                    bucketNb         : Int) {
+    private mutating func initializeBuckets(distributionType : DistributionType,
+                                            openEnds         : Bool = true,
+                                            Xmin             : Double,
+                                            Xmax             : Double,
+                                            bucketNb         : Int) {
         precondition(bucketNb >= 1 , "Histogram.init: bucketNb < 1: pas de case dans l'histogramme pour ranger les échantillons")
         precondition(Xmax > Xmin , "Histogram.init: Xmax <= Xmin")
         self.Xmin             = Xmin
@@ -259,8 +265,8 @@ struct Histogram {
     /// Initialise les cases de l'histogramme et range les échantillons dans les cases
     /// - Parameters:
     ///   - openEnds:true si les premières et derniers case s'étendent à l'infini
-    ///   - Xmin: borne inf
-    ///   - Xmax: borne sup
+    ///   - Xmin: borne inf. Si nil alors = min des échantillons
+    ///   - Xmax: borne sup.  Si nil alors = max des échantillons
     ///   - bucketNb: nombre de cases (incluant les éventuelles cases s'étendant à l'infini)
     mutating func sort(distributionType : DistributionType,
                        openEnds         : Bool     = true,
@@ -310,5 +316,9 @@ struct Histogram {
     /// - Warning: probability in [0, 1]
     func percentile(probability: Double) -> Double? {
         Sigma.percentile(dataset, percentile: probability)
+    }
+    
+    mutating func record(_ sequence: [Double]) {
+        sequence.forEach { record($0) }
     }
 }

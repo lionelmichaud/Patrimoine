@@ -46,9 +46,9 @@ enum RandomGeneratorEnum: Int, PickableEnum {
 ///
 /// - Reference: https://en.wikipedia.org/wiki/Beta_distribution
 ///
-struct BetaRandomGenerator: RandomGenerator, Distribution {
+struct BetaRandomGenerator: RandomGenerator, Distribution, Codable {
     typealias Number = Double
-    
+
     // MARK: - Properties
     
     var minX     : Number? // valeur minimale de X
@@ -73,18 +73,6 @@ struct BetaRandomGenerator: RandomGenerator, Distribution {
             precondition(x <= 1.0, "BetaRandomGenerator: X > 1")
             return pow((1 - xl), beta - 1.0) * pow(xl, alpha - 1.0) / Patrimoine.beta(a: alpha, b: beta)
         }
-    }
-}
-
-struct BetaRG: RandomGenerator, Codable {
-    let min   : Double
-    let max   : Double
-    let alpha : Double
-    let beta  : Double
-    
-    /// Retourne une valeur aléatoire
-    func next() -> Double {
-        (min - max) / 2.0
     }
 }
 

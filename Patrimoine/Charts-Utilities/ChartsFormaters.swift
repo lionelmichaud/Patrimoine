@@ -51,6 +51,48 @@ class Kilo€Formatter: NSObject, IAxisValueFormatter, IValueFormatter {
     }
 }
 
+class PercentFormatter: NSObject, IAxisValueFormatter, IValueFormatter {
+    let numFormatter: NumberFormatter
+    
+    override init() {
+        numFormatter = NumberFormatter()
+        
+        // if number is less than 1 add 0 before decimal
+        numFormatter.minimumIntegerDigits = 1 // how many digits do want before decimal
+        numFormatter.multiplier = 100.0
+        //numFormatter.thousandSeparator = " "
+        numFormatter.positiveSuffix = " %"
+        numFormatter.negativeSuffix = " %"
+        numFormatter.paddingPosition = .beforePrefix
+        numFormatter.paddingCharacter = "0"
+        //numFormatter.zeroSymbol = ""
+    }
+    
+    /// Called when a value from an axis is formatted before being drawn.
+    ///
+    /// For performance reasons, avoid excessive calculations and memory allocations inside this method.
+    ///
+    /// - returns: The customized label that is drawn on the axis.
+    /// - parameter value:           the value that is currently being drawn
+    /// - parameter axis:            the axis that the value belongs to
+    ///
+    public func stringForValue(_ value: Double, axis: AxisBase?) -> String {
+        return numFormatter.string(from: NSNumber(floatLiteral: value))!
+    }
+    
+    /// - Parameters:
+    ///   - value:           The value to be formatted
+    ///   - dataSetIndex:    The index of the DataSet the entry in focus belongs to
+    ///   - viewPortHandler: provides information about the current chart state (scale, translation, ...)
+    /// - Returns:           The formatted label ready to be drawn
+    public func stringForValue(_ value: Double,
+                               entry: ChartDataEntry,
+                               dataSetIndex: Int,
+                               viewPortHandler: ViewPortHandler?) -> String {
+        return numFormatter.string(from: NSNumber(floatLiteral: value))!
+    }
+}
+
 public class DateValueFormatter: NSObject, IAxisValueFormatter {
     private let dateFormatter = DateFormatter()
     

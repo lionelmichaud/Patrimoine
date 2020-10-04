@@ -49,12 +49,24 @@ struct SimulationMode {
 // MARK: - Simulation: une simulation contient: les scénarios, les résultats de simulation
 
 final class Simulation: ObservableObject {
+    
+    // MARK: - Properties
+    
     @Published var socialAccounts = SocialAccounts()
+    @Published var kpis           = kpiArray()
     @Published var title          = "Simulation"
     @Published var isComputed     = false
     @Published var isSaved        = false
     @Published var firstYear      : Int?
     @Published var lastYear       : Int?
+    
+    // MARK: - Initializers
+    
+    init() {
+        
+    }
+    
+    // MARK: - Methods
     
     /// Réinitialiser la simulation
     /// - Parameters:

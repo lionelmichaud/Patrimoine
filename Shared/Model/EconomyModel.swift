@@ -14,17 +14,21 @@ struct Economy {
     
     // nested types
     
-    struct Model: Codable, Versionable {
-        var version      : Version
-        var inflation    : ModelRandomizer<BetaRG>
+    struct Model: Codable {
+        var inflation    : ModelRandomizer<BetaRandomGenerator>
         var longTermRate : ModelRandomizer<DiscreteRandomGenerator>
+        
+        mutating func next() {
+            inflation.next()
+            longTermRate.next()
+        }
     }
     
     // static properties
     
     static var model: Model  =
         Bundle.main.decode(Model.self,
-                           from                 : "Economy.json",
+                           from                 : "EconomyModelConfig.json",
                            dateDecodingStrategy : .iso8601,
                            keyDecodingStrategy  : .useDefaultKeys)
 }

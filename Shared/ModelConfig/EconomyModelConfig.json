@@ -1,11 +1,4 @@
 {
-    "version" :
-    {
-        "version" : "0.1",
-        "date"    : "2020-09-12T23:00:00+01:00",
-        "comment" : null
-    },
-    
     "inflation" :
     {
         "version" :
@@ -16,10 +9,12 @@
         },
         "distribution":
         {
-            "min"   : 0.0,
-            "max"   : 4.0,
-            "alpha" : 3.0,
-            "beta"  : 3.0
+            "minX"     : 0.0,
+            "maxX"     : 4.0,
+            "alpha"    : 3.0,
+            "beta"     : 3.0,
+            "pdfMax"   : null,
+            "cdfCurve" : null
         },
         "defaultValue" : 1.0,
         "randomValue"  : 0.0
@@ -35,10 +30,17 @@
         },
         "distribution":
         {
-            "x" : [   3,    4,    5,    6,    7,    8],
-            "p" : [0.15, 0.15, 0.15, 0.15, 0.20, 0.20]
+            "distribution" :
+            [
+                { "x": 1.0, "y": 0.2 },
+                { "x": 1.5, "y": 0.3 },
+                { "x": 2.0, "y": 0.3 },
+                { "x": 2.5, "y": 0.2 }
+            ],
+            "pc" : null
         },
-        "defaultValue" : 1.0,
+        "defaultValue" : 1.5,
         "randomValue"  : 0.0
     }
 }
+

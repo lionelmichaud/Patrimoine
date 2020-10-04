@@ -23,10 +23,11 @@ where R: Codable,
     }
     
     /// Returns a default value or a  random value depending on the value of simulationMode.mode
-    mutating func value() -> Double {
+    func value() -> Double {
         switch simulationMode.mode {
             case .deterministic:
                 return defaultValue
+                
             case .random:
                 return randomValue
         }

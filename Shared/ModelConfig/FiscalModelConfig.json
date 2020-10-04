@@ -5,7 +5,6 @@
         "date"    : "2020-09-12T23:00:00+01:00",
         "comment" : null
     },
-
     "PASS" : 41136,
     
     "irppOnEstateCapitalGain" :
@@ -19,7 +18,8 @@
                 "comment" : null
             },
             "irpp" : 19.0,
-            "exoGrid" : [
+            "exoGrid" :
+            [
                 {
                     "floor"        : 5,
                     "discountRate" : 6.0,
@@ -52,7 +52,8 @@
             "CRDS"         : 0.5,
             "CSG"          : 9.2,
             "prelevSocial" : 7.5,
-            "exoGrid" : [
+            "exoGrid" :
+            [
                 {
                     "floor"        : 5,
                     "discountRate" : 1.65,

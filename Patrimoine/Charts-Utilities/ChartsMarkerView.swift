@@ -228,7 +228,7 @@ open class BalloonMarker: MarkerImage
 // MARK: - Bulle d'info pour diagramme en X-Y
 
 /// Bulle d'info pour diagramme en en X-Y
-class XYMarkerView: BalloonMarker {
+class XYMarkerViewSpecial: BalloonMarker {
     public var xAxisValueFormatter: IAxisValueFormatter
     fileprivate var yFormatter = NumberFormatter()
     
@@ -248,6 +248,31 @@ class XYMarkerView: BalloonMarker {
             + xAxisValueFormatter.stringForValue(entry.x, axis: XAxis())
             + ", y: "
             + yFormatter.string(from: NSNumber(floatLiteral: entry.y))!
+        setLabel(string)
+    }
+}
+
+/// Bulle d'info pour diagramme en en X-Y
+class XYMarkerView: BalloonMarker {
+    public var xAxisValueFormatter: IAxisValueFormatter
+    public var yAxisValueFormatter: IAxisValueFormatter
+    
+    public init(color               : UIColor,
+                font                : UIFont,
+                textColor           : UIColor,
+                insets              : UIEdgeInsets,
+                xAxisValueFormatter : IAxisValueFormatter,
+                yAxisValueFormatter : IAxisValueFormatter) {
+        self.xAxisValueFormatter = xAxisValueFormatter
+        self.yAxisValueFormatter = yAxisValueFormatter
+        super.init(color: color, font: font, textColor: textColor, insets: insets)
+    }
+    
+    public override func refreshContent(entry: ChartDataEntry, highlight: Highlight) {
+        let string = "x: "
+            + xAxisValueFormatter.stringForValue(entry.x, axis: XAxis())
+            + ", y: "
+            + yAxisValueFormatter.stringForValue(entry.y, axis: YAxis())
         setLabel(string)
     }
 }

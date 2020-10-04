@@ -13,7 +13,7 @@ struct ChartsView: View {
     @EnvironmentObject var uiState    : UIState
 
     enum PushedItem {
-        case bilanSynthese, bilanDetail, cfSynthese, cfDetail, statistics
+        case bilanSynthese, bilanDetail, cfSynthese, cfDetail, kpi, statistics
     }
     
     var body: some View {
@@ -64,6 +64,16 @@ struct ChartsView: View {
                                        tag         : .cfDetail,
                                        selection   : $uiState.chartsViewState.selectedItem) {
                             Text("Détails")
+                        }
+                        .isDetailLink(true)
+                        .padding(.leading)
+                    }
+
+                    Section(header: Text("KPI").font(.headline)) {
+                        NavigationLink(destination: KpiView(),
+                                       tag         : .kpi,
+                                       selection   : $uiState.chartsViewState.selectedItem) {
+                            Text("KPI n°1")
                         }
                         .isDetailLink(true)
                         .padding(.leading)

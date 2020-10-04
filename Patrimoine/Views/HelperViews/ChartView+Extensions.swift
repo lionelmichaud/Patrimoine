@@ -17,6 +17,7 @@ import Charts // https://github.com/danielgindi/Charts.git
 enum AxisFormatterChoice {
     case k€
     case largeValue (appendix: String?)
+    case percent
     case none
     
     func IaxisFormatter() -> Charts.IAxisValueFormatter? {
@@ -25,6 +26,8 @@ enum AxisFormatterChoice {
                 return Kilo€Formatter()
             case .largeValue (let appendix):
                 return LargeValueFormatter(appendix: appendix)
+            case .percent:
+                return PercentFormatter()
             case .none:
                 return nil
         }
@@ -203,5 +206,20 @@ extension LineChartDataSet {
         self.highlightColor        = color
         self.highlightEnabled      = true
         self.drawCircleHoleEnabled = false
+    }
+}
+
+// MARK: - Extension de ChartLimitLine pour customizer la configuration de la ligne limite
+
+extension ChartLimitLine {
+    convenience init(limit        : Double,
+                     label        : String,
+                     labelPosition: LabelPosition) {
+        self.init(limit: limit, label: label)
+        self.lineWidth = 4
+        self.lineDashLengths = [5, 5]
+        self.labelPosition = .topRight
+        self.valueFont = ChartThemes.ChartDefaults.labelFont
+        self.valueTextColor = .white
     }
 }
