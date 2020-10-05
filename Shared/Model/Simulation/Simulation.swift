@@ -32,14 +32,14 @@ enum SimulationModeEnum: Int, PickableEnum, Codable, Hashable {
 
 // MARK: - Singleton mode de simulation
 
-let simulationMode = SimulationMode.shared
+var simulationMode = SimulationMode.shared
 
 struct SimulationMode {
     static let shared = SimulationMode()
     
     // properties
     
-    let mode: SimulationModeEnum
+    var mode: SimulationModeEnum
     
     // initializer
     
@@ -78,6 +78,11 @@ final class Simulation: ObservableObject {
                                  objective: 200_000.0,
                                  withProbability: 0.98)
         kpis.append(kpiMinimumCash)
+        
+        // TODO: - à retirer
+        kpis[0].record(400000)
+        //kpis[1].record(250000)
+        kpis[2].record(300000)
     }
     
     // MARK: - Methods
@@ -97,7 +102,8 @@ final class Simulation: ObservableObject {
         // réinitialiser les comptes sociaux du patrimoine de la famille
         socialAccounts.reset(withPatrimoine : patrimoine)
         // remettre à zéero l'historique des KPI (Histogramme)
-        kpis = kpis.resetCopy()
+        // TODO: - à décommenter
+        //kpis = kpis.resetCopy()
         
         firstYear  = nil
         lastYear   = nil

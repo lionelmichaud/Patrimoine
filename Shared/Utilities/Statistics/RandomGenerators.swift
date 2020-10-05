@@ -47,6 +47,8 @@ enum RandomGeneratorEnum: Int, PickableEnum {
 ///
 /// - Note: [Reference](https://en.wikipedia.org/wiki/Beta_distribution)
 ///
+/// ![Xcode icon](http://devimages.apple.com.edgekey.net/assets/elements/icons/128x128/xcode.png)
+///
 struct BetaRandomGenerator: RandomGenerator, Distribution, Codable {
     typealias Number = Double
 

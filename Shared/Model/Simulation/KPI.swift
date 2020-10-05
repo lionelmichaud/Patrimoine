@@ -10,6 +10,22 @@ import Foundation
 
 typealias KpiArray = [KPI]
 extension KpiArray {
+    /// Est-ce que tous les objectifs sont atteints ?
+    /// - Warning: Retourne nil si au moins une des valeurs n'est pas définie
+    var allObjectivesAreReached : Bool? {
+        var result = true
+        for kpi in self {
+            if let objectiveIsReached = kpi.objectiveIsReached {
+                result = result && objectiveIsReached
+            } else {
+                // un résultat est inconnu
+                return nil
+            }
+        }
+        // tous les résultats sont connus
+        return result
+    }
+    
     /// remettre à zéero l'historique des KPI (Histogramme)
     mutating func resetCopy() -> KpiArray {
         self.map {
@@ -24,23 +40,23 @@ extension KpiArray {
 ///
 /// Usage:
 /// ```
-///var kpi = KPI(name            : "My KPI",
-///               objective       : 100_000.0,
-///               withProbability : 0.95)
+///       var kpi = KPI(name            : "My KPI",
+///                      objective       : 100_000.0,
+///                      withProbability : 0.95)
 ///
-///// ajoute un échantillon à l'histogramme
-///kpi.record(kpiSample1)
-///kpi.record(kpiSample2)
+///       // ajoute un échantillon à l'histogramme
+///       kpi.record(kpiSample1)
+///       kpi.record(kpiSample2)
 ///
-///// récupère la valeur déterministe du KPI
-///// ou valeur du KPI atteinte avec la proba objectif
-///let kpiValue = kpi.value()
+///       // récupère la valeur déterministe du KPI
+///       // ou valeur du KPI atteinte avec la proba objectif
+///       let kpiValue = kpi.value()
 ///
-///// valeur du KPI atteinte avec la proba 95%
-///let kpiValue = kpi.value(for: 0.95)
+///       // valeur du KPI atteinte avec la proba 95%
+///       let kpiValue = kpi.value(for: 0.95)
 ///
-///// remet à zéro l'historique du KPI
-///kpi.reset()
+///       // remet à zéro l'historique du KPI
+///       kpi.reset()
 /// ```
 ///
 struct KPI: Identifiable {
@@ -56,7 +72,14 @@ struct KPI: Identifiable {
     // valeur déterministe
     private var valueKPI: Double?
     // histogramme des valeurs du KPI
-    private var histogram: Histogram
+    var histogram: Histogram
+    // true si l'objectif de valeur est atteint
+    var objectiveIsReached: Bool? {
+        guard let value = self.value() else {
+            return nil
+        }
+        return value >= objective
+    }
     
     // MARK: - Initializers
     
@@ -85,7 +108,7 @@ struct KPI: Identifiable {
     mutating func reset() {
         switch simulationMode.mode {
             case .deterministic:
-                self.valueKPI = 0.0
+                self.valueKPI = nil
                 
             case .random:
                 histogram.reset()
@@ -111,5 +134,4 @@ struct KPI: Identifiable {
                 return histogram.percentile(for: probability)
         }
     }
-
 }

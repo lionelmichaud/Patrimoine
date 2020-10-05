@@ -82,42 +82,42 @@ extension BucketsArray {
 ///
 /// Usage 1:
 /// ```
-///var histogram = Histogram(distributionType : .continuous,
-///                          openEnds         : false,
-///                          Xmin             : minX,
-///                          Xmax             : maxX,
-///                          bucketNb         : 50)
+///     var histogram = Histogram(distributionType : .continuous,
+///                               openEnds         : false,
+///                               Xmin             : minX,
+///                               Xmax             : maxX,
+///                               bucketNb         : 50)
 ///
-///// ajoute une séquence d'échantillons à l'histogramme
-///histogram.record(sequence)
+///     // ajoute une séquence d'échantillons à l'histogramme
+///     histogram.record(sequence)
 ///
-///// récupère la densité de probabiilité
-///let pdf = histogram.xPDF
+///     // récupère la densité de probabiilité
+///     let pdf = histogram.xPDF
 ///
-///// récupère la densité de probabiilité cumulée
-///let cdf = histogram.xCDF
+///     // récupère la densité de probabiilité cumulée
+///     let cdf = histogram.xCDF
 /// ```
 ///
 /// Usage 2:
 /// ```
-///var histogram = Histogram()
+///     var histogram = Histogram()
 ///
-///// ajoute une séquence d'échantillons à l'histogramme
-///histogram.record(sequence)
+///     // ajoute une séquence d'échantillons à l'histogramme
+///     histogram.record(sequence)
 ///
-///// trier les échantillons dans les cases:
-///// Note: on eut le faire plusieurs fois de suite avec les mêmes échantillons
-///histogram.sort(distributionType : .continuous,
-///                openEnds         : false,
-///                Xmin             : minX,
-///                Xmax             : maxX,
-///                bucketNb         : 50)
+///     // trier les échantillons dans les cases:
+///     // Note: on eut le faire plusieurs fois de suite avec les mêmes échantillons
+///     histogram.sort(distributionType : .continuous,
+///                     openEnds         : false,
+///                     Xmin             : minX,
+///                     Xmax             : maxX,
+///                     bucketNb         : 50)
 ///
-///// récupère la densité de probabiilité
-///let pdf = histogram.xPDF
+///     // récupère la densité de probabiilité
+///     let pdf = histogram.xPDF
 ///
-///// récupère la densité de probabiilité cumulée
-///let cdf = histogram.xCDF
+///     // récupère la densité de probabiilité cumulée
+///     let cdf = histogram.xCDF
 /// ```
 ///
 struct Histogram {
@@ -402,7 +402,11 @@ struct Histogram {
     /// - Returns: X telle que P(X) >= probability
     /// - Warning: probability in [0, 1]
     func percentile(for probability: Double) -> Double? {
-        Sigma.percentile(dataset, percentile: probability)
+        guard !dataset.isEmpty else {
+            // pas d'échantillons à traiter
+            return nil
+        }
+        return Sigma.percentile(dataset, percentile: probability)
     }
 
     /// Renvoie la probabilité P telle que CDF(X) >= P

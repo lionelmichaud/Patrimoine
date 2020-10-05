@@ -37,7 +37,6 @@ struct ChartsView: View {
                                        tag         : .bilanSynthese,
                                        selection   : $uiState.chartsViewState.selectedItem) {
                                         Text("Synthèse")
-                                        
                         }
                         .isDetailLink(true)
                         .padding(.leading)
@@ -70,10 +69,24 @@ struct ChartsView: View {
                     }
                     
                     Section(header: Text("KPI").font(.headline)) {
+                        // synthèse des KPIs
+                        NavigationLink(destination: KpisSummaryView()) {
+                            HStack {
+                                if let allObjectivesAreReached = simulation.kpis.allObjectivesAreReached {
+                                Image(systemName: allObjectivesAreReached ? "checkmark.circle.fill" : "multiply.circle.fill")
+                                    .imageScale(.medium)
+                                    .foregroundColor(allObjectivesAreReached ? .green : .red)
+                                }
+                                Text("Synthèse")
+                            }
+                        }
+                        .isDetailLink(true)
+                        .padding(.leading)
+                        // Liste des KPIs
                         KpiListView()
                             .padding(.leading)
                     }
-
+                    
                     Section(header: Text("Statistiques").font(.headline)) {
                         NavigationLink(destination: StatisticsChartsView(),
                                        tag         : .statistics,

@@ -163,6 +163,7 @@ struct ProgressBar: View {
     private let labelsEnabled     : Bool
     private let backgroundColor   : Color
     private let foregroundColor   : Color
+    private let formater          : NumberFormatter?
     
     init(value             : Double,
          minValue          : Double,
@@ -170,7 +171,8 @@ struct ProgressBar: View {
          backgroundEnabled : Bool  = true,
          labelsEnabled     : Bool  = false,
          backgroundColor   : Color = .secondary,
-         foregroundColor   : Color = .blue) {
+         foregroundColor   : Color = .blue,
+         formater          : NumberFormatter? = nil) {
         self.value             = value.clamp(low: minValue, high: maxValue)
         self.minValue          = minValue
         self.maxValue          = max (minValue+0.01, maxValue)
@@ -178,6 +180,7 @@ struct ProgressBar: View {
         self.labelsEnabled     = labelsEnabled
         self.backgroundColor   = backgroundColor
         self.foregroundColor   = foregroundColor
+        self.formater          = formater
     }
     
     var body: some View {
@@ -212,11 +215,19 @@ struct ProgressBar: View {
             
             if labelsEnabled {
                 HStack() {
-                    Text(minValue.roundedString)
-                        .fontWeight(.bold)
-                    Spacer()
-                    Text(maxValue.roundedString)
-                        .fontWeight(.bold)
+                    if let formater = self.formater {
+                        Text(formater.string(from: minValue as NSNumber) ?? "")
+                            .fontWeight(.bold)
+                        Spacer()
+                        Text(formater.string(from: maxValue as NSNumber) ?? "")
+                            .fontWeight(.bold)
+                    } else {
+                        Text(minValue.roundedString)
+                            .fontWeight(.bold)
+                        Spacer()
+                        Text(maxValue.roundedString)
+                            .fontWeight(.bold)
+                    }
                 }
                 .font(.system(size: 14))
             }
