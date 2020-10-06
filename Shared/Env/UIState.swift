@@ -47,7 +47,7 @@ class UIState: ObservableObject {
     
     // MARK: - Etat de la vue Simulation
     struct SimulationViewState {
-        var selectedItem: SimulationView.PushedItem?
+        var selectedItem: SimulationView.PushedItem? = .computation
     }
     
     // MARK: - Etat de la vue Charts

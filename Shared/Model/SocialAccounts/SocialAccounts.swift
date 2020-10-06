@@ -49,7 +49,8 @@ struct SocialAccounts {
     ///   - reportProgress: closure pour indiquer l'avancement de la simulation
     mutating func build(nbOfYears                 : Int,
                         withFamily family         : Family,
-                        withPatrimoine patrimoine : Patrimoin) {
+                        withPatrimoine patrimoine : Patrimoin,
+                        withKPIs kpis             : inout KpiArray) {
         firstYear = Date.now.year
         lastYear  = firstYear + nbOfYears - 1
 
@@ -73,9 +74,14 @@ struct SocialAccounts {
                                                withPatrimoine                        : patrimoine,
                                                taxableIrppRevenueDelayedFromLastyear : lastYearDelayedTaxableIrppRevenue)
                 cashFlowArray.append(newLine)
+
+
             } catch {
                 Swift.print("Arrêt de la construction de la table de Comptes sociaux: Actifs financiers = 0")
                 lastYear = year
+                // mémoriser le montant de l'Actif Net
+                kpis[0].record(0)
+                kpis[1].record(0)
                 return // arrêter la construction de la table
             }
             
@@ -84,7 +90,26 @@ struct SocialAccounts {
             let newLine = BalanceSheetLine(withYear       : year,
                                            withPatrimoine : patrimoine)
             balanceArray.append(newLine)
+            
+            // gérer les KPI 1 et 2 au décès de l'un des conjoints
+            //----------------------------------------------------
+            if family.nbOfAdultAlive(atEndOf: year) == family.nbOfAdultAlive(atEndOf: year-1) - 1 {
+                if family.nbOfAdultAlive(atEndOf: year) == 1 {
+                    // KPI 1: décès du premier conjoint et mémoriser la valeur du KPI
+                    // mémoriser le montant de l'Actif Net
+                    kpis[0].record(newLine.net)
+                    
+                } else {
+                    // KPI 2: décès du second conjoint et mémoriser la valeur du KPI
+                    // mémoriser le montant de l'Actif Net
+                    kpis[1].record(newLine.net)
+
+                }
+            }
         }
+        
+        // on est arrivé à la fin de la période de simulation
+        
     }
     
     // MARK: - Impression écran

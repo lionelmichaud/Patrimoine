@@ -80,9 +80,9 @@ final class Simulation: ObservableObject {
         kpis.append(kpiMinimumCash)
         
         // TODO: - à retirer
-        kpis[0].record(400000)
-        //kpis[1].record(250000)
-        kpis[2].record(300000)
+        // kpis[0].record(400000)
+        // kpis[1].record(250000)
+        // kpis[2].record(300000)
     }
     
     // MARK: - Methods
@@ -103,7 +103,7 @@ final class Simulation: ObservableObject {
         socialAccounts.reset(withPatrimoine : patrimoine)
         // remettre à zéero l'historique des KPI (Histogramme)
         // TODO: - à décommenter
-        //kpis = kpis.resetCopy()
+        kpis = kpis.resetCopy()
         
         firstYear  = nil
         lastYear   = nil
@@ -127,7 +127,8 @@ final class Simulation: ObservableObject {
         // construire les comptes sociaux du patrimoine de la famille
         socialAccounts.build(nbOfYears      : nbOfYears,
                              withFamily     : family,
-                             withPatrimoine : patrimoine)
+                             withPatrimoine : patrimoine,
+                             withKPIs       : &kpis)
         firstYear  = Date.now.year
         lastYear   = firstYear + nbOfYears - 1
         isComputed = true
