@@ -22,7 +22,7 @@ final class Adult: Person {
              regime_General_Situation,
              age_Of_Agirc_Pension_Liquid,
              regime_Agirc_Situation,
-             nb_Of_Year_Of_Dependency,
+             //nb_Of_Year_Of_Dependency,
              work_Income
     }
     
@@ -32,7 +32,7 @@ final class Adult: Person {
     @Published var nbOfChildBirth: Int = 0
     
     /// ACTIVITE: revenus du travail
-    @Published var workIncome        : WorkIncomeType?
+    @Published var workIncome : WorkIncomeType?
     var workBrutIncome    : Double { // avant charges sociales, dépenses de mutuelle ou d'assurance perte d'emploi
         switch workIncome {
             case .salary(let brutSalary, _, _, _, _):
@@ -384,9 +384,10 @@ final class Adult: Person {
         lastKnownAgircPensionSituation =
             try container.decode(RegimeAgircSituation.self,
                                  forKey: .regime_Agirc_Situation)
-        nbOfYearOfDependency =
-            try container.decode(Int.self,
-                                 forKey: .nb_Of_Year_Of_Dependency)
+        // initialiser avec la valeur moyenne déterministe
+        nbOfYearOfDependency = Int(HumanLife.model.nbOfYearsOfdependency.value())
+//            try container.decode(Int.self,
+//                                 forKey: .nb_Of_Year_Of_Dependency)
         workIncome =
             try container.decode(WorkIncomeType.self,
                                  forKey: .work_Income)
@@ -396,15 +397,15 @@ final class Adult: Person {
         try super.init(from: decoder)
     }
     
-    override init(sexe         : Sexe,
-                  givenName    : String,
-                  familyName   : String,
-                  yearOfBirth  : Int,
-                  monthOfBirth : Int,
-                  dayOfBirth   : Int,
-                  ageOfDeath   : Int = CalendarCst.forever) {
-        super.init(sexe: sexe, givenName: givenName, familyName: familyName, yearOfBirth: yearOfBirth, monthOfBirth: monthOfBirth, dayOfBirth: dayOfBirth, ageOfDeath: ageOfDeath)
-    }
+//    override init(sexe         : Sexe,
+//                  givenName    : String,
+//                  familyName   : String,
+//                  yearOfBirth  : Int,
+//                  monthOfBirth : Int,
+//                  dayOfBirth   : Int,
+//                  ageOfDeath   : Int = CalendarCst.forever) {
+//        super.init(sexe: sexe, givenName: givenName, familyName: familyName, yearOfBirth: yearOfBirth, monthOfBirth: monthOfBirth, dayOfBirth: dayOfBirth, ageOfDeath: ageOfDeath)
+//    }
     
     override init(sexe       : Sexe,
                   givenName  : String,
@@ -428,7 +429,7 @@ final class Adult: Person {
         try container.encode(lastKnownPensionSituation, forKey: .regime_General_Situation)
         try container.encode(ageOfAgircPensionLiquidComp, forKey: .age_Of_Agirc_Pension_Liquid)
         try container.encode(lastKnownAgircPensionSituation, forKey: .regime_Agirc_Situation)
-        try container.encode(nbOfYearOfDependency, forKey: .nb_Of_Year_Of_Dependency)
+//        try container.encode(nbOfYearOfDependency, forKey: .nb_Of_Year_Of_Dependency)
         try container.encode(workIncome, forKey: .work_Income)
     }
     

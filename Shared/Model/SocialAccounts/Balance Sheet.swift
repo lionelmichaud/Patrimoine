@@ -44,11 +44,11 @@ extension BalanceSheetArray {
             rows = zip(rows, rowsTotal).map(+)
         }
         
-        func builNetTableCSV(firstline: BalanceSheetLine) {
+        func buildNetTableCSV(firstline: BalanceSheetLine) {
             // heading
             heading += "ACTIF NET"
             // valeurs
-            let rowsTotal = self.map { "\($0.net.roundedString)" }
+            let rowsTotal = self.map { "\($0.netAssets.roundedString)" }
             rows = zip(rows, rowsTotal).map(+)
         }
         
@@ -73,7 +73,7 @@ extension BalanceSheetArray {
         buildLiabilitiesTableCSV(firstline: firstLine)
         
         // ajoute le total Actif Net au bout
-        builNetTableCSV(firstline: firstLine)
+        buildNetTableCSV(firstline: firstLine)
         
         // Turn all of the rows into one big string
         let csvString = heading + "\n" + rows.joined(separator: "\n")
@@ -128,19 +128,13 @@ struct BalanceSheetLine {
     // passifs
     var liabilities = ValuedLiabilities(name: "PASSIF")
     // net
-    var net       : Double {
+    var netAssets   : Double {
         assets.total + liabilities.total
     }
-    //    var headerCSV : String {
-    //        let assetsNames      = assets.headerCSV
-    //        let liabilitiesNames = liabilities.headerCSV
-    //        return "\(assetsNames); \(liabilitiesNames)\n"
-    //    }
-    //    var valuesCSV : String {
-    //        let assetsValues      = assets.valuesCSV
-    //        let liabilitiesValues = liabilities.valuesCSV
-    //        return "\(assetsValues); \(liabilitiesValues)\n"
-    //    }
+    // tous les actifs sauf immobilier
+    var totalFinancialAssets: Double {
+        assets.total - assets.perCategory[.realEstates]?.total ?? 0.0
+    }
     
     // MARK: - Initializers
     
@@ -211,7 +205,7 @@ struct BalanceSheetLine {
         // passifs
         liabilities.print(level: 1)
         // net
-        Swift.print("Net: \(net)")
+        Swift.print("Net: \(netAssets)")
         Swift.print("-----------------------------------------")
     }
     

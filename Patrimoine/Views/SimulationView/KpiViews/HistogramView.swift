@@ -17,8 +17,8 @@ import Charts // https://github.com/danielgindi/Charts.git
 struct HistogramView : UIViewRepresentable {
     static var uiView        : LineChartView?
     var histogram            : Histogram
-    var xLimitLine           : Double
-    var yLimitLine           : Double
+    var xLimitLine           : Double?
+    var yLimitLine           : Double?
     var xAxisFormatterChoice : AxisFormatterChoice
 
     func makeUIView(context: Context) -> LineChartView {
@@ -37,30 +37,38 @@ struct HistogramView : UIViewRepresentable {
         /// ajouter le Chartdata au ChartView
         chartView.data = data
         
-        /// ligne de limite de proba minimum à atteindre
-        // y-axis limit line
-        let pObjectiveLine = ChartLimitLine(limit: yLimitLine,
-                                           label: "Objectif: \(Int(yLimitLine * 100))%",
-                                           labelPosition: .topLeft)
         let leftAxis = chartView.leftAxis
         leftAxis.removeAllLimitLines()
-        leftAxis.addLimitLine(pObjectiveLine)
         leftAxis.drawLimitLinesBehindDataEnabled = true
         leftAxis.valueFormatter = AxisFormatterChoice.percent.IaxisFormatter()
-
-        // ligne de valeure correspondant à la proba minimum objectif
-        // x-axis limit line
-        let objectiveLine = ChartLimitLine(limit: xLimitLine,
-                                           label: "Objectif: \(Int(xLimitLine))",
-                                           labelPosition: .topRight)
+        
+        /// ligne de limite de proba minimum à atteindre
+        // y-axis limit line
+        if let yLimitLine = yLimitLine {
+            let pObjectiveLine = ChartLimitLine(limit       : yLimitLine,
+                                                label: "Probabilité Objectif: \(Int(yLimitLine * 100))%",
+                                                labelPosition: .topLeft,
+                                                lineColor    : .red)
+            leftAxis.addLimitLine(pObjectiveLine)
+        }
+        
         let xAxis = chartView.xAxis
         xAxis.removeAllLimitLines()
-        xAxis.addLimitLine(objectiveLine)
         xAxis.drawLimitLinesBehindDataEnabled = false
         xAxis.valueFormatter = xAxisFormatterChoice.IaxisFormatter()
         xAxis.labelRotationAngle = 0
 
-        /// jouter un Marker
+        /// ligne de valeure objectif
+        // x-axis limit line
+        if let xLimitLine = xLimitLine {
+            let objectiveLine = ChartLimitLine(limit        : xLimitLine,
+                                               label        : "Objectif: \(Int(xLimitLine))",
+                                               labelPosition: .topRight,
+                                               lineColor    : .green)
+            xAxis.addLimitLine(objectiveLine)
+        }
+        
+        /// ajouter un Marker
         let marker = XYMarkerView(color: ChartThemes.BallonColors.color,
                                    font: ChartThemes.ChartDefaults.baloonfont,
                                    textColor: ChartThemes.BallonColors.textColor,

@@ -183,6 +183,17 @@ extension LineChartView {
         legend.verticalAlignment   = .bottom
         legend.horizontalAlignment = .left
         
+        //: ### ajouter un Marker
+        let marker = XYMarkerView(color: ChartThemes.BallonColors.color,
+                                  font: ChartThemes.ChartDefaults.baloonfont,
+                                  textColor: ChartThemes.BallonColors.textColor,
+                                  insets: UIEdgeInsets(top: 8, left: 8, bottom: 20, right: 8),
+                                  xAxisValueFormatter: xAxis.valueFormatter!,
+                                  yAxisValueFormatter: leftAxis.valueFormatter!)
+        marker.chartView = self
+        marker.minimumSize = CGSize(width: 80, height: 40)
+        self.marker = marker
+        
         //: ### Description
         self.chartDescription?.text = title
         self.chartDescription?.enabled = true
@@ -214,12 +225,14 @@ extension LineChartDataSet {
 extension ChartLimitLine {
     convenience init(limit        : Double,
                      label        : String,
-                     labelPosition: LabelPosition) {
+                     labelPosition: LabelPosition,
+                     lineColor    : NSUIColor) {
         self.init(limit: limit, label: label)
-        self.lineWidth = 4
+        self.lineWidth       = 4
         self.lineDashLengths = [5, 5]
-        self.labelPosition = .topRight
-        self.valueFont = ChartThemes.ChartDefaults.labelFont
-        self.valueTextColor = .white
+        self.lineColor       = lineColor
+        self.labelPosition   = .topRight
+        self.valueFont       = ChartThemes.ChartDefaults.labelFont
+        self.valueTextColor  = .white
     }
 }

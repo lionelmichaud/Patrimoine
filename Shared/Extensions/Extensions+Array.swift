@@ -66,4 +66,3 @@ extension Array {
         return true
     }
 }
-

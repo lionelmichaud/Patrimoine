@@ -57,7 +57,9 @@ class UIState: ObservableObject {
     
     // MARK: - Etat de la vue Compute
     struct ComputationState {
-        var nbYears: Double = 15
+        var nbYears        : Double             = 15
+        var simulationMode : SimulationModeEnum = .deterministic
+        var nbRuns         : Double             = 100
     }
     
     // MARK: - Etat des filtres graphes Bilan

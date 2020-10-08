@@ -101,8 +101,11 @@ final class Simulation: ObservableObject {
     func reset(withPatrimoine patrimoine : Patrimoin) {
         // réinitialiser les comptes sociaux du patrimoine de la famille
         socialAccounts.reset(withPatrimoine : patrimoine)
+        
+        // réinitialiser les propriétés aléatoires de la famille
+        
+        
         // remettre à zéero l'historique des KPI (Histogramme)
-        // TODO: - à décommenter
         kpis = kpis.resetCopy()
         
         firstYear  = nil
@@ -119,16 +122,23 @@ final class Simulation: ObservableObject {
     ///   - reportProgress: closure pour indiquer l'avancement de la simulation
     ///
     func compute(nbOfYears                 : Int,
+                 nbOfRuns                  : Int,
                  withFamily family         : Family,
                  withPatrimoine patrimoine : Patrimoin) {
-        // Réinitialiser la simulation
-        self.reset(withPatrimoine : patrimoine)
-        
-        // construire les comptes sociaux du patrimoine de la famille
-        socialAccounts.build(nbOfYears      : nbOfYears,
-                             withFamily     : family,
-                             withPatrimoine : patrimoine,
-                             withKPIs       : &kpis)
+        // calculer tous les runs
+        for _ in 1...nbOfRuns {
+            // Réinitialiser la simulation
+            self.reset(withPatrimoine : patrimoine)
+            
+            // construire les comptes sociaux du patrimoine de la famille:
+            // - personnes
+            // - dépenses
+            socialAccounts.build(nbOfYears      : nbOfYears,
+                                 withFamily     : family,
+                                 withPatrimoine : patrimoine,
+                                 withKPIs       : &kpis)
+        }
+        //propriétés indépendantes du nombre de run
         firstYear  = Date.now.year
         lastYear   = firstYear + nbOfYears - 1
         isComputed = true

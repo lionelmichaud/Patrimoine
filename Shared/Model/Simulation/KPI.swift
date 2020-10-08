@@ -8,6 +8,8 @@
 
 import Foundation
 
+// MARK: - KpiArray : tableau de KPI
+
 typealias KpiArray = [KPI]
 extension KpiArray {
     /// Est-ce que tous les objectifs sont atteints ?
@@ -35,6 +37,8 @@ extension KpiArray {
         }
     }
 }
+
+// MARK: - KPI : indicateur de performance
 
 /// KPI
 ///
@@ -66,9 +70,9 @@ struct KPI: Identifiable {
     var id = UUID()
     var name: String
     // objectif à atteindre
-    var objective: Double
+    var objective       : Double
     // probability d'atteindre l'objectif
-    var probaObjective: Double
+    var probaObjective  : Double
     // valeur déterministe
     private var valueKPI: Double?
     // histogramme des valeurs du KPI

@@ -109,7 +109,7 @@ class Person : ObservableObject, Identifiable, CustomStringConvertible, Codable 
     
     // MARK: - Properties
     // retirer
-    var test: Double = Economy.model.longTermRate.value()
+//    var test: Double = Economy.model.longTermRate.value()
 
     let id                    = UUID()
     let sexe                  : Sexe
@@ -163,10 +163,13 @@ class Person : ObservableObject, Identifiable, CustomStringConvertible, Codable 
         self.birthDateComponents = Date.calendar.dateComponents([.year, .month, .day], from : birthDate)
     }
     
-    init(sexe: Sexe,
-         givenName: String, familyName: String,
-         yearOfBirth: Int, monthOfBirth: Int, dayOfBirth: Int,
-         ageOfDeath: Int = CalendarCst.forever) {
+    init(sexe         : Sexe,
+         givenName    : String,
+         familyName   : String,
+         yearOfBirth  : Int,
+         monthOfBirth : Int,
+         dayOfBirth   : Int,
+         ageOfDeath   : Int = CalendarCst.forever) {
         self.sexe                = sexe
         self.name                = PersonNameComponents()
         self.name.namePrefix     = sexe.displayString

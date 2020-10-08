@@ -16,8 +16,8 @@
             "salary_fromDate"        : "2001-11-19T23:00:00+01:00",
             "salary_healthInsurance" : 700
         },
-        "nb_Of_Child_Birth"       : 0,
-        "age_Of_Death"           : 81,
+        "nb_Of_Child_Birth"        : 0,
+        "age_Of_Death"             : 81,
         "nb_Of_Year_Of_Dependency" : 0,
         "age_Of_Pension_Liquid" : {
             "year"  : 62,

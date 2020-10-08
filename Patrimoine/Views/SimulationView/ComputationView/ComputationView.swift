@@ -23,31 +23,57 @@ struct ComputationView: View {
         
         var body: some View {
             Form {
-                HStack{
-                    Text("Titre")
-                        .frame(width: 70, alignment: .leading)
-                    TextField("", text: $simulation.title)
-                        .textFieldStyle(RoundedBorderTextFieldStyle())
-                }
-                //.padding(.top)
-                HStack {
-                    Text("Nombre d'années à calculer: ") + Text(String(Int(uiState.computationState.nbYears)))
-                    Slider(value : $uiState.computationState.nbYears,
-                           in    : 5 ... 50,
-                           step  : 5,
-                           onEditingChanged: {_ in
-                           })
-                }
-                if !simulation.isComputed {
-                    // pas de données à afficher
-                    VStack(alignment: .leading) {
-                        Text("Aucune données à présenter")
-                        Text("Calculer une simulation au préalable").foregroundColor(.red)
+                // paramétrage de la simulation : cas général
+                Section() {
+                    HStack{
+                        Text("Titre")
+                            .frame(width: 70, alignment: .leading)
+                        TextField("", text: $simulation.title)
+                            .textFieldStyle(RoundedBorderTextFieldStyle())
                     }
-                    
-                } else {
-                    Text("Simulation disponible: \(simulation.firstYear!) à \(simulation.lastYear!)")
-                        .font(.callout)
+                    //.padding(.top)
+                    HStack {
+                        Text("Nombre d'années à calculer: ") + Text(String(Int(uiState.computationState.nbYears)))
+                        Slider(value : $uiState.computationState.nbYears,
+                               in    : 5 ... 50,
+                               step  : 5,
+                               onEditingChanged: {_ in
+                               })
+                    }
+                }
+                // choix du mode de simulation: cas spécifiques
+                Section(header: Text("Mode de Simulation").font(.headline)) {
+                    // sélecteur: Déterministe / Aléatoire
+                    CasePicker(pickedCase: self.$uiState.computationState.simulationMode, label: "")
+                        .padding()
+                        .pickerStyle(SegmentedPickerStyle())
+                    switch self.uiState.computationState.simulationMode {
+                        case .deterministic:
+                            EmptyView()
+                            
+                        case .random:
+                            Text("Nombre de run: ") + Text(String(Int(uiState.computationState.nbRuns)))
+                            Slider(value : $uiState.computationState.nbRuns,
+                                   in    : 100 ... 1000,
+                                   step  : 100,
+                                   onEditingChanged: {_ in
+                                   })
+                            
+                    }
+                }
+                // affichage des résultats
+                Section() {
+                    if !simulation.isComputed {
+                        // pas de données à afficher
+                        VStack(alignment: .leading) {
+                            Text("Aucune données à présenter")
+                            Text("Calculer une simulation au préalable").foregroundColor(.red)
+                        }
+                        
+                    } else {
+                        Text("Simulation disponible: de \(simulation.firstYear!) à \(simulation.lastYear!)")
+                            .font(.callout)
+                    }
                 }
             }
         }
@@ -58,7 +84,7 @@ struct ComputationView: View {
             .navigationTitle("Calcul")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                ToolbarItem(placement: .bottomBar) {
+                ToolbarItem(placement: .automatic) {
                     // bouton sauvegarder
                     Button(action: saveSimulation,
                            label: {
@@ -75,7 +101,7 @@ struct ComputationView: View {
                     .disabled(!(simulation.isComputed && !simulation.isSaved))
                     .opacity(!(simulation.isComputed && !simulation.isSaved) ? 0.5 : 1.0)
                 }
-                ToolbarItem(placement: .bottomBar) {
+                ToolbarItem(placement: .primaryAction) {
                     // bouton calculer
                     Button(action: computeSimulation,
                            label: {
@@ -97,9 +123,19 @@ struct ComputationView: View {
         busyCompWheelAnimate.toggle()
         // executer les calculs en tâche de fond
         //DispatchQueue.global(qos: .userInitiated).async {
-        simulation.compute(nbOfYears      : Int(uiState.computationState.nbYears),
-                           withFamily     : family,
-                           withPatrimoine : patrimoine)
+        switch uiState.computationState.simulationMode {
+            case .deterministic:
+                simulation.compute(nbOfYears      : Int(uiState.computationState.nbYears),
+                                   nbOfRuns       : 1,
+                                   withFamily     : family,
+                                   withPatrimoine : patrimoine)
+
+            case .random:
+                simulation.compute(nbOfYears      : Int(uiState.computationState.nbYears),
+                                   nbOfRuns       : Int(uiState.computationState.nbRuns),
+                                   withFamily     : family,
+                                   withPatrimoine : patrimoine)
+        }
         // mettre à jour les variables d'état dans le thread principal
         //DispatchQueue.main.async {
         uiState.bsChartState.itemSelection = simulation.socialAccounts.getBalanceSheetLegend(.both)

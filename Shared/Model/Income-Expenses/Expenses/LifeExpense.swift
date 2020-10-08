@@ -17,7 +17,11 @@ extension LifeExpensesDic {
     /// Utiliser pour générer le graphe de la vue de synthèses des dépense
     /// - Returns: table
     func namedValuedTimeFrameTable()
-    -> [(name: String, value: Double, prop: Bool, idx: Int, firstYearDuration: [Int])] {
+    -> [(name: String,
+         value: Double,
+         prop: Bool,
+         idx: Int,
+         firstYearDuration: [Int])] {
         var table = [(name: String, value: Double, prop: Bool, idx: Int, firstYearDuration: [Int])]()
         var idx = 0
         perCategory.sortedReversed(by: \.key.displayString).forEach { (category, expenseArray) in

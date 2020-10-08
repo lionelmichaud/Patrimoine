@@ -1,5 +1,48 @@
 {
-    "inflation" :
+    "pensionDevaluationRate" :
+    {
+        "version" :
+        {
+            "version" : "0.1",
+            "date"    : "2020-10-12T23:00:00+01:00",
+            "comment" : null
+        },
+        "distribution":
+        {
+            "minX"     : 0.5,
+            "maxX"     : 1.25,
+            "alpha"    : 3.0,
+            "beta"     : 1.7,
+            "pdfMax"   : null,
+            "cdfCurve" : null
+        },
+        "defaultValue" : 1.0,
+        "randomValue"  : 0.0
+    },
+    
+    "nbTrimTauxPlein":
+    {
+        "version" :
+        {
+            "version" : "0.1",
+            "date"    : "2020-10-12T23:00:00+01:00",
+            "comment" : null
+        },
+        "distribution":
+        {
+            "distribution" :
+            [
+                { "x": 0, "y": 0.65 },
+                { "x": 4, "y": 0.30 },
+                { "x": 8, "y": 0.05 }
+            ],
+            "pc" : null
+        },
+        "defaultValue" : 0,
+        "randomValue"  : 0.0
+    },
+    
+    "expensesUnderEvaluationrate" :
     {
         "version" :
         {
@@ -10,55 +53,13 @@
         "distribution":
         {
             "minX"     : 0.0,
-            "maxX"     : 4.0,
-            "alpha"    : 2.0,
-            "beta"     : 3.0,
-            "pdfMax"   : null,
-            "cdfCurve" : null
-        },
-        "defaultValue" : 1.5,
-        "randomValue"  : 0.0
-    },
-    
-    "longTermRate":
-    {
-        "version" :
-        {
-            "version" : "0.1",
-            "date"    : "2020-10-12T23:00:00+01:00",
-            "comment" : null
-        },
-        "distribution":
-        {
-            "minX"     : 1.0,
-            "maxX"     : 3.0,
-            "alpha"    : 1.5,
+            "maxX"     : 5.0,
+            "alpha"    : 1.0,
             "beta"     : 2.0,
             "pdfMax"   : null,
             "cdfCurve" : null
         },
-        "defaultValue" : 2.0,
-        "randomValue"  : 0.0
-    },
-    
-    "stockRate":
-    {
-        "version" :
-        {
-            "version" : "0.1",
-            "date"    : "2020-10-12T23:00:00+01:00",
-            "comment" : null
-        },
-        "distribution":
-        {
-            "minX"     : 3.0,
-            "maxX"     : 7.0,
-            "alpha"    : 2.0,
-            "beta"     : 2.5,
-            "pdfMax"   : null,
-            "cdfCurve" : null
-        },
-        "defaultValue" : 4.5,
+        "defaultValue" : 0.0,
         "randomValue"  : 0.0
     }
 }

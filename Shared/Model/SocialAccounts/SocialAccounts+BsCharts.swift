@@ -59,7 +59,7 @@ extension SocialAccounts {
             ChartDataEntry(x: $0.year.double(), y: $0.liabilities.total)
         }
         yVals3 = balanceArray.map {
-            ChartDataEntry(x: $0.year.double(), y: $0.net)
+            ChartDataEntry(x: $0.year.double(), y: $0.netAssets)
         }
         
         let set1 = LineChartDataSet(entries: yVals1,

@@ -22,7 +22,6 @@ struct KpisSummaryView: View {
                         Text("Valeure indéfinie")
                             .foregroundColor(.red)
                     }
-                    
                 }
             }
         }

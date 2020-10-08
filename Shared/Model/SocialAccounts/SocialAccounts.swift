@@ -6,8 +6,8 @@ import Foundation
 /// Comptes sociaux: Table de Compte de résultat annuels + Bilans annuels
 struct SocialAccounts {
     
-   // static properties
-    
+    // MARK: - Static Properties
+
     //#if DEBUG
     /// URL du fichier de stockage du résultat de calcul au format CSV
     static let balanceSheetFileUrl = Bundle.main.url(forResource: "BalanceSheet.csv", withExtension: nil)
@@ -15,8 +15,8 @@ struct SocialAccounts {
     static let cashFlowFileUrl = Bundle.main.url(forResource: "CashFlow.csv", withExtension: nil)
     //#endif
 
-    // properties
-    
+    // MARK: - Properties
+
     var cashFlowArray = CashFlowArray()
     var balanceArray  = BalanceSheetArray()
     var firstYear     = Date.now.year
@@ -25,8 +25,8 @@ struct SocialAccounts {
         cashFlowArray.isEmpty || balanceArray.isEmpty
     }
 
-    // methods
-    
+    // MARK: - Methods
+
     /// réinitialiser les comptes sociaux
     /// - Parameters:
     ///   - family: la famille dont il faut faire le bilan
@@ -97,19 +97,24 @@ struct SocialAccounts {
                 if family.nbOfAdultAlive(atEndOf: year) == 1 {
                     // KPI 1: décès du premier conjoint et mémoriser la valeur du KPI
                     // mémoriser le montant de l'Actif Net
-                    kpis[0].record(newLine.net)
+                    kpis[0].record(newLine.netAssets)
                     
                 } else {
                     // KPI 2: décès du second conjoint et mémoriser la valeur du KPI
                     // mémoriser le montant de l'Actif Net
-                    kpis[1].record(newLine.net)
+                    kpis[1].record(newLine.netAssets)
 
                 }
             }
         }
         
         // on est arrivé à la fin de la période de simulation
-        
+        // rechercher le minimum d'actif financier net au cours du temps
+        let minBalanceSheetLine = balanceArray.min { a, b in
+            a.totalFinancialAssets < b.totalFinancialAssets
+        }
+        // KPI 3: mémoriser le minimum d'actif financier net au cours du temps
+        kpis[2].record(minBalanceSheetLine!.totalFinancialAssets)
     }
     
     // MARK: - Impression écran
