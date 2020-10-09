@@ -177,7 +177,7 @@ extension SocialAccounts {
         
         if let found = firstLine.assets.summary.namedValues.first(where: { $0.name == categoryName }) {
             /// rechercher les valeurs des actifs
-            customLog.log(level: .info, "Catégorie trouvée dans assets : \(found.name)")
+            // customLog.log(level: .info, "Catégorie trouvée dans assets : \(found.name)")
             guard let category = AssetsCategory.category(of: categoryName) else {
                 return BarChartDataSet()
             }
@@ -200,7 +200,7 @@ extension SocialAccounts {
             
         } else if let found = firstLine.liabilities.summary.namedValues.first(where: { $0.name == categoryName }) {
             /// rechercher les valeurs des passifs
-            customLog.log(level: .info, "Catégorie trouvée dans liabilities : \(found.name)")
+            // customLog.log(level: .info, "Catégorie trouvée dans liabilities : \(found.name)")
             guard let category = LiabilitiesCategory.category(of: categoryName) else {
                 return BarChartDataSet()
             }

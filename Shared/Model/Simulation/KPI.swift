@@ -28,14 +28,36 @@ extension KpiArray {
         return result
     }
     
-    /// remettre à zéero l'historique des KPI (Histogramme)
-    mutating func resetCopy() -> KpiArray {
+    /// remettre à zéro l'historique des KPI (Histogramme)
+    func resetCopy() -> KpiArray {
         self.map {
             var newKPI = $0
             newKPI.reset()
             return newKPI
         }
     }
+    
+    /// remettre à zéro l'historique des KPI (Histogramme)
+    static func reset(theseKPIs: inout KpiArray) {
+        theseKPIs = theseKPIs.map {
+            var newKPI = $0
+            newKPI.reset()
+            return newKPI
+        }
+    }
+    
+    /// Initialise les cases de l'histogramme et range les échantillons dans les cases
+    ///
+    /// - Warning: les échantillons doivent avoir été enregistrées au préalable
+    ///
+    static func sortHistograms(ofTheseKPIs: inout KpiArray) {
+        ofTheseKPIs = ofTheseKPIs.map {
+            var newKPI = $0
+            newKPI.sortHistogram()
+            return newKPI
+        }
+    }
+
 }
 
 // MARK: - KPI : indicateur de performance
@@ -65,6 +87,10 @@ extension KpiArray {
 ///
 struct KPI: Identifiable {
     
+    // MARK: - Static Properties
+    
+    static let nbBucketsInHistograms = 50
+    
     // MARK: - Properties
     
     var id = UUID()
@@ -93,6 +119,7 @@ struct KPI: Identifiable {
         self.name           = name
         self.objective      = objective
         self.probaObjective = withProbability
+        // initializer l'histogramme sans les cases
         self.histogram      = Histogram(name: name)
     }
     
@@ -116,6 +143,22 @@ struct KPI: Identifiable {
                 
             case .random:
                 histogram.reset()
+        }
+    }
+    
+    /// Initialise les cases de l'histogramme et range les échantillons dans les cases
+    ///
+    /// - Warning: les échantillons doivent avoir été enregistrées au préalable
+    ///
+    mutating func sortHistogram() {
+        switch simulationMode.mode {
+            case .deterministic:
+                ()
+                
+            case .random:
+                histogram.sort(distributionType : .continuous,
+                               openEnds         : true,
+                               bucketNb         : KPI.nbBucketsInHistograms)
         }
     }
     

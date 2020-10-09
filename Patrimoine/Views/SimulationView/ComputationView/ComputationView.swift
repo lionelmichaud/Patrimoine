@@ -24,7 +24,7 @@ struct ComputationView: View {
         var body: some View {
             Form {
                 // paramétrage de la simulation : cas général
-                Section() {
+                Section(header: Text("Paramètres de Simulation").font(.headline)) {
                     HStack{
                         Text("Titre")
                             .frame(width: 70, alignment: .leading)
@@ -40,39 +40,53 @@ struct ComputationView: View {
                                onEditingChanged: {_ in
                                })
                     }
-                }
                 // choix du mode de simulation: cas spécifiques
-                Section(header: Text("Mode de Simulation").font(.headline)) {
                     // sélecteur: Déterministe / Aléatoire
                     CasePicker(pickedCase: self.$uiState.computationState.simulationMode, label: "")
-                        .padding()
+                        .onChange(of: self.uiState.computationState.simulationMode) {mode in
+                            simulationMode.mode = mode
+                        }
+                        //.padding()
                         .pickerStyle(SegmentedPickerStyle())
                     switch self.uiState.computationState.simulationMode {
                         case .deterministic:
                             EmptyView()
                             
                         case .random:
+                            HStack {
                             Text("Nombre de run: ") + Text(String(Int(uiState.computationState.nbRuns)))
                             Slider(value : $uiState.computationState.nbRuns,
                                    in    : 100 ... 1000,
                                    step  : 100,
                                    onEditingChanged: {_ in
                                    })
-                            
+                            }
                     }
                 }
                 // affichage des résultats
-                Section() {
-                    if !simulation.isComputed {
+                Section(header: Text("Résultats").font(.headline)) {
+                    if simulation.isComputed {
+                        Text("Simulation disponible: de \(simulation.firstYear!) à \(simulation.lastYear!)")
+                            .font(.callout)
+                        
+                    } else {
                         // pas de données à afficher
                         VStack(alignment: .leading) {
                             Text("Aucune données à présenter")
                             Text("Calculer une simulation au préalable").foregroundColor(.red)
                         }
-                        
-                    } else {
-                        Text("Simulation disponible: de \(simulation.firstYear!) à \(simulation.lastYear!)")
-                            .font(.callout)
+                    }
+                }
+                if simulation.isComputed {
+                    ForEach(simulation.kpis) { kpi in
+                        Section(header: Text(kpi.name)) {
+                            if kpi.value() != nil {
+                                KpiSummaryView(kpi: kpi, withDetails: false)
+                            } else {
+                                Text("Valeure indéfinie")
+                                    .foregroundColor(.red)
+                            }
+                        }
                     }
                 }
             }
@@ -129,7 +143,7 @@ struct ComputationView: View {
                                    nbOfRuns       : 1,
                                    withFamily     : family,
                                    withPatrimoine : patrimoine)
-
+                
             case .random:
                 simulation.compute(nbOfYears      : Int(uiState.computationState.nbYears),
                                    nbOfRuns       : Int(uiState.computationState.nbRuns),
@@ -144,7 +158,7 @@ struct ComputationView: View {
         //}
         busyCompWheelAnimate.toggle()
         #if DEBUG
-        self.simulation.socialAccounts.printBalanceSheetTable()
+        // self.simulation.socialAccounts.printBalanceSheetTable()
         #endif
     }
     

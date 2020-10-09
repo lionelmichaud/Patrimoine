@@ -10,7 +10,7 @@ import Foundation
 
 // MARK: - Type mode de simulation
 
-enum SimulationModeEnum: Int, PickableEnum, Codable, Hashable {
+enum SimulationModeEnum: Int, PickableEnum, Codable, Hashable, Equatable {
     case deterministic
     case random
     
@@ -97,8 +97,10 @@ final class Simulation: ObservableObject {
     /// - Parameters:
     ///   - family: la famille
     ///   - patrimoine: le patrimoine
+    ///   - includingKPIs: réinitialiser les KPI (seulement sur le premier run)
     ///
-    func reset(withPatrimoine patrimoine : Patrimoin) {
+    func reset(withPatrimoine patrimoine : Patrimoin,
+               includingKPIs             : Bool = true) {
         // réinitialiser les comptes sociaux du patrimoine de la famille
         socialAccounts.reset(withPatrimoine : patrimoine)
         
@@ -106,8 +108,9 @@ final class Simulation: ObservableObject {
         
         
         // remettre à zéero l'historique des KPI (Histogramme)
-        kpis = kpis.resetCopy()
-        
+//        if includingKPIs { kpis = kpis.resetCopy() }
+        if includingKPIs { KpiArray.reset(theseKPIs: &kpis) }
+
         firstYear  = nil
         lastYear   = nil
         isComputed = false
@@ -126,9 +129,10 @@ final class Simulation: ObservableObject {
                  withFamily family         : Family,
                  withPatrimoine patrimoine : Patrimoin) {
         // calculer tous les runs
-        for _ in 1...nbOfRuns {
+        for run in 1...nbOfRuns {
             // Réinitialiser la simulation
-            self.reset(withPatrimoine : patrimoine)
+            self.reset(withPatrimoine : patrimoine,
+                       includingKPIs  : run == 1 ? true : false)
             
             // construire les comptes sociaux du patrimoine de la famille:
             // - personnes
@@ -137,6 +141,11 @@ final class Simulation: ObservableObject {
                                  withFamily     : family,
                                  withPatrimoine : patrimoine,
                                  withKPIs       : &kpis)
+            
+            // créer les hisitogrammes et y ranger les éhantillons de KPIs si on est en mode Aléatoire
+            if nbOfRuns > 1 && run == nbOfRuns {
+                KpiArray.sortHistograms(ofTheseKPIs: &kpis)
+            }
         }
         //propriétés indépendantes du nombre de run
         firstYear  = Date.now.year

@@ -193,13 +193,13 @@ struct RegimeAgirc: Codable {
             customLog.log(level: .default, "dateOfAgeMinimumAgirc = nil")
             return nil
         }
-        customLog.log(level: .info, "date Of Age Minimum Agirc = \(dateOfAgeMinimumAgirc, privacy: .public)")
+        // customLog.log(level: .info, "date Of Age Minimum Agirc = \(dateOfAgeMinimumAgirc, privacy: .public)")
         
         guard let dateOfAgeMinimumLegal = Pension.model.regimeGeneral.dateAgeMinimumLegal(birthDate:birthDate) else {
             customLog.log(level: .default, "dateOfAgeMinimumLegal = nil")
             return nil
         }
-        customLog.log(level: .info, "date Of Age Minimum Legal = \(dateOfAgeMinimumLegal, privacy: .public)")
+        // customLog.log(level: .info, "date Of Age Minimum Legal = \(dateOfAgeMinimumLegal, privacy: .public)")
         
         guard dateOfPensionLiquid >= dateOfAgeMinimumAgirc else {
             // pas de pension avant cet age minimum
@@ -208,7 +208,7 @@ struct RegimeAgirc: Codable {
                     pensionBrute        : 0.0,
                     pensionNette        : 0.0)
         }
-        customLog.log(level: .info, "date Of Pension Liquid = \(dateOfPensionLiquid, privacy: .public)")
+        // customLog.log(level: .info, "date Of Pension Liquid = \(dateOfPensionLiquid, privacy: .public)")
 
         if dateOfPensionLiquid >= dateOfAgeMinimumLegal {
             // nombre de trimestre manquant au moment de la liquidation de la pension pour pour obtenir le taux plein
@@ -221,7 +221,7 @@ struct RegimeAgirc: Codable {
                 return nil
             }
             nbTrimManquantPourTauxPlein = max(nbTrimManquantPourTauxPlein, 0)
-            customLog.log(level: .info, "nb Trim Manquant Pour Taux Plein = \(nbTrimManquantPourTauxPlein, privacy: .public)")
+            // customLog.log(level: .info, "nb Trim Manquant Pour Taux Plein = \(nbTrimManquantPourTauxPlein, privacy: .public)")
             
             // nombre de trimestre au-delà de l'age minimum légal de départ à la retraite au moment de la liquidation de la pension
             guard let yearOfPensionLiquid = ageOfPensionLiquidComp.year,
@@ -235,7 +235,7 @@ struct RegimeAgirc: Codable {
                 customLog.log(level: .error, "nb Trim Post Age Legal Min < 0 = \(nbTrimPostAgeLegalMin, privacy: .public)")
                 fatalError("Agirc pension nbTrimPostAgeLegalMin < 0 = \(nbTrimPostAgeLegalMin)")
             }
-            customLog.log(level: .info, "nb Trim Post Age Legal Min = \(nbTrimPostAgeLegalMin, privacy: .public)")
+            // customLog.log(level: .info, "nb Trim Post Age Legal Min = \(nbTrimPostAgeLegalMin, privacy: .public)")
             
             // coefficient de minoration
             guard let coef = coefDeMinorationApresAgeLegal (nbTrimManquantPourTauxPlein : nbTrimManquantPourTauxPlein,
@@ -263,7 +263,7 @@ struct RegimeAgirc: Codable {
             }
             coefMinoration = coef
         }
-        customLog.log(level: .info, "coef Minoration= \(coefMinoration, privacy: .public)")
+        // customLog.log(level: .info, "coef Minoration= \(coefMinoration, privacy: .public)")
 
         // projection du nb de points au moment de la demande de liquidation de la pension
         guard let projectedNumberOfPoints = self.projectedNumberOfPoints(lastAgircKnownSituation : lastAgircKnownSituation,
@@ -272,14 +272,14 @@ struct RegimeAgirc: Codable {
             customLog.log(level: .default, "projectedNumberOfPoints = nil")
             return nil
         }
-        customLog.log(level: .info, "projected Number Of Points = \(projectedNumberOfPoints, privacy: .public)")
+        // customLog.log(level: .info, "projected Number Of Points = \(projectedNumberOfPoints, privacy: .public)")
 
         // Pension = Nombre de points X Valeurs du point X Coefficient de minoration
         var pensionBrute = projectedNumberOfPoints.double() * model.valeurDuPoint * coefMinoration
-        customLog.log(level: .info, "pension Brute = \(projectedNumberOfPoints, privacy: .public)")
+        // customLog.log(level: .info, "pension Brute = \(projectedNumberOfPoints, privacy: .public)")
 
         var pensionNette = Fiscal.model.pensionTaxes.net(pensionBrute)
-        customLog.log(level: .info, "pension Nette = \(pensionNette, privacy: .public)")
+        // customLog.log(level: .info, "pension Nette = \(pensionNette, privacy: .public)")
         
         if let yearEval = year {
             if yearEval < dateOfRetirement.year {

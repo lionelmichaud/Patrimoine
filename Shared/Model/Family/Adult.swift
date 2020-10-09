@@ -386,6 +386,7 @@ final class Adult: Person {
                                  forKey: .regime_Agirc_Situation)
         // initialiser avec la valeur moyenne déterministe
         nbOfYearOfDependency = Int(HumanLife.model.nbOfYearsOfdependency.value())
+//        nbOfYearOfDependency =
 //            try container.decode(Int.self,
 //                                 forKey: .nb_Of_Year_Of_Dependency)
         workIncome =

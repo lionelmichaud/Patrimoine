@@ -82,11 +82,12 @@ extension BucketsArray {
 ///
 /// Usage 1:
 /// ```
-///     var histogram = Histogram(distributionType : .continuous,
-///                               openEnds         : false,
-///                               Xmin             : minX,
-///                               Xmax             : maxX,
-///                               bucketNb         : 50)
+///     var histogram = Histogram(name             : "histogramme",
+///                                 distributionType : .continuous,
+///                                 openEnds         : false,
+///                                 Xmin             : minX,
+///                                 Xmax             : maxX,
+///                                 bucketNb         : 50)
 ///
 ///     // ajoute une séquence d'échantillons à l'histogramme
 ///     histogram.record(sequence)
@@ -100,7 +101,7 @@ extension BucketsArray {
 ///
 /// Usage 2:
 /// ```
-///     var histogram = Histogram()
+///     var histogram = Histogram(name: "histogramme")
 ///
 ///     // ajoute une séquence d'échantillons à l'histogramme
 ///     histogram.record(sequence)
@@ -295,19 +296,28 @@ struct Histogram {
     ///   - bucketNb: nombre de cases fermées sur le doamine de X
     /// - Warning: bucketNb ne doit as iclure des 2 case s'étendant à l'inifini si openEnds = true
     fileprivate mutating func initializeBuckets(distributionType : DistributionType,
-                                                openEnds         : Bool = true,
+                                                openEnds         : Bool = false,
                                                 Xmin             : Double,
                                                 Xmax             : Double,
                                                 bucketNb         : Int) {
         precondition(bucketNb >= 1 , "Histogram.init: bucketNb < 1: pas de case dans l'histogramme pour ranger les échantillons")
-        precondition(Xmax > Xmin , "Histogram.init: Xmax <= Xmin")
+        precondition(Xmax >= Xmin , "Histogram.init: Xmax < Xmin")
+        
+        // si Xmin = Xmax alors 1 seule case
+        var _bucketNb : Int
+        if Xmin == Xmax {
+            _bucketNb = 1
+        } else {
+            _bucketNb = bucketNb
+        }
+        
         self.Xmin             = Xmin
         self.Xmax             = Xmax
         self.distributionType = distributionType
         self.openEnds         = openEnds
         
         // créer les cases
-        self.Xstep = (Xmax - Xmin) / bucketNb.double()
+        self.Xstep = (Xmax - Xmin) / _bucketNb.double()
         
         if openEnds {
             // créer une première case sétendant à l'infini
@@ -317,13 +327,13 @@ struct Histogram {
             xValues.append(buckets.last!.Xmed)
         }
         // créer les cases fermées
-        for i in 0..<bucketNb {
+        for i in 0..<_bucketNb {
             buckets.append(Bucket(Xmin: self.Xmin + i.double() * self.Xstep,
                                   Xmax: self.Xmin + (i.double() + 1) * self.Xstep))
             xValues.append(buckets.last!.Xmed)
         }
         if openEnds {
-            // créer une dernère case sétendant à l'infini
+            // créer une dernière case sétendant à l'infini
             buckets.append(Bucket(Xmin: self.Xmax,
                                   Xmax: Double.infinity,
                                   step: self.Xstep / 2))
@@ -336,12 +346,13 @@ struct Histogram {
     /// - Warning: les échantillons doivent avoir été enregistrées au préalable
     ///
     /// - Parameters:
+    ///   - distributionType: type de sitribution (.continuous ou .discrete)
     ///   - openEnds:true si les premières et derniers case s'étendent à l'infini
     ///   - Xmin: borne inf. Si nil alors = min des échantillons
     ///   - Xmax: borne sup.  Si nil alors = max des échantillons
     ///   - bucketNb: nombre de cases (incluant les éventuelles cases s'étendant à l'infini)
     mutating func sort(distributionType : DistributionType,
-                       openEnds         : Bool     = true,
+                       openEnds         : Bool     = false,
                        Xmin             : Double?  = nil,
                        Xmax             : Double?  = nil,
                        bucketNb         : Int) {
@@ -354,13 +365,15 @@ struct Histogram {
         
         buckets = [Bucket]()
         xValues = [Double]()
+        
+        // initializer les cases de rangement
         initializeBuckets(distributionType : distributionType,
                           openEnds         : openEnds,
                           Xmin             : computedXmin,
                           Xmax             : computedXmax,
                           bucketNb         : bucketNb)
         
-        // ranger les échantillons dans une case
+        // ranger les échantillons dans les cases
         for data in dataset {
             buckets.record(data)
         }
@@ -371,7 +384,8 @@ struct Histogram {
     mutating func record(_ data: Double) {
         // ajouter la valeur au dataset
         dataset.append(data)
-        // ranger l'échantillon dans une case
+        // ranger l'échantillon dans une case (si les cases on été initialisées)
+        // sinon il faudra utiliser la méthode "sort" pour les trier
         buckets.record(data)
     }
     

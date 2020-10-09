@@ -79,13 +79,13 @@ struct RegimeGeneral: Codable {
                                        dateOfPensionLiquid : dateOfPensionLiquid)
         switch result {
             case .success(let nbTrimestreDecote):
-                customLog.log(level: .info, "nb Trimestre Decote = \(nbTrimestreDecote, privacy: .public)")
+                // customLog.log(level: .info, "nb Trimestre Decote = \(nbTrimestreDecote, privacy: .public)")
                 return model.maxReversionRate - model.decoteParTrimestre * nbTrimestreDecote.double()
 
             case .failure(let error):
                 switch error {
                     case .outsiteBounds:
-                        customLog.log(level: .default, "Surcote à calculer")
+                        // customLog.log(level: .info, "Surcote à calculer")
                         let result = nbTrimestreSurcote(dureeAssurance   : dureeAssurance,
                                                         dureeDeReference : dureeDeReference)
                         switch result {
@@ -147,12 +147,12 @@ struct RegimeGeneral: Codable {
                             dureeDeReference : Int) -> Result<Int, RegimeGeneralError> {
         /// le nombre de trimestres supplémentaires entre la date de votre départ en retraite et la date à laquelle vous atteignez l'âge permettant de bénéficier automatiquement du taux plein
         guard dureeAssurance >= dureeDeReference else {
-            customLog.log(level: .info, "Pas de surcote, il doit y avoir décote de la pension régime général")
+            // customLog.log(level: .info, "Pas de surcote, il doit y avoir décote de la pension régime général")
             return .failure(.outsiteBounds)
         }
         
         let trimestreDeSurcote = dureeAssurance - dureeDeReference
-        customLog.log(level: .info, "trimestre De Surcote = \(trimestreDeSurcote, privacy: .public)")
+        // customLog.log(level: .info, "trimestre De Surcote = \(trimestreDeSurcote, privacy: .public)")
         
         return .success(trimestreDeSurcote)
     }
@@ -173,20 +173,20 @@ struct RegimeGeneral: Codable {
                            dureeAssurance      : Int,
                            dureeDeReference    : Int,
                            dateOfPensionLiquid : Date) -> Result<Int, RegimeGeneralError> {
-        customLog.log(level: .info, "Durée de référence = \(dureeDeReference, privacy: .public)")
+        // customLog.log(level: .info, "Durée de référence = \(dureeDeReference, privacy: .public)")
         
         /// le nombre de trimestres manquants entre la date de votre départ en retraite et la date à laquelle vous atteignez l'âge permettant de bénéficier automatiquement du taux plein
         guard let dateDuTauxPlein = ageTauxPleinLegal(birthYear: birthDate.year)?.years.from(birthDate) else {
             customLog.log(level: .default, "date Du Taux Plein = nil")
             return .failure(.impossibleToCompute)
         }
-        customLog.log(level: .info, "date Du Taux Plein = \(dateDuTauxPlein, privacy: .public)")
+        // customLog.log(level: .info, "date Du Taux Plein = \(dateDuTauxPlein, privacy: .public)")
         
         guard dureeAssurance < dureeDeReference else {
-            customLog.log(level: .info, "Pas de decote, il doit y avoir surcote de la pension régime général")
+            // customLog.log(level: .info, "Pas de decote, il doit y avoir surcote de la pension régime général")
             return .failure(.outsiteBounds)
         }
-        customLog.log(level: .info, "date Of Pension Liquid = \(dateOfPensionLiquid, privacy: .public)")
+        // customLog.log(level: .info, "date Of Pension Liquid = \(dateOfPensionLiquid, privacy: .public)")
 
         let duree = Date.calendar.dateComponents([.year, .month, .day],
                                                  from : dateOfPensionLiquid,
@@ -195,12 +195,12 @@ struct RegimeGeneral: Codable {
         
         //    Le nombre de trimestres est arrondi au chiffre supérieur
         let trimestresManquantAgeTauxPlein = max(0, (duree.year! * 4) + (r1 > 0 ? q1 + 1 : q1))
-        customLog.log(level: .info, "trimestres Manquant Age Taux Plein = \(trimestresManquantAgeTauxPlein, privacy: .public)")
+        // customLog.log(level: .info, "trimestres Manquant Age Taux Plein = \(trimestresManquantAgeTauxPlein, privacy: .public)")
         
         /// le nombre de trimestres manquant entre le nb de trimestre accumulés à la date de votre départ en retraite et la durée d'assurance retraite ouvrant droit au taux plein
         let trimestresManquantNbTrimestreTauxPlein = max(0, dureeDeReference - dureeAssurance)
-        customLog.log(level: .info, "trimestres Manquant Nb Trimestre Taux Plein = \(trimestresManquantNbTrimestreTauxPlein, privacy: .public)")
-        customLog.log(level: .info, "model.max Nb Trimestre Decote = \(model.maxNbTrimestreDecote, privacy: .public)")
+        // customLog.log(level: .info, "trimestres Manquant Nb Trimestre Taux Plein = \(trimestresManquantNbTrimestreTauxPlein, privacy: .public)")
+        // customLog.log(level: .info, "model.max Nb Trimestre Decote = \(model.maxNbTrimestreDecote, privacy: .public)")
         
         // retenir le plus favorable des deux et limiter à 20 max
         return .success(min(trimestresManquantNbTrimestreTauxPlein,
@@ -440,13 +440,13 @@ struct RegimeGeneral: Codable {
         let dureeAssurance = self.dureeAssurance(lastKnownSituation       : lastKnownSituation,
                                                  dateOfRetirement         : dateOfRetirement,
                                                  dateOfEndOfUnemployAlloc : dateOfEndOfUnemployAlloc)
-        customLog.log(level: .info, "duree Assurance = \(dureeAssurance, privacy: .public)")
+        // customLog.log(level: .info, "duree Assurance = \(dureeAssurance, privacy: .public)")
 
         guard let dureeDeReference = dureeDeReference(birthYear: birthDate.year) else {
             customLog.log(level: .default, "duree De Reference = nil")
             return nil
         }
-        customLog.log(level: .info, "duree De Reference = \(dureeDeReference, privacy: .public)")
+        // customLog.log(level: .info, "duree De Reference = \(dureeDeReference, privacy: .public)")
 
         guard let tauxDePension = tauxDePension(birthDate           : birthDate,
                                                 dureeAssurance      : dureeAssurance,
@@ -455,7 +455,7 @@ struct RegimeGeneral: Codable {
             customLog.log(level: .default, "taux De Pension = nil")
             return nil
         }
-        customLog.log(level: .info, "taux De Pension = \(tauxDePension, privacy: .public)")
+        // customLog.log(level: .info, "taux De Pension = \(tauxDePension, privacy: .public)")
 
         let majorationEnfant = self.majorationEnfant(nbEnfant: nbEnfant)
         
@@ -464,10 +464,10 @@ struct RegimeGeneral: Codable {
                                    majorationEnfant : majorationEnfant,
                                    dureeAssurance   : dureeAssurance,
                                    dureeDeReference : dureeDeReference)
-        customLog.log(level: .info, "pension Brute = \(pensionBrute, privacy: .public)")
+        // customLog.log(level: .info, "pension Brute = \(pensionBrute, privacy: .public)")
 
         var pensionNette = Fiscal.model.pensionTaxes.net(pensionBrute)
-        customLog.log(level: .info, "pension Nette = \(pensionNette, privacy: .public)")
+        // customLog.log(level: .info, "pension Nette = \(pensionNette, privacy: .public)")
 
         if let yearEval = year {
             if yearEval < dateOfRetirement.year {

@@ -226,7 +226,7 @@ extension SocialAccounts {
         
         if let found = firstLine.revenues.summary.namedValues.first(where: { $0.name == categoryName } ) {
             /// rechercher la catégorie dans les revenus
-            customLog.log(level: .info, "Catégorie trouvée dans Revenues : \(found.name)")
+            // customLog.log(level: .info, "Catégorie trouvée dans Revenues : \(found.name)")
             guard let category = RevenueCategory.category(of: categoryName) else {
                 return BarChartDataSet()
             }
@@ -249,7 +249,7 @@ extension SocialAccounts {
             
         } else if let found = firstLine.sciCashFlowLine.summary.namedValues.first(where: { $0.name == categoryName } ) {
             /// rechercher la catégorie dans les revenus de la SCI
-            customLog.log(level: .info, "Catégorie trouvée dans sciCashFlowLine : \(found.name)")
+            // customLog.log(level: .info, "Catégorie trouvée dans sciCashFlowLine : \(found.name)")
             let labelsInCategory = firstLine.sciCashFlowLine.namesFlatArray
             print("  legende : ", labelsInCategory)
             
@@ -266,7 +266,7 @@ extension SocialAccounts {
             
         } else if let found = firstLine.taxes.summary.namedValues.first(where: { $0.name == categoryName } ) {
             /// rechercher les valeurs des taxes
-            customLog.log(level: .info, "Catégorie trouvée dans taxes : \(found.name)")
+            // customLog.log(level: .info, "Catégorie trouvée dans taxes : \(found.name)")
             guard let category = TaxeCategory.category(of: categoryName) else {
                 return BarChartDataSet()
             }
@@ -289,7 +289,7 @@ extension SocialAccounts {
             
         } else if categoryName == firstLine.lifeExpenses.summary.name {
             /// rechercher les valeurs des dépenses
-            customLog.log(level: .info, "Catégorie trouvée dans lifeExpenses : \(categoryName)")
+            // customLog.log(level: .info, "Catégorie trouvée dans lifeExpenses : \(categoryName)")
             let labelsInCategory = firstLine.lifeExpenses.namedValueTable.namesArray
             print("  legende : ", labelsInCategory)
             
@@ -307,7 +307,7 @@ extension SocialAccounts {
             
         } else if categoryName == firstLine.debtPayements.summary.name {
             /// rechercher les valeurs des debtPayements
-            customLog.log(level: .info, "Catégorie trouvée dans debtPayements : \(categoryName)")
+            // customLog.log(level: .info, "Catégorie trouvée dans debtPayements : \(categoryName)")
             let labelsInCategory = firstLine.debtPayements.namedValueTable.namesArray
             print("  legende : ", labelsInCategory)
             
@@ -325,7 +325,7 @@ extension SocialAccounts {
             
         } else if categoryName == firstLine.investPayements.summary.name {
             /// rechercher les valeurs des investPayements
-            customLog.log(level: .info, "Catégorie trouvée dans investPayements : \(categoryName)")
+            // customLog.log(level: .info, "Catégorie trouvée dans investPayements : \(categoryName)")
             let labelsInCategory = firstLine.investPayements.namedValueTable.namesArray
             print("  legende : ", labelsInCategory)
             

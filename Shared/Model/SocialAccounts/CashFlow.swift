@@ -289,7 +289,7 @@ struct CashFlowLine {
                                     lifeInsuranceRebate : &lifeInsuranceRebate,
                                     atEndOf             : year)
         #if DEBUG
-        Swift.print("Year = \(year), Revenus = \(sumOfrevenues), Expenses = \(sumOfExpenses), Net cash flow = \(netCashFlow)")
+        //Swift.print("Year = \(year), Revenus = \(sumOfrevenues), Expenses = \(sumOfExpenses), Net cash flow = \(netCashFlow)")
         #endif
         
     }

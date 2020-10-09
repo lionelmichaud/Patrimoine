@@ -58,12 +58,14 @@ struct FamilyView: View {
 
 struct FamilyView_Previews: PreviewProvider {
     static let family     = Family()
+    static let simulation = Simulation()
     static let patrimoine = Patrimoin()
     static let uiState    = UIState()
     
     static var previews: some View {
         FamilyView()
             .environmentObject(family)
+            .environmentObject(simulation)
             .environmentObject(patrimoine)
             .environmentObject(uiState)
             .colorScheme(.dark)

@@ -10,7 +10,6 @@ import SwiftUI
 
 struct KpiListView : View {
     @EnvironmentObject var simulation : Simulation
-    @EnvironmentObject var uiState    : UIState
     
     var body: some View {
         ForEach(simulation.kpis) { kpi in
