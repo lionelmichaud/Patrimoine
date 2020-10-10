@@ -42,13 +42,10 @@ struct ComputationView: View {
                     }
                 // choix du mode de simulation: cas spécifiques
                     // sélecteur: Déterministe / Aléatoire
-                    CasePicker(pickedCase: self.$uiState.computationState.simulationMode, label: "")
-                        .onChange(of: self.uiState.computationState.simulationMode) {mode in
-                            simulationMode.mode = mode
-                        }
+                    CasePicker(pickedCase: $simulation.mode, label: "")
                         //.padding()
                         .pickerStyle(SegmentedPickerStyle())
-                    switch self.uiState.computationState.simulationMode {
+                    switch simulation.mode {
                         case .deterministic:
                             EmptyView()
                             
@@ -80,8 +77,10 @@ struct ComputationView: View {
                 if simulation.isComputed {
                     ForEach(simulation.kpis) { kpi in
                         Section(header: Text(kpi.name)) {
-                            if kpi.value() != nil {
-                                KpiSummaryView(kpi: kpi, withDetails: false)
+                            if kpi.value(withMode: simulation.mode) != nil {
+                                KpiSummaryView(kpi         : kpi,
+                                               withPadding : false,
+                                               withDetails : false)
                             } else {
                                 Text("Valeure indéfinie")
                                     .foregroundColor(.red)
@@ -112,6 +111,7 @@ struct ComputationView: View {
                             }
                            }
                     )
+                    .capsuleButtonStyle()
                     .disabled(!(simulation.isComputed && !simulation.isSaved))
                     .opacity(!(simulation.isComputed && !simulation.isSaved) ? 0.5 : 1.0)
                 }
@@ -129,6 +129,7 @@ struct ComputationView: View {
                             }
                            }
                     )
+                    .capsuleButtonStyle()
                 }
             }
     }
@@ -137,7 +138,7 @@ struct ComputationView: View {
         busyCompWheelAnimate.toggle()
         // executer les calculs en tâche de fond
         //DispatchQueue.global(qos: .userInitiated).async {
-        switch uiState.computationState.simulationMode {
+        switch simulation.mode {
             case .deterministic:
                 simulation.compute(nbOfYears      : Int(uiState.computationState.nbYears),
                                    nbOfRuns       : 1,

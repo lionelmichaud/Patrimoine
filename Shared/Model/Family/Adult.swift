@@ -350,8 +350,8 @@ final class Adult: Person {
         date of pension liquidation: \(dateOfPensionLiquid.stringMediumDate)
         number of children: \(nbOfChildBirth)
         type de revenus: \(workIncome?.displayString ?? "aucun")
-        net income for living: \(workLivingIncome.euroString)
-        taxable income: \(workTaxableIncome.euroString) \n
+        net income for living: \(workLivingIncome.€String)
+        taxable income: \(workTaxableIncome.€String) \n
         """
     }
     
@@ -385,7 +385,7 @@ final class Adult: Person {
             try container.decode(RegimeAgircSituation.self,
                                  forKey: .regime_Agirc_Situation)
         // initialiser avec la valeur moyenne déterministe
-        nbOfYearOfDependency = Int(HumanLife.model.nbOfYearsOfdependency.value())
+        nbOfYearOfDependency = Int(HumanLife.model.nbOfYearsOfdependency.value(withMode: .deterministic))
 //        nbOfYearOfDependency =
 //            try container.decode(Int.self,
 //                                 forKey: .nb_Of_Year_Of_Dependency)
@@ -712,6 +712,18 @@ final class Adult: Person {
             return (0,0,0)
         }
     }
+    
+    /// Réinitialiser les prioriété aléatoires des membres
+    override func resetRandomProperties() {
+        super.resetRandomProperties()
+        
+        // générer une nouvelle valeure aléatoire
+        HumanLife.model.nbOfYearsOfdependency.next()
+        
+        // réinitialiser la durée de dépendance
+        nbOfYearOfDependency = Int(HumanLife.model.nbOfYearsOfdependency.value(withMode: .random))
+    }
+
     
     override func print() {
         super.print()

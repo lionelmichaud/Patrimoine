@@ -14,7 +14,7 @@ struct KpiListView : View {
     var body: some View {
         ForEach(simulation.kpis) { kpi in
             NavigationLink(destination : KpiDetailedView(kpi: kpi)) {
-                if let objectiveIsReached = kpi.objectiveIsReached {
+                if let objectiveIsReached = kpi.objectiveIsReached(withMode: simulation.mode) {
                     Image(systemName: objectiveIsReached ? "checkmark.circle.fill" : "multiply.circle.fill")
                         .imageScale(.medium)
                         .foregroundColor(objectiveIsReached ? .green : .red)
@@ -27,23 +27,39 @@ struct KpiListView : View {
 }
 
 struct KpiDetailedView: View {
+    @EnvironmentObject var simulation : Simulation
     @State var kpi: KPI
     
     var body: some View {
-        Form {
-            Section(header: Text("CALCUL " + simulationMode.mode.displayString)) {
+        VStack {
+            Section(header: Text("Mode de Calcul " + simulation.mode.displayString)) {
                 // afficher le résumé
-                KpiSummaryView(kpi: kpi, withDetails: true)
-                
+                KpiSummaryView(kpi         : kpi,
+                               withPadding : true,
+                               withDetails : true)
+
                 // afficher le détail
-                if let value = kpi.value() {
-                    switch simulationMode.mode {
+                if kpi.hasValue(for: simulation.mode) {
+                    switch simulation.mode {
                         case .deterministic:
                             EmptyView()
-
+                            
                         case .random:
                             // simulation de Monté-Carlo
-                            Text("Valeur: \(value)")
+                            HStack {
+                                AmountView(label: "Valeur Moyenne", amount: kpi.average(withMode: simulation.mode) ?? Double.nan)
+                                    .padding(.trailing)
+                                AmountView(label: "Valeur Médiane", amount: kpi.median(withMode: simulation.mode) ?? Double.nan)
+                                    .padding(.leading)
+                            }
+                            .padding(.top, 3)
+                            HStack {
+                                AmountView(label: "Valeur Minimale", amount: kpi.min(withMode: simulation.mode) ?? Double.nan)
+                                    .padding(.trailing)
+                                AmountView(label: "Valeur Maximale", amount: kpi.max(withMode: simulation.mode) ?? Double.nan)
+                                    .padding(.leading)
+                            }
+                            .padding(.top, 3)
                             HistogramView(histogram           : kpi.histogram,
                                           xLimitLine          : kpi.objective,
                                           yLimitLine          : kpi.probaObjective,
@@ -52,26 +68,29 @@ struct KpiDetailedView: View {
                 }
             }
         }
+        .padding(.horizontal)
         .navigationTitle(kpi.name)
         .navigationBarTitleDisplayMode(.inline)
     }
 }
 
 struct KpiView_Previews: PreviewProvider {
+    static var simulation = Simulation()
+    
     static func kpiDeter() -> KPI {
-        simulationMode.mode = .deterministic
+        simulation.mode = .deterministic
         var kpi = KPI(name: "KPI test",
                       objective: 1000.0,
                       withProbability: 0.95)
-        kpi.record(100.0)
+        kpi.record(100.0, withMode: simulation.mode)
         return kpi
     }
     static func kpiRandom() -> KPI {
-        simulationMode.mode = .random
+        simulation.mode = .random
         var kpi = KPI(name: "KPI test",
                       objective: 1000.0,
                       withProbability: 0.95)
-        kpi.record(500.0)
+        kpi.record(500.0, withMode: simulation.mode)
         kpi.histogram.sort(distributionType : .continuous,
                            openEnds         : false,
                            bucketNb         : 50)

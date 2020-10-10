@@ -13,66 +13,81 @@ var valueKiloFormatter: NumberFormatter = {
     
     // if number is less than 1 add 0 before decimal
     numFormatter.minimumIntegerDigits = 1 // how many digits do want before decimal
-    numFormatter.multiplier = 0.001
-    //numFormatter.thousandSeparator = " "
-    //numFormatter.positiveSuffix = " k€"
-    //numFormatter.negativeSuffix = " k€"
-    numFormatter.paddingPosition = .beforePrefix
-    numFormatter.paddingCharacter = "0"
-    numFormatter.zeroSymbol = ""
-    
+    numFormatter.multiplier           = 0.001
+    numFormatter.paddingPosition      = .beforePrefix
+    numFormatter.paddingCharacter     = "0"
+    numFormatter.zeroSymbol           = ""
     return numFormatter
 }()
 
-var valueEuroFormatter: NumberFormatter = {
+var valueKilo€Formatter: NumberFormatter = {
     let numFormatter = NumberFormatter()
-    numFormatter.locale = Locale(identifier: "fr_FR") // French Locale (fr_FR)
-    numFormatter.isLenient = true
-    numFormatter.maximumFractionDigits = 0
-    numFormatter.numberStyle = .currency
     
+    // if number is less than 1 add 0 before decimal
+    numFormatter.minimumIntegerDigits = 1 // how many digits do want before decimal
+    numFormatter.multiplier           = 0.001
+    //numFormatter.thousandSeparator  = " "
+    numFormatter.positiveSuffix       = " k€"
+    numFormatter.negativeSuffix       = " k€"
+    numFormatter.paddingPosition      = .beforePrefix
+    numFormatter.paddingCharacter     = "0"
+    numFormatter.zeroSymbol           = ""
+    return numFormatter
+}()
+
+var value€Formatter: NumberFormatter = {
+    let numFormatter = NumberFormatter()
+    numFormatter.locale                = Locale(identifier : "fr_FR") // French Locale (fr_FR)
+    numFormatter.isLenient             = true
+    numFormatter.maximumFractionDigits = 0
+    numFormatter.numberStyle           = .currency
     return numFormatter
 }()
 
 var percentFormatter: NumberFormatter = {
     let numFormatter = NumberFormatter()
-    numFormatter.locale = Locale(identifier: "fr_FR") // French Locale (fr_FR)
-    numFormatter.isLenient = true
-    numFormatter.numberStyle = .percent
-    numFormatter.minimumIntegerDigits = 1
-    numFormatter.maximumIntegerDigits = 3
+    numFormatter.locale                = Locale(identifier : "fr_FR") // French Locale (fr_FR)
+    numFormatter.isLenient             = true
+    numFormatter.numberStyle           = .percent
+    numFormatter.minimumIntegerDigits  = 1
+    numFormatter.maximumIntegerDigits  = 3
     numFormatter.minimumFractionDigits = 2
     numFormatter.maximumFractionDigits = 2
-    //numFormatter.positivePrefix = "+"
+    //numFormatter.positivePrefix      = "+"
     return numFormatter
 }()
 
 var decimalFormatter: NumberFormatter = {
     let numFormatter = NumberFormatter()
-    numFormatter.locale = Locale(identifier: "fr_FR") // French Locale (fr_FR)
-    numFormatter.isLenient = true
-    numFormatter.numberStyle = .decimal
-    numFormatter.minimumIntegerDigits = 1
+    numFormatter.locale                = Locale(identifier : "fr_FR") // French Locale (fr_FR)
+    numFormatter.isLenient             = true
+    numFormatter.numberStyle           = .decimal
+    numFormatter.minimumIntegerDigits  = 1
     numFormatter.minimumFractionDigits = 2
     numFormatter.maximumFractionDigits = 2
-    //numFormatter.positivePrefix = "+"
+    //numFormatter.positivePrefix      = "+"
     return numFormatter
 }()
 
 extension Double {
-    var euroString: String {
-        valueEuroFormatter.string(from: self as NSNumber) ?? ""
+    var €String: String {
+        value€Formatter.string(from: self as NSNumber) ?? ""
     }
+    
+    var k€String: String {
+        valueKilo€Formatter.string(from: self as NSNumber) ?? ""
+    }
+
     func percentString(digit: Int = 0) -> String {
         guard digit >= 0 else {
             return "??"
         }
         let numFormatter = NumberFormatter()
-        numFormatter.locale = Locale(identifier: "fr_FR") // French Locale (fr_FR)
-        numFormatter.isLenient = true
-        numFormatter.numberStyle = .decimal
-        numFormatter.minimumIntegerDigits = 1
-        numFormatter.maximumIntegerDigits = 3
+        numFormatter.locale                = Locale(identifier : "fr_FR") // French Locale (fr_FR)
+        numFormatter.isLenient             = true
+        numFormatter.numberStyle           = .decimal
+        numFormatter.minimumIntegerDigits  = 1
+        numFormatter.maximumIntegerDigits  = 3
         numFormatter.minimumFractionDigits = 0
         numFormatter.maximumFractionDigits = digit
         return numFormatter.string(from: self as NSNumber) ?? ""

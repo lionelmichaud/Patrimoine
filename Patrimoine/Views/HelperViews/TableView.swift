@@ -29,7 +29,7 @@ struct ListTableRowView: View {
                                       design: Font.Design.default))
             }
             Spacer()
-            Text(value.euroString)
+            Text(value.€String)
                 .font(Font.system(size: ListTheme[indentLevel].valueFontSize,
                                   design: Font.Design.default))
         }

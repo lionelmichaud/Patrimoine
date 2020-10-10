@@ -91,10 +91,10 @@ extension Loan: CustomStringConvertible {
     var description: String {
         return """
         \(name)
-        valeur:           \(value(atEndOf: Date.now.year).euroString)
+        valeur:           \(value(atEndOf: Date.now.year).€String)
         first year:       \(firstYear) last year: \(lastYear)
-        loaned Value:     \(loanedValue) final Value: \(value(atEndOf: lastYear).euroString)
-        yearly Payement:  \(yearlyPayement.euroString)
+        loaned Value:     \(loanedValue) final Value: \(value(atEndOf: lastYear).€String)
+        yearly Payement:  \(yearlyPayement.€String)
         interest Rate:    \(interestRate) %
         monthly Insurance:\(monthlyInsurance) %
 

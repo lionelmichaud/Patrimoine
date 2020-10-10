@@ -59,7 +59,7 @@ struct PatrimoineHeaderView: View {
                                           design: Font.Design.default))
                         .fontWeight(.bold)
                     Spacer()
-                    Text(patrimoine.value(atEndOf: Date.now.year).euroString)
+                    Text(patrimoine.value(atEndOf: Date.now.year).€String)
                         .font(Font.system(size: 17,
                                           design: Font.Design.default))
                 }

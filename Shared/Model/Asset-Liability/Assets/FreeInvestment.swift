@@ -254,11 +254,11 @@ extension FreeInvestement: CustomStringConvertible {
         return """
         \(name)
           type:          \(type)
-          valeur:        \(value(atEndOf: Date.now.year).euroString)
-          initial state: (year: \(initialState.year), interest: \(initialState.interest.euroString), invest: \(initialState.investment.euroString), Value: \(initialState.value.euroString))
-          current state: (year: \(currentState.year), interest: \(currentState.interest.euroString), invest: \(currentState.investment.euroString), Value: \(currentState.value.euroString))
+          valeur:        \(value(atEndOf: Date.now.year).€String)
+          initial state: (year: \(initialState.year), interest: \(initialState.interest.€String), invest: \(initialState.investment.€String), Value: \(initialState.value.€String))
+          current state: (year: \(currentState.year), interest: \(currentState.interest.€String), invest: \(currentState.investment.€String), Value: \(currentState.value.€String))
           interest Rate: \(interestRate) %
-          yearly interest: \(yearlyInterest.euroString)
+          yearly interest: \(yearlyInterest.€String)
 
         """
     }

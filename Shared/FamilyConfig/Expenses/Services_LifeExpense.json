@@ -1,5 +1,45 @@
 {
     "items" : [
+        {
+            "id" : "562EE2A1-4FF5-450D-8BAE-3E8B793928DA",
+            "value" : 50000,
+            "proportional" : false,
+            "name" : "EHPAD Lionel",
+            "timeSpan" : {
+                "spanning_from" :
+                {
+                    "fixedYear": 2024,
+                    "event"    : "Dépendance",
+                    "name"     : "M. Lionel MICHAUD"
+                },
+                "spanning_to" :
+                {
+                    "fixedYear": 2025,
+                    "event"    : "Décès",
+                    "name"     : "M. Lionel MICHAUD"
+                }
+            }
+        },
+        {
+            "id" : "562EE2A1-4FF5-450D-8BAE-3E8B793928DA",
+            "value" : 50000,
+            "proportional" : false,
+            "name" : "EHPAD Vanessa",
+            "timeSpan" : {
+                "spanning_from" :
+                {
+                    "fixedYear": 2024,
+                    "event"    : "Dépendance",
+                    "name"     : "Mme. Vanessa MICHAUD"
+                },
+                "spanning_to" :
+                {
+                    "fixedYear": 2025,
+                    "event"    : "Décès",
+                    "name"     : "Mme. Vanessa MICHAUD"
+                }
+            }
+        }
     ],
     "fileNamePrefix" : ""
 }

@@ -211,6 +211,16 @@ final class Family: ObservableObject, CustomStringConvertible {
 
     }
     
+    /// Réinitialiser les prioriété aléatoires des membres et des dépenses
+    func resetRandomProperties() {
+        // Réinitialiser les prioriété aléatoires des membres
+        members.forEach {
+            $0.resetRandomProperties()
+        }
+        
+        // Réinitialiser les prioriété aléatoires des dépenses
+    }
+    
     private func storeMembersToFile() {
         // encoder
         if let encoded = try? Person.coder.encoder.encode(members.map { Wrap(wrapped: $0) }) {

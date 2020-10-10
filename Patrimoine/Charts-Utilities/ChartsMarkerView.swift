@@ -359,7 +359,7 @@ class ExpenseMarkerView: BalloonMarker {
 
             string += xAxisValueFormatter.stringForValue(e.x, axis: XAxis()) + "\n" +
                 String(firstYear) + " à " + String(lastYear) + "\n" +
-                value.euroString + (proportional ? " (X)" : "")
+                value.€String + (proportional ? " (X)" : "")
             //guard let s = self.chartView?.data?.dataSets[highlight.dataSetIndex].stackLabels[highlight.stackIndex] else { return }
         } else {
             string += xAxisValueFormatter.stringForValue(entry.x, axis: XAxis())

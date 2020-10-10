@@ -49,7 +49,7 @@ struct LabeledValueRowView: View {
                 }
             }
             Spacer()
-            Text(value.euroString)
+            Text(value.€String)
                 .font(Font.system(size: ListTheme[indentLevel].valueFontSize,
                                   design: Font.Design.default))
         }
@@ -122,7 +122,7 @@ struct AmountView: View {
                 .fontWeight(weight)
             Spacer()
             if comment != nil { Text(comment!).foregroundColor(.secondary) }
-            Text(valueEuroFormatter.string(from: amount as NSNumber) ?? "")
+            Text(value€Formatter.string(from: amount as NSNumber) ?? "")
                 .fontWeight(weight)
                 .frame(maxWidth: 100, alignment: .trailing)
         }
@@ -229,7 +229,7 @@ struct PercentEditView: View {
             TextField("montant",
                       text: textValueBinding)
                 //.textFieldStyle(RoundedBorderTextFieldStyle())
-                .frame(maxWidth: 50)
+                .frame(maxWidth: 88)
                 .keyboardType(.decimalPad)
                 .multilineTextAlignment(.trailing)
                 .onReceive(Just(textPercent)) { newValue in
@@ -248,8 +248,6 @@ struct PercentEditView: View {
         self.label  = label
         _percent     = percent
         _textPercent = State(initialValue: percent.wrappedValue.percentString(digit: 2))
-        //        print("amount: \(percent.wrappedValue)")
-        //        print("text: '\(textPercent)'")
     }
 }
 
@@ -265,7 +263,7 @@ struct PercentView: View {
             Spacer()
             if comment != nil { Text(comment!).foregroundColor(.secondary) }
             Text(percentFormatter.string(from: percent as NSNumber) ?? "??")
-                .frame(maxWidth: 150, alignment: .trailing)
+                .frame(maxWidth: 100, alignment: .trailing)
         }
     }
     

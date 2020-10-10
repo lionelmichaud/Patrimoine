@@ -203,14 +203,15 @@ extension LineChartView {
 // MARK: - Extension de LineChartDataSet pour customizer la configuration du tracé de courbe
 
 extension LineChartDataSet {
-    convenience init (entries : [ChartDataEntry]?,
-                      label   : String,
-                      color   : NSUIColor) {
+    convenience init (entries   : [ChartDataEntry]?,
+                      label     : String,
+                      color     : NSUIColor,
+                      lineWidth : Double = 2.0) {
         self.init(entries: entries, label: label)
         self.axisDependency        = .left
         self.colors                = [color]
         self.circleColors          = [color]
-        self.lineWidth             = 2.0
+        self.lineWidth             = CGFloat(lineWidth)
         self.circleRadius          = 3.0
         self.fillAlpha             = 65 / 255.0
         self.fillColor             = color
@@ -228,8 +229,8 @@ extension ChartLimitLine {
                      labelPosition: LabelPosition,
                      lineColor    : NSUIColor) {
         self.init(limit: limit, label: label)
-        self.lineWidth       = 4
-        self.lineDashLengths = [5, 5]
+        self.lineWidth       = 2
+        self.lineDashLengths = [10, 5]
         self.lineColor       = lineColor
         self.labelPosition   = .topRight
         self.valueFont       = ChartThemes.ChartDefaults.labelFont

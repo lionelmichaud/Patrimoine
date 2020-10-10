@@ -25,7 +25,7 @@ struct ExpenseSummaryView: View {
                        step  : 1,
                        onEditingChanged: {_ in
                 })
-                Text(self.family.expenses.value(atEndOf: Int(self.uiState.expenseViewState.evalDate)).euroString)
+                Text(self.family.expenses.value(atEndOf: Int(self.uiState.expenseViewState.evalDate)).€String)
             }
             // graphique
             .padding(.horizontal)

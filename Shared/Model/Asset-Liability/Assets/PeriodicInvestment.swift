@@ -172,12 +172,12 @@ extension PeriodicInvestement: CustomStringConvertible {
     var description: String {
         return """
         \(name)
-        valeur:            \(value(atEndOf: Date.now.year).euroString)
+        valeur:            \(value(atEndOf: Date.now.year).€String)
         type:              \(type)
         first year:        \(firstYear) last year: \(lastYear)
-        initial Value:     \(initialValue.euroString) initial Interests: \(initialInterest.euroString)
-        yearly Payement:   \(yearlyPayement.euroString)
-        liquidation value: \(value(atEndOf: lastYear).euroString) cumulated interests: \(cumulatedInterests(atEndOf: lastYear).euroString)
+        initial Value:     \(initialValue.€String) initial Interests: \(initialInterest.€String)
+        yearly Payement:   \(yearlyPayement.€String)
+        liquidation value: \(value(atEndOf: lastYear).€String) cumulated interests: \(cumulatedInterests(atEndOf: lastYear).€String)
         interest Rate Brut:\(interestRate) % interest Rate Net:\(interestRateNet) %
         
         """

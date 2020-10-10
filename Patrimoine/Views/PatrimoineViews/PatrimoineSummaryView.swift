@@ -33,7 +33,7 @@ struct PatrimoineSummaryView: View {
                     HStack {
                         Text("Actif Net").fontWeight(.bold)
                         Spacer()
-                        Text(patrimoine.value(atEndOf: Int(uiState.patrimoineViewState.evalDate)).euroString)
+                        Text(patrimoine.value(atEndOf: Int(uiState.patrimoineViewState.evalDate)).€String)
                     }
                 }
                 .listRowBackground(ListTheme.rowsBaseColor)

@@ -72,7 +72,7 @@ struct ChartsView: View {
                         // synthèse des KPIs
                         NavigationLink(destination: KpiListSummaryView()) {
                             HStack {
-                                if let allObjectivesAreReached = simulation.kpis.allObjectivesAreReached {
+                                if let allObjectivesAreReached = simulation.kpis.allObjectivesAreReached(withMode: simulation.mode) {
                                 Image(systemName: allObjectivesAreReached ? "checkmark.circle.fill" : "multiply.circle.fill")
                                     .imageScale(.medium)
                                     .foregroundColor(allObjectivesAreReached ? .green : .red)

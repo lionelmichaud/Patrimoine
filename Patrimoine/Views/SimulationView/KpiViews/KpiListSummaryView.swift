@@ -12,11 +12,13 @@ struct KpiListSummaryView: View {
     @EnvironmentObject var simulation : Simulation
     
     var body: some View {
-        Text("Calcul " + simulationMode.mode.displayString)
+        Text("Mode de Calcul " + simulation.mode.displayString)
         Form {
             ForEach(simulation.kpis) { kpi in
                 Section(header: Text(kpi.name)) {
-                    KpiSummaryView(kpi: kpi, withDetails: false)
+                    KpiSummaryView(kpi         : kpi,
+                                   withPadding : false,
+                                   withDetails : false)
                 }
             }
         }
@@ -26,30 +28,48 @@ struct KpiListSummaryView: View {
 }
 
 struct KpiSummaryView: View {
-    @State var kpi: KPI
-    var withDetails: Bool
-    
+    @EnvironmentObject var simulation : Simulation
+    @State var kpi  : KPI
+    var withPadding : Bool
+    var withDetails : Bool
     
     var body: some View {
-        if kpi.value() != nil {
+        if kpi.hasValue(for: simulation.mode) {
             if withDetails {
-                AmountView(label: "Valeur objectif", amount: kpi.objective)
+                AmountView(label   : "Valeur Objectif Minimale",
+                           amount  : kpi.objective,
+                           comment : simulation.mode == .random ? "à atteindre avec une probabilité ≥ \((kpi.probaObjective * 100.0).percentString())%" : "")
+                    .padding(EdgeInsets(top: withPadding ? 3 : 0, leading: 0, bottom: withPadding ? 3 : 0, trailing: 0))
+                if simulation.mode == .random {
+                    HStack {
+                        PercentView(label   : "Valeur Objectif Atteinte",
+                                    percent : 1.0 - (kpi.probability(for: kpi.objective) ?? Double.nan),
+                                    comment : "avec une probabilité de")
+                        Image(systemName: kpi.objectiveIsReached(withMode: simulation.mode)! ? "checkmark.circle.fill" : "multiply.circle.fill")
+                            .imageScale(/*@START_MENU_TOKEN@*/.large/*@END_MENU_TOKEN@*/)
+                    }
+                    .foregroundColor(kpi.objectiveIsReached(withMode: simulation.mode)! ? .green : .red)
+                    .padding(EdgeInsets(top: 0, leading: 0, bottom: withPadding ? 3 : 0, trailing: 0))
+                }
             }
             HStack {
-                AmountView(label: "Valeur atteinte", amount: kpi.value()!)
-                Image(systemName: kpi.objectiveIsReached! ? "checkmark.circle.fill" : "multiply.circle.fill")
+                AmountView(label   : "Valeur Atteinte",
+                           amount  : kpi.value(withMode: simulation.mode)!,
+                           comment : simulation.mode == .random ? "avec une probabilité de \((kpi.probaObjective * 100.0).percentString())%" : "")
+                Image(systemName: kpi.objectiveIsReached(withMode: simulation.mode)! ? "checkmark.circle.fill" : "multiply.circle.fill")
                     .imageScale(/*@START_MENU_TOKEN@*/.large/*@END_MENU_TOKEN@*/)
             }
-            .foregroundColor(kpi.objectiveIsReached! ? .green : .red)
+            .foregroundColor(kpi.objectiveIsReached(withMode: simulation.mode)! ? .green : .red)
+            .padding(EdgeInsets(top: 0, leading: 0, bottom: withPadding ? 3 : 0, trailing: 0))
             // simulation déterministe
-            ProgressBar(value            : kpi.value()!,
+            ProgressBar(value            : kpi.value(withMode: simulation.mode)!,
                         minValue         : 0.0,
                         maxValue         : kpi.objective,
                         backgroundEnabled: false,
                         labelsEnabled    : true,
                         backgroundColor  : .secondary,
-                        foregroundColor  : kpi.objectiveIsReached! ? .green : .red,
-                        formater: valueEuroFormatter)
+                        foregroundColor  : kpi.objectiveIsReached(withMode: simulation.mode)! ? .green : .red,
+                        formater: value€Formatter)
             //.padding(.vertical)
             
         } else {

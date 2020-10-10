@@ -56,7 +56,7 @@ extension Debt: CustomStringConvertible {
     var description: String {
         return """
         \(name)
-        valeur: \(value.euroString)
+        valeur: \(value.€String)
         
         """
     }

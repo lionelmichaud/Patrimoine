@@ -62,7 +62,7 @@ struct ExpenseHeaderView: View {
                                           design: Font.Design.default))
                         .fontWeight(.bold)
                     Spacer()
-                    Text(family.expenses.value(atEndOf: Date.now.year).euroString)
+                    Text(family.expenses.value(atEndOf: Date.now.year).€String)
                         .font(Font.system(size: 21,
                                           design: Font.Design.default))
                 }

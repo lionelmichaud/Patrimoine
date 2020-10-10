@@ -10,7 +10,7 @@ import Foundation
 
 // MARK: - Type mode de simulation
 
-enum SimulationModeEnum: Int, PickableEnum, Codable, Hashable, Equatable {
+enum SimulationModeEnum: Int, PickableEnum, Codable, Hashable {
     case deterministic
     case random
     
@@ -30,20 +30,29 @@ enum SimulationModeEnum: Int, PickableEnum, Codable, Hashable, Equatable {
     }
 }
 
-// MARK: - Singleton mode de simulation
+// MARK: - Type mode de simulation
 
-var simulationMode = SimulationMode.shared
+enum SimulationKPIEnum: Int, PickableEnum, Codable, Hashable {
+    case minimumAsset = 0
+    case assetAt1stDeath
+    case assetAt2ndtDeath
 
-struct SimulationMode {
-    static let shared = SimulationMode()
-    
     // properties
     
-    var mode: SimulationModeEnum
+    var id: Int {
+        return self.rawValue
+    }
     
-    // initializer
-    
-    private init() { self.mode = .deterministic }
+    var pickerString: String {
+        switch self {
+            case .minimumAsset:
+                return "Actif Financier minimal"
+            case .assetAt1stDeath:
+                return "Actif au Premier Décès"
+            case .assetAt2ndtDeath:
+                return "Actif au Dernier Décès"
+        }
+    }
 }
 
 // MARK: - Simulation: une simulation contient: les scénarios, les résultats de simulation
@@ -52,6 +61,7 @@ final class Simulation: ObservableObject {
     
     // MARK: - Properties
     
+    @Published var mode           : SimulationModeEnum = .deterministic
     @Published var socialAccounts = SocialAccounts()
     @Published var kpis           = KpiArray()
     @Published var title          = "Simulation"
@@ -64,20 +74,20 @@ final class Simulation: ObservableObject {
     
     init() {
         /// initialiser les KPI
-        let kpiAssetsAtFirstDeath = KPI(name: "Capital au Premier Décès",
+        let kpiMinimumCash = KPI(name: SimulationKPIEnum.minimumAsset.displayString,
+                                 objective: 200_000.0,
+                                 withProbability: 0.98)
+        kpis.append(kpiMinimumCash)
+        
+        let kpiAssetsAtFirstDeath = KPI(name: SimulationKPIEnum.assetAt1stDeath.displayString,
                                         objective: 200_000.0,
                                         withProbability: 0.98)
         kpis.append(kpiAssetsAtFirstDeath)
         
-        let kpiAssetsAtLastDeath = KPI(name: "Capital au Dernier Décès",
+        let kpiAssetsAtLastDeath = KPI(name: SimulationKPIEnum.assetAt2ndtDeath.displayString,
                                        objective: 200_000.0,
                                        withProbability: 0.98)
         kpis.append(kpiAssetsAtLastDeath)
-        
-        let kpiMinimumCash = KPI(name: "Trésorerie minimale",
-                                 objective: 200_000.0,
-                                 withProbability: 0.98)
-        kpis.append(kpiMinimumCash)
         
         // TODO: - à retirer
         // kpis[0].record(400000)
@@ -91,8 +101,8 @@ final class Simulation: ObservableObject {
     ///
     /// - Note:
     ///   - les comptes sociaux sont réinitialisés
-    ///   - les KPI sont réinitialisés
     ///   - les années de début et fin sont réinitialisées à nil
+    ///   - les KPI peuvent être réinitialisés
     ///
     /// - Parameters:
     ///   - family: la famille
@@ -104,12 +114,11 @@ final class Simulation: ObservableObject {
         // réinitialiser les comptes sociaux du patrimoine de la famille
         socialAccounts.reset(withPatrimoine : patrimoine)
         
-        // réinitialiser les propriétés aléatoires de la famille
-        
-        
-        // remettre à zéero l'historique des KPI (Histogramme)
+        // remettre à zéero l'historique des KPI (Histogramme) au début d'un MontéCarlo seulement
 //        if includingKPIs { kpis = kpis.resetCopy() }
-        if includingKPIs { KpiArray.reset(theseKPIs: &kpis) }
+        if includingKPIs {
+            KpiArray.reset(theseKPIs: &kpis, withMode: mode)
+        }
 
         firstYear  = nil
         lastYear   = nil
@@ -117,19 +126,27 @@ final class Simulation: ObservableObject {
         isSaved    = false
     }
     
-    /// Exécuter une simulation
+    /// Exécuter une simulation Déterministe ou Aléatoire
     /// - Parameters:
     ///   - nbOfYears: nombre d'années à construire
+    ///   - nbOfRuns: nombre de run à calculer (> 1: mode aléatoire)
     ///   - family: la famille
     ///   - patrimoine: le patrimoine
-    ///   - reportProgress: closure pour indiquer l'avancement de la simulation
     ///
     func compute(nbOfYears                 : Int,
                  nbOfRuns                  : Int,
                  withFamily family         : Family,
                  withPatrimoine patrimoine : Patrimoin) {
+        let monteCarlo = nbOfRuns > 1
+        
         // calculer tous les runs
         for run in 1...nbOfRuns {
+            // Régénérer les propriétés aléatoires à chaque run si on est en mode Aléatoire
+            if monteCarlo {
+                // réinitialiser les propriétés aléatoires de la famille
+                family.resetRandomProperties()
+            }
+
             // Réinitialiser la simulation
             self.reset(withPatrimoine : patrimoine,
                        includingKPIs  : run == 1 ? true : false)
@@ -140,10 +157,12 @@ final class Simulation: ObservableObject {
             socialAccounts.build(nbOfYears      : nbOfYears,
                                  withFamily     : family,
                                  withPatrimoine : patrimoine,
-                                 withKPIs       : &kpis)
+                                 withKPIs       : &kpis,
+                                 withMode       : mode)
             
-            // créer les hisitogrammes et y ranger les éhantillons de KPIs si on est en mode Aléatoire
-            if nbOfRuns > 1 && run == nbOfRuns {
+            // Dernier run, créer les histogrammes et y ranger
+            // les échantillons de KPIs si on est en mode Aléatoire
+            if monteCarlo && run == nbOfRuns {
                 KpiArray.sortHistograms(ofTheseKPIs: &kpis)
             }
         }

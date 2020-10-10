@@ -12,36 +12,12 @@ import Foundation
 
 typealias KpiArray = [KPI]
 extension KpiArray {
-    /// Est-ce que tous les objectifs sont atteints ?
-    /// - Warning: Retourne nil si au moins une des valeurs n'est pas définie
-    var allObjectivesAreReached : Bool? {
-        var result = true
-        for kpi in self {
-            if let objectiveIsReached = kpi.objectiveIsReached {
-                result = result && objectiveIsReached
-            } else {
-                // un résultat est inconnu
-                return nil
-            }
-        }
-        // tous les résultats sont connus
-        return result
-    }
-    
     /// remettre à zéro l'historique des KPI (Histogramme)
-    func resetCopy() -> KpiArray {
-        self.map {
-            var newKPI = $0
-            newKPI.reset()
-            return newKPI
-        }
-    }
-    
-    /// remettre à zéro l'historique des KPI (Histogramme)
-    static func reset(theseKPIs: inout KpiArray) {
+    static func reset(theseKPIs     : inout KpiArray,
+                      withMode mode : SimulationModeEnum) {
         theseKPIs = theseKPIs.map {
             var newKPI = $0
-            newKPI.reset()
+            newKPI.reset(withMode: mode)
             return newKPI
         }
     }
@@ -57,6 +33,32 @@ extension KpiArray {
             return newKPI
         }
     }
+    
+    /// remettre à zéro l'historique des KPI (Histogramme)
+    func resetCopy(withMode mode : SimulationModeEnum) -> KpiArray {
+        self.map {
+            var newKPI = $0
+            newKPI.reset(withMode: mode)
+            return newKPI
+        }
+    }
+    
+    /// Est-ce que tous les objectifs sont atteints ?
+    /// - Warning: Retourne nil si au moins une des valeurs n'est pas définie
+    func allObjectivesAreReached(withMode mode : SimulationModeEnum) -> Bool? {
+        var result = true
+        for kpi in self {
+            if let objectiveIsReached = kpi.objectiveIsReached(withMode: mode) {
+                result = result && objectiveIsReached
+            } else {
+                // un résultat est inconnu
+                return nil
+            }
+        }
+        // tous les résultats sont connus
+        return result
+    }
+    
 
 }
 
@@ -103,13 +105,6 @@ struct KPI: Identifiable {
     private var valueKPI: Double?
     // histogramme des valeurs du KPI
     var histogram: Histogram
-    // true si l'objectif de valeur est atteint
-    var objectiveIsReached: Bool? {
-        guard let value = self.value() else {
-            return nil
-        }
-        return value >= objective
-    }
     
     // MARK: - Initializers
     
@@ -125,8 +120,9 @@ struct KPI: Identifiable {
     
     // MARK: - Methods
     
-    mutating func record(_ value: Double) {
-        switch simulationMode.mode {
+    mutating func record(_ value       : Double,
+                         withMode mode: SimulationModeEnum) {
+        switch mode {
             case .deterministic:
                 self.valueKPI = value
                 
@@ -136,8 +132,8 @@ struct KPI: Identifiable {
     }
     
     /// remettre à zéero l'historique du KPI (Histogramme)
-    mutating func reset() {
-        switch simulationMode.mode {
+    mutating func reset(withMode mode: SimulationModeEnum) {
+        switch mode {
             case .deterministic:
                 self.valueKPI = nil
                 
@@ -151,34 +147,106 @@ struct KPI: Identifiable {
     /// - Warning: les échantillons doivent avoir été enregistrées au préalable
     ///
     mutating func sortHistogram() {
-        switch simulationMode.mode {
-            case .deterministic:
-                ()
-                
-            case .random:
-                histogram.sort(distributionType : .continuous,
-                               openEnds         : true,
-                               bucketNb         : KPI.nbBucketsInHistograms)
-        }
+        histogram.sort(distributionType : .continuous,
+                       openEnds         : true,
+                       bucketNb         : KPI.nbBucketsInHistograms)
     }
     
-    func value() -> Double? {
-        switch simulationMode.mode {
+    // true si la valeur du KPI a été définie au cours de la simulation
+    func hasValue(for mode: SimulationModeEnum) -> Bool {
+        value(withMode: mode) != nil
+    }
+    
+    /// Valeur du KPI
+    ///
+    /// - Note:
+    ///     Mode Déterministe:
+    ///     - retourne la valeur unique du KPI
+    ///
+    ///     Mode Aléatoire:
+    ///     - retourne la valeur X telle que la probabilité P(X>Objectif)
+    ///     est = à la probabilité Pobjectif.
+    ///
+    ///     P(X>Objectif) = 1 - P(X<=Objectif)
+    ///
+    func value(withMode mode: SimulationModeEnum) -> Double? {
+        switch mode {
             case .deterministic:
                 return valueKPI
                 
             case .random:
-                return histogram.percentile(for: probaObjective)
+                return percentile(for: 1.0 - probaObjective)
         }
+    }
+    
+    /// Valeur du KPI avec la probabilité objectif
+    ///
+    /// Renvoie la valeur x telle que P(X<x) >= probability
+    /// - Parameter probability: probabilité
+    /// - Returns: x telle que P(X<x) >= probability
+    /// - Warning: probability in [0, 1]
+    func percentile(for probability: Double) -> Double? {
+        histogram.percentile(for: probability)
+    }
+    
+    /// Renvoie la probabilité P telle que CDF(X) >= P
+    /// - Parameter value: valeure dont il faut rechercher la probabilité
+    /// - Returns: probabilité P telle que CDF(X) >= P
+    /// - Warning: x in [Xmin, Xmax]
+    func probability(for value: Double) -> Double? {
+        histogram.probability(for: value)
     }
 
-    func value(for probability: Double) -> Double? {
-        switch simulationMode.mode {
+    /// Valeur moyenne du KPI
+    func average(withMode mode: SimulationModeEnum) -> Double? {
+        switch mode {
             case .deterministic:
-                return nil
+                return valueKPI
                 
             case .random:
-                return histogram.percentile(for: probability)
+                return histogram.average
         }
     }
+    
+    /// Valeur médianne du KPI
+    func median(withMode mode: SimulationModeEnum) -> Double? {
+        switch mode {
+            case .deterministic:
+                return valueKPI
+                
+            case .random:
+                return histogram.median
+        }
+    }
+    
+    /// Valeur min du KPI
+    func min(withMode mode: SimulationModeEnum) -> Double? {
+        switch mode {
+            case .deterministic:
+                return valueKPI
+                
+            case .random:
+                return histogram.min
+        }
+    }
+    
+    /// Valeur max du KPI
+    func max(withMode mode: SimulationModeEnum) -> Double? {
+        switch mode {
+            case .deterministic:
+                return valueKPI
+                
+            case .random:
+                return histogram.max
+        }
+    }
+    
+    // true si l'objectif de valeur est atteint
+    func objectiveIsReached(withMode mode: SimulationModeEnum) -> Bool? {
+        guard let value = self.value(withMode: mode) else {
+            return nil
+        }
+        return value >= objective
+    }
+
 }

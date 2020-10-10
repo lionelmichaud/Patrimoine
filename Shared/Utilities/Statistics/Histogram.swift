@@ -60,7 +60,7 @@ extension BucketsArray {
     /// - Parameter data: échantillon
     mutating func record(_ data: Double) {
         // ranger l'échantillon dans une case
-        if let idx = self.firstIndex(where: { data < $0.Xmax }) {
+        if let idx = self.lastIndex(where: { $0.Xmin <= data }) {
             // incrémente le nombre d'échantillons dans la case
             self[idx].record()
         }
@@ -156,6 +156,15 @@ struct Histogram {
         precondition(isInitialized , "Histogram.counts: histogramme non initialisé")
         return buckets.map { $0.sampleNb }
     } // computed
+    var xCounts: [(x: Double, n: Int)] {
+        precondition(isInitialized , "Histogram.xCounts: histogramme non initialisé")
+        let yCounts = self.counts
+        var values = [(x: Double, n: Int)]()
+        for i in yCounts.indices {
+            values.append((x: xValues[i], n: yCounts[i]))
+        }
+        return values
+    } // computed
     // nombre d'échantillons cumulés de la première case à la case courante
     var cumulatedCounts: [Int] {
         precondition(isInitialized , "Histogram.cumulatedCounts: histogramme non initialisé")
@@ -170,7 +179,6 @@ struct Histogram {
         }
         return result
     } // computed
-    // nombre d'échantillons cumulés de la première case à la case courante
     var xCumulatedCounts : [(x: Double, n: Int)] {
         precondition(isInitialized , "Histogram.xCumulatedCounts: histogramme non initialisé")
         let yCumulatedValues = self.cumulatedCounts
@@ -189,11 +197,10 @@ struct Histogram {
                 normalizer = dataset.count.double()
                 
             case .continuous:
-                normalizer = dataset.count.double() * Xrange / bucketNb.double()
+                normalizer = dataset.count.double() * Xstep
         }
         return buckets.map { $0.sampleNb.double() / normalizer }
     } // computed
-    // densités de probabilité
     var xPDF: [(x: Double, p: Double)] {
         precondition(isInitialized , "Histogram.xPDF: histogramme non initialisé")
         let pdf    = PDF
@@ -215,7 +222,6 @@ struct Histogram {
         }
         return result
     } // computed
-    // densités de probabilité cumulées
     var xCDF: [(x: Double, p: Double)] {
         precondition(isInitialized , "Histogram.xCDF: histogramme non initialisé")
         let cdf = self.CDF
@@ -411,9 +417,9 @@ struct Histogram {
         buckets = buckets.emptyCopy()
     }
     
-    /// Renvoie la valeur X telle que P(X) >= probability
+    /// Renvoie la valeur x telle que P(X<x) >= probability
     /// - Parameter probability: probabilité
-    /// - Returns: X telle que P(X) >= probability
+    /// - Returns: x telle que P(X<x) >= probability
     /// - Warning: probability in [0, 1]
     func percentile(for probability: Double) -> Double? {
         guard !dataset.isEmpty else {

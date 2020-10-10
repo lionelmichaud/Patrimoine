@@ -50,7 +50,8 @@ struct SocialAccounts {
     mutating func build(nbOfYears                 : Int,
                         withFamily family         : Family,
                         withPatrimoine patrimoine : Patrimoin,
-                        withKPIs kpis             : inout KpiArray) {
+                        withKPIs kpis             : inout KpiArray,
+                        withMode simulationMode   : SimulationModeEnum) {
         firstYear = Date.now.year
         lastYear  = firstYear + nbOfYears - 1
 
@@ -80,8 +81,8 @@ struct SocialAccounts {
                 Swift.print("Arrêt de la construction de la table de Comptes sociaux: Actifs financiers = 0")
                 lastYear = year
                 // mémoriser le montant de l'Actif Net
-                kpis[0].record(0)
-                kpis[1].record(0)
+                kpis[SimulationKPIEnum.assetAt1stDeath.id].record(0, withMode: simulationMode)
+                kpis[SimulationKPIEnum.assetAt2ndtDeath.id].record(0, withMode: simulationMode)
                 return // arrêter la construction de la table
             }
             
@@ -97,12 +98,12 @@ struct SocialAccounts {
                 if family.nbOfAdultAlive(atEndOf: year) == 1 {
                     // KPI 1: décès du premier conjoint et mémoriser la valeur du KPI
                     // mémoriser le montant de l'Actif Net
-                    kpis[0].record(newLine.netAssets)
+                    kpis[SimulationKPIEnum.assetAt1stDeath.id].record(newLine.netAssets, withMode: simulationMode)
                     
                 } else {
                     // KPI 2: décès du second conjoint et mémoriser la valeur du KPI
                     // mémoriser le montant de l'Actif Net
-                    kpis[1].record(newLine.netAssets)
+                    kpis[SimulationKPIEnum.assetAt2ndtDeath.id].record(newLine.netAssets, withMode: simulationMode)
 
                 }
             }
@@ -114,7 +115,7 @@ struct SocialAccounts {
             a.totalFinancialAssets < b.totalFinancialAssets
         }
         // KPI 3: mémoriser le minimum d'actif financier net au cours du temps
-        kpis[2].record(minBalanceSheetLine!.totalFinancialAssets)
+        kpis[SimulationKPIEnum.minimumAsset.id].record(minBalanceSheetLine!.totalFinancialAssets, withMode: simulationMode)
     }
     
     // MARK: - Impression écran

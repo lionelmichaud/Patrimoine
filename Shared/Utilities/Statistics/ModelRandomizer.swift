@@ -23,8 +23,8 @@ where R: Codable,
     }
     
     /// Returns a default value or a  random value depending on the value of simulationMode.mode
-    func value() -> Double {
-        switch simulationMode.mode {
+    func value(withMode mode : SimulationModeEnum) -> Double {
+        switch mode {
             case .deterministic:
                 return defaultValue
                 

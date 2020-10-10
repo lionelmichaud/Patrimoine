@@ -237,7 +237,7 @@ extension RealEstateAsset: CustomStringConvertible {
     var description: String {
         let s1 = """
         \(name)
-        buying price: \(buyingPrice.euroString) date: \(buyingDate.stringShortDate) /n
+        buying price: \(buyingPrice.€String) date: \(buyingDate.stringShortDate) /n
         """
         var s2: String = ""
         if willBeInhabited {
@@ -245,7 +245,7 @@ extension RealEstateAsset: CustomStringConvertible {
                 inhabited:
             from:" \(inhabitedFromDate.stringShortDate)
             to:  " \(inhabitedToDate.stringShortDate)
-                    local taxes: \(yearlyLocalTaxes(during: Date.now.year).euroString) \n
+                    local taxes: \(yearlyLocalTaxes(during: Date.now.year).€String) \n
             """
         }
 
@@ -255,15 +255,15 @@ extension RealEstateAsset: CustomStringConvertible {
                 rented:
             from: \(rentalFromDate.stringShortDate)
             to:   \(rentalToDate.stringShortDate)
-                    monthly rental:        \(monthlyRentAfterCharges.euroString)
-                    yearly rental:         \(yearlyRentAfterCharges.euroString)
-                    yearly rental taxable: \(yearlyRentTaxableIrpp.euroString) \n
+                    monthly rental:        \(monthlyRentAfterCharges.€String)
+                    yearly rental:         \(yearlyRentAfterCharges.€String)
+                    yearly rental taxable: \(yearlyRentTaxableIrpp.€String) \n
             """
         }
 
         var s4: String = ""
         if willBeSold {
-            s4 = "    selling price: \(sellingNetPrice.euroString) date: \(sellingDate.stringMediumDate) \n"
+            s4 = "    selling price: \(sellingNetPrice.€String) date: \(sellingDate.stringMediumDate) \n"
         }
 
         return s1 + s2 + s3 + s4

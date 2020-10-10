@@ -210,6 +210,7 @@ class Person : ObservableObject, Identifiable, CustomStringConvertible, Codable 
     func age(atEndOf year: Int) -> Int {
         ageAtEndOfCurrentYear + (year - CalendarCst.thisYear)
     }
+    
     func age(atDate date: Date) -> DateComponents {
         let dateComp = Date.calendar.dateComponents([.year, .month, .day],
                                                     from: date)
@@ -217,6 +218,7 @@ class Person : ObservableObject, Identifiable, CustomStringConvertible, Codable 
                                             from: birthDateComponents,
                                             to: dateComp)
     }
+    
     /// True si la personne est encore vivante à la fin de l'année donnée
     /// - Parameter year: année
     /// - Returns: True si la personne est encore vivante
@@ -224,6 +226,7 @@ class Person : ObservableObject, Identifiable, CustomStringConvertible, Codable 
     func isAlive(atEndOf year : Int) -> Bool {
         year < yearOfDeath
     }
+    
     /// Année ou a lieu l'événement recherché
     /// - Parameter event: événement recherché
     /// - Returns: Année ou a lieu l'événement recherché, nil si l'événement n'existe pas
@@ -235,6 +238,11 @@ class Person : ObservableObject, Identifiable, CustomStringConvertible, Codable 
                 return nil
         }
     }
+    
+    /// Réinitialiser les prioriété aléatoires des membres
+    func resetRandomProperties() {
+    }
+    
     func print() {
         Swift.print("    ", displayName, ":")
         Swift.print("       birthdate:", mediumDateFormatter.string(from: birthDate))
