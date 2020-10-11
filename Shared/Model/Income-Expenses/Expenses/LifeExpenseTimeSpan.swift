@@ -93,6 +93,7 @@ enum LifeExpenseTimeSpan: PickableIdentifiableEnum, Hashable {
                 return year <= to.year
             
             case .spanning (let from, let to):
+                if from.year > to.year { return false }
                 return (from.year...to.year).contains(year)
             
             case .exceptional(let inYear):

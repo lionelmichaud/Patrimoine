@@ -211,7 +211,7 @@ final class Family: ObservableObject, CustomStringConvertible {
 
     }
     
-    /// Réinitialiser les prioriété aléatoires des membres et des dépenses
+    /// Réinitialiser les prioriétés aléatoires des membres et des dépenses
     func resetRandomProperties() {
         // Réinitialiser les prioriété aléatoires des membres
         members.forEach {

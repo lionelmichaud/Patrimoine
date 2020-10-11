@@ -142,9 +142,9 @@ struct DiscreteRandomGenerator: RandomGenerator, Codable {
             fatalError("Valeurs possibles non croisantes dans \(Self.self)")
         }
         // la somme des probabilités d'occurence pour toutes les valeurs = 100%
-        guard distribution.reduce(.zero, { (result, point) in result + point.y }) == 1.0 else {
+        guard distribution.reduce(.zero, { (result, point) in result + point.y }).isApproximatelyEqual(to: 1.0, absoluteTolerance: 0.0001) else {
             customLog.log(level: .fault, "Somme de probabiltés différente de 100% dans \(Self.self, privacy: .public)")
-            fatalError("Somme de probabiltés différente de 100% dans \(Self.self)")
+            fatalError("Somme de probabiltés différente de 100% dans \(Self.self) = \(distribution.reduce(.zero, { (result, point) in result + point.y }))")
         }
         return
     }

@@ -50,21 +50,14 @@ final class Child: Person {
     required init(from decoder: Decoder) throws {
         // Get our container for this subclass' coding keys
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        ageOfUniversity = try container.decode(Int.self, forKey: .age_Of_University)
-        ageOfIndependence = try container.decode(Int.self, forKey: .age_Of_Independence)
+        ageOfUniversity   = try container.decode(Int.self, forKey   : .age_Of_University)
+        ageOfIndependence = try container.decode(Int.self, forKey : .age_Of_Independence)
         
         // Get superDecoder for superclass and call super.init(from:) with it
         //let superDecoder = try container.superDecoder()
         try super.init(from: decoder)
     }
-    
-    override init(sexe: Sexe,
-                  givenName: String, familyName: String,
-                  yearOfBirth: Int, monthOfBirth: Int, dayOfBirth: Int,
-                  ageOfDeath: Int = CalendarCst.forever) {
-        super.init(sexe: sexe, givenName: givenName, familyName: familyName, yearOfBirth: yearOfBirth, monthOfBirth: monthOfBirth, dayOfBirth: dayOfBirth, ageOfDeath: ageOfDeath)
-    }
-    
+        
     override init(sexe: Sexe,
                   givenName: String, familyName: String,
                   birthDate : Date,

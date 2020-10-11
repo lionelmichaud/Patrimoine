@@ -159,30 +159,18 @@ class Person : ObservableObject, Identifiable, CustomStringConvertible, Codable 
         self.name                = try container.decode(PersonNameComponents.self, forKey: .name)
         self.sexe                = try container.decode(Sexe.self, forKey: .sexe)
         self.birthDate           = try container.decode(Date.self, forKey: .birth_Date)
-        self.ageOfDeath          = try container.decode(Int.self, forKey: .age_Of_Death)
         self.birthDateComponents = Date.calendar.dateComponents([.year, .month, .day], from : birthDate)
+        //        self.ageOfDeath          = try container.decode(Int.self, forKey: .age_Of_Death)
+        // initialiser avec la valeur moyenne déterministe
+        switch self.sexe {
+            case .male:
+                self.ageOfDeath = Int(HumanLife.model.menLifeEpectation.value(withMode: .deterministic))
+
+            case .female:
+                self.ageOfDeath = Int(HumanLife.model.womenLifeExpectation.value(withMode: .deterministic))
+        }
     }
-    
-    init(sexe         : Sexe,
-         givenName    : String,
-         familyName   : String,
-         yearOfBirth  : Int,
-         monthOfBirth : Int,
-         dayOfBirth   : Int,
-         ageOfDeath   : Int = CalendarCst.forever) {
-        self.sexe                = sexe
-        self.name                = PersonNameComponents()
-        self.name.namePrefix     = sexe.displayString
-        self.name.givenName      = givenName
-        self.name.familyName     = familyName.localizedUppercase
-        self.birthDateComponents = DateComponents(calendar : Date.calendar,
-                                                  year     : yearOfBirth,
-                                                  month    : monthOfBirth,
-                                                  day      : dayOfBirth)
-        self.birthDate           = birthDateComponents.date!
-        self.ageOfDeath          = ageOfDeath
-    }
-    
+        
     init(sexe: Sexe,
          givenName: String, familyName: String,
          birthDate : Date,
@@ -204,7 +192,7 @@ class Person : ObservableObject, Identifiable, CustomStringConvertible, Codable 
         try container.encode(name, forKey: .name)
         try container.encode(sexe, forKey: .sexe)
         try container.encode(birthDate, forKey: .birth_Date)
-        try container.encode(ageOfDeath, forKey: .age_Of_Death)
+//        try container.encode(ageOfDeath, forKey: .age_Of_Death)
     }
     
     func age(atEndOf year: Int) -> Int {
@@ -239,8 +227,21 @@ class Person : ObservableObject, Identifiable, CustomStringConvertible, Codable 
         }
     }
     
-    /// Réinitialiser les prioriété aléatoires des membres
+    /// Réinitialiser les prioriétés aléatoires des membres
     func resetRandomProperties() {
+        switch self.sexe {
+            case .male:
+                // générer une nouvelle valeure aléatoire
+                HumanLife.model.menLifeEpectation.next()
+                // réinitialiser l'age de décès
+                self.ageOfDeath = Int(HumanLife.model.menLifeEpectation.value(withMode: .random))
+                
+            case .female:
+                // générer une nouvelle valeure aléatoire
+                HumanLife.model.womenLifeExpectation.next()
+                // réinitialiser l'age de décès
+                self.ageOfDeath = Int(HumanLife.model.womenLifeExpectation.value(withMode: .random))
+        }
     }
     
     func print() {

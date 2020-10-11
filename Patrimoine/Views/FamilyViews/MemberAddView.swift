@@ -207,8 +207,7 @@ struct MemberAddView: View {
             .textFieldStyle(RoundedBorderTextFieldStyle())
         }
     }
-    
-    
+
     /// Création du nouveau membre et ajout à la famille
     func addMember() {
         // remettre à zéro la simulation et sa vue

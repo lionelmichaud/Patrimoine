@@ -398,16 +398,6 @@ final class Adult: Person {
         try super.init(from: decoder)
     }
     
-//    override init(sexe         : Sexe,
-//                  givenName    : String,
-//                  familyName   : String,
-//                  yearOfBirth  : Int,
-//                  monthOfBirth : Int,
-//                  dayOfBirth   : Int,
-//                  ageOfDeath   : Int = CalendarCst.forever) {
-//        super.init(sexe: sexe, givenName: givenName, familyName: familyName, yearOfBirth: yearOfBirth, monthOfBirth: monthOfBirth, dayOfBirth: dayOfBirth, ageOfDeath: ageOfDeath)
-//    }
-    
     override init(sexe       : Sexe,
                   givenName  : String,
                   familyName : String,
@@ -713,7 +703,7 @@ final class Adult: Person {
         }
     }
     
-    /// Réinitialiser les prioriété aléatoires des membres
+    /// Réinitialiser les prioriétés aléatoires des membres
     override func resetRandomProperties() {
         super.resetRandomProperties()
         
