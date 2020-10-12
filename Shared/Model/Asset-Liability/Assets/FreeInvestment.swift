@@ -214,6 +214,7 @@ struct FreeInvestement: Identifiable, Codable, NameableValuable {
         let estimationYear = Date.now.year - 1
         if estimationYear == initialState.year {
             currentState = initialState
+            
         } else if estimationYear > initialState.year {
             // revaloriser la valeure par extrapolation à partir de la situation initiale
             let futurVal = futurValue(payement     : 0,
@@ -223,14 +224,14 @@ struct FreeInvestement: Identifiable, Codable, NameableValuable {
             currentState.year       = estimationYear
             currentState.investment = initialState.investment
             currentState.interest   = initialState.interest + (futurVal - initialState.value)
+            
         } else {
             // on ne remonte pas le temps
             customLog.log(level: .fault,
                           "didSet: estimationYear (\(estimationYear, privacy: .public)) < initialState.year")
             fatalError("didSet: estimationYear (\(estimationYear)) < initialState.year (\(initialState.year))")
         }
-        
-        currentState = initialState
+//        currentState = initialState
     }
 
     func print() {

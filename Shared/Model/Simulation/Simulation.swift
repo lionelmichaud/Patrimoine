@@ -8,7 +8,7 @@
 
 import Foundation
 
-// MARK: - Type mode de simulation
+// MARK: - Enum mode de simulation
 
 enum SimulationModeEnum: Int, PickableEnum, Codable, Hashable {
     case deterministic
@@ -30,7 +30,7 @@ enum SimulationModeEnum: Int, PickableEnum, Codable, Hashable {
     }
 }
 
-// MARK: - Type mode de simulation
+// MARK: - Enum de KPI
 
 enum SimulationKPIEnum: Int, PickableEnum, Codable, Hashable {
     case minimumAsset = 0
@@ -62,10 +62,12 @@ final class Simulation: ObservableObject {
     // MARK: - Properties
     
     @Published var mode           : SimulationModeEnum = .deterministic
+    @Published var currentRunNb   : Int = 0
     @Published var socialAccounts = SocialAccounts()
     @Published var kpis           = KpiArray()
     @Published var title          = "Simulation"
     @Published var isComputed     = false
+    @Published var isComputing    = false
     @Published var isSaved        = false
     @Published var firstYear      : Int?
     @Published var lastYear       : Int?
@@ -115,15 +117,14 @@ final class Simulation: ObservableObject {
         socialAccounts.reset(withPatrimoine : patrimoine)
         
         // remettre à zéero l'historique des KPI (Histogramme) au début d'un MontéCarlo seulement
-//        if includingKPIs { kpis = kpis.resetCopy() }
         if includingKPIs {
             KpiArray.reset(theseKPIs: &kpis, withMode: mode)
         }
 
-        firstYear  = nil
-        lastYear   = nil
-        isComputed = false
-        isSaved    = false
+        firstYear    = nil
+        lastYear     = nil
+        isComputed   = false
+        isSaved      = false
     }
     
     /// Exécuter une simulation Déterministe ou Aléatoire
@@ -137,10 +138,15 @@ final class Simulation: ObservableObject {
                  nbOfRuns                  : Int,
                  withFamily family         : Family,
                  withPatrimoine patrimoine : Patrimoin) {
+        isComputing = true
         let monteCarlo = nbOfRuns > 1
         
         // calculer tous les runs
         for run in 1...nbOfRuns {
+            currentRunNb = run
+            print("Run : \(run)")
+            print("Nombre de freeInvest = \(patrimoine.assets.freeInvests.items.count)")
+            
             // Régénérer les propriétés aléatoires à chaque run si on est en mode Aléatoire
             if monteCarlo {
                 // réinitialiser les propriétés aléatoires de la famille
@@ -167,10 +173,11 @@ final class Simulation: ObservableObject {
             }
         }
         //propriétés indépendantes du nombre de run
-        firstYear  = Date.now.year
-        lastYear   = firstYear + nbOfYears - 1
-        isComputed = true
-        isSaved    = false
+        firstYear   = Date.now.year
+        lastYear    = firstYear + nbOfYears - 1
+        isComputed  = true
+        isSaved     = false
+        isComputing = false
     }
     
     /// Sauvegrder les résultats de simulation dans des fchier CSV

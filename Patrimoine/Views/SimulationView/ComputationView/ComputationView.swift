@@ -63,8 +63,15 @@ struct ComputationView: View {
                 // affichage des résultats
                 Section(header: Text("Résultats").font(.headline)) {
                     if simulation.isComputed {
-                        Text("Simulation disponible: de \(simulation.firstYear!) à \(simulation.lastYear!)")
-                            .font(.callout)
+                        HStack {
+                            Text("Simulation disponible: de \(simulation.firstYear!) à \(simulation.lastYear!)")
+                                .font(.callout)
+                            if simulation.mode == .random {
+                                Spacer(minLength: 100)
+                                IntegerView(label   : "Nombre de run exécutés",
+                                            integer : simulation.mode == .deterministic ? 1  : simulation.currentRunNb)
+                            }
+                        }
                         
                     } else {
                         // pas de données à afficher

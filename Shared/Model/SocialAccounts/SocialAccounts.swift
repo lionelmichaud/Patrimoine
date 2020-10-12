@@ -1,5 +1,4 @@
 import Foundation
-//import Cocoa
 
 // MARK: - Comptes sociaux
 
@@ -27,7 +26,7 @@ struct SocialAccounts {
 
     // MARK: - Methods
 
-    /// réinitialiser les comptes sociaux
+    /// Réinitialiser les comptes sociaux
     /// - Parameters:
     ///   - family: la famille dont il faut faire le bilan
     ///   - patrimoine: le patrimoine

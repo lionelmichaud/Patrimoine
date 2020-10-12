@@ -111,7 +111,9 @@ extension CashFlowArray {
         let firstLine = self.first!
         
         // Année et Ages
-        let personsNames = firstLine.ages.persons.map( { "Age " + $0.name } ).joined(separator: "; ")
+        let personsNames = firstLine.ages.persons
+            .map( { "Age " + $0.name } )
+            .joined(separator: "; ")
         heading = "YEAR; \(personsNames);"
         rows = self.map {
             "\($0.year); \($0.ages.persons.map( { String($0.age) } ).joined(separator: "; ")); "
@@ -183,8 +185,6 @@ extension CashFlowArray {
                 """)
         }
     }
-    
-
 }
 
 // MARK: - Ligne de cash flow annuel

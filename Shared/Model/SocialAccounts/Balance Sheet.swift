@@ -112,7 +112,6 @@ extension BalanceSheetArray {
                 """)
         }
     }
-
 }
 
 // MARK: - Ligne de Bilan annuel

@@ -11,11 +11,17 @@ import Foundation
 // MARK: - Table d'Item Generic Valuable and Namable
 
 struct ItemArray<E>: Codable where E: Codable, E: Identifiable, E: NameableValuable  {
-    var items = [E]()
+
+    // MARK: - Properties
+    
+    var items          = [E]()
     var fileNamePrefix : String
     var currentValue   : Double {
         items.sum(atEndOf: Date.now.year)
-    }
+    } // computed
+    
+    // MARK: - Subscript
+    
     subscript(idx: Int) -> E {
         get {
             return  items[idx]
@@ -25,12 +31,16 @@ struct ItemArray<E>: Codable where E: Codable, E: Identifiable, E: NameableValua
         }
     }
     
+    // MARK: - Initializers
+    
     init(fileNamePrefix: String = "") {
         self = Bundle.main.decode(ItemArray.self,
                                   from                 : fileNamePrefix + String(describing: E.self) + ".json",
                                   dateDecodingStrategy : .iso8601,
                                   keyDecodingStrategy  : .useDefaultKeys)
     }
+    
+    // MARK: - Methods
     
     func storeItemsToFile(fileNamePrefix: String = "") {
         // encode to JSON file
@@ -84,4 +94,3 @@ struct ItemArray<E>: Codable where E: Codable, E: Identifiable, E: NameableValua
         }
     }
 }
-

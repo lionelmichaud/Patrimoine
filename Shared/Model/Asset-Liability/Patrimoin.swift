@@ -25,6 +25,7 @@ final class Patrimoin: ObservableObject {
             investements.append(invest)
         }
         assets.freeInvests.items = investements
+        print("Nombre de freeInvest = \(assets.freeInvests.items.count)")
     }
     
     /// Capitaliser les intérêts des investissements financiers libres
@@ -38,6 +39,7 @@ final class Patrimoin: ObservableObject {
             investements.append(invest)
         }
         assets.freeInvests.items = investements
+        print("Nombre de freeInvest = \(assets.freeInvests.items.count)")
     }
     
     fileprivate func investNetCashFlow(amount      : inout Double,
@@ -63,6 +65,7 @@ final class Patrimoin: ObservableObject {
             }
         }
         assets.freeInvests.items = investements
+        print("Nombre de freeInvest = \(assets.freeInvests.items.count)")
     }
     
     /// Ajouter la capacité d'épargne à l'investissement libre de type Assurance vie de meilleur rendement
@@ -120,7 +123,9 @@ final class Patrimoin: ObservableObject {
             investements.append(invest)
         }
         assets.freeInvests.items = investements
-        
+        print("Nombre de freeInvest = \(assets.freeInvests.items.count)")
+
+        investements = [FreeInvestement]()
         if amountRemainingToRemove > 0.0 {
             // si le solde des PEA n'était pas suffisant alors retirer de l'Assurances vie procurant le moins bon rendement
             assets.freeInvests.items.sorted(by: {$0.interestRate < $1.interestRate}).forEach {
@@ -149,6 +154,7 @@ final class Patrimoin: ObservableObject {
                 investements.append(invest)
             }
             assets.freeInvests.items = investements
+            print("Nombre de freeInvest = \(assets.freeInvests.items.count)")
         }
         
         // TODO: - Si pas assez alors prendre sur la trésorerie
