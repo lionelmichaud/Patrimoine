@@ -70,6 +70,10 @@ struct RegimeGeneral: Codable {
         SocioEconomy.model.pensionDevaluationRate.value(withMode: simulationMode)
     }
     
+    static var nbTrimAdditional: Double { // %
+        SocioEconomy.model.nbTrimTauxPlein.value(withMode: simulationMode)
+    }
+    
     static var yearlyRevaluationRate: Double { // %
         // on ne tient pas compte de l'inflation car les dépenses ne sont pas inflatées
         // donc les revenus non plus s'ils sont supposés progresser comme l'inflation
@@ -297,7 +301,7 @@ struct RegimeGeneral: Codable {
             customLog.log(level: .default, "dureeDeReference slice = nil")
             return nil
         }
-        return slice.ndTrimestre
+        return slice.ndTrimestre + Int(RegimeGeneral.nbTrimAdditional)
     }
     
     /// Calcul le nb de trimestre manquantà la date prévisionnelle de demande de liquidation de la pension de retraite pour obtenir le taux plein
