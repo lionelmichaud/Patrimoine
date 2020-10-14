@@ -11,11 +11,21 @@ import Foundation
 typealias ScpiArray = ItemArray<SCPI>
 
 // MARK: - SCPI à revenus périodiques, annuels et fixes
+
 struct SCPI: Identifiable, Codable, NameableValuable {
     
-    static var saleCommission: Double = 10.0 // %
+    // MARK: - Static Properties
     
-    // properties
+    static var saleCommission : Double = 10.0 // %
+    static var simulationMode : SimulationModeEnum = .deterministic
+    
+    // MARK: - Static Methods
+    
+    static var inflation: Double { // %
+        Economy.model.inflation.value(withMode: simulationMode)
+    }
+    
+    // MARK: - Properties
     
     var id           = UUID()
     var name         : String
@@ -30,18 +40,16 @@ struct SCPI: Identifiable, Codable, NameableValuable {
     var willBeSold   : Bool = false
     var sellingDate  : Date = 100.years.fromNow!
 
-    // initialization
-    
-    // methods
-    
+    // MARK: - Methods
+
     /// Valeur capitalisée à la date spécifiée
     /// - Parameter year: fin de l'année
     func value (atEndOf year: Int) -> Double {
         if isOwned(before: year) {
-            return futurValue(payement: 0,
-                              interestRate: revaluatRate/100,
-                              nbPeriod: year - buyingDate.year,
-                              initialValue: buyingPrice) * (1.0 - SCPI.saleCommission / 100.0)
+            return futurValue(payement     : 0,
+                              interestRate : (revaluatRate - SCPI.inflation) / 100.0,
+                              nbPeriod     : year - buyingDate.year,
+                              initialValue : buyingPrice) * (1.0 - SCPI.saleCommission / 100.0)
         } else {
             return 0.0
         }
@@ -55,7 +63,7 @@ struct SCPI: Identifiable, Codable, NameableValuable {
     -> (revenue    : Double,
         taxableIrpp: Double,
         socialTaxes: Double) {
-        let revenue     = (isOwned(before: year) ? buyingPrice * interestRate / 100.0 : 0.0)
+        let revenue     = (isOwned(before: year) ? buyingPrice * (interestRate - SCPI.inflation) / 100.0 : 0.0)
         let taxableIrpp = Fiscal.model.socialTaxesOnFinancialRevenu.net(revenue)
         return (revenue    : revenue,
                 taxableIrpp: taxableIrpp,
@@ -120,7 +128,7 @@ struct SCPI: Identifiable, Codable, NameableValuable {
     func print() {
         Swift.print("    ", name)
         Swift.print("       buying price: ", buyingPrice, "euro - date: ", buyingDate.stringShortDate)
-        Swift.print("       interest Rate:     ", interestRate, "%  revaluation rate: ", revaluatRate, "%")
+        Swift.print("       interest Rate:     ", interestRate - SCPI.inflation, "%  revaluation rate: ", revaluatRate - SCPI.inflation, "%")
         if willBeSold {
             Swift.print("       selling price: \(value(atEndOf: sellingDate.year)) euro - date: \(sellingDate.stringShortDate)")
         }

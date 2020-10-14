@@ -90,11 +90,6 @@ final class Simulation: ObservableObject {
                                        objective: 200_000.0,
                                        withProbability: 0.98)
         kpis.append(kpiAssetsAtLastDeath)
-        
-        // TODO: - à retirer
-        // kpis[0].record(400000)
-        // kpis[1].record(250000)
-        // kpis[2].record(300000)
     }
     
     // MARK: - Methods
@@ -144,13 +139,15 @@ final class Simulation: ObservableObject {
         // calculer tous les runs
         for run in 1...nbOfRuns {
             currentRunNb = run
-            print("Run : \(run)")
-            print("Nombre de freeInvest = \(patrimoine.assets.freeInvests.items.count)")
             
             // Régénérer les propriétés aléatoires à chaque run si on est en mode Aléatoire
             if monteCarlo {
                 // réinitialiser les propriétés aléatoires de la famille
                 family.resetRandomProperties()
+                // réinitialiser les propriétés aléatoires du modèle macro économique
+                Economy.model.next()
+                // réinitialiser les propriétés aléatoires du modèle socio économique
+                SocioEconomy.model.next()
             }
 
             // Réinitialiser la simulation

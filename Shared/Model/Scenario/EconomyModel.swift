@@ -18,18 +18,25 @@ struct Economy {
         var inflation    : ModelRandomizer<BetaRandomGenerator>
         var longTermRate : ModelRandomizer<BetaRandomGenerator>
         var stockRate    : ModelRandomizer<BetaRandomGenerator>
+        
+        init() {
+            self = Bundle.main.decode(Model.self,
+                                      from                 : "EconomyModelConfig.json",
+                                      dateDecodingStrategy : .iso8601,
+                                      keyDecodingStrategy  : .useDefaultKeys)
+            inflation.distribution.initialize()
+            longTermRate.distribution.initialize()
+            stockRate.distribution.initialize()
+        }
 
         mutating func next() {
             inflation.next()
             longTermRate.next()
+            stockRate.next()
         }
     }
     
     // MARK: - Static Properties
-
-    static var model: Model  =
-        Bundle.main.decode(Model.self,
-                           from                 : "EconomyModelConfig.json",
-                           dateDecodingStrategy : .iso8601,
-                           keyDecodingStrategy  : .useDefaultKeys)
+    
+    static var model: Model = Model()
 }

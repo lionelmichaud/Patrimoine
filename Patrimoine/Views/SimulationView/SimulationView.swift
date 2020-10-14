@@ -33,7 +33,7 @@ struct SimulationView: View {
                     .isDetailLink(true)
                     
                     // affichage des graphiques
-                    NavigationLink(destination: ChartsView(),
+                    NavigationLink(destination : ChartsView(),
                                    tag         : .charts,
                                    selection   : $uiState.simulationViewState.selectedItem) {
                         Text("Graphiques")

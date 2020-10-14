@@ -40,23 +40,26 @@ struct ComputationView: View {
                                onEditingChanged: {_ in
                                })
                     }
-                // choix du mode de simulation: cas spécifiques
+                    // choix du mode de simulation: cas spécifiques
                     // sélecteur: Déterministe / Aléatoire
                     CasePicker(pickedCase: $simulation.mode, label: "")
-                        //.padding()
                         .pickerStyle(SegmentedPickerStyle())
+                        .onChange(of: simulation.mode) { newMode in
+                            Patrimoin.setSimulationMode(to: newMode)
+                            Pension.setSimulationMode(to: newMode)
+                        }
                     switch simulation.mode {
                         case .deterministic:
                             EmptyView()
                             
                         case .random:
                             HStack {
-                            Text("Nombre de run: ") + Text(String(Int(uiState.computationState.nbRuns)))
-                            Slider(value : $uiState.computationState.nbRuns,
-                                   in    : 100 ... 1000,
-                                   step  : 100,
-                                   onEditingChanged: {_ in
-                                   })
+                                Text("Nombre de run: ") + Text(String(Int(uiState.computationState.nbRuns)))
+                                Slider(value : $uiState.computationState.nbRuns,
+                                       in    : 100 ... 1000,
+                                       step  : 100,
+                                       onEditingChanged: {_ in
+                                       })
                             }
                     }
                 }

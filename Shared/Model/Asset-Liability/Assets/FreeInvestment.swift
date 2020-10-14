@@ -28,8 +28,18 @@ struct FreeInvestement: Identifiable, Codable, NameableValuable {
         var value      : Double { interest + investment } // valeur totale
     }
     
-    // properties
+    // MARK: - Static Properties
     
+    static var simulationMode : SimulationModeEnum = .deterministic
+    
+    // MARK: - Static Methods
+    
+    static var inflation: Double { // %
+        Economy.model.inflation.value(withMode: simulationMode)
+    }
+    
+    // MARK: - Properties
+
     var id                   = UUID()
     var name                 : String
     var note                 : String
@@ -39,10 +49,12 @@ struct FreeInvestement: Identifiable, Codable, NameableValuable {
         switch type {
             case .lifeInsurance(let periodicSocialTaxes):
                 // si assurance vie: le taux net est le taux brut - charges sociales si celles-ci sont prélèvées à la source anuellement
-                return (periodicSocialTaxes ? Fiscal.model.socialTaxesOnFinancialRevenu.net(interestRate) : interestRate)
+                return (periodicSocialTaxes ?
+                            Fiscal.model.socialTaxesOnFinancialRevenu.net(interestRate - PeriodicInvestement.inflation) :
+                            interestRate - PeriodicInvestement.inflation)
             default:
                 // dans tous les autres cas: pas de charges sociales prélevées à la source anuellement (capitalisation et taxation à la sortie)
-                return interestRate
+                return interestRate - PeriodicInvestement.inflation
         }
     }
     var initialState         : State {// dernière constitution du capital connue
@@ -56,8 +68,8 @@ struct FreeInvestement: Identifiable, Codable, NameableValuable {
         currentState.value * interestRateNet / 100.0
     }
     
-    // initialization
-    
+    // MARK: - Initialization
+
     init(year            : Int,
          name            : String,
          note            : String,
@@ -75,8 +87,8 @@ struct FreeInvestement: Identifiable, Codable, NameableValuable {
         self.currentState = self.initialState
     }
     
-    // methods
-    
+    // MARK: - Methods
+
     /// Fractionnement d'un retrait entre: versements cumulés et intérêts cumulés
     /// - Parameter amount: montant du retrait
     func split(removal amount: Double) -> (investement: Double, interest: Double) {
@@ -237,7 +249,7 @@ struct FreeInvestement: Identifiable, Codable, NameableValuable {
     func print() {
         Swift.print("    ", name)
         Swift.print("       type", type)
-        Swift.print("       interest Rate: ", interestRate, "%")
+        Swift.print("       interest Rate: ", interestRate - PeriodicInvestement.inflation, "%")
         Swift.print("       year:     ", currentState.year, "value: ", currentState.value)
         Swift.print("       investement: ", currentState.investment, "interest: ", currentState.interest)
     }
@@ -258,7 +270,7 @@ extension FreeInvestement: CustomStringConvertible {
           valeur:        \(value(atEndOf: Date.now.year).€String)
           initial state: (year: \(initialState.year), interest: \(initialState.interest.€String), invest: \(initialState.investment.€String), Value: \(initialState.value.€String))
           current state: (year: \(currentState.year), interest: \(currentState.interest.€String), invest: \(currentState.investment.€String), Value: \(currentState.value.€String))
-          interest Rate: \(interestRate) %
+          interest Rate: \(interestRate - PeriodicInvestement.inflation) %
           yearly interest: \(yearlyInterest.€String)
 
         """

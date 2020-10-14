@@ -44,7 +44,43 @@ struct RegimeAgirc: Codable {
         let gridApres62   : [SliceApresAgeLegal]
         let valeurDuPoint : Double // 1.2714
         let ageMinimum    : Int    // 57
-        let devalAnnuelle : Double // -1.0% en dessous de l'inflation annuelle
+    }
+    
+    // MARK: - Static Properties
+    
+    static var simulationMode : SimulationModeEnum = .deterministic
+    
+    // MARK: - Static Methods
+    
+    static var inflation: Double { // %
+        Economy.model.inflation.value(withMode: simulationMode)
+    }
+    
+    static var devaluationRate: Double { // %
+        SocioEconomy.model.pensionDevaluationRate.value(withMode: simulationMode)
+    }
+    
+    static var yearlyRevaluationRate: Double { // %
+        // on ne tient pas compte de l'inflation car les dépenses ne sont pas inflatées
+        // donc les revenus non plus s'ils sont supposés progresser comme l'inflation
+        // on ne tient donc compte que du delta par rapport à l'inflation
+        -devaluationRate
+    }
+    
+    /// Coefficient de réévaluation de la pension en prenant comme base 1.0
+    ///  la valeur à la date de liquidation de la pension.
+    /// - Parameters:
+    ///   - year: année de calcul du coefficient
+    ///   - dateOfPensionLiquid: date de liquidation de la pension
+    /// - Returns: Coefficient multiplicateur
+    /// - Note: Coefficient = coef de dévaluation par rapport à l'inflation
+    ///
+    ///   On ne tient pas compte de l'inflation car les dépenses ne sont pas inflatées
+    ///   donc les revenus non plus s'ils sont supposés progresser comme l'inflation
+    ///   on ne tient donc compte que du delta par rapport à l'inflation
+    static func revaluationCoef(during year         : Int,
+                                dateOfPensionLiquid : Date) -> Double { // %
+        pow(1.0 + yearlyRevaluationRate/100.0, Double(year - dateOfPensionLiquid.year))
     }
     
     // MARK: - Properties
@@ -282,11 +318,15 @@ struct RegimeAgirc: Codable {
         // customLog.log(level: .info, "pension Nette = \(pensionNette, privacy: .public)")
         
         if let yearEval = year {
-            if yearEval < dateOfRetirement.year {
-                customLog.log(level: .error, "pension / yearEval < dateOfRetirement")
+            if yearEval < dateOfPensionLiquid.year {
+                customLog.log(level: .error, "pension / yearEval < dateOfPensionLiquid")
             }
-            pensionBrute *= pow((1.0 + model.devalAnnuelle/100.0), (yearEval - dateOfRetirement.year).double())
-            pensionNette *= pow((1.0 + model.devalAnnuelle/100.0), (yearEval - dateOfRetirement.year).double())
+            // révaluer le montant de la pension à la date demandée
+            let coefReavluation = RegimeAgirc.revaluationCoef(during              : yearEval,
+                                                              dateOfPensionLiquid : dateOfPensionLiquid)
+            
+            pensionBrute *= coefReavluation
+            pensionNette *= coefReavluation
         }
 
         return (coefMinoration      : coefMinoration,

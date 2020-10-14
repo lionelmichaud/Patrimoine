@@ -13,8 +13,21 @@ typealias RealEstateArray = ItemArray<RealEstateAsset>
 // MARK: - Actif immobilier physique
 struct RealEstateAsset: Identifiable, Codable, NameableValuable {
     
-    // properties
+    // MARK: - Static Properties
     
+    static var simulationMode : SimulationModeEnum = .deterministic
+    
+    // MARK: - Static Methods
+    
+    // pas utilisé
+    // on suppose que les loyers des biens immobiliers physiques sont réévalués de l'inflation
+    // on suppose que les valeurs de vente des biens immobiliers physiques et papier sont réévalués de l'inflation
+    static var inflation: Double { // %
+        Economy.model.inflation.value(withMode: simulationMode)
+    }
+    
+    // MARK: - Properties
+
     var id                   = UUID()
     var name                 : String
     var note                 : String

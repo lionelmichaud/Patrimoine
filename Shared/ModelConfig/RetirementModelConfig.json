@@ -9,7 +9,6 @@
             "decoteParTrimestre"   : 0.625,
             "surcoteParTrimestre"  : 1.25,
             "maxNbTrimestreDecote" : 20,
-            "devalAnnuelle"        : -1.0,
             "dureeDeReferenceGrid" : [
                 {
                     "birthYear"    : 1953,
@@ -258,8 +257,7 @@
                 }
             ],
             "valeurDuPoint" : 1.2714,
-            "ageMinimum"    : 57,
-            "devalAnnuelle" : -1.0
+            "ageMinimum"    : 57
         }
     },
     

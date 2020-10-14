@@ -19,6 +19,16 @@ struct SocioEconomy {
         var nbTrimTauxPlein            : ModelRandomizer<DiscreteRandomGenerator>
         var expensesUnderEvaluationrate: ModelRandomizer<BetaRandomGenerator>
 
+        init() {
+            self = Bundle.main.decode(Model.self,
+                                      from                 : "SocioEconomyModelConfig.json",
+                                      dateDecodingStrategy : .iso8601,
+                                      keyDecodingStrategy  : .useDefaultKeys)
+            pensionDevaluationRate.distribution.initialize()
+            nbTrimTauxPlein.distribution.initialize()
+            expensesUnderEvaluationrate.distribution.initialize()
+        }
+        
         mutating func next() {
             pensionDevaluationRate.next()
             nbTrimTauxPlein.next()
@@ -28,9 +38,5 @@ struct SocioEconomy {
     
     // MARK: - Static Properties
     
-    static var model: Model  =
-        Bundle.main.decode(Model.self,
-                           from                 : "SocioEconomyModelConfig.json",
-                           dateDecodingStrategy : .iso8601,
-                           keyDecodingStrategy  : .useDefaultKeys)
+    static var model: Model = Model()
 }

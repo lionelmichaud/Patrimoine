@@ -8,15 +8,28 @@
 
 import Foundation
 
+// MARK: - Patrimoine constitué d'un Actif et d'un Passif
+
 final class Patrimoin: ObservableObject {
     @Published var assets      = Assets()
     @Published var liabilities = Liabilities()
     
+    // MARK: - Static Methods
+    
+    /// Définir le mode de simulation à utiliser pour tous les calculs futurs
+    /// - Parameter simulationMode: mode de simulation à utiliser
+    static func setSimulationMode(to simulationMode : SimulationModeEnum) {
+        Assets.setSimulationMode(to: simulationMode)
+    }
+    
+    // MARK: - Methods
+
     func value(atEndOf year: Int) -> Double {
         assets.value(atEndOf: year) +
             liabilities.value(atEndOf: year)
     }
     
+    /// Réinitialiser les valeurs courantes des investissements libres
     func resetFreeInvestementCurrentValue() {
         var investements = [FreeInvestement]()
         assets.freeInvests.items.forEach {
@@ -25,7 +38,6 @@ final class Patrimoin: ObservableObject {
             investements.append(invest)
         }
         assets.freeInvests.items = investements
-        print("Nombre de freeInvest = \(assets.freeInvests.items.count)")
     }
     
     /// Capitaliser les intérêts des investissements financiers libres
@@ -39,9 +51,12 @@ final class Patrimoin: ObservableObject {
             investements.append(invest)
         }
         assets.freeInvests.items = investements
-        print("Nombre de freeInvest = \(assets.freeInvests.items.count)")
     }
     
+    /// Placer le net cash flow en fin d'année
+    /// - Parameters:
+    ///   - amount: montant à placer
+    ///   - category: dans cette catégories d'actif
     fileprivate func investNetCashFlow(amount      : inout Double,
                                        in category : InvestementType) {
         guard amount != 0 else {
@@ -65,7 +80,6 @@ final class Patrimoin: ObservableObject {
             }
         }
         assets.freeInvests.items = investements
-        print("Nombre de freeInvest = \(assets.freeInvests.items.count)")
     }
     
     /// Ajouter la capacité d'épargne à l'investissement libre de type Assurance vie de meilleur rendement
@@ -123,7 +137,6 @@ final class Patrimoin: ObservableObject {
             investements.append(invest)
         }
         assets.freeInvests.items = investements
-        print("Nombre de freeInvest = \(assets.freeInvests.items.count)")
 
         investements = [FreeInvestement]()
         if amountRemainingToRemove > 0.0 {
@@ -154,7 +167,6 @@ final class Patrimoin: ObservableObject {
                 investements.append(invest)
             }
             assets.freeInvests.items = investements
-            print("Nombre de freeInvest = \(assets.freeInvests.items.count)")
         }
         
         // TODO: - Si pas assez alors prendre sur la trésorerie

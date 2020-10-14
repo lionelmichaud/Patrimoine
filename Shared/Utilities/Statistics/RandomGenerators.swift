@@ -113,7 +113,6 @@ struct UniformRandomGenerator: RandomGenerator, Codable {
     }
 }
 
-
 // MARK: - Générateur aléatoire selon une Loie de distribution DISCRETE
 
 /// Générateur aléatoire selon une Loie de distribution DISCRETE

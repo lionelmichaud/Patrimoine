@@ -320,7 +320,7 @@ final class Adult: Person {
         }
     } // computed
     
-    /// RETRAITE: pension
+    /// RETRAITE: pension évalée l'année de la liquidation de la pension (non révaluée)
     var pension: (brut: Double, net: Double, taxable: Double) { // computed
         let pensionGeneral = pensionRegimeGeneral
         let pensionAgirc   = pensionRegimeAgirc

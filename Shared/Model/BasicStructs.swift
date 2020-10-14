@@ -146,7 +146,6 @@ extension ItemSelectionList {
     /// - Returns: nom de la première catégorie sélectionnée dans la liste du menu
     func firstCategorySelected () -> String? {
         if let foundSelection = self.first(where: { $0.selected }) {
-            print("catégorie= \(foundSelection.label)")
             return foundSelection.label
         } else {
             customLog.log(level: .error, "firstCategorySelected/foundSelection = false : catégorie non trouvée dans le menu")

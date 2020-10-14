@@ -54,7 +54,43 @@ struct RegimeGeneral: Codable {
         let decoteParTrimestre   : Double // 0.625 // % par trimestre
         let surcoteParTrimestre  : Double // 1.25  // % par trimestre
         let maxNbTrimestreDecote : Int    // 20 // plafond
-        let devalAnnuelle        : Double // -1.0% en dessous de l'inflation annuelle
+    }
+    
+    // MARK: - Static Properties
+    
+    static var simulationMode : SimulationModeEnum = .deterministic
+    
+    // MARK: - Static Methods
+    
+    static var inflation: Double { // %
+        Economy.model.inflation.value(withMode: simulationMode)
+    }
+    
+    static var devaluationRate: Double { // %
+        SocioEconomy.model.pensionDevaluationRate.value(withMode: simulationMode)
+    }
+    
+    static var yearlyRevaluationRate: Double { // %
+        // on ne tient pas compte de l'inflation car les dépenses ne sont pas inflatées
+        // donc les revenus non plus s'ils sont supposés progresser comme l'inflation
+        // on ne tient donc compte que du delta par rapport à l'inflation
+         -devaluationRate
+    }
+    
+    /// Coefficient de réévaluation de la pension en prenant comme base 1.0
+    ///  la valeur à la date de liquidation de la pension.
+    /// - Parameters:
+    ///   - year: année de calcul du coefficient
+    ///   - dateOfPensionLiquid: date de liquidation de la pension
+    /// - Returns: Coefficient multiplicateur
+    /// - Note: Coefficient = coef de dévaluation par rapport à l'inflation
+    ///
+    ///   On ne tient pas compte de l'inflation car les dépenses ne sont pas inflatées
+    ///   donc les revenus non plus s'ils sont supposés progresser comme l'inflation
+    ///   on ne tient donc compte que du delta par rapport à l'inflation
+    static func revaluationCoef(during year         : Int,
+                                dateOfPensionLiquid : Date) -> Double { // %
+        pow(1.0 + yearlyRevaluationRate/100.0, Double(year - dateOfPensionLiquid.year))
     }
     
     // MARK: - Properties
@@ -371,6 +407,7 @@ struct RegimeGeneral: Codable {
     ///   - dateOfPensionLiquid: date de demande de liquidation de la pension
     ///   - lastKnownSituation: dernière situation connue pour le régime général
     ///   - nbEnfant: nb d'enfant aus sens de la retraite (pour les majorations)
+    ///   - year: année de calcul
     /// - Returns: Les données relatives à la pension de retraite ou nil
     func pension(birthDate                : Date,
                  dateOfRetirement         : Date,
@@ -401,11 +438,19 @@ struct RegimeGeneral: Codable {
         
         let majorationEnfant = self.majorationEnfant(nbEnfant: nbEnfant)
         
-        let pensionBrute = pension(sam              : lastKnownSituation.sam,
+        var pensionBrute = pension(sam              : lastKnownSituation.sam,
                                    tauxDePension    : tauxDePension,
                                    majorationEnfant : majorationEnfant,
                                    dureeAssurance   : dureeAssurance,
                                    dureeDeReference : dureeDeReference)
+        if let yearEval = year {
+            if yearEval < dateOfPensionLiquid.year {
+                customLog.log(level: .error, "pension / yearEval < dateOfPensionLiquid")
+            }
+            // révaluer le montant de la pension à la date demandée
+            pensionBrute = pensionBrute * RegimeGeneral.revaluationCoef(during              : yearEval,
+                                                                        dateOfPensionLiquid : dateOfPensionLiquid)
+        }
         
         let pensionNette = Fiscal.model.pensionTaxes.net(pensionBrute)
         
@@ -470,11 +515,15 @@ struct RegimeGeneral: Codable {
         // customLog.log(level: .info, "pension Nette = \(pensionNette, privacy: .public)")
 
         if let yearEval = year {
-            if yearEval < dateOfRetirement.year {
-                customLog.log(level: .error, "pension / yearEval < dateOfRetirement")
+            if yearEval < dateOfPensionLiquid.year {
+                customLog.log(level: .error, "pension / yearEval < dateOfPensionLiquid")
             }
-            pensionBrute *= pow((1.0 + model.devalAnnuelle/100.0), (yearEval - dateOfRetirement.year).double())
-            pensionNette *= pow((1.0 + model.devalAnnuelle/100.0), (yearEval - dateOfRetirement.year).double())
+            // révaluer le montant de la pension à la date demandée
+            let coefReavluation = RegimeGeneral.revaluationCoef(during              : yearEval,
+                                                                dateOfPensionLiquid : dateOfPensionLiquid)
+
+            pensionBrute *= coefReavluation
+            pensionNette *= coefReavluation
         }
         
         return (tauxDePension    : tauxDePension,

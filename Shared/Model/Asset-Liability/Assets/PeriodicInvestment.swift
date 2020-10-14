@@ -28,6 +28,16 @@ typealias PeriodicInvestementArray = ItemArray<PeriodicInvestement>
 /// Tous les intérêts sont capitalisés
 struct PeriodicInvestement: Identifiable, Codable, NameableValuable {
     
+    // MARK: - Static Properties
+    
+    static var simulationMode : SimulationModeEnum = .deterministic
+    
+    // MARK: - Static Methods
+    
+    static var inflation: Double { // %
+        Economy.model.inflation.value(withMode: simulationMode)
+    }
+    
     // MARK: - Properties
     
     var id              = UUID()
@@ -46,10 +56,12 @@ struct PeriodicInvestement: Identifiable, Codable, NameableValuable {
         switch type {
             case .lifeInsurance(let periodicSocialTaxes):
                 // si assurance vie: le taux net est le taux brut - charges sociales si celles-ci sont prélèvées à la source anuellement
-                return (periodicSocialTaxes ? Fiscal.model.socialTaxesOnFinancialRevenu.net(interestRate) : interestRate)
+                return (periodicSocialTaxes ?
+                            Fiscal.model.socialTaxesOnFinancialRevenu.net(interestRate - PeriodicInvestement.inflation) :
+                            interestRate - PeriodicInvestement.inflation)
             default:
                 // dans tous les autres cas: pas de charges sociales prélevées à la source anuellement (capitalisation et taxation à la sortie)
-                return interestRate
+                return interestRate - PeriodicInvestement.inflation
         }
     }
     // liquidation
@@ -155,7 +167,7 @@ struct PeriodicInvestement: Identifiable, Codable, NameableValuable {
         Swift.print("       type", type)
         Swift.print("       first year:        ", firstYear, "last year: ", lastYear)
         Swift.print("       initial Value:     ", initialValue, "initial Interests: ", initialInterest)
-        Swift.print("       yearly Payement:   ", yearlyPayement.rounded(), "interest Rate Brut: ", interestRate, "%", "interest Rate Net: ", interestRateNet, "%")
+        Swift.print("       yearly Payement:   ", yearlyPayement.rounded(), "interest Rate Brut: ", interestRate - PeriodicInvestement.inflation, "%", "interest Rate Net: ", interestRateNet, "%")
         Swift.print("       liquidation value: ", value(atEndOf: lastYear).rounded(), "cumulated interests: ", cumulatedInterests(atEndOf: lastYear).rounded())
     }
 }
@@ -178,7 +190,7 @@ extension PeriodicInvestement: CustomStringConvertible {
         initial Value:     \(initialValue.€String) initial Interests: \(initialInterest.€String)
         yearly Payement:   \(yearlyPayement.€String)
         liquidation value: \(value(atEndOf: lastYear).€String) cumulated interests: \(cumulatedInterests(atEndOf: lastYear).€String)
-        interest Rate Brut:\(interestRate) % interest Rate Net:\(interestRateNet) %
+        interest Rate Brut:\(interestRate - PeriodicInvestement.inflation) % interest Rate Net:\(interestRateNet) %
         
         """
     }
