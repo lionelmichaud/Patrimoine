@@ -54,7 +54,7 @@ struct FreeInvestement: Identifiable, Codable, NameableValuable {
     var id                   = UUID()
     var name                 : String
     var note                 : String
-    let type                 : InvestementType // type de l'investissement
+    var type                 : InvestementType // type de l'investissement
     var interestRateType     : InterestRateType // type de taux de rendement
     var interestRate         : Double {// % avant charges sociales si prélevées à la source annuellement
         switch interestRateType {

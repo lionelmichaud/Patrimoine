@@ -18,38 +18,44 @@ struct FreeInvestDetailedView: View {
     @Environment(\.presentationMode) var presentationMode
     @State private var index: Int?
     // à adapter
-    @State private var initialName      : String = ""
-    @State private var initialNote      : String = ""
-    @State private var investType       : InvestementType  = .other
-    @State private var initialRateType  : InterestRateType = .contractualRate(fixedRate: 0.0)
-    @State private var initialYear      : Int    = Date.now.year
-    @State private var initialInterest  : Double = 0.0
-    @State private var initialValue     : Double = 0.0
+    @State private var totalValue : Double = 0.0
+    @State private var localItem = FreeInvestement(year             : Date.now.year - 1,
+                                                   name             : "",
+                                                   note             : "",
+                                                   type             : .other,
+                                                   interestRateType : .contractualRate(fixedRate: 0.0),
+                                                   initialValue     : 0,
+                                                   initialInterest  : 0)
 
     var body: some View {
         Form {
-            LabeledTextField(label: "Nom", defaultText: "obligatoire", text: $initialName)
-            LabeledTextEditor(label: "Note", text: $initialNote)
+            LabeledTextField(label: "Nom", defaultText: "obligatoire", text: $localItem.name)
+            LabeledTextEditor(label: "Note", text: $localItem.note)
             // acquisition
             Section(header: Text("TYPE")) {
-                TypeInvestEditView(investType: $investType)
+                TypeInvestEditView(investType: $localItem.type)
             }
             Section(header: Text("INITIALISATION")) {
-                YearPicker(title: "Année d'actualisation",
-                           inRange: Date.now.year - 20...Date.now.year + 100,
-                           selection: $initialYear)
-                AmountEditView(label: "Valeure actualisée",
-                               amount: $initialValue)
+                YearPicker(title    : "Année d'actualisation",
+                           inRange  : Date.now.year - 20...Date.now.year + 100,
+                           selection: $localItem.initialState.year)
+                AmountEditView(label : "Valeure actualisée",
+                               amount: $totalValue)
+                    .onChange(of: totalValue) { newValue in
+                        localItem.initialState.investment = newValue - localItem.initialState.interest
+                    }
                 AmountEditView(label: "dont Plus-values",
-                               amount: $initialInterest)
+                               amount: $localItem.initialState.interest)
+                    .onChange(of: localItem.initialState.interest) { newValue in
+                        localItem.initialState.investment = totalValue - newValue
+                    }
             }
             Section(header: Text("RENTABILITE")) {
-                InterestRateTypeEditView(rateType: $initialRateType)
+                InterestRateTypeEditView(rateType: $localItem.interestRateType)
+                PercentView(label: "Rendement net d'inflation",
+                            percent: localItem.interestRateNet/100.0)
+                    .foregroundColor(.secondary)
             }
-//            Section(header: Text("RENTABILITE")) {
-//                PercentView(label: "Rendement",
-//                            percent: localItem.interestRate)
-//            }
         }
         .textFieldStyle(RoundedBorderTextFieldStyle())
         .navigationTitle("Invest. Libre")
@@ -72,15 +78,10 @@ struct FreeInvestDetailedView: View {
         self.originalItem = item
         if let initialItemValue = item {
             // modification d'un élément existant
-            _index = State(initialValue: patrimoine.assets.freeInvests.items.firstIndex(of: initialItemValue))
+            _localItem  = State(initialValue: initialItemValue)
+            _index      = State(initialValue: patrimoine.assets.freeInvests.items.firstIndex(of: initialItemValue))
+            _totalValue = State(initialValue: initialItemValue.initialState.value)
             // specific
-            _initialName     = State(initialValue: initialItemValue.name)
-            _initialNote     = State(initialValue: initialItemValue.note)
-            _investType      = State(initialValue: initialItemValue.type)
-            _initialRateType = State(initialValue: initialItemValue.interestRateType)
-            _initialYear     = State(initialValue: initialItemValue.initialState.year)
-            _initialInterest = State(initialValue: initialItemValue.initialState.interest)
-            _initialValue    = State(initialValue: initialItemValue.initialState.value)
         } else {
             // nouvel élément
             index = nil
@@ -88,28 +89,17 @@ struct FreeInvestDetailedView: View {
     }
     
     func duplicate() {
-        let copyOfItemWithNewId = FreeInvestement(year             : initialYear,
-                                                  name             : initialName + "-copie",
-                                                  note             : initialNote,
-                                                  type             : investType,
-                                                  interestRateType : initialRateType,
-                                                  initialValue     : initialValue,
-                                                  initialInterest  : initialInterest)
-        patrimoine.assets.freeInvests.add(copyOfItemWithNewId)
+        // générer un nouvel identifiant pour la copie
+        localItem.id = UUID()
+        localItem.name += "-copie"
+        // ajouter la copie
+        patrimoine.assets.freeInvests.add(localItem)
         // revenir à l'élement avant duplication
+        localItem = originalItem!
     }
     
     // sauvegarder les changements
     func applyChanges() {
-        // construire l'item nouveau ou modifier à partir des valeurs saisies
-        let localItem = FreeInvestement(year             : initialYear,
-                                        name             : initialName,
-                                        note             : initialNote,
-                                        type             : investType,
-                                        interestRateType : initialRateType,
-                                        initialValue     : initialValue,
-                                        initialInterest  : initialInterest)
-        
         if let index = index {
             // modifier un éléménet existant
             patrimoine.assets.freeInvests.update(with: localItem, at: index)
@@ -126,7 +116,7 @@ struct FreeInvestDetailedView: View {
     }
     
     func changeOccured() -> Bool {
-        return true // localItem != item
+        return localItem != originalItem
     }
 }
 

@@ -50,6 +50,7 @@ struct PeriodicInvestDetailedView: View {
                 InterestRateTypeEditView(rateType: $localItem.interestRateType)
                 PercentView(label: "Rendement net d'inflation",
                             percent: localItem.interestRateNet/100.0)
+                    .foregroundColor(.secondary)
             }
             Section(header: Text("LIQUIDATION")) {
                 YearPicker(title: "Année de liquidation (fin d'année)",
@@ -109,7 +110,7 @@ struct PeriodicInvestDetailedView: View {
         // générer un nouvel identifiant pour la copie
         localItem.id = UUID()
         localItem.name += "-copie"
-        // revenir à l'élement avant duplication
+        // ajouter la copie
         patrimoine.assets.periodicInvests.add(localItem)
         // revenir à l'élement avant duplication
         localItem = originalItem!
