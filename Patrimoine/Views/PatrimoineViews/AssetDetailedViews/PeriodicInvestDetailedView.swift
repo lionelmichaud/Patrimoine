@@ -49,6 +49,8 @@ struct PeriodicInvestDetailedView: View {
             Section(header: Text("RENTABILITE")) {
                 PercentEditView(label: "Rendement",
                                 percent: $localItem.interestRate)
+                PercentView(label: "Rendement net d'inflation",
+                            percent: localItem.interestRateNet/100.0)
             }
             Section(header: Text("LIQUIDATION")) {
                 YearPicker(title: "Année de liquidation (fin d'année)",

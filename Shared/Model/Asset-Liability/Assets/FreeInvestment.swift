@@ -14,6 +14,7 @@ fileprivate let customLog = Logger(subsystem: "me.michaud.lionel.Patrimoine", ca
 typealias FreeInvestmentArray = ItemArray<FreeInvestement>
 
 // MARK: - Placement à versement et retrait variable et à taux fixe
+
 /// Placement à versement et retrait libres et à taux fixe
 /// Les intérêts sont capitalisés lors de l'appel à capitalize()
 struct FreeInvestement: Identifiable, Codable, NameableValuable {
@@ -34,8 +35,18 @@ struct FreeInvestement: Identifiable, Codable, NameableValuable {
     
     // MARK: - Static Methods
     
-    static var inflation: Double { // %
+    private static var inflation: Double { // %
         Economy.model.inflation.value(withMode: simulationMode)
+    }
+    
+    /// taux à long terme - rendement d'un fond en euro
+    private static var longTermRate: Double { // %
+        Economy.model.longTermRate.value(withMode: simulationMode)
+    }
+    
+    /// rendement des actions
+    private static var stockRate: Double { // %
+        Economy.model.stockRate.value(withMode: simulationMode)
     }
     
     // MARK: - Properties
@@ -44,17 +55,29 @@ struct FreeInvestement: Identifiable, Codable, NameableValuable {
     var name                 : String
     var note                 : String
     let type                 : InvestementType // type de l'investissement
-    let interestRate         : Double // % fixe avant charges sociales si prélevées à la source annuellement
+    var interestRateType     : InterestRateType // type de taux de rendement
+    var interestRate         : Double {// % avant charges sociales si prélevées à la source annuellement
+        switch interestRateType {
+            case .contractualRate( let fixedRate):
+                return fixedRate - FreeInvestement.inflation
+                
+            case .marketRate(let stockRatio):
+                let stock = stockRatio / 100.0
+                // taux d'intérêt composite fonction de la composition du portefeuille
+                let rate = stock * FreeInvestement.stockRate + (1.0 - stock) * FreeInvestement.longTermRate
+                return rate - FreeInvestement.inflation
+        }
+    }
     var interestRateNet      : Double { // % fixe après charges sociales si prélevées à la source annuellement
         switch type {
             case .lifeInsurance(let periodicSocialTaxes):
                 // si assurance vie: le taux net est le taux brut - charges sociales si celles-ci sont prélèvées à la source anuellement
                 return (periodicSocialTaxes ?
-                            Fiscal.model.socialTaxesOnFinancialRevenu.net(interestRate - PeriodicInvestement.inflation) :
-                            interestRate - PeriodicInvestement.inflation)
+                            Fiscal.model.socialTaxesOnFinancialRevenu.net(interestRate) :
+                            interestRate)
             default:
                 // dans tous les autres cas: pas de charges sociales prélevées à la source anuellement (capitalisation et taxation à la sortie)
-                return interestRate - PeriodicInvestement.inflation
+                return interestRate
         }
     }
     var initialState         : State {// dernière constitution du capital connue
@@ -70,21 +93,21 @@ struct FreeInvestement: Identifiable, Codable, NameableValuable {
     
     // MARK: - Initialization
 
-    init(year            : Int,
-         name            : String,
-         note            : String,
-         type            : InvestementType,
-         rate            : Double,
-         initialValue    : Double = 0.0,
-         initialInterest : Double = 0.0) {
-        self.name         = name
-        self.note         = note
-        self.type         = type
-        self.interestRate = rate
-        self.initialState = State(year       : year,
-                                  interest   : initialInterest,
-                                  investment : initialValue - initialInterest)
-        self.currentState = self.initialState
+    init(year             : Int,
+         name             : String,
+         note             : String,
+         type             : InvestementType,
+         interestRateType : InterestRateType,
+         initialValue     : Double = 0.0,
+         initialInterest  : Double = 0.0) {
+        self.name             = name
+        self.note             = note
+        self.type             = type
+        self.interestRateType = interestRateType
+        self.initialState     = State(year       : year,
+                                      interest   : initialInterest,
+                                      investment : initialValue - initialInterest)
+        self.currentState     = self.initialState
     }
     
     // MARK: - Methods
@@ -99,15 +122,12 @@ struct FreeInvestement: Identifiable, Codable, NameableValuable {
     
     /// somme des versements + somme des intérêts
     func value(atEndOf year: Int) -> Double {
-//        Swift.print("year: \(year)")
-//        Swift.print(description)
         guard year == self.currentState.year else {
             // revaloriser la valeur par extrapolation à partir de la situation initiale
             return futurValue(payement     : 0,
                               interestRate : interestRateNet/100,
                               nbPeriod     : year - initialState.year,
                               initialValue : initialState.value)
-            //return initialState.value
         }
         // valeur de la dernière année simulée
         return currentState.value
@@ -249,7 +269,7 @@ struct FreeInvestement: Identifiable, Codable, NameableValuable {
     func print() {
         Swift.print("    ", name)
         Swift.print("       type", type)
-        Swift.print("       interest Rate: ", interestRate - PeriodicInvestement.inflation, "%")
+        Swift.print("       interest Rate: ", interestRate, "%")
         Swift.print("       year:     ", currentState.year, "value: ", currentState.value)
         Swift.print("       investement: ", currentState.investment, "interest: ", currentState.interest)
     }
@@ -270,7 +290,7 @@ extension FreeInvestement: CustomStringConvertible {
           valeur:        \(value(atEndOf: Date.now.year).€String)
           initial state: (year: \(initialState.year), interest: \(initialState.interest.€String), invest: \(initialState.investment.€String), Value: \(initialState.value.€String))
           current state: (year: \(currentState.year), interest: \(currentState.interest.€String), invest: \(currentState.investment.€String), Value: \(currentState.value.€String))
-          interest Rate: \(interestRate - PeriodicInvestement.inflation) %
+          interest Rate: \(interestRate) %
           yearly interest: \(yearlyInterest.€String)
 
         """

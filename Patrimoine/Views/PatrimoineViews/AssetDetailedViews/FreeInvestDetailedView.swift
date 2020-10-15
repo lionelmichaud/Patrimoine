@@ -7,7 +7,6 @@
 //
 
 import SwiftUI
-import Combine
 
 struct FreeInvestDetailedView: View {
     @EnvironmentObject var simulation : Simulation
@@ -19,14 +18,14 @@ struct FreeInvestDetailedView: View {
     @Environment(\.presentationMode) var presentationMode
     @State private var index: Int?
     // à adapter
-    @State private var initialName     : String = ""
-    @State private var initialNote     : String = ""
-    @State private var initialrate     : Double = 0.0
-    @State private var initialYear     : Int    = Date.now.year
-    @State private var initialInterest : Double = 0.0
-    @State private var initialValue    : Double = 0.0
-    @State private var investType      : InvestementType = .other
-    
+    @State private var initialName      : String = ""
+    @State private var initialNote      : String = ""
+    @State private var investType       : InvestementType  = .other
+    @State private var initialRateType  : InterestRateType = .contractualRate(fixedRate: 0.0)
+    @State private var initialYear      : Int    = Date.now.year
+    @State private var initialInterest  : Double = 0.0
+    @State private var initialValue     : Double = 0.0
+
     var body: some View {
         Form {
             LabeledTextField(label: "Nom", defaultText: "obligatoire", text: $initialName)
@@ -45,9 +44,12 @@ struct FreeInvestDetailedView: View {
                                amount: $initialInterest)
             }
             Section(header: Text("RENTABILITE")) {
-                PercentEditView(label: "Rendement",
-                                percent: $initialrate)
+                InterestRateTypeEditView(rateType: $initialRateType)
             }
+//            Section(header: Text("RENTABILITE")) {
+//                PercentView(label: "Rendement",
+//                            percent: localItem.interestRate)
+//            }
         }
         .textFieldStyle(RoundedBorderTextFieldStyle())
         .navigationTitle("Invest. Libre")
@@ -75,7 +77,7 @@ struct FreeInvestDetailedView: View {
             _initialName     = State(initialValue: initialItemValue.name)
             _initialNote     = State(initialValue: initialItemValue.note)
             _investType      = State(initialValue: initialItemValue.type)
-            _initialrate     = State(initialValue: initialItemValue.interestRate)
+            _initialRateType = State(initialValue: initialItemValue.interestRateType)
             _initialYear     = State(initialValue: initialItemValue.initialState.year)
             _initialInterest = State(initialValue: initialItemValue.initialState.interest)
             _initialValue    = State(initialValue: initialItemValue.initialState.value)
@@ -86,27 +88,27 @@ struct FreeInvestDetailedView: View {
     }
     
     func duplicate() {
-        let copyOfItemWithNewId = FreeInvestement(year            : initialYear,
-                                                  name            : initialName + "-copie",
-                                                  note            : initialNote,
-                                                  type            : investType,
-                                                  rate            : initialrate,
-                                                  initialValue    : initialValue,
-                                                  initialInterest : initialInterest)
-        // revenir à l'élement avant duplication
+        let copyOfItemWithNewId = FreeInvestement(year             : initialYear,
+                                                  name             : initialName + "-copie",
+                                                  note             : initialNote,
+                                                  type             : investType,
+                                                  interestRateType : initialRateType,
+                                                  initialValue     : initialValue,
+                                                  initialInterest  : initialInterest)
         patrimoine.assets.freeInvests.add(copyOfItemWithNewId)
+        // revenir à l'élement avant duplication
     }
     
     // sauvegarder les changements
     func applyChanges() {
         // construire l'item nouveau ou modifier à partir des valeurs saisies
-        let localItem = FreeInvestement(year            : initialYear,
-                                        name            : initialName,
-                                        note            : initialNote,
-                                        type            : investType,
-                                        rate            : initialrate,
-                                        initialValue    : initialValue,
-                                        initialInterest : initialInterest)
+        let localItem = FreeInvestement(year             : initialYear,
+                                        name             : initialName,
+                                        note             : initialNote,
+                                        type             : investType,
+                                        interestRateType : initialRateType,
+                                        initialValue     : initialValue,
+                                        initialInterest  : initialInterest)
         
         if let index = index {
             // modifier un éléménet existant

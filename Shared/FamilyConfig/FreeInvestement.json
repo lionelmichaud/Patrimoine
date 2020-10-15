@@ -5,7 +5,6 @@
             "id"           : "4A6940AE-3D5B-4F3E-BB23-DF076F9CA5B0",
             "name"         : "PERCO",
             "note"         : "Fiscalité proche PEA\nFonds actions",
-            "interestRate" : 3.0,
             "initialState" : {
                 "year"       : 2019,
                 "interest"   : 0,
@@ -13,6 +12,9 @@
             },
             "type" : {
                 "PEA" : true
+            },
+            "interestRateType" : {
+                "marketRate_stockRatio" : 100.0
             },
             "currentState" : {
                 "year"       : 0,
@@ -24,7 +26,6 @@
             "id"           : "4A6940AE-3D5B-4F3E-BB23-EF076F9CA5B0",
             "name"         : "PEE",
             "note"         : "Fiscalité proche PEA\nFonds actions",
-            "interestRate" : 3.0,
             "initialState" : {
                 "year"       : 2019,
                 "interest"   : 10726,
@@ -32,6 +33,9 @@
             },
             "type" : {
                 "PEA" : true
+            },
+            "interestRateType" : {
+                "marketRate_stockRatio" : 100.0
             },
             "currentState" : {
                 "year"       : 0,
@@ -43,7 +47,6 @@
             "id"           : "4A6940AE-3D5B-4F3E-BB23-CF076F9CA5B0",
             "name"         : "PEA Bourso",
             "note"         : "Ouvert le 24/03/2014\nFonds actions",
-            "interestRate" : 3.0,
             "initialState" : {
                 "year"       : 2019,
                 "interest"   : 6373,
@@ -51,6 +54,9 @@
             },
             "type" : {
                 "PEA" : true
+            },
+            "interestRateType" : {
+                "marketRate_stockRatio" : 100.0
             },
             "currentState" : {
                 "year"       : 0,
@@ -62,7 +68,6 @@
             "id"           : "4A6940AE-3D5B-4F3E-BB23-CF076F9CA5B1",
             "name"         : "AV Lionel Bourso",
             "note"         : "Ouvert le 04/03/2012\nFonds actions",
-            "interestRate" : 3.0,
             "initialState" : {
                 "year"       : 2019,
                 "interest"   : 4685,
@@ -70,6 +75,9 @@
             },
             "type" : {
                 "lifeInsurance_taxes" : true
+            },
+            "interestRateType" : {
+                "marketRate_stockRatio" : 100.0
             },
             "currentState" : {
                 "year"       : 0,
@@ -81,7 +89,6 @@
             "id"           : "4A6940AE-3D5B-4F3E-BB23-CF076F9CA5B2",
             "name"         : "AV Lionel ASAC",
             "note"         : "Ouvert le 13/01/2006\nFond euro",
-            "interestRate" : 1.5,
             "initialState" : {
                 "year"       : 2019,
                 "interest"   : 14498,
@@ -89,6 +96,9 @@
             },
             "type" : {
                 "lifeInsurance_taxes" : true
+            },
+            "interestRateType" : {
+                "marketRate_stockRatio" : 0.0
             },
             "currentState" : {
                 "year"       : 0,
@@ -100,7 +110,6 @@
             "id"           : "4A6940AE-3D5B-4F3E-BB23-CF076F9CA5B3",
             "name"         : "AV Lionel AFER",
             "note"         : "Ouvert le 30/06/1999\nFonds actions",
-            "interestRate" : 3.0,
             "initialState" : {
                 "year"       : 2019,
                 "interest"   : 92526,
@@ -108,6 +117,9 @@
             },
             "type" : {
                 "lifeInsurance_taxes" : true
+            },
+            "interestRateType" : {
+                "marketRate_stockRatio" : 100.0
             },
             "currentState" : {
                 "year"       : 0,
@@ -119,7 +131,6 @@
             "id"           : "4A6940AE-3D5B-4F3E-BB23-CF076F9CA5B4",
             "name"         : "AV Lionel Conserv",
             "note"         : "Ouvert le 29/04/2010\nFond € à 60%",
-            "interestRate" : 2.25,
             "initialState" : {
                 "year"       : 2019,
                 "interest"   : 40395,
@@ -127,6 +138,9 @@
             },
             "type" : {
                 "lifeInsurance_taxes" : true
+            },
+            "interestRateType" : {
+                "marketRate_stockRatio" : 40.0
             },
             "currentState" : {
                 "year"       : 0,
@@ -138,7 +152,6 @@
             "id"           : "4A6940AE-3D5B-4F3E-BB23-CF076F9CA5B5",
             "name"         : "AV Vanessa AFER",
             "note"         : "Ouvert le 30/06/1999\nFonds actions",
-            "interestRate" : 3.0,
             "initialState" : {
                 "year"       : 2019,
                 "interest"   : 24375,
@@ -146,6 +159,9 @@
             },
             "type" : {
                 "lifeInsurance_taxes" : true
+            },
+            "interestRateType" : {
+                "marketRate_stockRatio" : 100.0
             },
             "currentState" : {
                 "year"       : 0,
@@ -157,7 +173,6 @@
             "id"           : "4A6940AE-3D5B-4F3E-BB23-CF076F9CA5B6",
             "name"         : "AV Vanessa Conserv",
             "note"         : "Ouvert le 30/06/1999\nFond € à 60%",
-            "interestRate" : 2.25,
             "initialState" : {
                 "year"       : 2019,
                 "interest"   : 2591,
@@ -165,6 +180,9 @@
             },
             "type" : {
                 "lifeInsurance_taxes" : true
+            },
+            "interestRateType" : {
+                "marketRate_stockRatio" : 40.0
             },
             "currentState" : {
                 "year"       : 0,
@@ -176,7 +194,6 @@
             "id"           : "4A6940AE-3D5B-4F3E-BB23-CF076F9CA5B7",
             "name"         : "Livret A Lionel Bourso",
             "note"         : "Ouvert en 2016",
-            "interestRate" : 0.5,
             "initialState" : {
                 "year"       : 2019,
                 "interest"   : 0,
@@ -184,6 +201,9 @@
             },
             "type" : {
                 "other" : true
+            },
+            "interestRateType" : {
+                "contractualRate_fixedRate" : 0.5
             },
             "currentState" : {
                 "year"       : 0,
@@ -195,7 +215,6 @@
             "id"           : "4A6940AE-3D5B-4F3E-BB23-CF076F9CA5B8",
             "name"         : "LDD Lionel LCL",
             "note"         : "",
-            "interestRate" : 0.5,
             "initialState" : {
                 "year"       : 2019,
                 "interest"   : 0,
@@ -203,6 +222,9 @@
             },
             "type" : {
                 "other" : true
+            },
+            "interestRateType" : {
+                "contractualRate_fixedRate" : 0.5
             },
             "currentState" : {
                 "year"       : 0,
