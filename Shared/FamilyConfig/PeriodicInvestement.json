@@ -10,7 +10,9 @@
             "initialValue"            : 5000,
             "yearlyPayement"          : 4800,
             "yearlyCost"              : 480,
-            "interestRate"            : 4.0,
+            "interestRateType" : {
+                "contractualRate_fixedRate" : 4.0
+            },
             "type" : {
                 "lifeInsurance_taxes" : false
             },
@@ -25,7 +27,9 @@
             "initialValue"            : 14000,
             "yearlyPayement"          : 0,
             "yearlyCost"              : 0,
-            "interestRate"            : 4.0,
+            "interestRateType" : {
+                "contractualRate_fixedRate" : 4.0
+            },
             "type" : {
                 "lifeInsurance_taxes" : false
             },
@@ -40,7 +44,9 @@
             "initialValue"            : 4626,
             "yearlyPayement"          : 0,
             "yearlyCost"              : 0,
-            "interestRate"            : 4.0,
+            "interestRateType" : {
+                "contractualRate_fixedRate" : 4.0
+            },
             "type" : {
                 "lifeInsurance_taxes" : false
             },
@@ -53,7 +59,9 @@
            "firstYear"               : 2010,
            "initialInterest"         : 0,
            "initialValue"            : 27321,
-           "interestRate"            : 4.0,
+           "interestRateType" : {
+               "contractualRate_fixedRate" : 4.0
+           },
            "yearlyPayement"          : 0,
            "yearlyCost"              : 0,
            "type" : {
@@ -68,7 +76,9 @@
             "firstYear"               : 2010,
             "initialInterest"         : 0,
             "initialValue"            : 27636,
-            "interestRate"            : 4.0,
+            "interestRateType" : {
+                "contractualRate_fixedRate" : 4.0
+            },
             "yearlyPayement"          : 0,
             "yearlyCost"              : 0,
             "type" : {
@@ -83,7 +93,9 @@
             "firstYear"               : 2010,
             "initialInterest"         : 0,
             "initialValue"            : 27924,
-            "interestRate"            : 4.0,
+            "interestRateType" : {
+                "contractualRate_fixedRate" : 4.0
+            },
             "yearlyPayement"          : 0,
             "yearlyCost"              : 0,
             "type" : {
@@ -98,7 +110,9 @@
             "firstYear"               : 2013,
             "initialInterest"         : 0,
             "initialValue"            : 8848,
-            "interestRate"            : 4.0,
+            "interestRateType" : {
+                "contractualRate_fixedRate" : 4.0
+            },
             "yearlyPayement"          : 0,
             "yearlyCost"              : 0,
             "type" : {
@@ -113,7 +127,9 @@
             "firstYear"               : 2013,
             "initialInterest"         : 0,
             "initialValue"            : 8699,
-            "interestRate"            : 4.0,
+            "interestRateType" : {
+                "contractualRate_fixedRate" : 4.0
+            },
             "yearlyPayement"          : 0,
             "yearlyCost"              : 0,
             "type" : {
@@ -128,7 +144,9 @@
             "firstYear"               : 2013,
             "initialInterest"         : 0,
             "initialValue"            : 8536,
-            "interestRate"            : 4.0,
+            "interestRateType" : {
+                "contractualRate_fixedRate" : 4.0
+            },
             "yearlyPayement"          : 0,
             "yearlyCost"              : 0,
             "type" : {

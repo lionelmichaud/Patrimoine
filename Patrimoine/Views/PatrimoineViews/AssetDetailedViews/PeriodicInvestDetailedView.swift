@@ -18,12 +18,12 @@ struct PeriodicInvestDetailedView: View {
     @Environment(\.presentationMode) var presentationMode
     @State private var index: Int?
     // à adapter
-    @State private var localItem = PeriodicInvestement(name      : "",
-                                                       note      : "",
-                                                       type      : .other,
-                                                       firstYear : Date.now.year,
-                                                       lastYear  : Date.now.year + 100,
-                                                       rate      : 0)
+    @State private var localItem = PeriodicInvestement(name             : "",
+                                                       note             : "",
+                                                       type             : .other,
+                                                       firstYear        : Date.now.year,
+                                                       lastYear         : Date.now.year + 100,
+                                                       interestRateType : .contractualRate(fixedRate: 0.0))
     
     var body: some View {
         Form {
@@ -47,8 +47,7 @@ struct PeriodicInvestDetailedView: View {
                                amount: $localItem.initialInterest)
             }
             Section(header: Text("RENTABILITE")) {
-                PercentEditView(label: "Rendement",
-                                percent: $localItem.interestRate)
+                InterestRateTypeEditView(rateType: $localItem.interestRateType)
                 PercentView(label: "Rendement net d'inflation",
                             percent: localItem.interestRateNet/100.0)
             }

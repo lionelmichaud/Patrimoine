@@ -38,6 +38,16 @@ struct PeriodicInvestement: Identifiable, Codable, NameableValuable {
         Economy.model.inflation.value(withMode: simulationMode)
     }
     
+    /// taux à long terme - rendement d'un fond en euro
+    private static var longTermRate: Double { // %
+        Economy.model.longTermRate.value(withMode: simulationMode)
+    }
+    
+    /// rendement des actions
+    private static var stockRate: Double { // %
+        Economy.model.stockRate.value(withMode: simulationMode)
+    }
+    
     // MARK: - Properties
     
     var id              = UUID()
@@ -51,17 +61,29 @@ struct PeriodicInvestement: Identifiable, Codable, NameableValuable {
     var initialValue    : Double
     var initialInterest : Double // portion of interests included in the initialValue
     // rendement
-    var interestRate    : Double // %
+    var interestRateType: InterestRateType // type de taux de rendement
+    var interestRate         : Double {// % avant charges sociales si prélevées à la source annuellement
+        switch interestRateType {
+            case .contractualRate( let fixedRate):
+                return fixedRate - PeriodicInvestement.inflation
+                
+            case .marketRate(let stockRatio):
+                let stock = stockRatio / 100.0
+                // taux d'intérêt composite fonction de la composition du portefeuille
+                let rate = stock * PeriodicInvestement.stockRate + (1.0 - stock) * PeriodicInvestement.longTermRate
+                return rate - PeriodicInvestement.inflation
+        }
+    }
     var interestRateNet : Double { // % fixe après charges sociales si prélevées à la source annuellement
         switch type {
             case .lifeInsurance(let periodicSocialTaxes):
                 // si assurance vie: le taux net est le taux brut - charges sociales si celles-ci sont prélèvées à la source anuellement
                 return (periodicSocialTaxes ?
-                            Fiscal.model.socialTaxesOnFinancialRevenu.net(interestRate - PeriodicInvestement.inflation) :
-                            interestRate - PeriodicInvestement.inflation)
+                            Fiscal.model.socialTaxesOnFinancialRevenu.net(interestRate) :
+                            interestRate)
             default:
                 // dans tous les autres cas: pas de charges sociales prélevées à la source anuellement (capitalisation et taxation à la sortie)
-                return interestRate - PeriodicInvestement.inflation
+                return interestRate
         }
     }
     // liquidation
@@ -69,26 +91,26 @@ struct PeriodicInvestement: Identifiable, Codable, NameableValuable {
 
     // MARK: - Initializers
     
-    init(name            : String,
-         note            : String,
-         type            : InvestementType,
-         firstYear       : Int,
-         lastYear        : Int,
-         rate            : Double,
-         initialValue    : Double = 0.0,
-         initialInterest : Double = 0.0,
-         yearlyPayement  : Double = 0.0,
-         yearlyCost      : Double = 0.0) {
-        self.name            = name
-        self.note            = note
-        self.type            = type
-        self.firstYear       = firstYear
-        self.lastYear        = lastYear
-        self.interestRate    = rate
-        self.initialValue    = initialValue
-        self.initialInterest = initialInterest
-        self.yearlyPayement  = yearlyPayement
-        self.yearlyCost      = yearlyCost
+    init(name             : String,
+         note             : String,
+         type             : InvestementType,
+         firstYear        : Int,
+         lastYear         : Int,
+         interestRateType : InterestRateType,
+         initialValue     : Double = 0.0,
+         initialInterest  : Double = 0.0,
+         yearlyPayement   : Double = 0.0,
+         yearlyCost       : Double = 0.0) {
+        self.name             = name
+        self.note             = note
+        self.type             = type
+        self.firstYear        = firstYear
+        self.lastYear         = lastYear
+        self.interestRateType = interestRateType
+        self.initialValue     = initialValue
+        self.initialInterest  = initialInterest
+        self.yearlyPayement   = yearlyPayement
+        self.yearlyCost       = yearlyCost
     }
     
     // MARK: - Methods
@@ -167,7 +189,7 @@ struct PeriodicInvestement: Identifiable, Codable, NameableValuable {
         Swift.print("       type", type)
         Swift.print("       first year:        ", firstYear, "last year: ", lastYear)
         Swift.print("       initial Value:     ", initialValue, "initial Interests: ", initialInterest)
-        Swift.print("       yearly Payement:   ", yearlyPayement.rounded(), "interest Rate Brut: ", interestRate - PeriodicInvestement.inflation, "%", "interest Rate Net: ", interestRateNet, "%")
+        Swift.print("       yearly Payement:   ", yearlyPayement.rounded(), "interest Rate Brut: ", interestRate, "%", "interest Rate Net: ", interestRateNet, "%")
         Swift.print("       liquidation value: ", value(atEndOf: lastYear).rounded(), "cumulated interests: ", cumulatedInterests(atEndOf: lastYear).rounded())
     }
 }
@@ -190,7 +212,7 @@ extension PeriodicInvestement: CustomStringConvertible {
         initial Value:     \(initialValue.€String) initial Interests: \(initialInterest.€String)
         yearly Payement:   \(yearlyPayement.€String)
         liquidation value: \(value(atEndOf: lastYear).€String) cumulated interests: \(cumulatedInterests(atEndOf: lastYear).€String)
-        interest Rate Brut:\(interestRate - PeriodicInvestement.inflation) % interest Rate Net:\(interestRateNet) %
+        interest Rate Brut:\(interestRate) % interest Rate Net:\(interestRateNet) %
         
         """
     }

@@ -116,8 +116,8 @@ struct ExpenseSummaryChartView: UIViewRepresentable {
         chartView.dragEnabled               = true
         chartView.drawGridBackgroundEnabled = true
         chartView.gridBackgroundColor       = ChartThemes.LightChartColors.gridBackgroundColor
-        chartView.backgroundColor           = ChartThemes.LightChartColors.backgroundColor
-        chartView.borderColor               = ChartThemes.LightChartColors.borderColor
+        chartView.backgroundColor           = ChartThemes.DarkChartColors.backgroundColor
+        chartView.borderColor               = ChartThemes.DarkChartColors.borderColor
         chartView.borderLineWidth           = 1.0
         chartView.drawBordersEnabled        = false
         chartView.drawValueAboveBarEnabled  = false
@@ -134,6 +134,7 @@ struct ExpenseSummaryChartView: UIViewRepresentable {
         xAxis.drawAxisLineEnabled  = true
         xAxis.labelPosition        = .bottom
         xAxis.labelFont            = ChartThemes.ChartDefaults.labelFont
+        xAxis.labelTextColor       = ChartThemes.DarkChartColors.labelTextColor
         xAxis.granularityEnabled   = false
         xAxis.granularity          = 1
         xAxis.labelCount           = 200
@@ -149,8 +150,8 @@ struct ExpenseSummaryChartView: UIViewRepresentable {
         leftAxis.enabled              = true
         leftAxis.drawAxisLineEnabled  = true
         leftAxis.drawGridLinesEnabled = true
-        leftAxis.gridColor            = ChartThemes.LightChartColors.gridColor
         leftAxis.labelFont            = ChartThemes.ChartDefaults.labelFont
+        leftAxis.labelTextColor       = ChartThemes.DarkChartColors.labelTextColor
         leftAxis.granularityEnabled   = true // autoriser la réducion du nombre de label
         leftAxis.granularity          = 1    // à utiliser sans dépasser .labelCount
         leftAxis.labelCount           = 15   // nombre maxi
@@ -162,7 +163,8 @@ struct ExpenseSummaryChartView: UIViewRepresentable {
         rightAxis.enabled              = true
         rightAxis.drawAxisLineEnabled  = true
         rightAxis.drawGridLinesEnabled = false
-        rightAxis.labelFont            = ChartThemes.ChartDefaults.labelFont
+        leftAxis.labelFont             = ChartThemes.ChartDefaults.labelFont
+        leftAxis.labelTextColor        = ChartThemes.DarkChartColors.labelTextColor
         rightAxis.granularityEnabled   = true // autoriser la réducion du nombre de label
         rightAxis.granularity          = 1    // à utiliser sans dépasser .labelCount
         rightAxis.labelCount           = 15   // nombre maxi
@@ -173,6 +175,7 @@ struct ExpenseSummaryChartView: UIViewRepresentable {
         let legend = chartView.legend
         legend.enabled             = false
         legend.font                = ChartThemes.ChartDefaults.legendFont
+        legend.textColor           = ChartThemes.DarkChartColors.legendColor
         legend.form                = .square
         legend.formSize            = 8
         legend.drawInside          = false
