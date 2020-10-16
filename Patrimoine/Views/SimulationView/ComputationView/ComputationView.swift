@@ -47,6 +47,7 @@ struct ComputationView: View {
                         .onChange(of: simulation.mode) { newMode in
                             Patrimoin.setSimulationMode(to: newMode)
                             Pension.setSimulationMode(to: newMode)
+                            LifeExpense.setSimulationMode(to: newMode)
                         }
                     switch simulation.mode {
                         case .deterministic:

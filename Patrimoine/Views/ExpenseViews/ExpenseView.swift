@@ -9,7 +9,7 @@
 import SwiftUI
 
 struct ExpenseView: View {
-    @EnvironmentObject var family     : Family
+    @EnvironmentObject var family: Family
 
     private var categories: [(LifeExpenseCategory, ExpenseArray)] {
         family.expenses.perCategory.sorted(by: \.key.displayString)

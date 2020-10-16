@@ -19,6 +19,24 @@ struct HumanLife {
         var womenLifeExpectation  : ModelRandomizer<DiscreteRandomGenerator>
         var nbOfYearsOfdependency : ModelRandomizer<DiscreteRandomGenerator>
         
+        init() {
+            self = Bundle.main.decode(Model.self,
+                                      from                 : "HumanLifeModelConfig.json",
+                                      dateDecodingStrategy : .iso8601,
+                                      keyDecodingStrategy  : .useDefaultKeys)
+            menLifeEpectation.distribution.initialize()
+            womenLifeExpectation.distribution.initialize()
+            nbOfYearsOfdependency.distribution.initialize()
+        }
+        
+        func storeItemsToFile(fileNamePrefix: String = "") {
+            // encode to JSON file
+            Bundle.main.encode(self,
+                               to                   : "HumanLifeModelConfig.json",
+                               dateEncodingStrategy : .iso8601,
+                               keyEncodingStrategy  : .useDefaultKeys)
+        }
+        
         mutating func next() {
             menLifeEpectation.next()
             womenLifeExpectation.next()
@@ -28,9 +46,5 @@ struct HumanLife {
     
     // MARK: - Static Properties
     
-    static var model: Model  =
-        Bundle.main.decode(Model.self,
-                           from                 : "HumanLifeModelConfig.json",
-                           dateDecodingStrategy : .iso8601,
-                           keyDecodingStrategy  : .useDefaultKeys)
+    static var model: Model = Model()
 }

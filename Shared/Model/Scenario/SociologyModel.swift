@@ -29,6 +29,14 @@ struct SocioEconomy {
             expensesUnderEvaluationrate.distribution.initialize()
         }
         
+        func storeItemsToFile(fileNamePrefix: String = "") {
+            // encode to JSON file
+            Bundle.main.encode(self,
+                               to                   : "SocioEconomyModelConfig.json",
+                               dateEncodingStrategy : .iso8601,
+                               keyEncodingStrategy  : .useDefaultKeys)
+        }
+        
         mutating func next() {
             pensionDevaluationRate.next()
             nbTrimTauxPlein.next()

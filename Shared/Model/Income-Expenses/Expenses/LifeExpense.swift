@@ -163,8 +163,23 @@ struct ExpenseArray: NameableValuableArray {
 struct LifeExpense: Identifiable, Codable, Hashable, NameableValuable {
     
     // MARK: - Static properties
-
+    
     static var family: Family?
+    static var simulationMode : SimulationModeEnum = .deterministic
+    
+    // MARK: - Static Methods
+    
+    /// Définir le mode de simulation à utiliser pour tous les calculs futurs
+    /// - Parameter simulationMode: mode de simulation à utiliser
+    static func setSimulationMode(to simulationMode : SimulationModeEnum) {
+        LifeExpense.simulationMode = simulationMode
+    }
+    
+    /// Calcule le facteur aléatoire de correction à appliquer
+    /// - Note: valeur > 1.0
+    static var correctionFactor: Double {
+        1.0 + SocioEconomy.model.expensesUnderEvaluationrate.value(withMode: simulationMode) / 100.0
+    }
     
     // MARK: - Properties
     
@@ -199,12 +214,13 @@ struct LifeExpense: Identifiable, Codable, Hashable, NameableValuable {
         if timeSpan.contains(year) {
             if proportional {
                 if let family = LifeExpense.family {
-                    return value * Double(family.nbOfAdultAlive(atEndOf: year) + family.nbOfFiscalChildren(during: year))
+                    let nbMembers = (family.nbOfAdultAlive(atEndOf: year) + family.nbOfFiscalChildren(during: year)).double()
+                    return value * LifeExpense.correctionFactor * nbMembers
                 } else {
                     return 0
                 }
             } else {
-                return value
+                return value * LifeExpense.correctionFactor
             }
         } else {
             return 0.0
@@ -222,4 +238,3 @@ struct LifeExpense: Identifiable, Codable, Hashable, NameableValuable {
 extension LifeExpense: Comparable {
     static func < (lhs: LifeExpense, rhs: LifeExpense) -> Bool { (lhs.name < rhs.name) }
 }
-

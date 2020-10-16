@@ -29,6 +29,14 @@ struct Economy {
             stockRate.distribution.initialize()
         }
 
+        func storeItemsToFile(fileNamePrefix: String = "") {
+            // encode to JSON file
+            Bundle.main.encode(self,
+                               to                   : "EconomyModelConfig.json",
+                               dateEncodingStrategy : .iso8601,
+                               keyEncodingStrategy  : .useDefaultKeys)
+        }
+        
         mutating func next() {
             inflation.next()
             longTermRate.next()
