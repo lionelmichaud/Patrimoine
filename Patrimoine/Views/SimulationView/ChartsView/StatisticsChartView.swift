@@ -145,7 +145,7 @@ func getUniformLineChartDataSets(minX : Double,
                                            maxX  : maxX)
     
     /// tirages aléatoires selon distribution en Beta et ajout à un histogramme
-    let nbRandomSamples = 10000
+    let nbRandomSamples = 1000
     let sequence = generator.sequence(of: nbRandomSamples)
     var histogram = Histogram(distributionType : .continuous,
                               openEnds         : false,
@@ -285,13 +285,13 @@ func getDiscreteChartDataSets(minX : Double,
     //: ### ChartDataEntry
     
     /// générateur de nombre aléatoire suivant une distribution Beta
-    var generator = DiscreteRandomGenerator(distribution: [[1.0, 0.2],
+    var generator = DiscreteRandomGenerator(pdf: [[1.0, 0.2],
                                                            [3.0, 0.3],
                                                            [4.0, 0.4],
                                                            [6.0, 0.1]])
     
     /// tirages aléatoires selon distribution en Beta et ajout à un histogramme
-    let nbRandomSamples = 10000
+    let nbRandomSamples = 1000
     let sequence  = generator.sequence(of: nbRandomSamples)
     var histogram = Histogram(distributionType : .discrete,
                               openEnds         : false,
@@ -394,14 +394,14 @@ struct BetaDistributionView: View {
                     .padding(.horizontal)
                 }
             }
-            BetaGammaChartView(minX  : $minX,  maxX : $maxX,
+            BetaGammaAssistantView(minX  : $minX,  maxX : $maxX,
                                alpha : $alpha, beta : $beta)
             
         }
     }
 }
 
-struct BetaGammaChartView : UIViewRepresentable {
+struct BetaGammaAssistantView : UIViewRepresentable {
     @Binding var minX : Double
     @Binding var maxX : Double
     @Binding var alpha: Double
@@ -433,7 +433,7 @@ struct BetaGammaChartView : UIViewRepresentable {
         chartView.animate(yAxisDuration: 0.5, easingOption: .linear)
         
         // mémoriser la référence de la vue pour sauvegarde d'image ultérieure
-        BetaGammaChartView.uiView = chartView
+        BetaGammaAssistantView.uiView = chartView
         return chartView
     }
     
@@ -497,7 +497,7 @@ func getBetaGammaLineChartDataSets(minX : Double,
     }
     
     /// tirages aléatoires selon distribution en Beta et ajout à un histogramme
-    let nbRandomSamples = 10000
+    let nbRandomSamples = 1000
     let sequence = betaGenerator.sequence(of: nbRandomSamples)
     var histogram = Histogram(distributionType : .continuous,
                               openEnds         : false,

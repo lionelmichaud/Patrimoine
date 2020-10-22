@@ -7,9 +7,9 @@
             "date"    : "2020-10-12T23:00:00+01:00",
             "comment" : null
         },
-        "distribution":
+        "rndGenerator":
         {
-            "distribution" :
+            "pdf" :
             [
                 { "x": 57, "y": 0.0086 },
                 { "x": 58, "y": 0.0091 },
@@ -70,9 +70,9 @@
             "date"    : "2020-10-12T23:00:00+01:00",
             "comment" : null
         },
-        "distribution":
+        "rndGenerator":
         {
-            "distribution" :
+            "pdf" :
             [
                 { "x": 54, "y": 0.0031 },
                 { "x": 55, "y": 0.0033 },
@@ -136,9 +136,9 @@
             "date"    : "2020-10-12T23:00:00+01:00",
             "comment" : null
         },
-        "distribution":
+        "rndGenerator":
         {
-            "distribution" :
+            "pdf" :
             [
                 { "x": 3, "y": 0.10 },
                 { "x": 4, "y": 0.10 },

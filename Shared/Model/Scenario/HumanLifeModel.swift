@@ -14,6 +14,26 @@ struct HumanLife {
     
     // MARK: - Nested Types
     
+    enum ModelEnum: Int, PickableEnum {
+        case menLifeEpectation
+        case womenLifeExpectation
+        case nbOfYearsOfdependency
+        
+        var id: Int {
+            return self.rawValue
+        }
+        var pickerString: String {
+            switch self {
+                case .menLifeEpectation:
+                    return "Espérance de Vie d'un Homme"
+                case .womenLifeExpectation:
+                    return "Espérance de Vie d'uns Femme"
+                case .nbOfYearsOfdependency:
+                    return "Nombre d'années de Dépendance"
+            }
+        }
+    }
+    
     struct Model: Codable {
         var menLifeEpectation     : ModelRandomizer<DiscreteRandomGenerator>
         var womenLifeExpectation  : ModelRandomizer<DiscreteRandomGenerator>
@@ -24,9 +44,9 @@ struct HumanLife {
                                       from                 : "HumanLifeModelConfig.json",
                                       dateDecodingStrategy : .iso8601,
                                       keyDecodingStrategy  : .useDefaultKeys)
-            menLifeEpectation.distribution.initialize()
-            womenLifeExpectation.distribution.initialize()
-            nbOfYearsOfdependency.distribution.initialize()
+            menLifeEpectation.rndGenerator.initialize()
+            womenLifeExpectation.rndGenerator.initialize()
+            nbOfYearsOfdependency.rndGenerator.initialize()
         }
         
         func storeItemsToFile(fileNamePrefix: String = "") {
@@ -35,6 +55,12 @@ struct HumanLife {
                                to                   : "HumanLifeModelConfig.json",
                                dateEncodingStrategy : .iso8601,
                                keyEncodingStrategy  : .useDefaultKeys)
+        }
+        
+        mutating func resetRandomHistory() {
+            menLifeEpectation.resetRandomHistory()
+            womenLifeExpectation.resetRandomHistory()
+            nbOfYearsOfdependency.resetRandomHistory()
         }
         
         mutating func next() {

@@ -7,7 +7,7 @@
             "date"    : "2020-10-12T23:00:00+01:00",
             "comment" : null
         },
-        "distribution":
+        "rndGenerator":
         {
             "minX"     : 0.5,
             "maxX"     : 1.25,
@@ -28,9 +28,9 @@
             "date"    : "2020-10-12T23:00:00+01:00",
             "comment" : null
         },
-        "distribution":
+        "rndGenerator":
         {
-            "distribution" :
+            "pdf" :
             [
                 { "x": 0, "y": 0.65 },
                 { "x": 4, "y": 0.30 },
@@ -50,7 +50,7 @@
             "date"    : "2020-10-12T23:00:00+01:00",
             "comment" : null
         },
-        "distribution":
+        "rndGenerator":
         {
             "minX"     : 0.0,
             "maxX"     : 5.0,

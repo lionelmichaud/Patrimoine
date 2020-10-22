@@ -14,6 +14,26 @@ struct Economy {
     
     // MARK: - Nested Types
 
+    enum ModelEnum: Int, PickableEnum {
+        case inflation
+        case longTermRate
+        case stockRate
+        
+        var id: Int {
+            return self.rawValue
+        }
+        var pickerString: String {
+            switch self {
+                case .inflation:
+                    return "Inflation"
+                case .longTermRate:
+                    return "Rendements des Placements Sûrs"
+                case .stockRate:
+                    return "Rendements des Actions"
+            }
+        }
+    }
+    
     struct Model: Codable {
         var inflation    : ModelRandomizer<BetaRandomGenerator>
         var longTermRate : ModelRandomizer<BetaRandomGenerator>
@@ -24,9 +44,9 @@ struct Economy {
                                       from                 : "EconomyModelConfig.json",
                                       dateDecodingStrategy : .iso8601,
                                       keyDecodingStrategy  : .useDefaultKeys)
-            inflation.distribution.initialize()
-            longTermRate.distribution.initialize()
-            stockRate.distribution.initialize()
+            inflation.rndGenerator.initialize()
+            longTermRate.rndGenerator.initialize()
+            stockRate.rndGenerator.initialize()
         }
 
         func storeItemsToFile(fileNamePrefix: String = "") {
@@ -35,6 +55,12 @@ struct Economy {
                                to                   : "EconomyModelConfig.json",
                                dateEncodingStrategy : .iso8601,
                                keyEncodingStrategy  : .useDefaultKeys)
+        }
+        
+        mutating func resetRandomHistory() {
+            inflation.resetRandomHistory()
+            longTermRate.resetRandomHistory()
+            stockRate.resetRandomHistory()
         }
         
         mutating func next() {

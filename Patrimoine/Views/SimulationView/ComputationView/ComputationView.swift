@@ -66,11 +66,13 @@ struct ComputationView: View {
                 }
                 // affichage des résultats
                 Section(header: Text("Résultats").font(.headline)) {
+                    // affichage du statut de la simulation
                     if simulation.isComputed {
                         HStack {
                             Text("Simulation disponible: de \(simulation.firstYear!) à \(simulation.lastYear!)")
                                 .font(.callout)
                             if simulation.mode == .random {
+                                // affichage du nombre de run
                                 Spacer(minLength: 100)
                                 IntegerView(label   : "Nombre de run exécutés",
                                             integer : simulation.mode == .deterministic ? 1  : simulation.currentRunNb)
@@ -85,6 +87,7 @@ struct ComputationView: View {
                         }
                     }
                 }
+                // affichage des valeurs des KPI
                 if simulation.isComputed {
                     ForEach(simulation.kpis) { kpi in
                         Section(header: Text(kpi.name)) {

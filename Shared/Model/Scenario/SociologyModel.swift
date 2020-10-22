@@ -14,6 +14,26 @@ struct SocioEconomy {
     
     // MARK: - Nested Types
     
+    enum ModelEnum: Int, PickableEnum {
+        case pensionDevaluationRate
+        case nbTrimTauxPlein
+        case expensesUnderEvaluationrate
+
+        var id: Int {
+            return self.rawValue
+        }
+        var pickerString: String {
+            switch self {
+                case .pensionDevaluationRate:
+                    return "Dévaluation de Pension"
+                case .nbTrimTauxPlein:
+                    return "Nombre de Trimestres"
+                case .expensesUnderEvaluationrate:
+                    return "Sous-etimation des dépenses"
+            }
+        }
+    }
+    
     struct Model: Codable {
         var pensionDevaluationRate     : ModelRandomizer<BetaRandomGenerator>
         var nbTrimTauxPlein            : ModelRandomizer<DiscreteRandomGenerator>
@@ -24,9 +44,9 @@ struct SocioEconomy {
                                       from                 : "SocioEconomyModelConfig.json",
                                       dateDecodingStrategy : .iso8601,
                                       keyDecodingStrategy  : .useDefaultKeys)
-            pensionDevaluationRate.distribution.initialize()
-            nbTrimTauxPlein.distribution.initialize()
-            expensesUnderEvaluationrate.distribution.initialize()
+            pensionDevaluationRate.rndGenerator.initialize()
+            nbTrimTauxPlein.rndGenerator.initialize()
+            expensesUnderEvaluationrate.rndGenerator.initialize()
         }
         
         func storeItemsToFile(fileNamePrefix: String = "") {
@@ -35,6 +55,12 @@ struct SocioEconomy {
                                to                   : "SocioEconomyModelConfig.json",
                                dateEncodingStrategy : .iso8601,
                                keyEncodingStrategy  : .useDefaultKeys)
+        }
+        
+        mutating func resetRandomHistory() {
+            pensionDevaluationRate.resetRandomHistory()
+            nbTrimTauxPlein.resetRandomHistory()
+            expensesUnderEvaluationrate.resetRandomHistory()
         }
         
         mutating func next() {

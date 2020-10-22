@@ -94,7 +94,6 @@ struct BetaRandomGenerator: RandomGenerator, Distribution, Codable {
 /// - Note: [Reference](https://en.wikipedia.org/wiki/Uniform_distribution_(continuous))
 ///
 struct UniformRandomGenerator: RandomGenerator, Codable {
-
     typealias Number = Double
     
     // MARK: - Properties
@@ -125,25 +124,47 @@ struct UniformRandomGenerator: RandomGenerator, Codable {
 ///         let sequence = randomGenerator.sequence(of: nbRandomSamples)
 ///
 struct DiscreteRandomGenerator: RandomGenerator, Codable {
-    var distribution : [Point]
-    var pc           : [Double]? // probabilité cumulée d'occurence (dernier = 100%)
+    typealias Number = Double
+    typealias Curve  = [PointReal<Number>]
 
+    // MARK: - Properties
+    
+    var pdf  : [Point]
+    var cdf  : [Double]? // probabilité cumulée d'occurence (dernier = 100%)
+    var minX : Number? { // valeur minimale de X
+        pdf.min(by: { return ($0.x < $1.x) } )?.x
+    }
+    var maxX         : Number? { // valeur minimale de X
+        pdf.max(by: { return ($0.x > $1.x) } )?.x
+    }
+    var cdfCurve : Curve? { // courbe CDF mémorisée au premier appel de initialize()
+        precondition(cdf != nil, "DiscreteRandomGenerator.cdfCurve: propriété cdf non initialisée")
+        precondition(cdf?.count == pdf.count, "DiscreteRandomGenerator.cdfCurve: longeur de pdf <> longeur de cdf")
+        var curve = Curve()
+        for idx in pdf.indices {
+            curve.append(PointReal<Double>(x: pdf[idx].x, y: cdf![idx]))
+        }
+        return curve
+    }
+
+    // MARK: - Methods
+    
     /// Vérifie la validité des données lues en fichier JSON
     /// Si invalide FatalError
     func checkValidity() {
         // valeurs possibles croissantes pour la variable aléatoire
-        guard !distribution.isEmpty else {
+        guard !pdf.isEmpty else {
             customLog.log(level: .fault, "Tableau de valeurs vide dans \(Self.self, privacy: .public)")
             fatalError("Tableau de valeurs vide dans \(Self.self)")
         }
-        guard distribution.isSorted( { $0.x < $1.x }) else {
+        guard pdf.isSorted( { $0.x < $1.x }) else {
             customLog.log(level: .fault, "Valeurs possibles non croisantes dans \(Self.self, privacy: .public)")
             fatalError("Valeurs possibles non croisantes dans \(Self.self)")
         }
         // la somme des probabilités d'occurence pour toutes les valeurs = 100%
-        guard distribution.reduce(.zero, { (result, point) in result + point.y }).isApproximatelyEqual(to: 1.0, absoluteTolerance: 0.0001) else {
+        guard pdf.reduce(.zero, { (result, point) in result + point.y }).isApproximatelyEqual(to: 1.0, absoluteTolerance: 0.0001) else {
             customLog.log(level: .fault, "Somme de probabiltés différente de 100% dans \(Self.self, privacy: .public)")
-            fatalError("Somme de probabiltés différente de 100% dans \(Self.self) = \(distribution.reduce(.zero, { (result, point) in result + point.y }))")
+            fatalError("Somme de probabiltés différente de 100% dans \(Self.self) = \(pdf.reduce(.zero, { (result, point) in result + point.y }))")
         }
         return
     }
@@ -152,21 +173,21 @@ struct DiscreteRandomGenerator: RandomGenerator, Codable {
     mutating func initialize() {
         checkValidity()
         var sum = 0.0
-        pc = []
-        for i in distribution.indices {
-            sum += distribution[i].y
-            pc?.append(sum)
+        cdf = []
+        for i in pdf.indices {
+            sum += pdf[i].y
+            cdf?.append(sum)
         }
     }
     
-    /// Retourne une valeur aléatoire
+    /// Retourne une valeur aléatoire par la métthode inverse
     mutating func next() -> Double {
-        if pc == nil { initialize() }
+        if cdf == nil { initialize() }
         let rnd = Double.random(in: 0.0 ... 1.0)
-        if let idx = pc!.firstIndex(where: { rnd <= $0 }) {
-            return distribution[idx].x
+        if let idx = cdf!.firstIndex(where: { rnd <= $0 }) {
+            return pdf[idx].x
         } else {
-            return distribution[0].x
+            return pdf[0].x
         }
     }
 }

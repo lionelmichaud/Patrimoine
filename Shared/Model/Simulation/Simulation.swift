@@ -136,6 +136,13 @@ final class Simulation: ObservableObject {
         isComputing = true
         let monteCarlo = nbOfRuns > 1
         
+        // remettre à zéro les historiques des tirages aléatoires
+        if monteCarlo {
+            HumanLife.model.resetRandomHistory()
+            Economy.model.resetRandomHistory()
+            SocioEconomy.model.resetRandomHistory()
+        }
+        
         // calculer tous les runs
         for run in 1...nbOfRuns {
             currentRunNb = run
@@ -143,7 +150,7 @@ final class Simulation: ObservableObject {
             // Régénérer les propriétés aléatoires à chaque run si on est en mode Aléatoire
             if monteCarlo {
                 // réinitialiser les propriétés aléatoires de la famille
-                family.resetRandomProperties()
+                family.nextRandomProperties()
                 // réinitialiser les propriétés aléatoires du modèle macro économique
                 Economy.model.next()
                 // réinitialiser les propriétés aléatoires du modèle socio économique

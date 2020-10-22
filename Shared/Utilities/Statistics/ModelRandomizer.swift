@@ -13,13 +13,29 @@ import Foundation
 struct ModelRandomizer<R: RandomGenerator>: Codable, Versionable
 where R: Codable,
       R.Number == Double {
-    var version      : Version
-    var distribution : R
-    var defaultValue : Double = 0 // valeur par defaut déterministe
-    var randomValue  : Double = 0 // dernière valeur randomisée
+
+    // MARK: - Properties
+
+    var version       : Version
+    var rndGenerator  : R
+    var defaultValue  : Double = 0 // valeur par defaut déterministe
+    var randomValue   : Double = 0 // dernière valeur randomisée
+    var randomHistory : [Double]? // historique
     
+    // MARK: - Methods
+    
+    /// Remettre à zéro les historiques des tirages aléatoires
+    mutating func resetRandomHistory() {
+        randomHistory = []
+    }
+    
+    /// Générer le nombre aléatoire suivant
     mutating func next() {
-        randomValue = Double(distribution.next())
+        randomValue = Double(rndGenerator.next())
+        if randomHistory == nil {
+            randomHistory = []
+        }
+        randomHistory!.append(randomValue)
     }
     
     /// Returns a default value or a  random value depending on the value of simulationMode.mode

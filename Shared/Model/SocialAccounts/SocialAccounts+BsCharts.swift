@@ -175,7 +175,7 @@ extension SocialAccounts {
         var dataEntries = [ChartDataEntry]()
         let dataSet : BarChartDataSet
         
-        if let found = firstLine.assets.summary.namedValues.first(where: { $0.name == categoryName }) {
+        if firstLine.assets.summary.namedValues.first(where: { $0.name == categoryName }) != nil {
             /// rechercher les valeurs des actifs
             // customLog.log(level: .info, "Catégorie trouvée dans assets : \(found.name)")
             guard let category = AssetsCategory.category(of: categoryName) else {
@@ -198,7 +198,7 @@ extension SocialAccounts {
             dataSet.stackLabels = labelsInCategory
             dataSet.colors      = ChartThemes.positiveColors(number : dataSet.stackLabels.count)
             
-        } else if let found = firstLine.liabilities.summary.namedValues.first(where: { $0.name == categoryName }) {
+        } else if firstLine.liabilities.summary.namedValues.first(where: { $0.name == categoryName }) != nil {
             /// rechercher les valeurs des passifs
             // customLog.log(level: .info, "Catégorie trouvée dans liabilities : \(found.name)")
             guard let category = LiabilitiesCategory.category(of: categoryName) else {

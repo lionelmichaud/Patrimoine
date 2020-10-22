@@ -224,7 +224,7 @@ extension SocialAccounts {
         var dataEntries = [ChartDataEntry]()
         let dataSet : BarChartDataSet
         
-        if let found = firstLine.revenues.summary.namedValues.first(where: { $0.name == categoryName } ) {
+        if firstLine.revenues.summary.namedValues.first(where: { $0.name == categoryName } ) != nil {
             /// rechercher la catégorie dans les revenus
             // customLog.log(level: .info, "Catégorie trouvée dans Revenues : \(found.name)")
             guard let category = RevenueCategory.category(of: categoryName) else {
@@ -247,7 +247,7 @@ extension SocialAccounts {
             dataSet.stackLabels = labelsInCategory
             dataSet.colors      = ChartThemes.positiveColors(number : dataSet.stackLabels.count)
             
-        } else if let found = firstLine.sciCashFlowLine.summary.namedValues.first(where: { $0.name == categoryName } ) {
+        } else if firstLine.sciCashFlowLine.summary.namedValues.first(where: { $0.name == categoryName } ) != nil {
             /// rechercher la catégorie dans les revenus de la SCI
             // customLog.log(level: .info, "Catégorie trouvée dans sciCashFlowLine : \(found.name)")
             let labelsInCategory = firstLine.sciCashFlowLine.namesFlatArray
@@ -264,7 +264,7 @@ extension SocialAccounts {
             dataSet.stackLabels = labelsInCategory
             dataSet.colors      = ChartThemes.positiveColors(number : dataSet.stackLabels.count)
             
-        } else if let found = firstLine.taxes.summary.namedValues.first(where: { $0.name == categoryName } ) {
+        } else if firstLine.taxes.summary.namedValues.first(where: { $0.name == categoryName } ) != nil {
             /// rechercher les valeurs des taxes
             // customLog.log(level: .info, "Catégorie trouvée dans taxes : \(found.name)")
             guard let category = TaxeCategory.category(of: categoryName) else {

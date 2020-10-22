@@ -9,11 +9,22 @@
 import SwiftUI
 import Charts // https://github.com/danielgindi/Charts.git
 
-/// Présentation graphique d'un Historgramme contenant:
+/// Présentation graphique d'un Historgramme
+///
+/// Le graphique contient:
 ///  - une courbe de la densité de probabilité PDF
 ///  - une courbe de la densité de probabilité cumulée CDF
-///  - une ligne limite verticale: valeur objectif à atteindreI
-///  - une ligne limite horizontale: probabilité minimale acceptable
+///  - une ligne limite verticale: valeur objectif à atteindre (optionel)
+///  - une ligne limite horizontale: probabilité minimale acceptable  (optionel)
+///
+/// Usage:
+/// ```
+///     HistogramView(histogram           : kpi.histogram,
+///                   xLimitLine          : kpi.objective,
+///                   yLimitLine          : kpi.probaObjective,
+///                   xAxisFormatterChoice: .k€)
+/// ```
+///
 struct HistogramView : UIViewRepresentable {
     static var uiView        : LineChartView?
     var histogram            : Histogram

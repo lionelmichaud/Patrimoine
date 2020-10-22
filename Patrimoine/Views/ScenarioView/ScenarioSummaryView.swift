@@ -57,14 +57,17 @@ struct ScenarioSummaryView: View {
 }
 
 struct ScenarioSummaryViewView_Previews: PreviewProvider {
+    static var uiState    = UIState()
     static var family     = Family()
+    static var patrimoine = Patrimoin()
     static var simulation = Simulation()
 
     static var previews: some View {
             ScenarioSummaryView()
-                .previewLayout(.sizeThatFits)
+                .environmentObject(uiState)
                 .environmentObject(family)
+                .environmentObject(patrimoine)
                 .environmentObject(simulation)
-                .previewDevice("iPad Air (3rd generation)")
+                .previewLayout(.sizeThatFits)
     }
 }

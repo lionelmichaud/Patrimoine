@@ -9,19 +9,27 @@
 import SwiftUI
 
 struct ScenarioModelListView: View {
+    @EnvironmentObject var uiState: UIState
+
     var body: some View {
         Section(header: Text("Modèles").font(.headline)) {
-            NavigationLink(destination: ModelHumanView()) {
+            NavigationLink(destination: ModelHumanView(),
+                           tag         : .humanModel,
+                           selection   : $uiState.scenarioViewState.selectedItem) {
                 Text("Modèle Humain").fontWeight(.bold)
             }
             .isDetailLink(true)
             
-            NavigationLink(destination: ModelEconomyView()) {
+            NavigationLink(destination: ModelEconomyView(),
+                           tag         : .economyModel,
+                           selection   : $uiState.scenarioViewState.selectedItem) {
                 Text("Modèle Economique").fontWeight(.bold)
             }
             .isDetailLink(true)
             
-            NavigationLink(destination: ModelSociologyView()) {
+            NavigationLink(destination: ModelSociologyView(),
+                           tag         : .sociologyModel,
+                           selection   : $uiState.scenarioViewState.selectedItem) {
                 Text("Modèle Sociologique").fontWeight(.bold)
             }
             .isDetailLink(true)
@@ -30,9 +38,18 @@ struct ScenarioModelListView: View {
 }
 
 struct ScenarioModelListView_Previews: PreviewProvider {
+    static var uiState    = UIState()
+    static var family     = Family()
+    static var patrimoine = Patrimoin()
+    static var simulation = Simulation()
+
     static var previews: some View {
         Form {
             ScenarioModelListView()
+                .environmentObject(uiState)
+                .environmentObject(family)
+                .environmentObject(patrimoine)
+                .environmentObject(simulation)
                 .previewLayout(.sizeThatFits)
         }        
     }

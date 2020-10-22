@@ -86,16 +86,6 @@ struct ChartsView: View {
                         KpiListView()
                             .padding(.leading)
                     }
-                    
-                    Section(header: Text("Statistiques").font(.headline)) {
-                        NavigationLink(destination: StatisticsChartsView(),
-                                       tag         : .statistics,
-                                       selection   : $uiState.chartsViewState.selectedItem) {
-                            Text("Assistant Distributions")
-                        }
-                        .isDetailLink(true)
-                        .padding(.leading)
-                    }
                 }
                 .defaultSideBarListStyle()
                 //.listStyle(GroupedListStyle())

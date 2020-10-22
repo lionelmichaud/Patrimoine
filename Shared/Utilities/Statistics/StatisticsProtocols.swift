@@ -9,12 +9,12 @@
 import Foundation
 import Numerics
 
-// MARK: - Protocol Distribution statistique entre minX et maxX
-
 struct PointReal<Number: Real> : Codable where Number: Codable {
     var x: Number
     var y: Number
 }
+
+// MARK: - Protocol Distribution statistique entre minX et maxX
 
 protocol Distribution {
     associatedtype Number: Real, Codable
@@ -122,7 +122,7 @@ extension RandomGenerator {
         return seq
     }
 }
-// implémentation par défaut uniquement pour les types conformes au protocol Distribution
+// implémentation par défaut uniquement pour les RandomGenerator conformes au protocol Distribution
 extension RandomGenerator where Self: Distribution, Number: Randomizable {
     
     /// Génération aléatoire par la méthode de Rejection sampling

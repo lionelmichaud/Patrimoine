@@ -704,8 +704,8 @@ final class Adult: Person {
     }
     
     /// Réinitialiser les prioriétés aléatoires des membres
-    override func resetRandomProperties() {
-        super.resetRandomProperties()
+    override func nextRandomProperties() {
+        super.nextRandomProperties()
         
         // générer une nouvelle valeure aléatoire
         HumanLife.model.nbOfYearsOfdependency.next()

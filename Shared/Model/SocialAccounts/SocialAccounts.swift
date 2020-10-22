@@ -1,4 +1,7 @@
 import Foundation
+import os
+
+fileprivate let customLog = Logger(subsystem: "me.michaud.lionel.Patrimoine", category: "Model.SocialAccounts")
 
 // MARK: - Comptes sociaux
 
@@ -39,6 +42,19 @@ struct SocialAccounts {
         patrimoine.resetFreeInvestementCurrentValue()
     }
     
+    /// Mémorise le niveau le bas atteint par les actifs financiers au cours du run
+    /// - Parameters:
+    ///   - kpis: les KPI
+    ///   - simulationMode: mode de simluation en cours
+    func storeMnimumAssetKpiValue(withKPIs kpis           : inout KpiArray,
+                                  withMode simulationMode : SimulationModeEnum) {
+        let minBalanceSheetLine = balanceArray.min { a, b in
+            a.totalFinancialAssets < b.totalFinancialAssets
+        }
+        // KPI 3: mémoriser le minimum d'actif financier net au cours du temps
+        kpis[SimulationKPIEnum.minimumAsset.id].record(minBalanceSheetLine!.totalFinancialAssets, withMode: simulationMode)
+    }
+    
     // MARK: - Construction de la table des comptes sociaux = Bilan + CashFlow
     /// construire la table de comptes sociaux au fil des années
     /// - Parameters:
@@ -46,6 +62,8 @@ struct SocialAccounts {
     ///   - family: la famille dont il faut faire le bilan
     ///   - patrimoine: le patrimoine
     ///   - reportProgress: closure pour indiquer l'avancement de la simulation
+    ///   - kpis: les KPI
+    ///   - simulationMode: mode de simluation en cours
     mutating func build(nbOfYears                 : Int,
                         withFamily family         : Family,
                         withPatrimoine patrimoine : Patrimoin,
@@ -77,11 +95,28 @@ struct SocialAccounts {
 
 
             } catch {
+                customLog.log(level: .info , "Nombre d'adulte survivants inatendu: \(family.nbOfAdultAlive(atEndOf: year), privacy: .public) dans \(Self.self, privacy: .public)")
                 Swift.print("Arrêt de la construction de la table de Comptes sociaux: Actifs financiers = 0")
                 lastYear = year
-                // mémoriser le montant de l'Actif Net
-                kpis[SimulationKPIEnum.assetAt1stDeath.id].record(0, withMode: simulationMode)
-                kpis[SimulationKPIEnum.assetAt2ndtDeath.id].record(0, withMode: simulationMode)
+                // mémoriser le montant de l'Actif financier Net
+                switch family.nbOfAdultAlive(atEndOf: year) {
+                    case 2:
+                        // il reste 2 adultes vivants
+                        kpis[SimulationKPIEnum.assetAt1stDeath.id].record(0, withMode: simulationMode)
+                        kpis[SimulationKPIEnum.assetAt2ndtDeath.id].record(0, withMode: simulationMode)
+                    case 1:
+                        // il reste 1 seul adulte vivant
+                        kpis[SimulationKPIEnum.assetAt2ndtDeath.id].record(0, withMode: simulationMode)
+                    case 0:
+                        // il ne plus d'adulte vivant
+                        ()
+                    default:
+                        // ne devrait jamais se produire
+                        customLog.log(level: .fault, "Nombre d'adulte survivants inatendu: \(family.nbOfAdultAlive(atEndOf: year), privacy: .public) dans \(Self.self, privacy: .public)")
+                        fatalError("Nombre d'adulte survivants inatendu: \(family.nbOfAdultAlive(atEndOf: year)) dans  \(Self.self)")
+                }
+                storeMnimumAssetKpiValue(withKPIs : &kpis,
+                                         withMode : simulationMode)
                 return // arrêter la construction de la table
             }
             
@@ -110,11 +145,8 @@ struct SocialAccounts {
         
         // on est arrivé à la fin de la période de simulation
         // rechercher le minimum d'actif financier net au cours du temps
-        let minBalanceSheetLine = balanceArray.min { a, b in
-            a.totalFinancialAssets < b.totalFinancialAssets
-        }
-        // KPI 3: mémoriser le minimum d'actif financier net au cours du temps
-        kpis[SimulationKPIEnum.minimumAsset.id].record(minBalanceSheetLine!.totalFinancialAssets, withMode: simulationMode)
+        storeMnimumAssetKpiValue(withKPIs : &kpis,
+                                 withMode : simulationMode)
     }
     
     // MARK: - Impression écran

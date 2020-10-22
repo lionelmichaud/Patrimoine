@@ -228,7 +228,7 @@ class Person : ObservableObject, Identifiable, CustomStringConvertible, Codable 
     }
     
     /// Réinitialiser les prioriétés aléatoires des membres
-    func resetRandomProperties() {
+    func nextRandomProperties() {
         switch self.sexe {
             case .male:
                 // générer une nouvelle valeure aléatoire

@@ -45,6 +45,11 @@ class UIState: ObservableObject {
         var evalDate          : Double = Date.now.year.double()
     }
     
+    // MARK: - Etat de la vue Scenario
+    struct ScenarioViewState {
+        var selectedItem: ScenarioView.PushedItem?
+    }
+    
     // MARK: - Etat de la vue Simulation
     struct SimulationViewState {
         var selectedItem: SimulationView.PushedItem? = .computation
@@ -80,6 +85,7 @@ class UIState: ObservableObject {
     
     @Published var selectedTab         = Tab.family
     @Published var patrimoineViewState = PatrimoineViewState()
+    @Published var scenarioViewState   = ScenarioViewState()
     @Published var simulationViewState = SimulationViewState()
     @Published var chartsViewState     = ChartsViewState()
     @Published var expenseViewState    = ExpenseViewState()
