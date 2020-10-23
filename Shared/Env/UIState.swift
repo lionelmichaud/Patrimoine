@@ -55,16 +55,10 @@ class UIState: ObservableObject {
         var selectedItem: SimulationView.PushedItem? = .computation
     }
     
-    // MARK: - Etat de la vue Charts
-    struct ChartsViewState {
-        var selectedItem: ChartsView.PushedItem?
-    }
-    
     // MARK: - Etat de la vue Compute
     struct ComputationState {
-        var nbYears        : Double             = 15
-//        var simulationMode : SimulationModeEnum = .deterministic
-        var nbRuns         : Double             = 100
+        var nbYears : Double = 15
+        var nbRuns  : Double = 100
     }
     
     // MARK: - Etat des filtres graphes Bilan
@@ -87,7 +81,6 @@ class UIState: ObservableObject {
     @Published var patrimoineViewState = PatrimoineViewState()
     @Published var scenarioViewState   = ScenarioViewState()
     @Published var simulationViewState = SimulationViewState()
-    @Published var chartsViewState     = ChartsViewState()
     @Published var expenseViewState    = ExpenseViewState()
     @Published var computationState    = ComputationState()
     @Published var bsChartState        = BalanceSheetChartState()
@@ -99,6 +92,5 @@ class UIState: ObservableObject {
     
     func resetSimulation() {
         simulationViewState.selectedItem = .computation
-        chartsViewState.selectedItem     = nil
     }
 }

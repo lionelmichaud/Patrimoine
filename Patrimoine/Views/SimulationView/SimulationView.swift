@@ -13,7 +13,7 @@ struct SimulationView: View {
     @EnvironmentObject var uiState    : UIState
     
     enum PushedItem {
-        case computation, charts
+        case computation, bilanSynthese, bilanDetail, cfSynthese, cfDetail, kpiSummary, statistics
     }
     
     var body: some View {
@@ -33,12 +33,7 @@ struct SimulationView: View {
                     .isDetailLink(true)
                     
                     // affichage des graphiques
-                    NavigationLink(destination : ChartsView(),
-                                   tag         : .charts,
-                                   selection   : $uiState.simulationViewState.selectedItem) {
-                        Text("Graphiques")
-                    }
-                    .isDetailLink(false)
+                    ChartsView()
                 }
                 .defaultSideBarListStyle()
                 //.listStyle(InsetGroupedListStyle())
@@ -47,32 +42,11 @@ struct SimulationView: View {
             .navigationTitle("Simulation")
 
             // vue par défaut
-            SimulationHeaderView()
+            //SimulationHeaderView()
         }
         .navigationViewStyle(DoubleColumnNavigationViewStyle())
     }
 }
-
-struct SimulationHeaderView : View {
-    @EnvironmentObject var simulation : Simulation
-
-    var body: some View {
-        Group {
-            if !simulation.isComputed {
-                VStack {
-                    Text("Aucune données à présenter")
-                    Text("Calculer une simulation au préalable").foregroundColor(.red)
-                }
-                .padding(.horizontal)
-            } else {
-                Text("Simulation disponible: \(simulation.firstYear!) à \(simulation.lastYear!)")
-                    .font(.callout)
-                    .padding(.horizontal)
-            }
-        }
-    }
-}
-
 
 struct SimulationView_Previews: PreviewProvider {
     static var uiState    = UIState()
