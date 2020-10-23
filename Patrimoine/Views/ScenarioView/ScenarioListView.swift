@@ -12,7 +12,15 @@ struct ScenarioModelListView: View {
     @EnvironmentObject var uiState: UIState
 
     var body: some View {
-        Section(header: Text("Modèles").font(.headline)) {
+        Section(header: Text("Modèles Déterministe").font(.headline)) {
+            NavigationLink(destination: ModelDeterministicView(),
+                           tag         : .deterministicModel,
+                           selection   : $uiState.scenarioViewState.selectedItem) {
+                Text("Tous les Modèles").fontWeight(.bold)
+            }
+            .isDetailLink(true)
+        }
+       Section(header: Text("Modèles Statistiques").font(.headline)) {
             NavigationLink(destination: ModelHumanView(),
                            tag         : .humanModel,
                            selection   : $uiState.scenarioViewState.selectedItem) {

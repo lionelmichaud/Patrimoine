@@ -12,7 +12,7 @@ struct ScenarioView: View {
     @EnvironmentObject var uiState    : UIState
     
     enum PushedItem {
-        case summary, humanModel, economyModel, sociologyModel, statisticsAssistant
+        case summary, deterministicModel, humanModel, economyModel, sociologyModel, statisticsAssistant
     }
     
     var body: some View {
@@ -55,7 +55,7 @@ struct ScenarioHeaderView: View {
             NavigationLink(destination : ScenarioSummaryView(),
                            tag         : .summary,
                            selection   : $uiState.scenarioViewState.selectedItem) {
-                Text("Résumé").fontWeight(.bold)
+                Text("Dernière Valeurs Utilisées").fontWeight(.bold)
             }
             .isDetailLink(true)
         }
@@ -68,9 +68,7 @@ struct ScenarioListView: View {
     
     var body: some View {
         // Vue des statistiques générées pour les modèles
-        if simulation.mode == .random {
-            ScenarioModelListView()
-        }
+        ScenarioModelListView()
         
         // Vua assistant statistiques
         Section(header: Text("Statistiques").font(.headline)) {

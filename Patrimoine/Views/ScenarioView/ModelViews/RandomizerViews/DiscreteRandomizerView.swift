@@ -61,11 +61,17 @@ struct DiscreteRandomizerView: UIViewRepresentable {
     }
     
     func getLineChartDataSets() -> [LineChartDataSet]? {
+        var dataSets = [LineChartDataSet]()
+
         /// PDF de la distribution Beta(alpha,beta)
         let yVals1 = randomizer.rndGenerator.pdf.map {
                                         ChartDataEntry(x: $0.x, y: $0.y)
                                      }
-        
+        let set1 = LineChartDataSet(entries: yVals1,
+                                    label: "PDF)",
+                                    color: #colorLiteral(red: 1, green: 0.1491314173, blue: 0, alpha: 1))
+        dataSets.append(set1)
+
         /// CDF de la distribution Beta(alpha,beta)
         var yVals2 = [ChartDataEntry]()
         if let betaCdfCurve = randomizer.rndGenerator.cdfCurve {
@@ -73,46 +79,39 @@ struct DiscreteRandomizerView: UIViewRepresentable {
                 yVals2.append(ChartDataEntry(x: point.x, y: point.y))
             }
         }
-        
-        var histogram = Histogram()
-        let sequence = randomizer.randomHistory!
-        print("longeur séquence = ", sequence.count)
-        histogram.record(sequence)
-        histogram.sort(distributionType : .discrete,
-                       openEnds         : false,
-                       bucketNb         : 50)
-
-        /// PDF des tirages aléatoires
-        var yVals3 = [ChartDataEntry]()
-        histogram.xPDF.forEach {
-            yVals3.append(ChartDataEntry(x: $0.x, y: $0.p))
-        }
-        
-        /// CDF des tirages aléatoires
-        var yVals4 = [ChartDataEntry]()
-        histogram.xCDF.forEach {
-            yVals4.append(ChartDataEntry(x: $0.x, y: $0.p))
-        }
-        
-        let set1 = LineChartDataSet(entries: yVals1,
-                                    label: "PDF)",
-                                    color: #colorLiteral(red: 1, green: 0.1491314173, blue: 0, alpha: 1))
         let set2 = LineChartDataSet(entries: yVals2,
                                     label: "CDF)",
                                     color: #colorLiteral(red: 0.1960784346, green: 0.3411764801, blue: 0.1019607857, alpha: 1))
-        let set3 = LineChartDataSet(entries: yVals3,
-                                    label: "PDF des tirages aléatoires",
-                                    color: #colorLiteral(red: 0.9411764741, green: 0.4980392158, blue: 0.3529411852, alpha: 1))
-        let set4 = LineChartDataSet(entries: yVals4,
-                                    label: "CDF des tirages aléatoires",
-                                    color: #colorLiteral(red: 0.721568644, green: 0.8862745166, blue: 0.5921568871, alpha: 1))
-        
-        // ajouter les dataSet au dataSets
-        var dataSets = [LineChartDataSet]()
-        dataSets.append(set1)
         dataSets.append(set2)
-        dataSets.append(set3)
-        dataSets.append(set4)
+        
+        if let sequence = randomizer.randomHistory {
+            var histogram = Histogram()
+            print("longeur séquence = ", sequence.count)
+            histogram.record(sequence)
+            histogram.sort(distributionType : .discrete,
+                           openEnds         : false,
+                           bucketNb         : 50)
+            
+            /// PDF des tirages aléatoires
+            var yVals3 = [ChartDataEntry]()
+            histogram.xPDF.forEach {
+                yVals3.append(ChartDataEntry(x: $0.x, y: $0.p))
+            }
+            let set3 = LineChartDataSet(entries: yVals3,
+                                        label: "PDF des tirages aléatoires",
+                                        color: #colorLiteral(red: 0.9411764741, green: 0.4980392158, blue: 0.3529411852, alpha: 1))
+            dataSets.append(set3)
+            
+            /// CDF des tirages aléatoires
+            var yVals4 = [ChartDataEntry]()
+            histogram.xCDF.forEach {
+                yVals4.append(ChartDataEntry(x: $0.x, y: $0.p))
+            }
+            let set4 = LineChartDataSet(entries: yVals4,
+                                        label: "CDF des tirages aléatoires",
+                                        color: #colorLiteral(red: 0.721568644, green: 0.8862745166, blue: 0.5921568871, alpha: 1))
+            dataSets.append(set4)
+        }
         
         return dataSets
     }

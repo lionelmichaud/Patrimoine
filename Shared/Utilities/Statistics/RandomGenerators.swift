@@ -52,6 +52,10 @@ enum RandomGeneratorEnum: Int, PickableEnum {
 struct BetaRandomGenerator: RandomGenerator, Distribution, Codable {
     typealias Number = Double
 
+    // MARK: - Type Properties
+    
+    static var cdfCurveSamplesNumber : Int = 1000
+    
     // MARK: - Properties
     
     var minX     : Number? // valeur minimale de X

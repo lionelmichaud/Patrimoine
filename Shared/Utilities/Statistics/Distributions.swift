@@ -12,6 +12,8 @@ import Foundation
 struct BetaDistribution: Distribution {
     typealias Number = Double
     
+    static var cdfCurveSamplesNumber : Int = 1000
+
     // MARK: - Properties
     
     var minX     : Double?

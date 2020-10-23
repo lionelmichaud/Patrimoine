@@ -63,6 +63,9 @@ struct BetaRandomizerView: UIViewRepresentable {
     func getLineChartDataSets() -> [LineChartDataSet]? {
         let nbSamples = 100
 
+        // ajouter les dataSet au dataSets
+        var dataSets = [LineChartDataSet]()
+
         /// PDF de la distribution Beta(alpha,beta)
         let yVals1 = functionSampler(minX      : randomizer.rndGenerator.minX!,
                                      maxX      : randomizer.rndGenerator.maxX!,
@@ -70,6 +73,10 @@ struct BetaRandomizerView: UIViewRepresentable {
                                      f         : randomizer.rndGenerator.pdf).map {
                                         ChartDataEntry(x: $0.x, y: $0.y)
                                      }
+        let set1 = LineChartDataSet(entries: yVals1,
+                                    label: "PDF de Beta (\(randomizer.rndGenerator.alpha), \(randomizer.rndGenerator.beta))",
+                                    color: #colorLiteral(red: 1, green: 0.1491314173, blue: 0, alpha: 1))
+        dataSets.append(set1)
         
         /// CDF de la distribution Beta(alpha,beta)
         var yVals2 = [ChartDataEntry]()
@@ -78,48 +85,41 @@ struct BetaRandomizerView: UIViewRepresentable {
                 yVals2.append(ChartDataEntry(x: point.x, y: point.y))
             }
         }
-        
-        let sequence = randomizer.randomHistory!
-        print("longeur séquence = ", sequence.count)
-        var histogram = Histogram(distributionType : .continuous,
-                                  openEnds         : false,
-                                  Xmin             : randomizer.rndGenerator.minX!,
-                                  Xmax             : randomizer.rndGenerator.maxX!,
-                                  bucketNb         : 50)
-        histogram.record(sequence)
-        
-        /// PDF des tirages aléatoires
-        var yVals3 = [ChartDataEntry]()
-        histogram.xPDF.forEach {
-            yVals3.append(ChartDataEntry(x: $0.x, y: $0.p))
-        }
-        
-        /// CDF des tirages aléatoires
-        var yVals4 = [ChartDataEntry]()
-        histogram.xCDF.forEach {
-            yVals4.append(ChartDataEntry(x: $0.x, y: $0.p))
-        }
-        
-        let set1 = LineChartDataSet(entries: yVals1,
-                                    label: "PDF de Beta (\(randomizer.rndGenerator.alpha), \(randomizer.rndGenerator.beta))",
-                                    color: #colorLiteral(red: 1, green: 0.1491314173, blue: 0, alpha: 1))
         let set2 = LineChartDataSet(entries: yVals2,
                                     label: "CDF de Beta (\(randomizer.rndGenerator.alpha), \(randomizer.rndGenerator.beta))",
                                     color: #colorLiteral(red: 0.1960784346, green: 0.3411764801, blue: 0.1019607857, alpha: 1))
-        let set3 = LineChartDataSet(entries: yVals3,
-                                    label: "PDF des tirages aléatoires",
-                                    color: #colorLiteral(red: 0.9411764741, green: 0.4980392158, blue: 0.3529411852, alpha: 1))
-        let set4 = LineChartDataSet(entries: yVals4,
-                                    label: "CDF des tirages aléatoires",
-                                    color: #colorLiteral(red: 0.721568644, green: 0.8862745166, blue: 0.5921568871, alpha: 1))
-
-        // ajouter les dataSet au dataSets
-        var dataSets = [LineChartDataSet]()
-        dataSets.append(set1)
         dataSets.append(set2)
-        dataSets.append(set3)
-        dataSets.append(set4)
-
+        
+        if let sequence = randomizer.randomHistory {
+            print("longeur séquence = ", sequence.count)
+            var histogram = Histogram(distributionType : .continuous,
+                                      openEnds         : false,
+                                      Xmin             : randomizer.rndGenerator.minX!,
+                                      Xmax             : randomizer.rndGenerator.maxX!,
+                                      bucketNb         : 50)
+            histogram.record(sequence)
+            
+            /// PDF des tirages aléatoires
+            var yVals3 = [ChartDataEntry]()
+            histogram.xPDF.forEach {
+                yVals3.append(ChartDataEntry(x: $0.x, y: $0.p))
+            }
+            let set3 = LineChartDataSet(entries: yVals3,
+                                        label: "PDF des tirages aléatoires",
+                                        color: #colorLiteral(red: 0.9411764741, green: 0.4980392158, blue: 0.3529411852, alpha: 1))
+            dataSets.append(set3)
+            
+            /// CDF des tirages aléatoires
+            var yVals4 = [ChartDataEntry]()
+            histogram.xCDF.forEach {
+                yVals4.append(ChartDataEntry(x: $0.x, y: $0.p))
+            }
+            let set4 = LineChartDataSet(entries: yVals4,
+                                        label: "CDF des tirages aléatoires",
+                                        color: #colorLiteral(red: 0.721568644, green: 0.8862745166, blue: 0.5921568871, alpha: 1))
+            dataSets.append(set4)
+        }
+        
         return dataSets
     }
     

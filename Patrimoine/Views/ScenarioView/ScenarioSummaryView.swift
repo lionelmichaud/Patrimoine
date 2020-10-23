@@ -33,19 +33,19 @@ struct ScenarioSummaryView: View {
                 }
                 Section(header: Text("Modèle Economique")) {
                     PercentView(label   : "Inflation",
-                                percent : Economy.model.inflation.value(withMode: .deterministic)/100.0)
+                                percent : Economy.model.inflation.value(withMode: simulation.mode)/100.0)
                     PercentView(label   : "Rendement sans Risque",
-                                percent : Economy.model.longTermRate.value(withMode: .deterministic)/100.0)
+                                percent : Economy.model.longTermRate.value(withMode: simulation.mode)/100.0)
                     PercentView(label   : "Rendement des Actions",
-                                percent : Economy.model.stockRate.value(withMode: .deterministic)/100.0)
+                                percent : Economy.model.stockRate.value(withMode: simulation.mode)/100.0)
                 }
                 Section(header: Text("Modèle Sociologique")) {
                     PercentView(label   : "Dévaluation anuelle des pensions par rapport à l'inflation",
-                                percent : -SocioEconomy.model.pensionDevaluationRate.value(withMode: .deterministic)/100.0)
+                                percent : -SocioEconomy.model.pensionDevaluationRate.value(withMode: simulation.mode)/100.0)
                     IntegerView(label   : "Nombre de trimestres additionels pour obtenir le taux plein",
-                                integer : Int(SocioEconomy.model.nbTrimTauxPlein.value(withMode: .deterministic)))
+                                integer : Int(SocioEconomy.model.nbTrimTauxPlein.value(withMode: simulation.mode)))
                     PercentView(label   : "Pénalisation des dépenses",
-                                percent : SocioEconomy.model.expensesUnderEvaluationrate.value(withMode: .deterministic)/100.0)
+                                percent : SocioEconomy.model.expensesUnderEvaluationrate.value(withMode: simulation.mode)/100.0)
                 }
             }
             .navigationTitle("Résumé")
