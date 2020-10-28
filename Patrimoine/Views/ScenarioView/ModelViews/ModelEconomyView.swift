@@ -9,7 +9,7 @@
 import SwiftUI
 
 struct ModelEconomyView: View {
-    @State private var modelChoice: Economy.ModelEnum = .inflation
+    @State private var modelChoice: Economy.RandomVariable = .inflation
     
     var body: some View {
         VStack {

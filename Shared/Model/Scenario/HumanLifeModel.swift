@@ -14,7 +14,7 @@ struct HumanLife {
     
     // MARK: - Nested Types
     
-    enum ModelEnum: Int, PickableEnum {
+    enum RandomVariable: Int, PickableEnum {
         case menLifeEpectation
         case womenLifeExpectation
         case nbOfYearsOfdependency
@@ -63,11 +63,26 @@ struct HumanLife {
             nbOfYearsOfdependency.resetRandomHistory()
         }
         
-        mutating func next() {
-            menLifeEpectation.next()
-            womenLifeExpectation.next()
-            nbOfYearsOfdependency.next()
-        }
+//        mutating func next() {
+//            menLifeEpectation.next()
+//            womenLifeExpectation.next()
+//            nbOfYearsOfdependency.next()
+//        }
+//
+        func randomHistories() -> Dictionary<RandomVariable, [Double]?> {
+            var dico = Dictionary<RandomVariable, [Double]?>()
+            for randomVariable in RandomVariable.allCases {
+                switch randomVariable {
+                    case .menLifeEpectation:
+                        dico[randomVariable] = menLifeEpectation.randomHistory
+                    case .womenLifeExpectation:
+                        dico[randomVariable] = womenLifeExpectation.randomHistory
+                    case .nbOfYearsOfdependency:
+                        dico[randomVariable] = nbOfYearsOfdependency.randomHistory
+                }
+            }
+            return dico
+        }    
     }
     
     // MARK: - Static Properties

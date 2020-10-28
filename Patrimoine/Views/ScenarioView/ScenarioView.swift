@@ -55,7 +55,7 @@ struct ScenarioHeaderView: View {
             NavigationLink(destination : ScenarioSummaryView(),
                            tag         : .summary,
                            selection   : $uiState.scenarioViewState.selectedItem) {
-                Text("Dernière Valeurs Utilisées").fontWeight(.bold)
+                Text("Dernière Valeurs Utilisées")
             }
             .isDetailLink(true)
         }
@@ -78,7 +78,6 @@ struct ScenarioListView: View {
                 Text("Assistant Distributions")
             }
             .isDetailLink(true)
-            .padding(.leading)
         }
     }
 }

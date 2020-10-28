@@ -14,7 +14,7 @@ struct SocioEconomy {
     
     // MARK: - Nested Types
     
-    enum ModelEnum: Int, PickableEnum {
+    enum RandomVariable: Int, PickableEnum {
         case pensionDevaluationRate
         case nbTrimTauxPlein
         case expensesUnderEvaluationrate
@@ -34,6 +34,8 @@ struct SocioEconomy {
         }
     }
     
+    typealias DictionaryOfRandomVariable = Dictionary<RandomVariable, Double>
+
     struct Model: Codable {
         var pensionDevaluationRate     : ModelRandomizer<BetaRandomGenerator>
         var nbTrimTauxPlein            : ModelRandomizer<DiscreteRandomGenerator>
@@ -63,10 +65,27 @@ struct SocioEconomy {
             expensesUnderEvaluationrate.resetRandomHistory()
         }
         
-        mutating func next() {
-            pensionDevaluationRate.next()
-            nbTrimTauxPlein.next()
-            expensesUnderEvaluationrate.next()
+        mutating func next() -> DictionaryOfRandomVariable {
+            var dicoOfRandomVariable = DictionaryOfRandomVariable()
+            dicoOfRandomVariable[.pensionDevaluationRate]      = pensionDevaluationRate.next()
+            dicoOfRandomVariable[.nbTrimTauxPlein]             = nbTrimTauxPlein.next()
+            dicoOfRandomVariable[.expensesUnderEvaluationrate] = expensesUnderEvaluationrate.next()
+            return dicoOfRandomVariable
+        }
+        
+        func randomHistories() -> Dictionary<RandomVariable, [Double]?> {
+            var dico = Dictionary<RandomVariable, [Double]?>()
+            for randomVariable in RandomVariable.allCases {
+                switch randomVariable {
+                    case .pensionDevaluationRate:
+                        dico[randomVariable] = pensionDevaluationRate.randomHistory
+                    case .nbTrimTauxPlein:
+                        dico[randomVariable] = nbTrimTauxPlein.randomHistory
+                    case .expensesUnderEvaluationrate:
+                        dico[randomVariable] = expensesUnderEvaluationrate.randomHistory
+                }
+            }
+            return dico
         }
     }
     

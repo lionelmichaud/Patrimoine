@@ -8,7 +8,7 @@
 
 import Foundation
 
-// MARK: - Enum mode de simulation
+// MARK: - Enumération des modes de simulation
 
 enum SimulationModeEnum: Int, PickableEnum, Codable, Hashable {
     case deterministic
@@ -30,7 +30,7 @@ enum SimulationModeEnum: Int, PickableEnum, Codable, Hashable {
     }
 }
 
-// MARK: - Enum de KPI
+// MARK: - Enumération des KPI
 
 enum SimulationKPIEnum: Int, PickableEnum, Codable, Hashable {
     case minimumAsset = 0
@@ -46,7 +46,7 @@ enum SimulationKPIEnum: Int, PickableEnum, Codable, Hashable {
     var pickerString: String {
         switch self {
             case .minimumAsset:
-                return "Actif Financier minimal"
+                return "Actif Financier Minimum"
             case .assetAt1stDeath:
                 return "Actif au Premier Décès"
             case .assetAt2ndtDeath:
@@ -65,6 +65,7 @@ final class Simulation: ObservableObject {
     @Published var currentRunNb   : Int = 0
     @Published var socialAccounts = SocialAccounts()
     @Published var kpis           = KpiArray()
+    @Published var resultTable    = SimulationResultTable()
     @Published var title          = "Simulation"
     @Published var isComputed     = false
     @Published var isComputing    = false
@@ -76,19 +77,19 @@ final class Simulation: ObservableObject {
     
     init() {
         /// initialiser les KPI
-        let kpiMinimumCash = KPI(name: SimulationKPIEnum.minimumAsset.displayString,
-                                 objective: 200_000.0,
-                                 withProbability: 0.98)
+        let kpiMinimumCash = KPI(name            : SimulationKPIEnum.minimumAsset.displayString,
+                                 objective       : 200_000.0,
+                                 withProbability : 0.98)
         kpis.append(kpiMinimumCash)
         
-        let kpiAssetsAtFirstDeath = KPI(name: SimulationKPIEnum.assetAt1stDeath.displayString,
-                                        objective: 200_000.0,
-                                        withProbability: 0.98)
+        let kpiAssetsAtFirstDeath = KPI(name            : SimulationKPIEnum.assetAt1stDeath.displayString,
+                                        objective       : 200_000.0,
+                                        withProbability : 0.98)
         kpis.append(kpiAssetsAtFirstDeath)
         
-        let kpiAssetsAtLastDeath = KPI(name: SimulationKPIEnum.assetAt2ndtDeath.displayString,
-                                       objective: 200_000.0,
-                                       withProbability: 0.98)
+        let kpiAssetsAtLastDeath = KPI(name            : SimulationKPIEnum.assetAt2ndtDeath.displayString,
+                                       objective       : 200_000.0,
+                                       withProbability : 0.98)
         kpis.append(kpiAssetsAtLastDeath)
     }
     
@@ -133,14 +134,17 @@ final class Simulation: ObservableObject {
                  nbOfRuns                  : Int,
                  withFamily family         : Family,
                  withPatrimoine patrimoine : Patrimoin) {
-        isComputing = true
+        isComputing    = true
         let monteCarlo = nbOfRuns > 1
-        
+        var dicoOfEconomyRandomVariables      = Economy.DictionaryOfRandomVariable()
+        var dicoOfSocioEconomyRandomVariables = SocioEconomy.DictionaryOfRandomVariable()
+
         // remettre à zéro les historiques des tirages aléatoires
         if monteCarlo {
             HumanLife.model.resetRandomHistory()
             Economy.model.resetRandomHistory()
             SocioEconomy.model.resetRandomHistory()
+            resultTable = SimulationResultTable()
         }
         
         // calculer tous les runs
@@ -152,9 +156,9 @@ final class Simulation: ObservableObject {
                 // réinitialiser les propriétés aléatoires de la famille
                 family.nextRandomProperties()
                 // réinitialiser les propriétés aléatoires du modèle macro économique
-                Economy.model.next()
+                dicoOfEconomyRandomVariables      = Economy.model.next()
                 // réinitialiser les propriétés aléatoires du modèle socio économique
-                SocioEconomy.model.next()
+                dicoOfSocioEconomyRandomVariables = SocioEconomy.model.next()
             }
 
             // Réinitialiser la simulation
@@ -164,16 +168,33 @@ final class Simulation: ObservableObject {
             // construire les comptes sociaux du patrimoine de la famille:
             // - personnes
             // - dépenses
-            socialAccounts.build(nbOfYears      : nbOfYears,
-                                 withFamily     : family,
-                                 withPatrimoine : patrimoine,
-                                 withKPIs       : &kpis,
-                                 withMode       : mode)
-            
-            // Dernier run, créer les histogrammes et y ranger
-            // les échantillons de KPIs si on est en mode Aléatoire
-            if monteCarlo && run == nbOfRuns {
-                KpiArray.sortHistograms(ofTheseKPIs: &kpis)
+            let dicoOfKpiResults = socialAccounts.build(nbOfYears      : nbOfYears,
+                                                        withFamily     : family,
+                                                        withPatrimoine : patrimoine,
+                                                        withKPIs       : &kpis,
+                                                        withMode       : mode)
+            if monteCarlo {
+                // récupérer les propriétés aléatoires des adultes de la famille
+                var adultsRandomProperties = [(name: String, ageOfDeath: Int, nbOfYearOfDependency: Int)]()
+                family.members.forEach { person in
+                    if let adult = person as? Adult {
+                        adultsRandomProperties.append((name                 : adult.displayName,
+                                                       ageOfDeath           : adult.ageOfDeath,
+                                                       nbOfYearOfDependency : adult.nbOfYearOfDependency))
+                    }
+                }
+                let currentRunResults = SimulationResultLine(runNumber                         : run,
+                                                             dicoOfKpiResults                  : dicoOfKpiResults,
+                                                             dicoOfEconomyRandomVariables      : dicoOfEconomyRandomVariables,
+                                                             dicoOfSocioEconomyRandomVariables : dicoOfSocioEconomyRandomVariables,
+                                                             adultsRandomProperties            : adultsRandomProperties)
+                resultTable.append(currentRunResults)
+                
+                // Dernier run, créer les histogrammes et y ranger
+                // les échantillons de KPIs si on est en mode Aléatoire
+                if run == nbOfRuns {
+                    KpiArray.generateHistograms(ofTheseKPIs: &kpis)
+                }
             }
         }
         //propriétés indépendantes du nombre de run

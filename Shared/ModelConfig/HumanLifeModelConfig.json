@@ -1,6 +1,7 @@
 {
     "menLifeEpectation" :
     {
+        "name"    : "Espérance de Vie d'un Homme",
         "version" :
         {
             "version" : "0.1",
@@ -64,6 +65,7 @@
     
     "womenLifeExpectation":
     {
+        "name"    : "Espérance de Vie d'une Femme",
         "version" :
         {
             "version" : "0.1",
@@ -130,6 +132,7 @@
     
     "nbOfYearsOfdependency" :
     {
+        "name"    : "Nombre d'années de dépendance",
         "version" :
         {
             "version" : "0.1",

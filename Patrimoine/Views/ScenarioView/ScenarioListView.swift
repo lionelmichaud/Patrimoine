@@ -16,7 +16,7 @@ struct ScenarioModelListView: View {
             NavigationLink(destination: ModelDeterministicView(),
                            tag         : .deterministicModel,
                            selection   : $uiState.scenarioViewState.selectedItem) {
-                Text("Tous les Modèles").fontWeight(.bold)
+                Text("Tous les Modèles")
             }
             .isDetailLink(true)
         }
@@ -24,21 +24,21 @@ struct ScenarioModelListView: View {
             NavigationLink(destination: ModelHumanView(),
                            tag         : .humanModel,
                            selection   : $uiState.scenarioViewState.selectedItem) {
-                Text("Modèle Humain").fontWeight(.bold)
+                Text("Modèle Humain")
             }
             .isDetailLink(true)
             
             NavigationLink(destination: ModelEconomyView(),
                            tag         : .economyModel,
                            selection   : $uiState.scenarioViewState.selectedItem) {
-                Text("Modèle Economique").fontWeight(.bold)
+                Text("Modèle Economique")
             }
             .isDetailLink(true)
             
             NavigationLink(destination: ModelSociologyView(),
                            tag         : .sociologyModel,
                            selection   : $uiState.scenarioViewState.selectedItem) {
-                Text("Modèle Sociologique").fontWeight(.bold)
+                Text("Modèle Sociologique")
             }
             .isDetailLink(true)
         }

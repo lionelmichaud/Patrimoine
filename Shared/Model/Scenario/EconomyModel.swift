@@ -14,7 +14,7 @@ struct Economy {
     
     // MARK: - Nested Types
 
-    enum ModelEnum: Int, PickableEnum {
+    enum RandomVariable: Int, PickableEnum, CaseIterable {
         case inflation
         case longTermRate
         case stockRate
@@ -33,6 +33,8 @@ struct Economy {
             }
         }
     }
+    
+    typealias DictionaryOfRandomVariable = Dictionary<RandomVariable, Double>
     
     struct Model: Codable {
         var inflation    : ModelRandomizer<BetaRandomGenerator>
@@ -63,10 +65,27 @@ struct Economy {
             stockRate.resetRandomHistory()
         }
         
-        mutating func next() {
-            inflation.next()
-            longTermRate.next()
-            stockRate.next()
+        mutating func next() -> DictionaryOfRandomVariable {
+            var dicoOfRandomVariable = DictionaryOfRandomVariable()
+            dicoOfRandomVariable[.inflation]    = inflation.next()
+            dicoOfRandomVariable[.longTermRate] = longTermRate.next()
+            dicoOfRandomVariable[.stockRate]    = stockRate.next()
+            return dicoOfRandomVariable
+        }
+        
+        func randomHistories() -> Dictionary<RandomVariable, [Double]?> {
+            var dico = Dictionary<RandomVariable, [Double]?>()
+            for randomVariable in RandomVariable.allCases {
+                switch randomVariable {
+                    case .inflation:
+                        dico[randomVariable] = inflation.randomHistory
+                    case .longTermRate:
+                        dico[randomVariable] = longTermRate.randomHistory
+                    case .stockRate:
+                        dico[randomVariable] = stockRate.randomHistory
+                }
+            }
+            return dico
         }
     }
     

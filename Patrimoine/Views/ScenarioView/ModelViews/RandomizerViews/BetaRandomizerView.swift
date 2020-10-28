@@ -91,7 +91,6 @@ struct BetaRandomizerView: UIViewRepresentable {
         dataSets.append(set2)
         
         if let sequence = randomizer.randomHistory {
-            print("longeur séquence = ", sequence.count)
             var histogram = Histogram(distributionType : .continuous,
                                       openEnds         : false,
                                       Xmin             : randomizer.rndGenerator.minX!,

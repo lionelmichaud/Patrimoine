@@ -20,9 +20,28 @@ struct ChartsView: View {
                 Text("Calculer une simulation au préalable").foregroundColor(.red)
                 Spacer()
             }
-            .padding(.horizontal)
             
         } else {
+            Section(header: Text("KPI").font(.headline)) {
+                // synthèse des KPIs
+                NavigationLink(destination: KpiListSummaryView(),
+                               tag         : .kpiSummary,
+                               selection   : $uiState.simulationViewState.selectedItem) {
+                    HStack {
+                        if let allObjectivesAreReached = simulation.kpis.allObjectivesAreReached(withMode: simulation.mode) {
+                            Image(systemName: allObjectivesAreReached ? "checkmark.circle.fill" : "multiply.circle.fill")
+                                .imageScale(.medium)
+                                .foregroundColor(allObjectivesAreReached ? .green : .red)
+                        }
+                        Text("Synthèse")
+                    }
+                }
+                .isDetailLink(true)
+                
+                // Liste des KPIs
+                KpiListView()
+            }
+            
             Section(header: Text("Graphes Bilan").font(.headline)) {
                 NavigationLink(destination: BalanceSheetGlobalChartView(),
                                tag         : .bilanSynthese,
@@ -53,26 +72,6 @@ struct ChartsView: View {
                     Text("Détails")
                 }
                 .isDetailLink(true)
-            }
-            
-            Section(header: Text("KPI").font(.headline)) {
-                // synthèse des KPIs
-                NavigationLink(destination: KpiListSummaryView(),
-                               tag         : .kpiSummary,
-                               selection   : $uiState.simulationViewState.selectedItem) {
-                    HStack {
-                        if let allObjectivesAreReached = simulation.kpis.allObjectivesAreReached(withMode: simulation.mode) {
-                            Image(systemName: allObjectivesAreReached ? "checkmark.circle.fill" : "multiply.circle.fill")
-                                .imageScale(.medium)
-                                .foregroundColor(allObjectivesAreReached ? .green : .red)
-                        }
-                        Text("Synthèse")
-                    }
-                }
-                .isDetailLink(true)
-                
-                // Liste des KPIs
-                KpiListView()
             }
         }
     }

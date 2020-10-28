@@ -231,16 +231,10 @@ class Person : ObservableObject, Identifiable, CustomStringConvertible, Codable 
     func nextRandomProperties() {
         switch self.sexe {
             case .male:
-                // générer une nouvelle valeure aléatoire
-                HumanLife.model.menLifeEpectation.next()
-                // réinitialiser l'age de décès
-                self.ageOfDeath = Int(HumanLife.model.menLifeEpectation.value(withMode: .random))
+                self.ageOfDeath = Int(HumanLife.model.menLifeEpectation.next())
                 
             case .female:
-                // générer une nouvelle valeure aléatoire
-                HumanLife.model.womenLifeExpectation.next()
-                // réinitialiser l'age de décès
-                self.ageOfDeath = Int(HumanLife.model.womenLifeExpectation.value(withMode: .random))
+                self.ageOfDeath = Int(HumanLife.model.womenLifeExpectation.next())
         }
     }
     

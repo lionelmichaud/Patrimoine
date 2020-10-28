@@ -708,10 +708,8 @@ final class Adult: Person {
         super.nextRandomProperties()
         
         // générer une nouvelle valeure aléatoire
-        HumanLife.model.nbOfYearsOfdependency.next()
-        
         // réinitialiser la durée de dépendance
-        nbOfYearOfDependency = Int(HumanLife.model.nbOfYearsOfdependency.value(withMode: .random))
+        nbOfYearOfDependency = Int(HumanLife.model.nbOfYearsOfdependency.next())
     }
 
     

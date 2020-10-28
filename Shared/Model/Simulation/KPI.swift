@@ -26,7 +26,7 @@ extension KpiArray {
     ///
     /// - Warning: les échantillons doivent avoir été enregistrées au préalable
     ///
-    static func sortHistograms(ofTheseKPIs: inout KpiArray) {
+    static func generateHistograms(ofTheseKPIs: inout KpiArray) {
         ofTheseKPIs = ofTheseKPIs.map {
             var newKPI = $0
             newKPI.sortHistogram()
@@ -44,7 +44,10 @@ extension KpiArray {
     }
     
     /// Est-ce que tous les objectifs sont atteints ?
-    /// - Warning: Retourne nil si au moins une des valeurs n'est pas définie
+    /// - Warning:
+    ///     Retourne nil si au moins une des valeurs n'est pas définie
+    ///
+    ///     Ne doit être appelées qu'après la fin du dernier Run
     func allObjectivesAreReached(withMode mode : SimulationModeEnum) -> Bool? {
         var result = true
         for kpi in self {
@@ -73,11 +76,13 @@ extension KpiArray {
 ///                      withProbability : 0.95)
 ///
 ///       // ajoute un échantillon à l'histogramme
-///       kpi.record(kpiSample1)
-///       kpi.record(kpiSample2)
+///       kpi.record(kpiSample1, withMode: .random)
+///       kpi.record(kpiSample2, withMode: .random)
+///       kpi.record(kpiSample3, withMode: .random)
+///       objectiveIsReached = kpi.objectiveIsReachedWithLastValue(withMode: .random)
 ///
 ///       // récupère la valeur déterministe du KPI
-///       // ou valeur du KPI atteinte avec la proba objectif
+///       // ou valeur du KPI statistique atteinte avec la proba objectif
 ///       let kpiValue = kpi.value()
 ///
 ///       // valeur du KPI atteinte avec la proba 95%
@@ -152,7 +157,8 @@ struct KPI: Identifiable {
                        bucketNb         : KPI.nbBucketsInHistograms)
     }
     
-    // true si la valeur du KPI a été définie au cours de la simulation
+    /// Retourne true si la valeur du KPI a été définie au cours de la simulation (.deterministic)
+    /// ou peut être calculée (.random)
     func hasValue(for mode: SimulationModeEnum) -> Bool {
         value(withMode: mode) != nil
     }
@@ -176,6 +182,16 @@ struct KPI: Identifiable {
                 
             case .random:
                 return percentile(for: 1.0 - probaObjective)
+        }
+    }
+    
+    func lastValue(withMode mode: SimulationModeEnum) -> Double? {
+        switch mode {
+            case .deterministic:
+                return valueKPI
+                
+            case .random:
+                return histogram.lastRecordedValue
         }
     }
     
@@ -241,12 +257,21 @@ struct KPI: Identifiable {
         }
     }
     
-    // true si l'objectif de valeur est atteint
+    /// Retourrne true si l'objectif de valeur est atteint lors du run unique (.deterministic)
+    /// ou statistiquement sur l'ensmeble des runs (.random)
     func objectiveIsReached(withMode mode: SimulationModeEnum) -> Bool? {
         guard let value = self.value(withMode: mode) else {
             return nil
         }
         return value >= objective
     }
-
+    
+    /// Retourrne true si l'objectif de valeur est atteint lors du run unique (.deterministic)
+    /// ou sur le dernier run (.random)
+    func objectiveIsReachedWithLastValue(withMode mode: SimulationModeEnum) -> Bool? {
+        guard let lastValue = self.lastValue(withMode: mode) else {
+            return nil
+        }
+        return lastValue >= objective
+    }
 }

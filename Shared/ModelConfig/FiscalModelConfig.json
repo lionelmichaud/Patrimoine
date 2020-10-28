@@ -139,7 +139,7 @@
                 "date"    : "2020-09-12T23:00:00+01:00",
                 "comment" : null
             },
-            "seuilCsgCrds"  : 50.0,
+            "seuilCsgCrds"  : 51.0,
             "CRDS"          : 0.5,
             "CSG"           : 6.2,
             "retraiteCompl" : 3.0

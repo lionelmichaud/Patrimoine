@@ -1,6 +1,7 @@
 {
     "pensionDevaluationRate" :
     {
+        "name"    : "Taux de dévaluation annuel des pensions de retraite",
         "version" :
         {
             "version" : "0.1",
@@ -22,6 +23,7 @@
     
     "nbTrimTauxPlein":
     {
+        "name"    : "Incrément de nb de trimestres pour obtenir le taux plein",
         "version" :
         {
             "version" : "0.1",
@@ -44,6 +46,7 @@
     
     "expensesUnderEvaluationrate" :
     {
+        "name"    : "Taux de sévérisation des dépenses",
         "version" :
         {
             "version" : "0.1",

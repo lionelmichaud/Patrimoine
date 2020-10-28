@@ -32,8 +32,12 @@ struct SimulationView: View {
                     }
                     .isDetailLink(true)
                     
-                    // affichage des graphiques
+                    // affichage des résultats graphiques
                     ChartsView()
+                    
+                    // affichage des résultats tabulés
+                    GridsView()
+
                 }
                 .defaultSideBarListStyle()
                 //.listStyle(InsetGroupedListStyle())

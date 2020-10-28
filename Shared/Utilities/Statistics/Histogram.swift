@@ -132,6 +132,9 @@ struct Histogram {
     private var openEnds : Bool = false
     // tableau de tous les échantillons reçus
     private var dataset  = [Double]()
+    var lastRecordedValue: Double? {
+        dataset.last
+    }
     // cases pour compter les échantillons dans chaque case
     private var buckets  = [Bucket]()
     // largeur en X d'une case

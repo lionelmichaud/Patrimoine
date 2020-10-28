@@ -9,7 +9,7 @@
 import SwiftUI
 
 struct ModelHumanView: View {
-    @State private var modelChoice: HumanLife.ModelEnum = .menLifeEpectation
+    @State private var modelChoice: HumanLife.RandomVariable = .menLifeEpectation
     
     var body: some View {
         VStack {

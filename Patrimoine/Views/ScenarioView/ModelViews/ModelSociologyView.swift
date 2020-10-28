@@ -9,7 +9,7 @@
 import SwiftUI
 
 struct ModelSociologyView: View {
-    @State private var modelChoice: SocioEconomy.ModelEnum = .pensionDevaluationRate
+    @State private var modelChoice: SocioEconomy.RandomVariable = .pensionDevaluationRate
     
     var body: some View {
         VStack {

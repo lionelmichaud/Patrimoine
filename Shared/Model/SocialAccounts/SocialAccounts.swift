@@ -42,19 +42,6 @@ struct SocialAccounts {
         patrimoine.resetFreeInvestementCurrentValue()
     }
     
-    /// Mémorise le niveau le bas atteint par les actifs financiers au cours du run
-    /// - Parameters:
-    ///   - kpis: les KPI
-    ///   - simulationMode: mode de simluation en cours
-    func storeMnimumAssetKpiValue(withKPIs kpis           : inout KpiArray,
-                                  withMode simulationMode : SimulationModeEnum) {
-        let minBalanceSheetLine = balanceArray.min { a, b in
-            a.totalFinancialAssets < b.totalFinancialAssets
-        }
-        // KPI 3: mémoriser le minimum d'actif financier net au cours du temps
-        kpis[SimulationKPIEnum.minimumAsset.id].record(minBalanceSheetLine!.totalFinancialAssets, withMode: simulationMode)
-    }
-    
     // MARK: - Construction de la table des comptes sociaux = Bilan + CashFlow
     /// construire la table de comptes sociaux au fil des années
     /// - Parameters:
@@ -68,15 +55,31 @@ struct SocialAccounts {
                         withFamily family         : Family,
                         withPatrimoine patrimoine : Patrimoin,
                         withKPIs kpis             : inout KpiArray,
-                        withMode simulationMode   : SimulationModeEnum) {
+                        withMode simulationMode   : SimulationModeEnum) -> DictionaryOfKpiResults {
+        /// Mémorise le niveau le bas atteint par les actifs financiers au cours du run
+        /// - Parameters:
+        ///   - kpis: les KPI
+        ///   - simulationMode: mode de simluation en cours
+        func storeMnimumAssetKpiValue(withKPIs kpis           : inout KpiArray,
+                                      withMode simulationMode : SimulationModeEnum) {
+            let minBalanceSheetLine = balanceArray.min { a, b in
+                a.totalFinancialAssets < b.totalFinancialAssets
+            }
+            // KPI 3: mémoriser le minimum d'actif financier net au cours du temps
+            kpis[SimulationKPIEnum.minimumAsset.id].record(minBalanceSheetLine!.totalFinancialAssets, withMode: simulationMode)
+            currentKPIs[.minimumAsset] = (value: minBalanceSheetLine!.totalFinancialAssets,
+                                          objeciveReached: minBalanceSheetLine!.totalFinancialAssets >= kpis[SimulationKPIEnum.minimumAsset.id].objective)
+        }
+        
         firstYear = Date.now.year
         lastYear  = firstYear + nbOfYears - 1
-
+        
+        var currentKPIs = DictionaryOfKpiResults()
+        
         for year in firstYear ... lastYear {
-            
             // construire la ligne annuelle de Cash Flow
             //------------------------------------------
-            // gérer le report de revenu imposable
+            /// gérer le report de revenu imposable
             var lastYearDelayedTaxableIrppRevenue: Double
             if let lastLine = cashFlowArray.last { // de l'année précédente, s'il y en a une
                 lastYearDelayedTaxableIrppRevenue = lastLine.taxableIrppRevenueDelayedToNextYear.value(atEndOf: year - 1)
@@ -85,16 +88,15 @@ struct SocialAccounts {
                 lastYearDelayedTaxableIrppRevenue = 0
             }
             
-            // ajouter une nouvelle ligne
+            /// ajouter une nouvelle ligne piur une nouvelle année
             do {
                 let newLine = try CashFlowLine(withYear                              : year,
                                                withFamily                            : family,
                                                withPatrimoine                        : patrimoine,
                                                taxableIrppRevenueDelayedFromLastyear : lastYearDelayedTaxableIrppRevenue)
                 cashFlowArray.append(newLine)
-
-
             } catch {
+                /// il n'y a plus de Cash => on arrête la simulation
                 customLog.log(level: .info , "Nombre d'adulte survivants inatendu: \(family.nbOfAdultAlive(atEndOf: year), privacy: .public) dans \(Self.self, privacy: .public)")
                 Swift.print("Arrêt de la construction de la table de Comptes sociaux: Actifs financiers = 0")
                 lastYear = year
@@ -103,21 +105,34 @@ struct SocialAccounts {
                     case 2:
                         // il reste 2 adultes vivants
                         kpis[SimulationKPIEnum.assetAt1stDeath.id].record(0, withMode: simulationMode)
+                        currentKPIs[.assetAt1stDeath] = (value: 0,
+                                                         objeciveReached: false)
+                        
                         kpis[SimulationKPIEnum.assetAt2ndtDeath.id].record(0, withMode: simulationMode)
+                        currentKPIs[.assetAt2ndtDeath] = (value: 0,
+                                                          objeciveReached: false)
+                        
                     case 1:
                         // il reste 1 seul adulte vivant
                         kpis[SimulationKPIEnum.assetAt2ndtDeath.id].record(0, withMode: simulationMode)
+                        currentKPIs[.assetAt2ndtDeath] = (value: 0,
+                                                          objeciveReached: false)
+                        
                     case 0:
                         // il ne plus d'adulte vivant
                         ()
+                        
                     default:
                         // ne devrait jamais se produire
-                        customLog.log(level: .fault, "Nombre d'adulte survivants inatendu: \(family.nbOfAdultAlive(atEndOf: year), privacy: .public) dans \(Self.self, privacy: .public)")
-                        fatalError("Nombre d'adulte survivants inatendu: \(family.nbOfAdultAlive(atEndOf: year)) dans  \(Self.self)")
+                        customLog.log(level: .fault, "Nombre d'adulte survivants inattendu: \(family.nbOfAdultAlive(atEndOf: year), privacy: .public) dans \(Self.self, privacy: .public)")
+                        fatalError("Nombre d'adulte survivants inattendu: \(family.nbOfAdultAlive(atEndOf: year)) dans  \(Self.self)")
                 }
+                /// KPI n°3 : on est arrivé à la fin de la simulation
+                // rechercher le minimum d'actif financier net au cours du temps
                 storeMnimumAssetKpiValue(withKPIs : &kpis,
                                          withMode : simulationMode)
-                return // arrêter la construction de la table
+
+                return currentKPIs // arrêter la construction de la table
             }
             
             // construire la ligne annuelle de Bilan de fin d'année
@@ -126,27 +141,44 @@ struct SocialAccounts {
                                            withPatrimoine : patrimoine)
             balanceArray.append(newLine)
             
-            // gérer les KPI 1 et 2 au décès de l'un des conjoints
+            /// gérer les KPI n°1, 2, 3 au décès de l'un des conjoints
             //----------------------------------------------------
             if family.nbOfAdultAlive(atEndOf: year) == family.nbOfAdultAlive(atEndOf: year-1) - 1 {
-                if family.nbOfAdultAlive(atEndOf: year) == 1 {
-                    // KPI 1: décès du premier conjoint et mémoriser la valeur du KPI
-                    // mémoriser le montant de l'Actif Net
-                    kpis[SimulationKPIEnum.assetAt1stDeath.id].record(newLine.netAssets, withMode: simulationMode)
+                switch family.nbOfAdultAlive(atEndOf: year) {
+                    case 1:
+                        /// KPI n°1: décès du premier conjoint et mémoriser la valeur du KPI
+                        // mémoriser le montant de l'Actif Net
+                        kpis[SimulationKPIEnum.assetAt1stDeath.id].record(newLine.netAssets, withMode: simulationMode)
+                        currentKPIs[.assetAt1stDeath] = (value: newLine.netAssets,
+                                                         objeciveReached: newLine.netAssets >= kpis[SimulationKPIEnum.assetAt1stDeath.id].objective)
+                        
+                    case 0:
+                        /// KPI n°2: décès du second conjoint et mémoriser la valeur du KPI
+                        // mémoriser le montant de l'Actif Net
+                        kpis[SimulationKPIEnum.assetAt2ndtDeath.id].record(newLine.netAssets, withMode: simulationMode)
+                        currentKPIs[.assetAt2ndtDeath] = (value: newLine.netAssets,
+                                                          objeciveReached: newLine.netAssets >= kpis[SimulationKPIEnum.assetAt2ndtDeath.id].objective)
+                        /// KPI n°3 : on est arrivé à la fin de la simulation
+                        // rechercher le minimum d'actif financier net au cours du temps
+                        storeMnimumAssetKpiValue(withKPIs : &kpis,
+                                                 withMode : simulationMode)
+                        
+                        // il ne plus d'adulte vivant on arrête la simulation
+                        return currentKPIs // arrêter la construction de la table
                     
-                } else {
-                    // KPI 2: décès du second conjoint et mémoriser la valeur du KPI
-                    // mémoriser le montant de l'Actif Net
-                    kpis[SimulationKPIEnum.assetAt2ndtDeath.id].record(newLine.netAssets, withMode: simulationMode)
-
+                    default:
+                        // ne devrait jamais se produire
+                        customLog.log(level: .fault, "Nombre d'adulte survivants inattendu: \(family.nbOfAdultAlive(atEndOf: year), privacy: .public) dans \(Self.self, privacy: .public)")
+                        fatalError("Nombre d'adulte survivants inattendu: \(family.nbOfAdultAlive(atEndOf: year)) dans  \(Self.self)")
                 }
             }
         }
         
-        // on est arrivé à la fin de la période de simulation
+        /// KPI n°3 : on est arrivé à la fin de la simulation
         // rechercher le minimum d'actif financier net au cours du temps
         storeMnimumAssetKpiValue(withKPIs : &kpis,
                                  withMode : simulationMode)
+        return currentKPIs
     }
     
     // MARK: - Impression écran

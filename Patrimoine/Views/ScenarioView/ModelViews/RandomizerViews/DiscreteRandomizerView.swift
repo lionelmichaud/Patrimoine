@@ -15,7 +15,7 @@ struct DiscreteRandomizerView: UIViewRepresentable {
     
     func makeUIView(context: Context) -> LineChartView {
         // créer et configurer un nouveau graphique
-        let chartView = LineChartView(title              : "Distribution Discrète",
+        let chartView = LineChartView(title               : "Distribution Discrète",
                                       axisFormatterChoice : .none)
         
         // créer les DataSet: LineChartDataSets
@@ -68,7 +68,7 @@ struct DiscreteRandomizerView: UIViewRepresentable {
                                         ChartDataEntry(x: $0.x, y: $0.y)
                                      }
         let set1 = LineChartDataSet(entries: yVals1,
-                                    label: "PDF)",
+                                    label: "PDF du modèle",
                                     color: #colorLiteral(red: 1, green: 0.1491314173, blue: 0, alpha: 1))
         dataSets.append(set1)
 
@@ -80,13 +80,12 @@ struct DiscreteRandomizerView: UIViewRepresentable {
             }
         }
         let set2 = LineChartDataSet(entries: yVals2,
-                                    label: "CDF)",
+                                    label: "CDF du modèle",
                                     color: #colorLiteral(red: 0.1960784346, green: 0.3411764801, blue: 0.1019607857, alpha: 1))
         dataSets.append(set2)
         
         if let sequence = randomizer.randomHistory {
             var histogram = Histogram()
-            print("longeur séquence = ", sequence.count)
             histogram.record(sequence)
             histogram.sort(distributionType : .discrete,
                            openEnds         : false,

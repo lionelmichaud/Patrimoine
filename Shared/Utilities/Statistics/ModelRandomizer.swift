@@ -17,6 +17,7 @@ where R: Codable,
     // MARK: - Properties
 
     var version       : Version
+    var name          : String
     var rndGenerator  : R
     var defaultValue  : Double = 0 // valeur par defaut déterministe
     var randomValue   : Double = 0 // dernière valeur randomisée
@@ -30,12 +31,13 @@ where R: Codable,
     }
     
     /// Générer le nombre aléatoire suivant
-    mutating func next() {
+    mutating func next() -> Double {
         randomValue = Double(rndGenerator.next())
         if randomHistory == nil {
             randomHistory = []
         }
         randomHistory!.append(randomValue)
+        return randomValue
     }
     
     /// Returns a default value or a  random value depending on the value of simulationMode.mode

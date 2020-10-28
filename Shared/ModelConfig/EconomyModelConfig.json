@@ -1,6 +1,7 @@
 {
     "inflation" :
     {
+        "name"    : "Inflation",
         "version" :
         {
             "version" : "0.1",
@@ -22,6 +23,7 @@
     
     "longTermRate":
     {
+        "name"    : "Taux de rendement des placements sûrs",
         "version" :
         {
             "version" : "0.1",
@@ -43,6 +45,7 @@
     
     "stockRate":
     {
+        "name"    : "Taux de rendement des action",
         "version" :
         {
             "version" : "0.1",
