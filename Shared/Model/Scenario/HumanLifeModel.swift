@@ -15,7 +15,7 @@ struct HumanLife {
     // MARK: - Nested Types
     
     enum RandomVariable: Int, PickableEnum {
-        case menLifeEpectation
+        case menLifeEpectation = 0
         case womenLifeExpectation
         case nbOfYearsOfdependency
         

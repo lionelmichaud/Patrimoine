@@ -52,7 +52,7 @@ class UIState: ObservableObject {
     
     // MARK: - Etat de la vue Simulation
     struct SimulationViewState {
-        var selectedItem: SimulationView.PushedItem? = .computation
+        var selectedItem: SimulationView.PushedItem? = .computationView
     }
     
     // MARK: - Etat de la vue Compute
@@ -91,6 +91,6 @@ class UIState: ObservableObject {
     }
     
     func resetSimulation() {
-        simulationViewState.selectedItem = .computation
+        simulationViewState.selectedItem = .computationView
     }
 }

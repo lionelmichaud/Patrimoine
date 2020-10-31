@@ -13,7 +13,7 @@ struct SimulationView: View {
     @EnvironmentObject var uiState    : UIState
     
     enum PushedItem {
-        case computation, bilanSynthese, bilanDetail, cfSynthese, cfDetail, kpiSummary, statistics
+        case computationView, bilanSynthese, bilanDetail, cfSynthese, cfDetail, kpiSummaryView, shortGridView
     }
     
     var body: some View {
@@ -26,7 +26,7 @@ struct SimulationView: View {
                 List {
                     // calcul de simulation
                     NavigationLink(destination : ComputationView(),
-                                   tag         : .computation,
+                                   tag         : .computationView,
                                    selection   : $uiState.simulationViewState.selectedItem) {
                         Text("Calculs")
                     }

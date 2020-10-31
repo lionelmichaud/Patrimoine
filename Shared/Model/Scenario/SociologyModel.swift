@@ -15,7 +15,7 @@ struct SocioEconomy {
     // MARK: - Nested Types
     
     enum RandomVariable: Int, PickableEnum {
-        case pensionDevaluationRate
+        case pensionDevaluationRate = 0
         case nbTrimTauxPlein
         case expensesUnderEvaluationrate
 

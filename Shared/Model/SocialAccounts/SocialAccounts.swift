@@ -67,8 +67,8 @@ struct SocialAccounts {
             }
             // KPI 3: mémoriser le minimum d'actif financier net au cours du temps
             kpis[SimulationKPIEnum.minimumAsset.id].record(minBalanceSheetLine!.totalFinancialAssets, withMode: simulationMode)
-            currentKPIs[.minimumAsset] = (value: minBalanceSheetLine!.totalFinancialAssets,
-                                          objeciveReached: minBalanceSheetLine!.totalFinancialAssets >= kpis[SimulationKPIEnum.minimumAsset.id].objective)
+            currentKPIs[.minimumAsset] = KpiResult(value              : minBalanceSheetLine!.totalFinancialAssets,
+                                                   objectiveIsReached : minBalanceSheetLine!.totalFinancialAssets >= kpis[SimulationKPIEnum.minimumAsset.id].objective)
         }
         
         firstYear = Date.now.year
@@ -105,18 +105,18 @@ struct SocialAccounts {
                     case 2:
                         // il reste 2 adultes vivants
                         kpis[SimulationKPIEnum.assetAt1stDeath.id].record(0, withMode: simulationMode)
-                        currentKPIs[.assetAt1stDeath] = (value: 0,
-                                                         objeciveReached: false)
+                        currentKPIs[.assetAt1stDeath] = KpiResult(value              : 0,
+                                                                  objectiveIsReached : false)
                         
                         kpis[SimulationKPIEnum.assetAt2ndtDeath.id].record(0, withMode: simulationMode)
-                        currentKPIs[.assetAt2ndtDeath] = (value: 0,
-                                                          objeciveReached: false)
+                        currentKPIs[.assetAt2ndtDeath] = KpiResult(value              : 0,
+                                                                   objectiveIsReached : false)
                         
                     case 1:
                         // il reste 1 seul adulte vivant
                         kpis[SimulationKPIEnum.assetAt2ndtDeath.id].record(0, withMode: simulationMode)
-                        currentKPIs[.assetAt2ndtDeath] = (value: 0,
-                                                          objeciveReached: false)
+                        currentKPIs[.assetAt2ndtDeath] = KpiResult(value              : 0,
+                                                                   objectiveIsReached : false)
                         
                     case 0:
                         // il ne plus d'adulte vivant
@@ -149,15 +149,15 @@ struct SocialAccounts {
                         /// KPI n°1: décès du premier conjoint et mémoriser la valeur du KPI
                         // mémoriser le montant de l'Actif Net
                         kpis[SimulationKPIEnum.assetAt1stDeath.id].record(newLine.netAssets, withMode: simulationMode)
-                        currentKPIs[.assetAt1stDeath] = (value: newLine.netAssets,
-                                                         objeciveReached: newLine.netAssets >= kpis[SimulationKPIEnum.assetAt1stDeath.id].objective)
+                        currentKPIs[.assetAt1stDeath] = KpiResult(value              : newLine.netAssets,
+                                                                  objectiveIsReached : newLine.netAssets >= kpis[SimulationKPIEnum.assetAt1stDeath.id].objective)
                         
                     case 0:
                         /// KPI n°2: décès du second conjoint et mémoriser la valeur du KPI
                         // mémoriser le montant de l'Actif Net
                         kpis[SimulationKPIEnum.assetAt2ndtDeath.id].record(newLine.netAssets, withMode: simulationMode)
-                        currentKPIs[.assetAt2ndtDeath] = (value: newLine.netAssets,
-                                                          objeciveReached: newLine.netAssets >= kpis[SimulationKPIEnum.assetAt2ndtDeath.id].objective)
+                        currentKPIs[.assetAt2ndtDeath] = KpiResult(value              : newLine.netAssets,
+                                                                   objectiveIsReached : newLine.netAssets >= kpis[SimulationKPIEnum.assetAt2ndtDeath.id].objective)
                         /// KPI n°3 : on est arrivé à la fin de la simulation
                         // rechercher le minimum d'actif financier net au cours du temps
                         storeMnimumAssetKpiValue(withKPIs : &kpis,

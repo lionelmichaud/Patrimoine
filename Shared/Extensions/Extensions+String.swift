@@ -36,7 +36,6 @@ extension String {
     /// - Returns: new String
     ///
     ///  - Note: [Reference](https://www.hackingwithswift.com/articles/141/8-useful-swift-extensions)
-    /// - Parameters:
     func replacingOccurrences(of search: String, with replacement: String, count maxReplacements: Int) -> String {
         var count = 0
         var returnValue = self

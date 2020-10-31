@@ -15,7 +15,7 @@ struct Economy {
     // MARK: - Nested Types
 
     enum RandomVariable: Int, PickableEnum, CaseIterable {
-        case inflation
+        case inflation = 0
         case longTermRate
         case stockRate
         

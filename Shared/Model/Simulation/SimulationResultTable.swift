@@ -8,14 +8,24 @@
 
 import Foundation
 
-typealias DictionaryOfKpiResults = Dictionary<SimulationKPIEnum, (value: Double, objeciveReached: Bool)>
+struct KpiResult: Hashable {
+    var value              : Double
+    var objectiveIsReached : Bool
+}
+typealias DictionaryOfKpiResults = Dictionary<SimulationKPIEnum, KpiResult>
 
-struct SimulationResultLine {
+struct AdultRandomProperties: Hashable {
+    var ageOfDeath           : Int
+    var nbOfYearOfDependency : Int
+}
+typealias DictionaryOfAdultRandomProperties = Dictionary<String, AdultRandomProperties>
+
+struct SimulationResultLine: Hashable {
     var runNumber                         : Int
-    var dicoOfKpiResults                  : DictionaryOfKpiResults
+    var dicoOfAdultsRandomProperties      : DictionaryOfAdultRandomProperties
     var dicoOfEconomyRandomVariables      : Economy.DictionaryOfRandomVariable
     var dicoOfSocioEconomyRandomVariables : SocioEconomy.DictionaryOfRandomVariable
-    var adultsRandomProperties            : [(name: String, ageOfDeath: Int, nbOfYearOfDependency: Int)]
+    var dicoOfKpiResults                  : DictionaryOfKpiResults
 }
 
 typealias SimulationResultTable = Array<SimulationResultLine>

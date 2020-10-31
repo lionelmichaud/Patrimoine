@@ -175,19 +175,18 @@ final class Simulation: ObservableObject {
                                                         withMode       : mode)
             if monteCarlo {
                 // récupérer les propriétés aléatoires des adultes de la famille
-                var adultsRandomProperties = [(name: String, ageOfDeath: Int, nbOfYearOfDependency: Int)]()
+                var dicoOfAdultsRandomProperties = DictionaryOfAdultRandomProperties()
                 family.members.forEach { person in
                     if let adult = person as? Adult {
-                        adultsRandomProperties.append((name                 : adult.displayName,
-                                                       ageOfDeath           : adult.ageOfDeath,
-                                                       nbOfYearOfDependency : adult.nbOfYearOfDependency))
+                        dicoOfAdultsRandomProperties[adult.displayName] = AdultRandomProperties(ageOfDeath          : adult.ageOfDeath,
+                                                                                                nbOfYearOfDependency: adult.nbOfYearOfDependency)
                     }
                 }
                 let currentRunResults = SimulationResultLine(runNumber                         : run,
-                                                             dicoOfKpiResults                  : dicoOfKpiResults,
+                                                             dicoOfAdultsRandomProperties      : dicoOfAdultsRandomProperties,
                                                              dicoOfEconomyRandomVariables      : dicoOfEconomyRandomVariables,
                                                              dicoOfSocioEconomyRandomVariables : dicoOfSocioEconomyRandomVariables,
-                                                             adultsRandomProperties            : adultsRandomProperties)
+                                                             dicoOfKpiResults                  : dicoOfKpiResults)
                 resultTable.append(currentRunResults)
                 
                 // Dernier run, créer les histogrammes et y ranger

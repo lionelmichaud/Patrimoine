@@ -72,7 +72,7 @@ struct ScenarioListView: View {
         
         // Vua assistant statistiques
         Section(header: Text("Statistiques").font(.headline)) {
-            NavigationLink(destination: StatisticsChartsView(),
+            NavigationLink(destination : StatisticsChartsView(),
                            tag         : .statisticsAssistant,
                            selection   : $uiState.scenarioViewState.selectedItem) {
                 Text("Assistant Distributions")

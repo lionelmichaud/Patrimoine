@@ -24,8 +24,8 @@ struct ChartsView: View {
         } else {
             Section(header: Text("KPI").font(.headline)) {
                 // synthèse des KPIs
-                NavigationLink(destination: KpiListSummaryView(),
-                               tag         : .kpiSummary,
+                NavigationLink(destination : KpiListSummaryView(),
+                               tag         : .kpiSummaryView,
                                selection   : $uiState.simulationViewState.selectedItem) {
                     HStack {
                         if let allObjectivesAreReached = simulation.kpis.allObjectivesAreReached(withMode: simulation.mode) {
@@ -43,14 +43,14 @@ struct ChartsView: View {
             }
             
             Section(header: Text("Graphes Bilan").font(.headline)) {
-                NavigationLink(destination: BalanceSheetGlobalChartView(),
+                NavigationLink(destination : BalanceSheetGlobalChartView(),
                                tag         : .bilanSynthese,
                                selection   : $uiState.simulationViewState.selectedItem) {
                     Text("Synthèse")
                 }
                 .isDetailLink(true)
                 
-                NavigationLink(destination: BalanceSheetDetailedChartView(),
+                NavigationLink(destination : BalanceSheetDetailedChartView(),
                                tag         : .bilanDetail,
                                selection   : $uiState.simulationViewState.selectedItem) {
                     Text("Détails")
@@ -59,14 +59,14 @@ struct ChartsView: View {
             }
             
             Section(header: Text("Graphes Cash Flow").font(.headline)) {
-                NavigationLink(destination: CashFlowGlobalChartView(),
+                NavigationLink(destination : CashFlowGlobalChartView(),
                                tag         : .cfSynthese,
                                selection   : $uiState.simulationViewState.selectedItem) {
                     Text("Synthèse")
                 }
                 .isDetailLink(true)
                 
-                NavigationLink(destination: CashFlowDetailedChartView(),
+                NavigationLink(destination : CashFlowDetailedChartView(),
                                tag         : .cfDetail,
                                selection   : $uiState.simulationViewState.selectedItem) {
                     Text("Détails")
