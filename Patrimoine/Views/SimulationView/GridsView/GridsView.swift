@@ -30,21 +30,33 @@ struct GridsView: View {
 
 struct ShortGridView: View {
     @EnvironmentObject var simulation : Simulation
-    
+    @State private var filter         : RunFilterEnum       = .all
+    @State private var sortCriteria   : KpiSortCriteriaEnum = .byRunNumber
+    @State private var sortOrder      : SortingOrder        = .ascending
+
     var body: some View {
         let columns = [GridItem()]
         
         return
             VStack {
-                // entête
+                /// entête
                 if simulation.resultTable.count != 0 {
                     GridHeaderView(line: simulation.resultTable.first!)
                 }
-                // tableau
+                /// tableau
                 ScrollView([.vertical]) {
                     LazyVGrid(columns: columns) {
-                        ForEach(simulation.resultTable, id: \.self) { line in
+                        ForEach(simulation.resultTable
+                                    .filtered(with: filter)
+                                    .sorted(by: sortCriteria, with: sortOrder), id: \.self) { line in
                             ShortGridLineView(line: line)
+                                .contextMenu {
+                                    Button(action: {
+                                        replay(thisRun: line)
+                                    }) {
+                                        Label("Rejouer", systemImage: "arrowtriangle.forward.circle")
+                                    }
+                                }
                         }
                     }
                 }
@@ -52,6 +64,62 @@ struct ShortGridView: View {
             }
             .navigationTitle("Résultats des Runs de la Simulation")
             .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                // menu de filtrage
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Menu {
+                        Picker(selection: $filter, label: Text("Filtering options")) {
+                            Label("Tous les résultats", systemImage: "checkmark.circle.fill").tag(RunFilterEnum.all)
+                            Label("Résultats négatifs", systemImage: "xmark.octagon.fill").tag(RunFilterEnum.someBad)
+                            Label("Résultats indéterminés", systemImage: "exclamationmark.triangle.fill").tag(RunFilterEnum.somUnknown)
+                        }
+                    }
+                    label: {
+                        Image(systemName: "loupe")
+                            .imageScale(.large)
+                            .padding(.leading)
+                    }
+                }
+                // menu de choix de critère de tri
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Menu {
+                        Picker(selection: $sortCriteria, label: Text("Sorting options")) {
+                            Text("Numéro de Run").tag(KpiSortCriteriaEnum.byRunNumber)
+                            Text("KPI Actif Minimum").tag(KpiSortCriteriaEnum.byKpi1)
+                            Text("KPI Actif au 1er Décès").tag(KpiSortCriteriaEnum.byKpi2)
+                            Text("KPI Actif au 2nd Décès").tag(KpiSortCriteriaEnum.byKpi3)
+                        }
+                    }
+                    label: {
+                        Image(systemName: "arrow.up.arrow.down.circle")
+                            .imageScale(.large)
+                            .padding(.leading)
+                    }
+                }
+                // menu de choix de l'ordre de tri
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button(action: { sortOrder.toggle() } ) {
+                        Image(systemName: sortOrder.imageSystemName)
+                            .imageScale(.large)
+                    }
+                }
+                // sauvegarde du tableau
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button(action: saveGrid ) {
+                        Label("Enregistrer", systemImage: "square.and.arrow.up")
+                    }
+                }
+            }
+    }
+    
+    func saveGrid() {
+        // TODO: - implémenter la sauvegarde du tableau des KPIs de résultat de simulation
+    }
+    
+    func replay(thisRun: SimulationResultLine) {
+        // TODO: - implémenter la sauvegarde du tableau des KPIs de résultat de simulation
+        print("Long pressed!")
+
     }
 }
 
@@ -60,7 +128,7 @@ struct GridHeaderView : View {
     let viewHeight = CGFloat(100)
     
     var body: some View {
-        HStack {
+        HStack(alignment: .center) {
             Text("Run")
                 .italic()
                 .frame(width: viewHeight)
@@ -69,7 +137,7 @@ struct GridHeaderView : View {
             Divider()
             // propriétés aléatoires des adultes
             ForEach(line.dicoOfAdultsRandomProperties.keys.sorted(), id: \.self) { name in
-                Text("Espérance de Vie")
+                Text("Durée de Vie")
                     .frame(width: viewHeight)
                     .rotationEffect(.degrees(-90))
                     .frame(width: 28)
@@ -102,7 +170,7 @@ struct GridHeaderView : View {
                     .lineLimit(3)
                     .frame(width: viewHeight)
                     .rotationEffect(.degrees(-90))
-                    .frame(width: 65)
+                    .frame(width: 70)
                 Divider()
             }
             Spacer()
@@ -126,9 +194,11 @@ struct ShortGridLineView : View {
             HStack(spacing: nil) {
                 Text(String(line.runNumber))
                     .italic()
+                    .font(.caption)
+                    .foregroundColor(colorOfRun(withTheseKpis: line.dicoOfKpiResults))
                     .frame(width: 28)
                 Divider()
-                // propriétés aléatoires des adultes
+                /// propriétés aléatoires des adultes
                 ForEach(line.dicoOfAdultsRandomProperties.keys.sorted(), id: \.self) { name in
                     Text(String(line.dicoOfAdultsRandomProperties[name]!.ageOfDeath))
                         .frame(width: 28)
@@ -137,13 +207,13 @@ struct ShortGridLineView : View {
                         .frame(width: 15)
                     Divider()
                 }
-                // valeurs aléatoires de conditions économiques
+                /// valeurs aléatoires de conditions économiques
                 ForEach(Economy.RandomVariable.allCases, id: \.self) { variableEnum in
                     Text((line.dicoOfEconomyRandomVariables[variableEnum]?.percentString(digit: 1) ?? "NaN") + "%")
                         .frame(width: 40)
                     Divider()
                 }
-                // valeurs aléatoires de conditions socio-économiques
+                /// valeurs aléatoires de conditions socio-économiques
                 ForEach(SocioEconomy.RandomVariable.allCases, id: \.self) { variableEnum in
                     switch variableEnum {
                         case .nbTrimTauxPlein:
@@ -156,15 +226,15 @@ struct ShortGridLineView : View {
                     }
                     Divider()
                 }
-                // valeurs résultantes des KPIs
+                /// valeurs résultantes des KPIs
                 ForEach(SimulationKPIEnum.allCases, id: \.self) { kpiEnum in
                     if let kpiResult = line.dicoOfKpiResults[kpiEnum] {
                         Text(kpiResult.value.k€String)
-                            .frame(width: 65)
+                            .frame(width: 70)
                             .foregroundColor(kpiResult.objectiveIsReached ? .green : .red)
                     } else {
-                        Text("-")
-                            .frame(width: 65)
+                        Image(systemName: "exclamationmark.triangle.fill")
+                            .frame(width: 70)
                     }
                     Divider()
                 }
@@ -172,6 +242,18 @@ struct ShortGridLineView : View {
             }
             .font(.callout)
             .allowsTightening(true)
+        }
+    }
+    
+    func colorOfRun(withTheseKpis kpis: DictionaryOfKpiResults) -> Color {
+        let runResult = kpis.runResult()
+        switch runResult {
+            case .allObjectivesReached:
+                return .green
+            case .someObjectiveMissed:
+                return .red
+            case .someObjectiveUndefined:
+                return .primary
         }
     }
 }
@@ -184,8 +266,8 @@ struct ShortGridView_Previews: PreviewProvider {
     static var patrimoine = Patrimoin()
     
     static var previews: some View {
-        simulation.compute(nbOfYears      : 15,
-                           nbOfRuns       : 2,
+        simulation.compute(nbOfYears      : 25,
+                           nbOfRuns       : 10,
                            withFamily     : family,
                            withPatrimoine : patrimoine)
         return

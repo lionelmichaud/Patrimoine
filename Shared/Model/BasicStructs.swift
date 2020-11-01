@@ -8,6 +8,7 @@
 
 import os
 import Foundation
+import SwiftUI
 
 fileprivate let customLog = Logger(subsystem: "me.michaud.lionel.Patrimoine", category: "BasicStructs")
 
@@ -186,5 +187,27 @@ struct Point: Codable, ExpressibleByArrayLiteral {
     init(_ x: Double, _ y: Double) {
         self.x = x
         self.y = y
+    }
+}
+
+enum SortingOrder {
+    case ascending
+    case descending
+    
+    var imageSystemName: String {
+        switch self {
+            case .ascending:
+                return "arrow.up.circle"
+            case .descending:
+                return "arrow.down.circle"
+        }
+    }
+    mutating func toggle() {
+        switch self {
+            case .ascending:
+                self = .descending
+            case .descending:
+                self = .ascending
+        }
     }
 }

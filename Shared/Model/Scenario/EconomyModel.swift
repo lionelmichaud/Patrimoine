@@ -27,9 +27,9 @@ struct Economy {
                 case .inflation:
                     return "Inflation"
                 case .longTermRate:
-                    return "Rendements des Placements Sûrs"
+                    return "Rendements Sûrs"
                 case .stockRate:
-                    return "Rendements des Actions"
+                    return "Rendements Actions"
             }
         }
     }

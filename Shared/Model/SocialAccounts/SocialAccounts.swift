@@ -43,6 +43,7 @@ struct SocialAccounts {
     }
     
     // MARK: - Construction de la table des comptes sociaux = Bilan + CashFlow
+    
     /// construire la table de comptes sociaux au fil des années
     /// - Parameters:
     ///   - nbOfYears: nombre d'années à construire
@@ -88,7 +89,7 @@ struct SocialAccounts {
                 lastYearDelayedTaxableIrppRevenue = 0
             }
             
-            /// ajouter une nouvelle ligne piur une nouvelle année
+            /// ajouter une nouvelle ligne pour une nouvelle année
             do {
                 let newLine = try CashFlowLine(withYear                              : year,
                                                withFamily                            : family,
@@ -141,9 +142,9 @@ struct SocialAccounts {
                                            withPatrimoine : patrimoine)
             balanceArray.append(newLine)
             
-            /// gérer les KPI n°1, 2, 3 au décès de l'un des conjoints
+            /// gérer les KPI n°1, 2, 3 au décès de l'un ou des 2 conjoints
             //----------------------------------------------------
-            if family.nbOfAdultAlive(atEndOf: year) == family.nbOfAdultAlive(atEndOf: year-1) - 1 {
+            if family.nbOfAdultAlive(atEndOf: year) < family.nbOfAdultAlive(atEndOf: year-1) {
                 switch family.nbOfAdultAlive(atEndOf: year) {
                     case 1:
                         /// KPI n°1: décès du premier conjoint et mémoriser la valeur du KPI
@@ -153,6 +154,13 @@ struct SocialAccounts {
                                                                   objectiveIsReached : newLine.netAssets >= kpis[SimulationKPIEnum.assetAt1stDeath.id].objective)
                         
                     case 0:
+                        if family.nbOfAdultAlive(atEndOf: year-1) == 2 {
+                            /// KPI n°1: décès du premier conjoint et mémoriser la valeur du KPI
+                            // mémoriser le montant de l'Actif Net
+                            kpis[SimulationKPIEnum.assetAt1stDeath.id].record(newLine.netAssets, withMode: simulationMode)
+                            currentKPIs[.assetAt1stDeath] = KpiResult(value              : newLine.netAssets,
+                                                                      objectiveIsReached : newLine.netAssets >= kpis[SimulationKPIEnum.assetAt1stDeath.id].objective)
+                        }
                         /// KPI n°2: décès du second conjoint et mémoriser la valeur du KPI
                         // mémoriser le montant de l'Actif Net
                         kpis[SimulationKPIEnum.assetAt2ndtDeath.id].record(newLine.netAssets, withMode: simulationMode)

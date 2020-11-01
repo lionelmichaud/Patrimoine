@@ -27,9 +27,9 @@ struct SocioEconomy {
                 case .pensionDevaluationRate:
                     return "Dévaluation de Pension"
                 case .nbTrimTauxPlein:
-                    return "Nombre de Trimestres"
+                    return "Trimestres Supplémentaires"
                 case .expensesUnderEvaluationrate:
-                    return "Sous-etimation des dépenses"
+                    return "Sous-etimation dépenses"
             }
         }
     }

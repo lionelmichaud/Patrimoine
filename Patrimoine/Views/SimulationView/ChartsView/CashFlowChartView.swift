@@ -30,7 +30,7 @@ struct CashFlowGlobalChartView: View {
         .navigationBarItems(trailing: Button(action: saveImage,
                                              label : {
                                                 HStack {
-                                                    Image(systemName: "square.and.arrow.down")
+                                                    Image(systemName: "square.and.arrow.up")
                                                     Text("Image")
                                                 }
                                              }).capsuleButtonStyle()
@@ -86,7 +86,7 @@ struct CashFlowDetailedChartView: View {
                 label : {
                     HStack {
                         Image(systemName: self.uiState.cfChartState.itemSelection.allCategoriesSelected() ?
-                                "line.horizontal.3.decrease.circle" : "line.horizontal.3.decrease.circle.fill")
+                                "loupe" : "loupe.fill")
                         Text("Filtrer")
                     }
                 } ).capsuleButtonStyle(),
@@ -94,7 +94,7 @@ struct CashFlowDetailedChartView: View {
                 action: saveImage,
                 label : {
                     HStack {
-                        Image(systemName: "square.and.arrow.down")
+                        Image(systemName: "square.and.arrow.up")
                         Text("Image")
                     }
                 } ).capsuleButtonStyle()
