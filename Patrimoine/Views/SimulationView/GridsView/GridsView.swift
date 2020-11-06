@@ -30,6 +30,8 @@ struct GridsView: View {
 
 struct ShortGridView: View {
     @EnvironmentObject var simulation : Simulation
+    @EnvironmentObject var family     : Family
+    @EnvironmentObject var patrimoine : Patrimoin
     @State private var filter         : RunFilterEnum       = .all
     @State private var sortCriteria   : KpiSortCriteriaEnum = .byRunNumber
     @State private var sortOrder      : SortingOrder        = .ascending
@@ -117,9 +119,10 @@ struct ShortGridView: View {
     }
     
     func replay(thisRun: SimulationResultLine) {
-        // TODO: - implémenter la sauvegarde du tableau des KPIs de résultat de simulation
-        print("Long pressed!")
-
+        // rejouer le run unique
+        simulation.replay(thisRun        : thisRun,
+                          withFamily     : family,
+                          withPatrimoine : patrimoine)
     }
 }
 

@@ -73,6 +73,14 @@ struct Economy {
             return dicoOfRandomVariable
         }
         
+        /// Définir une valeur pour la variable aléaoitre avant un rejeu
+        /// - Parameter value: nouvelle valeure à rejouer
+        mutating func setRandomValue(to values: DictionaryOfRandomVariable) {
+            inflation.setRandomValue(to: values[.inflation]!)
+            longTermRate.setRandomValue(to: values[.longTermRate]!)
+            stockRate.setRandomValue(to: values[.stockRate]!)
+        }
+        
         func randomHistories() -> Dictionary<RandomVariable, [Double]?> {
             var dico = Dictionary<RandomVariable, [Double]?>()
             for randomVariable in RandomVariable.allCases {

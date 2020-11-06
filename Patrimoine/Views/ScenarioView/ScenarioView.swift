@@ -9,7 +9,7 @@
 import SwiftUI
 
 struct ScenarioView: View {
-    @EnvironmentObject var uiState    : UIState
+    @EnvironmentObject var uiState: UIState
     
     enum PushedItem {
         case summary, deterministicModel, humanModel, economyModel, sociologyModel, statisticsAssistant

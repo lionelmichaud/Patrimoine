@@ -16,12 +16,12 @@ where R: Codable,
 
     // MARK: - Properties
 
-    var version       : Version
-    var name          : String
-    var rndGenerator  : R
-    var defaultValue  : Double = 0 // valeur par defaut déterministe
-    var randomValue   : Double = 0 // dernière valeur randomisée
-    var randomHistory : [Double]? // historique
+    var version              : Version
+    var name                 : String
+    var rndGenerator         : R
+    private var defaultValue : Double = 0 // valeur par defaut déterministe
+    private var randomValue  : Double = 0 // dernière valeur randomisée
+    var randomHistory        : [Double]? // historique
     
     // MARK: - Methods
     
@@ -38,6 +38,12 @@ where R: Codable,
         }
         randomHistory!.append(randomValue)
         return randomValue
+    }
+    
+    /// Définir une valeur pour la variable aléaoitre avant un rejeu
+    /// - Parameter value: nouvelle valeure à rejouer
+    mutating func setRandomValue(to value: Double) {
+        randomValue = value
     }
     
     /// Returns a default value or a  random value depending on the value of simulationMode.mode

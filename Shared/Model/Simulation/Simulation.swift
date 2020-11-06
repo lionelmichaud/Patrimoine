@@ -204,7 +204,45 @@ final class Simulation: ObservableObject {
         isComputing = false
     }
     
-    /// Sauvegrder les résultats de simulation dans des fchier CSV
+    func replay(thisRun                   : SimulationResultLine,
+                withFamily family         : Family,
+                withPatrimoine patrimoine : Patrimoin) {
+        isComputing  = true
+        currentRunNb = 1
+        let nbOfYears = lastYear - firstYear + 1
+
+        // fixer tous les paramètres du run à rejouer
+        Economy.model.setRandomValue(to: thisRun.dicoOfEconomyRandomVariables)
+        SocioEconomy.model.setRandomValue(to: thisRun.dicoOfSocioEconomyRandomVariables)
+        family.members.forEach { person in
+            if let adult = person as? Adult {
+                adult.ageOfDeath           = thisRun.dicoOfAdultsRandomProperties[adult.displayName]!.ageOfDeath
+                adult.nbOfYearOfDependency = thisRun.dicoOfAdultsRandomProperties[adult.displayName]!.nbOfYearOfDependency
+            }
+        }
+
+        // Réinitialiser la simulation
+        self.reset(withPatrimoine : patrimoine,
+                   includingKPIs  : false)
+        
+        // construire les comptes sociaux du patrimoine de la famille:
+        // - personnes
+        // - dépenses
+        _ = socialAccounts.build(nbOfYears      : nbOfYears!,
+                                 withFamily     : family,
+                                 withPatrimoine : patrimoine,
+                                 withKPIs       : &kpis,
+                                 withMode       : mode)
+
+        // propriétés indépendantes du nombre de run
+        firstYear   = Date.now.year
+        lastYear    = firstYear + nbOfYears - 1
+        isComputed  = true
+        isSaved     = false
+        isComputing = false
+    }
+    
+    /// Sauvegarder les résultats de simulation dans des fchier CSV
     ///
     /// - un fichier pour le Cash Flow
     /// - un fichier pour le Bilan
