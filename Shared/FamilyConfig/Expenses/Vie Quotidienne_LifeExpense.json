@@ -1,5 +1,246 @@
 {
     "items" : [
+        {
+            "id" : "562EE2A1-4EF5-450D-8BAE-3E8B803928D1",
+            "value" : 0,
+            "proportional" : true,
+            "name" : "Alimentation",
+            "timeSpan" : {
+                "spanning_from" :
+                {
+                    "fixedYear": 2020,
+                    "event"    : null,
+                    "name"     : ""
+                },
+                "spanning_to" :
+                {
+                    "fixedYear": 2025,
+                    "event"    : "Dépendance",
+                    "name"     : "M. Lionel MICHAUD"
+                }
+            }
+        },
+        {
+            "id" : "562EE2A1-4EF5-450D-8BAE-3E8B803928D2",
+            "value" : 0,
+            "proportional" : false,
+            "name" : "Animaux domestiques",
+            "timeSpan" : {
+                "spanning_from" :
+                {
+                    "fixedYear": 2020,
+                    "event"    : null,
+                    "name"     : ""
+                },
+                "spanning_to" :
+                {
+                    "fixedYear": 2025,
+                    "event"    : "Dépendance",
+                    "name"     : "M. Lionel MICHAUD"
+                }
+            }
+        },
+        {
+            "id" : "562EE2A1-4EF5-450D-8BAE-3E8B803928D3",
+            "value" : 0,
+            "proportional" : true,
+            "name" : "Bien-être et soins (coiffeur, parfum...)",
+            "timeSpan" : {
+                "spanning_from" :
+                {
+                    "fixedYear": 2020,
+                    "event"    : null,
+                    "name"     : ""
+                },
+                "spanning_to" :
+                {
+                    "fixedYear": 2025,
+                    "event"    : "Dépendance",
+                    "name"     : "M. Lionel MICHAUD"
+                }
+            }
+        },
+        {
+            "id" : "562EE2A1-4EF5-450D-8BAE-3E8B803928D4",
+            "value" : 0,
+            "proportional" : false,
+            "name" : "Bricolage & Jardinage",
+            "timeSpan" : {
+                "spanning_from" :
+                {
+                    "fixedYear": 2020,
+                    "event"    : null,
+                    "name"     : ""
+                },
+                "spanning_to" :
+                {
+                    "fixedYear": 2025,
+                    "event"    : "Dépendance",
+                    "name"     : "M. Lionel MICHAUD"
+                }
+            }
+        },
+        {
+            "id" : "562EE2A1-4EF5-450D-8BAE-3E8B803928D5",
+            "value" : 0,
+            "proportional" : false,
+            "name" : "Electronique et informatique",
+            "timeSpan" : {
+                "spanning_from" :
+                {
+                    "fixedYear": 2020,
+                    "event"    : null,
+                    "name"     : ""
+                },
+                "spanning_to" :
+                {
+                    "fixedYear": 2025,
+                    "event"    : "Dépendance",
+                    "name"     : "M. Lionel MICHAUD"
+                }
+            }
+        },
+        {
+            "id" : "562EE2A1-4EF5-450D-8BAE-3E8B803928D6",
+            "value" : 0,
+            "proportional" : false,
+            "name" : "Equipements sportifs",
+            "timeSpan" : {
+                "spanning_from" :
+                {
+                    "fixedYear": 2020,
+                    "event"    : null,
+                    "name"     : ""
+                },
+                "spanning_to" :
+                {
+                    "fixedYear": 2025,
+                    "event"    : "Dépendance",
+                    "name"     : "M. Lionel MICHAUD"
+                }
+            }
+        },
+        {
+            "id" : "562EE2A1-4EF5-450D-8BAE-3E8B803928D7",
+            "value" : 0,
+            "proportional" : false,
+            "name" : "Pressing, repassage",
+            "timeSpan" : {
+                "spanning_from" :
+                {
+                    "fixedYear": 2020,
+                    "event"    : null,
+                    "name"     : ""
+                },
+                "spanning_to" :
+                {
+                    "fixedYear": 2025,
+                    "event"    : "Dépendance",
+                    "name"     : "M. Lionel MICHAUD"
+                }
+            }
+        },
+        {
+            "id" : "562EE2A1-4EF5-450D-8BAE-3E8B803928D8",
+            "value" : 0,
+            "proportional" : false,
+            "name" : "Livres, musique, jouets, bijous",
+            "timeSpan" : {
+                "spanning_from" :
+                {
+                    "fixedYear": 2020,
+                    "event"    : null,
+                    "name"     : ""
+                },
+                "spanning_to" :
+                {
+                    "fixedYear": 2025,
+                    "event"    : "Dépendance",
+                    "name"     : "M. Lionel MICHAUD"
+                }
+            }
+        },
+        {
+            "id" : "562EE2A1-4EF5-450D-8BAE-3E8B803928D9",
+            "value" : 0,
+            "proportional" : false,
+            "name" : "Mobiliers, électroménager, décoraion",
+            "timeSpan" : {
+                "spanning_from" :
+                {
+                    "fixedYear": 2020,
+                    "event"    : null,
+                    "name"     : ""
+                },
+                "spanning_to" :
+                {
+                    "fixedYear": 2025,
+                    "event"    : "Dépendance",
+                    "name"     : "M. Lionel MICHAUD"
+                }
+            }
+        },
+        {
+            "id" : "562EE2A1-4EF5-450D-8BAE-3E8B803928DA",
+            "value" : 0,
+            "proportional" : false,
+            "name" : "tabac",
+            "timeSpan" : {
+                "spanning_from" :
+                {
+                    "fixedYear": 2020,
+                    "event"    : null,
+                    "name"     : ""
+                },
+                "spanning_to" :
+                {
+                    "fixedYear": 2025,
+                    "event"    : "Dépendance",
+                    "name"     : "M. Lionel MICHAUD"
+                }
+            }
+        },
+        {
+            "id" : "562EE2A1-4EF5-450D-8BAE-3E8B803928DB",
+            "value" : 0,
+            "proportional" : false,
+            "name" : "Vêtements et accéssoires",
+            "timeSpan" : {
+                "spanning_from" :
+                {
+                    "fixedYear": 2020,
+                    "event"    : null,
+                    "name"     : ""
+                },
+                "spanning_to" :
+                {
+                    "fixedYear": 2025,
+                    "event"    : "Dépendance",
+                    "name"     : "M. Lionel MICHAUD"
+                }
+            }
+        },
+        {
+            "id" : "562EE2A1-4EF5-450D-8BAE-3E8B803928DC",
+            "value" : 0,
+            "proportional" : false,
+            "name" : "Autres",
+            "timeSpan" : {
+                "spanning_from" :
+                {
+                    "fixedYear": 2020,
+                    "event"    : null,
+                    "name"     : ""
+                },
+                "spanning_to" :
+                {
+                    "fixedYear": 2025,
+                    "event"    : "Dépendance",
+                    "name"     : "M. Lionel MICHAUD"
+                }
+            }
+        }
+        
     ],
     "fileNamePrefix" : ""
 }

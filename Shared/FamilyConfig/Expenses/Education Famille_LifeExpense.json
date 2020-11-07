@@ -1,6 +1,86 @@
 {
     "items" : [
-    ],
+        {
+            "id" : "562EE2A1-4FF5-450D-7BAE-3E8B803928DA",
+            "value" : 0,
+            "proportional" : false,
+            "name" : "Argent de poche",
+            "timeSpan" : {
+                "spanning_from" :
+                {
+                    "fixedYear": 2024,
+                    "event"    : "Liquidation de pension",
+                    "name"     : "M. Lionel MICHAUD"
+                },
+                "spanning_to" :
+                {
+                    "fixedYear": 2025,
+                    "event"    : "Dépendance",
+                    "name"     : "M. Lionel MICHAUD"
+                }
+            }
+        },
+        {
+            "id" : "562EE2A1-4FF5-450D-7BAE-3E8B803928DB",
+            "value" : 0,
+            "proportional" : false,
+            "name" : "Etudes (formation, fournitures, cantine...)",
+            "timeSpan" : {
+                "spanning_from" :
+                {
+                    "fixedYear": 2024,
+                    "event"    : "Liquidation de pension",
+                    "name"     : "M. Lionel MICHAUD"
+                },
+                "spanning_to" :
+                {
+                    "fixedYear": 2025,
+                    "event"    : "Dépendance",
+                    "name"     : "M. Lionel MICHAUD"
+                }
+            }
+        },
+        {
+            "id" : "562EE2A1-4FF5-450D-7BAE-3E8B803928DC",
+            "value" : 0,
+            "proportional" : false,
+            "name" : "Pension",
+            "timeSpan" : {
+                "spanning_from" :
+                {
+                    "fixedYear": 2024,
+                    "event"    : "Liquidation de pension",
+                    "name"     : "M. Lionel MICHAUD"
+                },
+                "spanning_to" :
+                {
+                    "fixedYear": 2025,
+                    "event"    : "Dépendance",
+                    "name"     : "M. Lionel MICHAUD"
+                }
+            }
+        },
+        {
+            "id" : "562EE2A1-4FF5-450D-7BAE-3E8B803928DD",
+            "value" : 0,
+            "proportional" : false,
+            "name" : "Autres",
+            "timeSpan" : {
+                "spanning_from" :
+                {
+                    "fixedYear": 2024,
+                    "event"    : "Liquidation de pension",
+                    "name"     : "M. Lionel MICHAUD"
+                },
+                "spanning_to" :
+                {
+                    "fixedYear": 2025,
+                    "event"    : "Dépendance",
+                    "name"     : "M. Lionel MICHAUD"
+                }
+            }
+        }
+   ],
     "fileNamePrefix" : ""
 }
 

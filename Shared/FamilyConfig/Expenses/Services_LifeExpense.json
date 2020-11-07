@@ -1,40 +1,56 @@
 {
     "items" : [
         {
-            "id" : "562EE2A1-4FF5-450D-8BAE-3E8B793928DA",
-            "value" : 50000,
-            "proportional" : false,
-            "name" : "EHPAD Lionel",
+            "id" : "B4EFF395-7A51-07AB-AD27-E7461ECB9ADA",
+            "value" : 380,
+            "proportional" : true,
+            "name" : "Services financiers",
             "timeSpan" : {
-                "spanning_from" :
+                "ending_to" :
                 {
-                    "fixedYear": 2024,
-                    "event"    : "Dépendance",
-                    "name"     : "M. Lionel MICHAUD"
-                },
-                "spanning_to" :
-                {
-                    "fixedYear": 2025,
+                    "fixedYear": 0,
                     "event"    : "Décès",
-                    "name"     : "M. Lionel MICHAUD"
+                    "name"     : "Mme. Vanessa MICHAUD"
                 }
             }
         },
         {
-            "id" : "562EE2A1-4FF5-450D-8BAE-3E8B793928DA",
-            "value" : 50000,
-            "proportional" : false,
-            "name" : "EHPAD Vanessa",
+            "id" : "B4EFF395-7A51-07AB-AD27-E7461ECB9ADB",
+            "value" : 968,
+            "proportional" : true,
+            "name" : "Frais bancaires et de gestion",
             "timeSpan" : {
-                "spanning_from" :
+                "ending_to" :
                 {
-                    "fixedYear": 2024,
-                    "event"    : "Dépendance",
+                    "fixedYear": 0,
+                    "event"    : "Décès",
                     "name"     : "Mme. Vanessa MICHAUD"
-                },
-                "spanning_to" :
+                }
+            }
+        },
+        {
+            "id" : "B4EFF395-7A51-07AB-AD27-E7461ECB9ADC",
+            "value" : 210,
+            "proportional" : true,
+            "name" : "Services pro (avocat, notaire, compatble...)",
+            "timeSpan" : {
+                "ending_to" :
                 {
-                    "fixedYear": 2025,
+                    "fixedYear": 0,
+                    "event"    : "Décès",
+                    "name"     : "Mme. Vanessa MICHAUD"
+                }
+            }
+        },
+        {
+            "id" : "B4EFF395-7A51-07AB-AD27-E7461ECB9ADD",
+            "value" : 210,
+            "proportional" : true,
+            "name" : "Autres",
+            "timeSpan" : {
+                "ending_to" :
+                {
+                    "fixedYear": 0,
                     "event"    : "Décès",
                     "name"     : "Mme. Vanessa MICHAUD"
                 }

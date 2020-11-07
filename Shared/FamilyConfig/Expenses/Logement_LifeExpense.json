@@ -1,5 +1,103 @@
 {
     "items" : [
+        {
+            "id" : "45325B0E-331D-480F-9C34-57C088289751",
+            "value" : 0,
+            "proportional" : false,
+            "name" : "Nettoyage et services à domicile",
+            "timeSpan" : {
+                "ending_to" :
+                {
+                    "fixedYear": 0,
+                    "event"    : "Dépendance",
+                    "name"     : "M. Lionel MICHAUD"
+                }
+            }
+        },
+        {
+            "id" : "45325B0E-331D-480F-9C34-57C088289752",
+            "value" : 0,
+            "proportional" : false,
+            "name" : "Assurances habitation",
+            "timeSpan" : {
+                "ending_to" :
+                {
+                    "fixedYear": 0,
+                    "event"    : "Dépendance",
+                    "name"     : "M. Lionel MICHAUD"
+                }
+            }
+        },
+        {
+            "id" : "45325B0E-331D-480F-9C34-57C088289753",
+            "value" : 0,
+            "proportional" : false,
+            "name" : "Eau",
+            "timeSpan" : {
+                "ending_to" :
+                {
+                    "fixedYear": 0,
+                    "event"    : "Dépendance",
+                    "name"     : "M. Lionel MICHAUD"
+                }
+            }
+        },
+        {
+            "id" : "45325B0E-331D-480F-9C34-57C088289754",
+            "value" : 0,
+            "proportional" : false,
+            "name" : "Gaz",
+            "timeSpan" : {
+                "ending_to" :
+                {
+                    "fixedYear": 0,
+                    "event"    : "Dépendance",
+                    "name"     : "M. Lionel MICHAUD"
+                }
+            }
+        },
+        {
+            "id" : "45325B0E-331D-480F-9C34-57C088289755",
+            "value" : 0,
+            "proportional" : false,
+            "name" : "Electricité",
+            "timeSpan" : {
+                "ending_to" :
+                {
+                    "fixedYear": 0,
+                    "event"    : "Dépendance",
+                    "name"     : "M. Lionel MICHAUD"
+                }
+            }
+        },
+        {
+            "id" : "45325B0E-331D-480F-9C34-57C088289756",
+            "value" : 0,
+            "proportional" : false,
+            "name" : "Travaux, réparation, entretien, aménagement...",
+            "timeSpan" : {
+                "ending_to" :
+                {
+                    "fixedYear": 0,
+                    "event"    : "Dépendance",
+                    "name"     : "M. Lionel MICHAUD"
+                }
+            }
+        },
+        {
+            "id" : "45325B0E-331D-480F-9C34-57C088289757",
+            "value" : 0,
+            "proportional" : false,
+            "name" : "Autres",
+            "timeSpan" : {
+                "ending_to" :
+                {
+                    "fixedYear": 0,
+                    "event"    : "Dépendance",
+                    "name"     : "M. Lionel MICHAUD"
+                }
+            }
+        }
     ],
     "fileNamePrefix" : ""
 }

@@ -1,5 +1,89 @@
 {
     "items" : [
+        {
+            "id" : "15325B0E-331D-481F-9C34-57C088289751",
+            "value" : 0,
+            "proportional" : false,
+            "name" : "Achats véhicules",
+            "timeSpan" : {
+                "starting_from" :
+                {
+                    "fixedYear": 2028,
+                    "event"    : "Fin d'activité proffesionelle",
+                    "name"     : "M. Lionel MICHAUD"
+                }
+            }
+        },
+        {
+            "id" : "15325B0E-331D-481F-9C34-57C088289752",
+            "value" : 0,
+            "proportional" : false,
+            "name" : "Assurances",
+            "timeSpan" : {
+                "starting_from" :
+                {
+                    "fixedYear": 2028,
+                    "event"    : "Fin d'activité proffesionelle",
+                    "name"     : "M. Lionel MICHAUD"
+                }
+            }
+        },
+        {
+            "id" : "15325B0E-331D-481F-9C34-57C088289753",
+            "value" : 0,
+            "proportional" : false,
+            "name" : "Carburants",
+            "timeSpan" : {
+                "starting_from" :
+                {
+                    "fixedYear": 2028,
+                    "event"    : "Fin d'activité proffesionelle",
+                    "name"     : "M. Lionel MICHAUD"
+                }
+            }
+        },
+        {
+            "id" : "15325B0E-331D-481F-9C34-57C088289754",
+            "value" : 0,
+            "proportional" : false,
+            "name" : "Entretien, réparation",
+            "timeSpan" : {
+                "starting_from" :
+                {
+                    "fixedYear": 2028,
+                    "event"    : "Fin d'activité proffesionelle",
+                    "name"     : "M. Lionel MICHAUD"
+                }
+            }
+        },
+        {
+            "id" : "15325B0E-331D-481F-9C34-57C088289755",
+            "value" : 0,
+            "proportional" : false,
+            "name" : "Parking, péages",
+            "timeSpan" : {
+                "starting_from" :
+                {
+                    "fixedYear": 2028,
+                    "event"    : "Fin d'activité proffesionelle",
+                    "name"     : "M. Lionel MICHAUD"
+                }
+            }
+        },
+        {
+            "id" : "15325B0E-331D-481F-9C34-57C088289756",
+            "value" : 0,
+            "proportional" : false,
+            "name" : "Autres",
+            "timeSpan" : {
+                "starting_from" :
+                {
+                    "fixedYear": 2028,
+                    "event"    : "Fin d'activité proffesionelle",
+                    "name"     : "M. Lionel MICHAUD"
+                }
+            }
+        }
     ],
     "fileNamePrefix" : ""
 }

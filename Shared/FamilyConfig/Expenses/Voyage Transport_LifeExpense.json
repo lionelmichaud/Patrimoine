@@ -1,5 +1,167 @@
 {
     "items" : [
+        {
+            "id" : "45325B0F-331C-481F-9C34-57C088289751",
+            "value" : 1000,
+            "proportional" : true,
+            "name" : "Petit voyage d'été",
+            "timeSpan" : {
+                "periodic_period" : 2,
+                "periodic_from" :
+                {
+                    "fixedYear": 2022,
+                    "event"    : null,
+                    "name"     : ""
+                },
+                "periodic_to" :
+                {
+                    "fixedYear": 0,
+                    "event"    : "Dépendance",
+                    "name"     : "M. Lionel MICHAUD"
+                }
+            }
+        },
+        {
+            "id" : "45325B0F-331C-481F-9C34-57C088289752",
+            "value" : 3000,
+            "proportional" : true,
+            "name" : "Grand voyage d'été",
+            "timeSpan" : {
+                "periodic_period" : 2,
+                "periodic_from" :
+                {
+                    "fixedYear": 2021,
+                    "event"    : null,
+                    "name"     : ""
+                },
+                "periodic_to" :
+                {
+                    "fixedYear": 0,
+                    "event"    : "Dépendance",
+                    "name"     : "M. Lionel MICHAUD"
+                }
+            }
+        },
+        {
+            "id" : "45325B0F-331C-481F-9C34-57C088289753",
+            "value" : 800,
+            "proportional" : true,
+            "name" : "Vacances ski",
+            "timeSpan" : {
+                "spanning_from" :
+                {
+                    "fixedYear": 2020,
+                    "event"    : null,
+                    "name"     : ""
+                },
+                "spanning_to" :
+                {
+                    "fixedYear": 0,
+                    "event"    : "Dépendance",
+                    "name"     : "M. Lionel MICHAUD"
+                }
+            }
+        },
+        {
+            "id" : "45325B0F-331C-481F-9C34-57C088289754",
+            "value" : 100,
+            "proportional" : true,
+            "name" : "Week Ends",
+            "timeSpan" : {
+                "spanning_from" :
+                {
+                    "fixedYear": 2020,
+                    "event"    : null,
+                    "name"     : ""
+                },
+                "spanning_to" :
+                {
+                    "fixedYear": 0,
+                    "event"    : "Dépendance",
+                    "name"     : "M. Lionel MICHAUD"
+                }
+            }
+        },
+        {
+            "id" : "45325B0F-331C-481F-9C34-57C088289755",
+            "value" : 0,
+            "proportional" : false,
+            "name" : "Location de véhicule",
+            "timeSpan" : {
+                "spanning_from" :
+                {
+                    "fixedYear": 2020,
+                    "event"    : null,
+                    "name"     : ""
+                },
+                "spanning_to" :
+                {
+                    "fixedYear": 0,
+                    "event"    : "Dépendance",
+                    "name"     : "M. Lionel MICHAUD"
+                }
+            }
+        },
+        {
+            "id" : "45325B0F-331C-481F-9C34-57C088289756",
+            "value" : 0,
+            "proportional" : true,
+            "name" : "Transport longue distance (avion, train)",
+            "timeSpan" : {
+                "spanning_from" :
+                {
+                    "fixedYear": 2020,
+                    "event"    : null,
+                    "name"     : ""
+                },
+                "spanning_to" :
+                {
+                    "fixedYear": 0,
+                    "event"    : "Dépendance",
+                    "name"     : "M. Lionel MICHAUD"
+                }
+            }
+        },
+        {
+            "id" : "45325B0F-331C-481F-9C34-57C088289757",
+            "value" : 0,
+            "proportional" : true,
+            "name" : "Transport quotidien (métro, bus, taxi)",
+            "timeSpan" : {
+                "spanning_from" :
+                {
+                    "fixedYear": 2020,
+                    "event"    : null,
+                    "name"     : ""
+                },
+                "spanning_to" :
+                {
+                    "fixedYear": 0,
+                    "event"    : "Dépendance",
+                    "name"     : "M. Lionel MICHAUD"
+                }
+            }
+        },
+        {
+            "id" : "45325B0F-331C-481F-9C34-57C088289758",
+            "value" : 0,
+            "proportional" : false,
+            "name" : "Autres",
+            "timeSpan" : {
+                "spanning_from" :
+                {
+                    "fixedYear": 2020,
+                    "event"    : null,
+                    "name"     : ""
+                },
+                "spanning_to" :
+                {
+                    "fixedYear": 0,
+                    "event"    : "Dépendance",
+                    "name"     : "M. Lionel MICHAUD"
+                }
+            }
+        }
     ],
     "fileNamePrefix" : ""
 }

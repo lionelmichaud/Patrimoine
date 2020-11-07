@@ -1,5 +1,58 @@
 {
     "items" : [
+        {
+            "id" : "45325B0E-331D-481F-9C34-57C088289751",
+            "value" : 0,
+            "proportional" : true,
+            "name" : "Divertissement - culture",
+            "timeSpan" : {
+                "ending_to" : {
+                    "fixedYear" : 170,
+                    "event"     : "Dépendance",
+                    "name"      : "M. Lionel MICHAUD"
+                }
+            }
+        },
+        {
+            "id" : "45325B0E-331D-481F-9C34-57C088289753",
+            "value" : 547,
+            "proportional" : true,
+            "name" : "Club / association (sport, hobby, art...)",
+            "timeSpan" : {
+                "ending_to" : {
+                    "fixedYear" : 0,
+                    "event"     : "Dépendance",
+                    "name"      : "M. Lionel MICHAUD"
+                }
+            }
+        },
+        {
+            "id" : "45325B0E-331D-481F-9C34-57C088289752",
+            "value" : 0,
+            "proportional" : true,
+            "name" : "Restaurants, bars...",
+            "timeSpan" : {
+                "ending_to" : {
+                    "fixedYear" : 250,
+                    "event"     : "Dépendance",
+                    "name"      : "M. Lionel MICHAUD"
+                }
+            }
+        },
+        {
+            "id" : "45325B0E-331D-481F-9C34-57C088289754",
+            "value" : 0,
+            "proportional" : true,
+            "name" : "Autres",
+            "timeSpan" : {
+                "ending_to" : {
+                    "fixedYear" : 0,
+                    "event"     : "Dépendance",
+                    "name"      : "M. Lionel MICHAUD"
+                }
+            }
+        }
+        
     ],
     "fileNamePrefix" : ""
 }

@@ -1,18 +1,67 @@
 {
     "items" : [
         {
-            "id" : "E641309D-2FE2-41F4-8AC4-4548F7BE8E0F",
-            "value" : 0,
+            "id" : "E641309D-2FE2-41F4-8AC0-4548F7BE8E0F",
+            "value" : 144,
+            "proportional" : true,
+            "name" : "Abonnement téléphone",
+            "timeSpan" : {
+                "permanent" : true
+            }
+        },
+        {
+            "id" : "E641309D-2FE2-41F4-8AC0-4548F7BE8E0A",
+            "value" : 348,
             "proportional" : false,
-            "name" : "Abonnement téléphone ",
+            "name" : "Abonnement internet",
             "timeSpan" : {
                 "ending_to" : {
                     "fixedYear" : 0,
-                    "event" : "Décès",
-                    "name" : "M. Lionel MICHAUD"
+                    "event"     : "Dépendance",
+                    "name"      : "Mme. Vanessa MICHAUD"
+                }
+            }
+        },
+        {
+            "id" : "E641309D-2FE2-41F4-8AC0-4548F7BE8E0B",
+            "value" : 144,
+            "proportional" : false,
+            "name" : "Abonnement Netflix",
+            "timeSpan" : {
+                "ending_to" : {
+                    "fixedYear" : 0,
+                    "event"     : "Dépendance",
+                    "name"      : "M. Lionel MICHAUD"
+                }
+            }
+        },
+        {
+            "id" : "E641309D-2FE2-41F4-8AC0-4548F7BE8E0C",
+            "value" : 241,
+            "proportional" : false,
+            "name" : "Abonnement Apple",
+            "timeSpan" : {
+                "ending_to" : {
+                    "fixedYear" : 0,
+                    "event"     : "Dépendance",
+                    "name"      : "M. Lionel MICHAUD"
+                }
+            }
+        },
+        {
+            "id" : "E641309D-2FE2-41F4-8AC0-4548F7BE8E0D",
+            "value" : 241,
+            "proportional" : false,
+            "name" : "Autres",
+            "timeSpan" : {
+                "ending_to" : {
+                    "fixedYear" : 0,
+                    "event"     : "Dépendance",
+                    "name"      : "M. Lionel MICHAUD"
                 }
             }
         }
+
     ],
     "fileNamePrefix" : ""
 }
