@@ -1,5 +1,19 @@
 {
     "items" : [
+        {
+            "id" : "B4EFF395-7A51-47AF-AD29-E7461ECB9ADA",
+            "value" : 555,
+            "proportional" : false,
+            "name" : "Cadeaux - Dons",
+            "timeSpan" : {
+                "ending_to" :
+                {
+                    "fixedYear": 0,
+                    "event"    : "Dépendance",
+                    "name"     : "Mme. Vanessa MICHAUD"
+                }
+            }
+        }
     ],
     "fileNamePrefix" : ""
 }
