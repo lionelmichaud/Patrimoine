@@ -13,28 +13,15 @@ import Foundation
 /// Limite temporelle d'une dépense: début ou fin.
 /// Date fixe ou calculée à partir d'un éventuel événement de vie d'une personne
 struct DateBoundary: Hashable, Codable {
+    
+    // MARK: - Properties
+    
     // date fixe ou calculée à partir d'un éventuel événement de vie d'une personne
     var fixedYear: Int = 0
     // non nil si la date est liée à un événement de vie d'une personne
     var event    : LifeEvent?
     // personne associée à l'évenement
     var name     : String = ""
-    
-    init() {
-    }
-    init(year: Int) {
-        self.fixedYear = year
-        self.event     = nil
-        self.name      = ""
-    }
-    init(event: LifeEvent?) {
-        self.event = event
-        self.name  = ""
-    }
-    init(name: String) {
-        self.name  = name
-        self.event = nil
-    }
     // date fixe ou calculée à partir d'un éventuel événement de vie d'une personne
     var year: Int {
         if let lifeEvent = self.event {
@@ -51,6 +38,27 @@ struct DateBoundary: Hashable, Codable {
             return fixedYear
         }
     }
+
+    // MARK: - Initializers
+    
+    init() {
+    }
+    
+    init(year: Int) {
+        self.fixedYear = year
+        self.event     = nil
+        self.name      = ""
+    }
+    
+    init(event: LifeEvent?) {
+        self.event = event
+        self.name  = ""
+    }
+    
+    init(name: String) {
+        self.name  = name
+        self.event = nil
+    }
 }
 
 // MARK: - Evénement de vie
@@ -58,7 +66,7 @@ struct DateBoundary: Hashable, Codable {
 enum LifeEvent: String, PickableEnum, Codable, Hashable {
     case debutEtude         = "Début étude"
     case independance       = "Indépendance financière"
-    case cessationActivite  = "Fin d'activité proffesionelle"
+    case cessationActivite  = "Fin d'activité profesionelle"
     case liquidationPension = "Liquidation de pension"
     case dependence         = "Dépendance"
     case deces              = "Décès"
