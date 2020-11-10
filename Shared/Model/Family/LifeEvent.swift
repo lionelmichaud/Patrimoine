@@ -139,8 +139,8 @@ enum GroupOfPersons: String, PickableEnum, Codable {
 // MARK: - Date au plus tôt ou au plus tard
 
 enum SoonestLatest: String, PickableEnum, Codable {
-    case soonest = "date au plus tôt"
-    case latest  = "date au plus tard"
+    case soonest = "Date au plus tôt"
+    case latest  = "Date au plus tard"
     
     var pickerString: String {
         return self.rawValue

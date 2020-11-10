@@ -25,6 +25,10 @@ struct TimeSpanEditView: View {
     @State private var toName        : String
     @State private var fromYear      : Int
     @State private var toYear        : Int
+    @State private var fromGroup     : GroupOfPersons
+    @State private var toGroup       : GroupOfPersons
+    @State private var fromOrder     : SoonestLatest
+    @State private var toOrder       : SoonestLatest
     @State private var period        : Int
     @State private var exceptionYear : Int
     @State private var caseIndex     : Int
@@ -44,7 +48,9 @@ struct TimeSpanEditView: View {
                                  isLinked  : $isLinkedToToEvent,
                                  fixedYear : $toYear,
                                  event     : $toEvent,
-                                 name      : $toName)
+                                 name      : $toName,
+                                 group     : $toGroup,
+                                 order     : $toOrder)
                 
             } else if caseIndex == LifeExpenseTimeSpan.starting(from: DateBoundary()).id {
                 // TimeSpan = .starting
@@ -52,7 +58,9 @@ struct TimeSpanEditView: View {
                                  isLinked  : $isLinkedToFromEvent,
                                  fixedYear : $fromYear,
                                  event     : $fromEvent,
-                                 name      : $fromName)
+                                 name      : $fromName,
+                                 group     : $fromGroup,
+                                 order     : $fromOrder)
                 
             } else if caseIndex == LifeExpenseTimeSpan.spanning(from: DateBoundary(), to: DateBoundary()).id {
                 // TimeSpan = .spanning
@@ -60,12 +68,16 @@ struct TimeSpanEditView: View {
                                  isLinked  : $isLinkedToFromEvent,
                                  fixedYear : $fromYear,
                                  event     : $fromEvent,
-                                 name      : $fromName)
+                                 name      : $fromName,
+                                 group     : $fromGroup,
+                                 order     : $fromOrder)
                 BoundaryEditView(label     : "Fin",
                                  isLinked  : $isLinkedToToEvent,
                                  fixedYear : $toYear,
                                  event     : $toEvent,
-                                 name      : $toName)
+                                 name      : $toName,
+                                 group     : $toGroup,
+                                 order     : $toOrder)
                 
             } else if caseIndex == LifeExpenseTimeSpan.periodic(from: DateBoundary(), period: 0, to: DateBoundary()).id {
                 // TimeSpan = .periodic
@@ -73,12 +85,16 @@ struct TimeSpanEditView: View {
                                  isLinked  : $isLinkedToFromEvent,
                                  fixedYear : $fromYear,
                                  event     : $fromEvent,
-                                 name      : $fromName)
+                                 name      : $fromName,
+                                 group     : $fromGroup,
+                                 order     : $fromOrder)
                 BoundaryEditView(label     : "Fin",
                                  isLinked  : $isLinkedToToEvent,
                                  fixedYear : $toYear,
                                  event     : $toEvent,
-                                 name      : $toName)
+                                 name      : $toName,
+                                 group     : $toGroup,
+                                 order     : $toOrder)
                 Section(header: Text("Période")) {
                     Stepper(value: $period, in: 0...100, step: 1, label: {
                         HStack {
@@ -130,11 +146,15 @@ struct TimeSpanEditView: View {
                 _toYear  = State(initialValue: to.year)
                 _toName  = State(initialValue: to.name ?? "") // default value should never be used
                 _toEvent = State(initialValue: to.event ?? TimeSpanEditView.defaultToEvent) // default value should never be used
+                _toGroup = State(initialValue: to.group ?? .allAdults) // default value should never be used
+                _toOrder = State(initialValue: to.order ?? .latest) // default value should never be used
                 _isLinkedToToEvent = State(initialValue: to.event != nil)
             default:
-                // nout used anyway
+                // not used anyway
                 _toYear  = State(initialValue: Date.now.year)
                 _toName  = State(initialValue: "")
+                _toGroup = State(initialValue: .allAdults) // default value should never be used
+                _toOrder = State(initialValue: .soonest) // default value should never be used
                 _toEvent = State(initialValue: TimeSpanEditView.defaultToEvent)
                 _isLinkedToToEvent = State(initialValue: false)
         }
@@ -145,12 +165,16 @@ struct TimeSpanEditView: View {
                 _fromYear  = State(initialValue: from.year)
                 _fromName  = State(initialValue: from.name ?? "")
                 _fromEvent = State(initialValue: from.event ?? TimeSpanEditView.defaultFromEvent) // default value should never be used
+                _fromGroup = State(initialValue: from.group ?? .allAdults) // default value should never be used
+                _fromOrder = State(initialValue: from.order ?? .soonest) // default value should never be used
                 _isLinkedToFromEvent = State(initialValue: from.event != nil)
             default:
-                // nout used anyway
+                // not used anyway
                 _fromYear  = State(initialValue: Date.now.year)
                 _fromName  = State(initialValue: "")
                 _fromEvent = State(initialValue: TimeSpanEditView.defaultFromEvent)
+                _fromGroup = State(initialValue: .allAdults) // default value should never be used
+                _fromOrder = State(initialValue: .latest) // default value should never be used
                 _isLinkedToFromEvent = State(initialValue: false)
         }
     }

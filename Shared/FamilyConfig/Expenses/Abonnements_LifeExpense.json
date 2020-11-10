@@ -18,9 +18,9 @@
                 "ending_to" : {
                     "fixedYear" : 0,
                     "event"     : "Dépendance",
-                    "group"     : null,
-                    "order"     : null,
-                    "name"      : "Mme. Vanessa MICHAUD"
+                    "group"     : "Tous les Adultes",
+                    "order"     : "Date au plus tard",
+                    "name"      : null
                 }
             }
         },

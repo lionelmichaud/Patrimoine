@@ -10,13 +10,13 @@ import SwiftUI
 
 struct BoundaryEditView: View {
     @EnvironmentObject var family: Family
-    let label : String
-    @Binding var isLinked : Bool
-    @Binding var fixedYear: Int
-    @Binding var event    : LifeEvent
-    @Binding var name     : String
-    @State private var group              : GroupOfPersons = .allPersons // pour affichage local
-    @State private var order              : SoonestLatest  = .soonest // pour affichage local
+    let label              : String
+    @Binding var isLinked  : Bool
+    @Binding var fixedYear : Int
+    @Binding var event     : LifeEvent
+    @Binding var name      : String
+    @Binding var group     : GroupOfPersons
+    @Binding var order     : SoonestLatest
     @State private var variableYear       : Int            = 0 // pour affichage local
     @State private var associatedToGroup  : Bool           = false // pour affichage local
     @State private var presentGroupPicker : Bool           = false // pour affichage local
