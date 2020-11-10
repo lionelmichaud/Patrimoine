@@ -10,6 +10,7 @@
                 {
                     "fixedYear": 0,
                     "event"    : "Dépendance",
+                    "group"    : null,
                     "name"     : "Mme. Vanessa MICHAUD"
                 }
             }

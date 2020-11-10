@@ -11,7 +11,7 @@ import SwiftUI
 struct PersonPickerView: View {
     @EnvironmentObject var family : Family
     @Binding var name             : String
-    let event    : LifeEvent
+    let event                     : LifeEvent
     
     var body: some View {
         if event.isAdultEvent {

@@ -10,8 +10,8 @@ import SwiftUI
 
 struct TimeSpanEditView: View {
     
-    static let defaultToEvent: LifeEvent = .deces
-    static let defaultFromEvent  : LifeEvent = .cessationActivite
+    static let defaultToEvent   : LifeEvent = .deces
+    static let defaultFromEvent : LifeEvent = .cessationActivite
 
     // MARK: - Properties
     
@@ -128,7 +128,7 @@ struct TimeSpanEditView: View {
                  .periodic(_ , _ , let to),
                  .spanning(_ , let to):
                 _toYear  = State(initialValue: to.year)
-                _toName  = State(initialValue: to.name) // default value should never be used
+                _toName  = State(initialValue: to.name ?? "") // default value should never be used
                 _toEvent = State(initialValue: to.event ?? TimeSpanEditView.defaultToEvent) // default value should never be used
                 _isLinkedToToEvent = State(initialValue: to.event != nil)
             default:
@@ -143,7 +143,7 @@ struct TimeSpanEditView: View {
                  .periodic(let from , _ , _),
                  .spanning(let from , _):
                 _fromYear  = State(initialValue: from.year)
-                _fromName  = State(initialValue: from.name)
+                _fromName  = State(initialValue: from.name ?? "")
                 _fromEvent = State(initialValue: from.event ?? TimeSpanEditView.defaultFromEvent) // default value should never be used
                 _isLinkedToFromEvent = State(initialValue: from.event != nil)
             default:
@@ -307,8 +307,7 @@ struct TimeSpanEditView: View {
     
     func updateLinkedToToEvent(isLinked: Bool) {
         // affecter une valeur par défaut au LifeEvent ou supprimer le lien vers le LifeEvent
-        let boundary = DateBoundary(
-            event: (isLinked ? TimeSpanEditView.defaultToEvent : nil))
+        let boundary = DateBoundary(event: (isLinked ? TimeSpanEditView.defaultToEvent : nil))
         switch self.timeSpan {
             case .ending (_):
                 self.timeSpan = .ending(to: boundary)
@@ -324,8 +323,7 @@ struct TimeSpanEditView: View {
     
     func updateLinkedToFromEvent(isLinked: Bool) {
         // affecter une valeur par défaut au LifeEvent ou supprimer le lien vers le LifeEvent
-        let boundary = DateBoundary(
-            event: (isLinked ? TimeSpanEditView.defaultFromEvent : nil))
+        let boundary = DateBoundary(event: (isLinked ? TimeSpanEditView.defaultFromEvent : nil))
         switch self.timeSpan {
             case .starting (_):
                 self.timeSpan = .starting(from: boundary)

@@ -10,6 +10,7 @@
                 {
                     "fixedYear": 2028,
                     "event"    : "Fin d'activité profesionelle",
+                    "group"    : null,
                     "name"     : "M. Lionel MICHAUD"
                 }
             }
@@ -24,6 +25,7 @@
                 {
                     "fixedYear": 2022,
                     "event"    : "Fin d'activité profesionelle",
+                    "group"    : null,
                     "name"     : "Mme. Vanessa MICHAUD"
                 }
             }
@@ -37,13 +39,12 @@
                 "spanning_from" :
                 {
                     "fixedYear": 2024,
-                    "event"    : "Liquidation de pension",
-                    "name"     : "M. Lionel MICHAUD"
                 },
                 "spanning_to" :
                 {
                     "fixedYear": 2025,
                     "event"    : "Dépendance",
+                    "group"    : null,
                     "name"     : "M. Lionel MICHAUD"
                 }
             }
@@ -68,12 +69,14 @@
                 {
                     "fixedYear": 2020,
                     "event"    : null,
+                    "group"    : null,
                     "name"     : ""
                 },
                 "periodic_to" :
                 {
                     "fixedYear": 2022,
                     "event"    : null,
+                    "group"    : null,
                     "name"     : ""
                 }
             }

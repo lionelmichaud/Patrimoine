@@ -165,6 +165,7 @@ extension LifeExpenseTimeSpan: Codable {
     enum ExpenseTimeSpanError: Error {
         case decoding(String)
     }
+    
     // MARK: - Decoding
 
     init(from decoder: Decoder) throws {

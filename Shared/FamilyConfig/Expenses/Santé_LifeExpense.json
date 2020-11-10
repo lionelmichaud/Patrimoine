@@ -10,6 +10,7 @@
                 {
                     "fixedYear": 0,
                     "event"    : "Décès",
+                    "group"    : null,
                     "name"     : "Mme. Vanessa MICHAUD"
                 }
             }
@@ -24,6 +25,7 @@
                 {
                     "fixedYear": 0,
                     "event"    : "Décès",
+                    "group"    : null,
                     "name"     : "Mme. Vanessa MICHAUD"
                 }
             }
@@ -38,12 +40,14 @@
                 {
                     "fixedYear": 2024,
                     "event"    : "Dépendance",
+                    "group"    : null,
                     "name"     : "M. Lionel MICHAUD"
                 },
                 "spanning_to" :
                 {
                     "fixedYear": 2025,
                     "event"    : "Décès",
+                    "group"    : null,
                     "name"     : "M. Lionel MICHAUD"
                 }
             }
@@ -58,12 +62,14 @@
                 {
                     "fixedYear": 2024,
                     "event"    : "Dépendance",
+                    "group"    : null,
                     "name"     : "Mme. Vanessa MICHAUD"
                 },
                 "spanning_to" :
                 {
                     "fixedYear": 2025,
                     "event"    : "Décès",
+                    "group"    : null,
                     "name"     : "Mme. Vanessa MICHAUD"
                 }
             }
@@ -78,6 +84,7 @@
                 {
                     "fixedYear": 0,
                     "event"    : "Décès",
+                    "group"    : null,
                     "name"     : "Mme. Vanessa MICHAUD"
                 }
             }

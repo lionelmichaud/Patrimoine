@@ -24,22 +24,22 @@ struct ExpenseDetailedView: View {
     
     var body: some View {
         Form {
-            // nom
+            /// nom
             HStack{
                 Text("Nom")
                     .frame(width: 70, alignment: .leading)
                 TextField("obligatoire", text: $localItem.name)
             }
             
-            // montant de la dépense
+            /// montant de la dépense
             AmountEditView(label: "Montant annuel",
                            amount: $localItem.value)
             
-            // proportionnalité de la dépense aux nb de membres de la famille
+            /// proportionnalité de la dépense aux nb de membres de la famille
             Toggle("Proportionnel au nombre de membres à charge de la famille",
                    isOn: $localItem.proportional)
             
-            // plage de temps
+            /// plage de temps
             TimeSpanEditView(timeSpan: $localItem.timeSpan)
         }
         .textFieldStyle(RoundedBorderTextFieldStyle())

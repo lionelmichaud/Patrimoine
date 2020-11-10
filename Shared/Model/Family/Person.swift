@@ -15,9 +15,9 @@ enum Sexe: Int, PickableEnum, Codable {
     case male
     case female
     
-    var id: Int {
-        return self.rawValue
-    }
+//    var id: Int {
+//        return self.rawValue
+//    }
     var displayString: String {
         switch self {
             case .male:
@@ -41,9 +41,9 @@ enum Seniority: Int, PickableEnum {
     case adult
     case enfant
     
-    var id: Int {
-        return self.rawValue
-    }
+//    var id: Int {
+//        return self.rawValue
+//    }
     var displayString: String {
         switch self {
             case .adult:

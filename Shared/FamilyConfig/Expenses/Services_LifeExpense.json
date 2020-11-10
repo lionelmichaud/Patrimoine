@@ -10,6 +10,7 @@
                 {
                     "fixedYear": 0,
                     "event"    : "Décès",
+                    "group"    : null,
                     "name"     : "Mme. Vanessa MICHAUD"
                 }
             }
@@ -24,6 +25,7 @@
                 {
                     "fixedYear": 0,
                     "event"    : "Décès",
+                    "group"    : null,
                     "name"     : "Mme. Vanessa MICHAUD"
                 }
             }
@@ -38,6 +40,7 @@
                 {
                     "fixedYear": 0,
                     "event"    : "Décès",
+                    "group"    : null,
                     "name"     : "Mme. Vanessa MICHAUD"
                 }
             }
@@ -52,6 +55,7 @@
                 {
                     "fixedYear": 0,
                     "event"    : "Décès",
+                    "group"    : null,
                     "name"     : "Mme. Vanessa MICHAUD"
                 }
             }

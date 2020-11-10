@@ -9,6 +9,7 @@
                 "ending_to" : {
                     "fixedYear" : 170,
                     "event"     : "Dépendance",
+                    "group"    : null,
                     "name"      : "M. Lionel MICHAUD"
                 }
             }
@@ -22,6 +23,7 @@
                 "ending_to" : {
                     "fixedYear" : 0,
                     "event"     : "Dépendance",
+                    "group"    : null,
                     "name"      : "M. Lionel MICHAUD"
                 }
             }
@@ -35,6 +37,7 @@
                 "ending_to" : {
                     "fixedYear" : 250,
                     "event"     : "Dépendance",
+                    "group"    : null,
                     "name"      : "M. Lionel MICHAUD"
                 }
             }
@@ -48,6 +51,7 @@
                 "ending_to" : {
                     "fixedYear" : 0,
                     "event"     : "Dépendance",
+                    "group"    : null,
                     "name"      : "M. Lionel MICHAUD"
                 }
             }

@@ -11,12 +11,14 @@
                 {
                     "fixedYear": 2022,
                     "event"    : null,
+                    "group"    : null,
                     "name"     : ""
                 },
                 "periodic_to" :
                 {
                     "fixedYear": 0,
                     "event"    : "Dépendance",
+                    "group"    : null,
                     "name"     : "M. Lionel MICHAUD"
                 }
             }
@@ -32,12 +34,14 @@
                 {
                     "fixedYear": 2021,
                     "event"    : null,
+                    "group"    : null,
                     "name"     : ""
                 },
                 "periodic_to" :
                 {
                     "fixedYear": 0,
                     "event"    : "Dépendance",
+                    "group"    : null,
                     "name"     : "M. Lionel MICHAUD"
                 }
             }
@@ -52,12 +56,14 @@
                 {
                     "fixedYear": 2020,
                     "event"    : null,
+                    "group"    : null,
                     "name"     : ""
                 },
                 "spanning_to" :
                 {
                     "fixedYear": 0,
                     "event"    : "Dépendance",
+                    "group"    : null,
                     "name"     : "M. Lionel MICHAUD"
                 }
             }
@@ -72,12 +78,14 @@
                 {
                     "fixedYear": 2020,
                     "event"    : null,
+                    "group"    : null,
                     "name"     : ""
                 },
                 "spanning_to" :
                 {
                     "fixedYear": 0,
                     "event"    : "Dépendance",
+                    "group"    : null,
                     "name"     : "M. Lionel MICHAUD"
                 }
             }
@@ -92,12 +100,14 @@
                 {
                     "fixedYear": 2020,
                     "event"    : null,
+                    "group"    : null,
                     "name"     : ""
                 },
                 "spanning_to" :
                 {
                     "fixedYear": 0,
                     "event"    : "Dépendance",
+                    "group"    : null,
                     "name"     : "M. Lionel MICHAUD"
                 }
             }
@@ -112,12 +122,14 @@
                 {
                     "fixedYear": 2020,
                     "event"    : null,
+                    "group"    : null,
                     "name"     : ""
                 },
                 "spanning_to" :
                 {
                     "fixedYear": 0,
                     "event"    : "Dépendance",
+                    "group"    : null,
                     "name"     : "M. Lionel MICHAUD"
                 }
             }
@@ -132,12 +144,14 @@
                 {
                     "fixedYear": 2020,
                     "event"    : null,
+                    "group"    : null,
                     "name"     : ""
                 },
                 "spanning_to" :
                 {
                     "fixedYear": 0,
                     "event"    : "Dépendance",
+                    "group"    : null,
                     "name"     : "M. Lionel MICHAUD"
                 }
             }
@@ -152,12 +166,14 @@
                 {
                     "fixedYear": 2020,
                     "event"    : null,
+                    "group"    : null,
                     "name"     : ""
                 },
                 "spanning_to" :
                 {
                     "fixedYear": 0,
                     "event"    : "Dépendance",
+                    "group"    : null,
                     "name"     : "M. Lionel MICHAUD"
                 }
             }

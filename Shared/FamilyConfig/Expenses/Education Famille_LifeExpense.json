@@ -10,12 +10,14 @@
                 {
                     "fixedYear": 2024,
                     "event"    : "Liquidation de pension",
+                    "group"    : null,
                     "name"     : "M. Lionel MICHAUD"
                 },
                 "spanning_to" :
                 {
                     "fixedYear": 2025,
                     "event"    : "Dépendance",
+                    "group"    : null,
                     "name"     : "M. Lionel MICHAUD"
                 }
             }
@@ -30,12 +32,14 @@
                 {
                     "fixedYear": 2024,
                     "event"    : "Liquidation de pension",
+                    "group"    : null,
                     "name"     : "M. Lionel MICHAUD"
                 },
                 "spanning_to" :
                 {
                     "fixedYear": 2025,
                     "event"    : "Dépendance",
+                    "group"    : null,
                     "name"     : "M. Lionel MICHAUD"
                 }
             }
@@ -50,12 +54,14 @@
                 {
                     "fixedYear": 2024,
                     "event"    : "Liquidation de pension",
+                    "group"    : null,
                     "name"     : "M. Lionel MICHAUD"
                 },
                 "spanning_to" :
                 {
                     "fixedYear": 2025,
                     "event"    : "Dépendance",
+                    "group"    : null,
                     "name"     : "M. Lionel MICHAUD"
                 }
             }
@@ -70,12 +76,14 @@
                 {
                     "fixedYear": 2024,
                     "event"    : "Liquidation de pension",
+                    "group"    : null,
                     "name"     : "M. Lionel MICHAUD"
                 },
                 "spanning_to" :
                 {
                     "fixedYear": 2025,
                     "event"    : "Dépendance",
+                    "group"    : null,
                     "name"     : "M. Lionel MICHAUD"
                 }
             }
