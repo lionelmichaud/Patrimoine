@@ -40,45 +40,45 @@ struct TimeSpanEditView: View {
             // en fonction du type choisi
             if caseIndex == LifeExpenseTimeSpan.ending (to: DateBoundary()).id {
                 // TimeSpan = .ending
-                BoundaryEditView(label    : "Fin",
-                                 event    : $toEvent,
-                                 isLinked : $isLinkedToToEvent,
-                                 year     : $toYear,
-                                 name     : $toName)
+                BoundaryEditView(label     : "Fin",
+                                 isLinked  : $isLinkedToToEvent,
+                                 fixedYear : $toYear,
+                                 event     : $toEvent,
+                                 name      : $toName)
                 
             } else if caseIndex == LifeExpenseTimeSpan.starting(from: DateBoundary()).id {
                 // TimeSpan = .starting
-                BoundaryEditView(label    : "Début",
-                                 event    : $fromEvent,
-                                 isLinked : $isLinkedToFromEvent,
-                                 year     : $fromYear,
-                                 name     : $fromName)
+                BoundaryEditView(label     : "Début",
+                                 isLinked  : $isLinkedToFromEvent,
+                                 fixedYear : $fromYear,
+                                 event     : $fromEvent,
+                                 name      : $fromName)
                 
             } else if caseIndex == LifeExpenseTimeSpan.spanning(from: DateBoundary(), to: DateBoundary()).id {
                 // TimeSpan = .spanning
-                BoundaryEditView(label    : "Début",
-                                 event    : $fromEvent,
-                                 isLinked : $isLinkedToFromEvent,
-                                 year     : $fromYear,
-                                 name     : $fromName)
-                BoundaryEditView(label    : "Fin",
-                                 event    : $toEvent,
-                                 isLinked : $isLinkedToToEvent,
-                                 year     : $toYear,
-                                 name     : $toName)
+                BoundaryEditView(label     : "Début",
+                                 isLinked  : $isLinkedToFromEvent,
+                                 fixedYear : $fromYear,
+                                 event     : $fromEvent,
+                                 name      : $fromName)
+                BoundaryEditView(label     : "Fin",
+                                 isLinked  : $isLinkedToToEvent,
+                                 fixedYear : $toYear,
+                                 event     : $toEvent,
+                                 name      : $toName)
                 
             } else if caseIndex == LifeExpenseTimeSpan.periodic(from: DateBoundary(), period: 0, to: DateBoundary()).id {
                 // TimeSpan = .periodic
-                BoundaryEditView(label    : "Début",
-                                 event    : $fromEvent,
-                                 isLinked : $isLinkedToFromEvent,
-                                 year     : $fromYear,
-                                 name     : $fromName)
-                BoundaryEditView(label    : "Fin",
-                                 event    : $toEvent,
-                                 isLinked : $isLinkedToToEvent,
-                                 year     : $toYear,
-                                 name     : $toName)
+                BoundaryEditView(label     : "Début",
+                                 isLinked  : $isLinkedToFromEvent,
+                                 fixedYear : $fromYear,
+                                 event     : $fromEvent,
+                                 name      : $fromName)
+                BoundaryEditView(label     : "Fin",
+                                 isLinked  : $isLinkedToToEvent,
+                                 fixedYear : $toYear,
+                                 event     : $toEvent,
+                                 name      : $toName)
                 Section(header: Text("Période")) {
                     Stepper(value: $period, in: 0...100, step: 1, label: {
                         HStack {
