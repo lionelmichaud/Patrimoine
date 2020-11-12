@@ -14,7 +14,7 @@ import SwiftUI
 typealias LifeExpensesDic = DictionaryOfItemArray<LifeExpenseCategory, ExpenseArray>
 
 extension LifeExpensesDic {
-    /// Utiliser pour générer le graphe de la vue de synthèses des dépense
+    /// Utiliser pour générer le graphe de la vue de synthèses des dépenses
     /// - Returns: table
     func namedValuedTimeFrameTable()
     -> [(name: String,
@@ -27,12 +27,14 @@ extension LifeExpensesDic {
         perCategory.sortedReversed(by: \.key.displayString).forEach { (category, expenseArray) in
             let nbItem = expenseArray.items.count
             for expIdx in 0..<nbItem {
-                table.append((name              : expenseArray[nbItem-1-expIdx].name,
-                              value             : expenseArray[nbItem-1-expIdx].value,
-                              prop             : expenseArray[nbItem-1-expIdx].proportional,
+                if let firstYear = expenseArray[nbItem - 1 - expIdx].firstYear,
+                   let lastYear  = expenseArray[nbItem - 1 - expIdx].lastYear {
+                table.append((name              : expenseArray[nbItem - 1 - expIdx].name,
+                              value             : expenseArray[nbItem - 1 - expIdx].value,
+                              prop              : expenseArray[nbItem - 1 - expIdx].proportional,
                               idx               : idx,
-                              firstYearDuration : [expenseArray[nbItem-1-expIdx].firstYear,
-                                                   expenseArray[nbItem-1-expIdx].lastYear - expenseArray[nbItem-1-expIdx].firstYear + 1]))
+                              firstYearDuration : [firstYear, lastYear - firstYear + 1]))
+                }
                 idx += 1
             }
         }
@@ -191,11 +193,11 @@ struct LifeExpense: Identifiable, Codable, Hashable, NameableValuable {
 
     // MARK: - Computed properties
     
-    var firstYear: Int { // computed
+    var firstYear: Int? { // computed
         timeSpan.firstYear
     }
     
-    var lastYear: Int { // computed
+    var lastYear: Int? { // computed
         timeSpan.lastYear
     }
     

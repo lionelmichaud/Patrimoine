@@ -8,79 +8,213 @@
 
 import SwiftUI
 
-struct BoundaryEditView: View {
-    @EnvironmentObject var family: Family
-    let label              : String
-    @Binding var isLinked  : Bool
-    @Binding var fixedYear : Int
-    @Binding var event     : LifeEvent
-    @Binding var name      : String
-    @Binding var group     : GroupOfPersons
-    @Binding var order     : SoonestLatest
-    @State private var variableYear       : Int            = 0 // pour affichage local
-    @State private var associatedToGroup  : Bool           = false // pour affichage local
-    @State private var presentGroupPicker : Bool           = false // pour affichage local
+// MARK: - View Model for BoundaryEditView
 
-    // calculer la date de l'événement
-    var choosenName: Binding<String> {
-        return Binding<String> (
-            get: { return (self.name) },
-            set: { name in
-                self.name = name
-                self.variableYear = self.yearOfEventFor(name: self.name)
-                }
-            )
+struct DateBoundaryViewModel {
+    
+    // MARK: - Properties
+    
+    var fixedYear       : Int
+    var event           : LifeEvent
+    var isLinkedToEvent : Bool
+    var name            : String
+    var group           : GroupOfPersons
+    var isLinkedToGroup : Bool
+    var order           : SoonestLatest
+    
+    // MARK: - Computed Properties
+    
+    // vérifier qu'il est possible de calculer l'année de la borne temporelle
+    var boundaryYearIsComputable: Bool {
+        if isLinkedToEvent {
+            if isLinkedToGroup {
+                return true
+            } else {
+                return name != ""
+            }
+        } else {
+            return true
+        }
     }
-
-    var body: some View {
-        Section(header: Text("\(label) de période")) {
-            /// la date est-elle liée à un événement ?
-            Toggle(isOn: $isLinked, label: { Text("Associé à un événement") })
-            if isLinked {
-                /// la date est liée à un événement:
-                /// choisir le type d'événement
-                CasePicker(pickedCase: $event, label: "Nature de cet événement")
-                    .onChange(of: event, perform: updateGroup)
-                /// choisir à quoi associer l'événement: personne ou groupe
-                Toggle(isOn: $associatedToGroup) { Text("Associer cet évenement à un groupe") }
-                    .onChange(of: associatedToGroup, perform: updateGroup)
-                if associatedToGroup {
-                    /// choisir le type de groupe si nécessaire
-                    if presentGroupPicker {
-                        CasePicker(pickedCase: $group, label: "Groupe associé")
-                    } else {
-                        LabeledText(label: "Groupe associé", text: group.displayString).foregroundColor(.secondary)
+    // date fixe ou calculée à partir d'un éventuel événement de vie d'une personne
+    var year  : Int? {
+        if isLinkedToEvent {
+            // la borne temporelle est accrochée à un événement
+            var persons: [Person]?
+            if isLinkedToGroup {
+                // l'événement est accroché à un groupe
+                // construire un tableau des membres du groupe
+                switch group {
+                    case .allAdults:
+                        guard !event.isChildEvent else {
+                            return nil
+                        }
+                        persons = LifeExpense.family?.members.filter {$0 is Adult}
+                        
+                    case .allChildrens:
+                        guard !event.isAdultEvent else {
+                            return nil
+                        }
+                        persons = LifeExpense.family?.members.filter {$0 is Child}
+                        
+                    case .allPersons:
+                        persons = LifeExpense.family?.members
+                }
+                // rechercher l'année au plus tôt ou au plus tard
+                if let years = persons?.map({ $0.yearOf(event: event)! }) {
+                    switch order {
+                        case .soonest:
+                            return years.min()
+                        case .latest:
+                            return years.max()
                     }
-                    CasePicker(pickedCase: $order, label: "Ordre")
                 } else {
-                    /// choisir la personne
-                    PersonPickerView(name: choosenName, event: event)
-                    /// afficher la date résultante
-                    if (-1...0).contains(variableYear) {
-                        Text("Choisir un événement et la personne associée")
-                            .foregroundColor(.red)
-                    } else {
-                        IntegerView(label: "\(label) (année inclue)", integer: variableYear).foregroundColor(.secondary)
-                    }
+                    // on ne trouve pas l'année
+                    return nil
                 }
                 
             } else {
-                /// choisir une date absolue
-                IntegerEditView(label: "\(label) (année inclue)", integer: $fixedYear)
+                // l'événement est accroché à une personne
+                // rechercher la personne
+                if let person = LifeExpense.family?.member(withName: name) {
+                    // rechercher l'année de l'événement pour cette personne
+                    return person.yearOf(event: event)
+                } else {
+                    // on ne trouve pas le nom de la personne dans la famille
+                    return nil
+                }
+                
             }
-        }.onAppear(perform: initializeLocalvariables)
+            
+        } else {
+            // pas d'événement, la date est fixe
+            return fixedYear
+        }
+    }
+    // construire l'objet de type DateBoundary correspondant au ViewModel
+    var dateBoundary: DateBoundary {
+        var _event : LifeEvent?
+        var _name  : String?
+        var _group : GroupOfPersons?
+        var _order : SoonestLatest?
+        
+        if isLinkedToEvent {
+            _event = self.event
+            if isLinkedToGroup {
+                _name  = nil
+                _group = self.group
+                _order = self.order
+            } else {
+                _name  = self.name
+                _group = nil
+                _order = nil
+            }
+                
+        } else {
+            _event = nil
+            _name  = nil
+            _group = nil
+            _order = nil
+        }
+        return DateBoundary(fixedYear : fixedYear,
+                            event     : _event,
+                            name      : _name,
+                            group     : _group,
+                            order     : _order)
     }
     
+    // MARK: -  Initializers of ViewModel from Model
+    
+    internal init(from dateBoundary: DateBoundary) {
+        self.fixedYear       = dateBoundary.fixedYear
+        self.event           = dateBoundary.event ?? .deces
+        self.isLinkedToEvent = dateBoundary.event != nil
+        self.name            = dateBoundary.name ?? ""
+        self.group           = dateBoundary.group ?? .allAdults
+        self.isLinkedToGroup = dateBoundary.group != nil
+        self.order           = dateBoundary.order ?? .soonest
+    }
+    
+}
+    
+struct BoundaryEditView: View {
+    @EnvironmentObject var family         : Family
+
+    // MARK: - Properties
+
+    let label                             : String
+    @Binding var boundaryVM               : DateBoundaryViewModel
+    @State private var presentGroupPicker : Bool = false // pour affichage local
+    
+    var body: some View {
+        Section(header: Text("\(label) de période")) {
+            /// la date est-elle liée à un événement ?
+            Toggle(isOn: $boundaryVM.isLinkedToEvent, label: { Text("Associé à un événement") })
+                .onChange(of: boundaryVM.isLinkedToEvent, perform: updateIsLinkedToEvent)
+
+            if boundaryVM.isLinkedToEvent {
+                /// la date est liée à un événement:
+                /// choisir le type d'événement
+                CasePicker(pickedCase: $boundaryVM.event, label: "Nature de cet événement")
+                    .onChange(of: boundaryVM.event, perform: updateGroup)
+
+                /// choisir à quoi associer l'événement: personne ou groupe
+                Toggle(isOn: $boundaryVM.isLinkedToGroup) { Text("Associer cet évenement à un groupe") }
+                    .onChange(of: boundaryVM.isLinkedToGroup, perform: updateGroup)
+                
+                if boundaryVM.isLinkedToGroup {
+                    /// choisir le type de groupe si nécessaire
+                    if presentGroupPicker {
+                        CasePicker(pickedCase: $boundaryVM.group, label: "Groupe associé")
+                    } else {
+                        LabeledText(label: "Groupe associé", text: boundaryVM.group.displayString).foregroundColor(.secondary)
+                    }
+                    CasePicker(pickedCase: $boundaryVM.order, label: "Ordre")
+                    
+                } else {
+                    /// choisir la personne
+                    PersonPickerView(name: $boundaryVM.name, event: boundaryVM.event)
+                }
+                /// afficher la date résultante
+                if !self.boundaryDateIsComputable() {
+                    Text("Choisir un événement et la personne ou le groupe associé")
+                        .foregroundColor(.red)
+                } else {
+                    IntegerView(label: "\(label) (année inclue)", integer: boundaryYear()).foregroundColor(.secondary)
+                }
+
+            } else {
+                /// choisir une date absolue
+                IntegerEditView(label: "\(label) (année inclue)", integer: $boundaryVM.fixedYear)
+            }
+        }
+    }
+    
+    // MARK: -  Initializers
+    
+    init(label    : String,
+         boundary : Binding<DateBoundaryViewModel?>) {
+        self.label  = label
+        _boundaryVM = boundary ?? DateBoundaryViewModel(from: DateBoundary.empty)
+    }
+    
+    // MARK: - Methods
+    
+    func updateIsLinkedToEvent(newIsLinkedToEvent: Bool) {
+        if !newIsLinkedToEvent {
+            boundaryVM.fixedYear = Date.now.year
+        }
+    }
     func updateGroup(isAssociatedToGroup: Bool) {
         if isAssociatedToGroup {
-            if event.isAdultEvent {
-                group              = .allAdults
+            if boundaryVM.event.isAdultEvent {
+                boundaryVM.group   = .allAdults
                 presentGroupPicker = false
                 
-            } else if event.isChildEvent {
-                group              = .allChildrens
+            } else if boundaryVM.event.isChildEvent {
+                boundaryVM.group   = .allChildrens
                 presentGroupPicker = false
-
+                
             } else {
                 presentGroupPicker = true
             }
@@ -88,13 +222,13 @@ struct BoundaryEditView: View {
     }
     
     func updateGroup(newEvent: LifeEvent) {
-        if associatedToGroup {
+        if boundaryVM.isLinkedToGroup {
             if newEvent.isAdultEvent {
-                group              = .allAdults
+                boundaryVM.group   = .allAdults
                 presentGroupPicker = false
                 
             } else if newEvent.isChildEvent {
-                group              = .allChildrens
+                boundaryVM.group   = .allChildrens
                 presentGroupPicker = false
                 
             } else {
@@ -102,18 +236,12 @@ struct BoundaryEditView: View {
             }
         }
     }
-
-    func initializeLocalvariables() {
-        self.variableYear = yearOfEventFor(name: self.name)
+    
+    func boundaryDateIsComputable() -> Bool {
+        return boundaryVM.boundaryYearIsComputable
     }
     
-    /// Recherche la date d'un évenement pour une personne d'un Nom donné
-    /// - Parameter name: Nom de la personne
-    /// - Returns: Date
-    func yearOfEventFor(name: String) -> Int {
-        // rechercher la personne
-        let person = self.family.member(withName: name)
-        // rechercher l'année de l'événement pour cette personne
-        return person?.yearOf(event: self.event) ?? -1
+    func boundaryYear() -> Int {
+        return boundaryVM.year ?? -1
     }
 }

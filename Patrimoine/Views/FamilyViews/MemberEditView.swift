@@ -90,7 +90,7 @@ struct MemberEditView: View {
     /// Applique les modifications: recopie le ViewModel dans les propriétés d'un membre existant
     func applyChanges() {
         // Update Person from ViewModel
-        personViewModel.updateFromModelView(member: member)
+        personViewModel.updateFromViewModel(member: member)
         
         // Child
         if let child = member as? Child {
@@ -100,7 +100,7 @@ struct MemberEditView: View {
         
         // Update Adult from ViewModel
         if let adult = member as? Adult {
-            adultViewModel.updateFromModelView(adult: adult)
+            adultViewModel.updateFromViewModel(adult: adult)
         }
         
         // mettre à jour le nombre d'enfant de chaque parent de la famille

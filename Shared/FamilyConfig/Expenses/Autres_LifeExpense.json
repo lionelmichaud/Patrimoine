@@ -37,9 +37,9 @@
                 "spanning_from" :
                 {
                     "fixedYear" : 0,
-                    "event"     : "Dépendance",
+                    "event"     : "Fin d'activité profesionelle",
                     "group"     : "Tous les Adultes",
-                    "order"     : "Date au plus tard",
+                    "order"     : "Date au plus tôt",
                 },
                 "spanning_to" :
                 {

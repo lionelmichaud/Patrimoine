@@ -14,6 +14,8 @@ import Foundation
 /// Date fixe ou calculée à partir d'un éventuel événement de vie d'une personne
 struct DateBoundary: Hashable, Codable {
     
+    static let empty: DateBoundary = DateBoundary()
+
     // MARK: - Properties
     
     // date fixe ou calculée à partir d'un éventuel événement de vie d'une personne
@@ -26,8 +28,11 @@ struct DateBoundary: Hashable, Codable {
     var group : GroupOfPersons?
     // date au plus tôt ou au plus tard du groupe
     var order : SoonestLatest?
-    // date fixe ou calculée à partir d'un éventuel événement de vie d'une personne
-    var year  : Int {
+
+    // MARK: - Computed Properties
+    
+    // date fixe ou calculée à partir d'un événement de vie d'une personne ou d'un groupe
+    var year  : Int? {
         if let lifeEvent = self.event {
             // la borne temporelle est accrochée à un événement
             var persons: [Person]?
@@ -36,10 +41,10 @@ struct DateBoundary: Hashable, Codable {
                     // rechercher la personne
                     if let theName = name, let person = LifeExpense.family?.member(withName: theName) {
                         // rechercher l'année de l'événement pour cette personne
-                        return person.yearOf(event: lifeEvent) ?? -1
+                        return person.yearOf(event: lifeEvent)
                     } else {
                         // on ne trouve pas le nom de la personne dans la famille
-                        return -1
+                        return nil
                     }
                     
                 case .allAdults:
@@ -54,14 +59,14 @@ struct DateBoundary: Hashable, Codable {
             if let years = persons?.map({ $0.yearOf(event: lifeEvent)! }) {
                 switch order {
                     case .soonest:
-                        return years.min()!
+                        return years.min()
                     case .latest:
-                        return years.max()!
+                        return years.max()
                     default:
-                        return -1
+                        return nil
                 }
             } else {
-                return -1
+                return nil
             }
         } else {
             // pas d'événement, la date est fixe
@@ -71,16 +76,28 @@ struct DateBoundary: Hashable, Codable {
 
     // MARK: - Initializers
     
-    init() {
+    internal init() {
     }
     
-    init(year: Int) {
+    internal init(fixedYear : Int              = 0,
+                  event     : LifeEvent?       = nil,
+                  name      : String?          = nil,
+                  group     : GroupOfPersons?  = nil,
+                  order     : SoonestLatest?   = nil) {
+        self.fixedYear = fixedYear
+        self.event     = event
+        self.name      = name
+        self.group     = group
+        self.order     = order
+    }
+    
+    internal init(year: Int) {
         self.fixedYear = year
         self.event     = nil
         self.name      = nil
     }
     
-    init(event: LifeEvent?) {
+    internal init(event: LifeEvent?) {
         self.event = event
         self.name  = nil
     }
@@ -96,6 +113,8 @@ enum LifeEvent: String, PickableEnum, Codable {
     case dependence         = "Dépendance"
     case deces              = "Décès"
 
+    // MARK: - Computed Properties
+    
     var pickerString: String {
         return self.rawValue
     }

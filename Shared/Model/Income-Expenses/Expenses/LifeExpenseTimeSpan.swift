@@ -23,10 +23,10 @@ enum LifeExpenseTimeSpan: PickableIdentifiableEnum, Hashable {
 
     static var allCases: [LifeExpenseTimeSpan] {
         return [.permanent,
-                .periodic (from: DateBoundary(), period: 1, to: DateBoundary()),
-                .starting (from: DateBoundary()),
-                .ending   (to:   DateBoundary()),
-                .spanning (from: DateBoundary(), to: DateBoundary()),
+                .periodic (from: DateBoundary.empty, period: 1, to: DateBoundary.empty),
+                .starting (from: DateBoundary.empty),
+                .ending   (to:   DateBoundary.empty),
+                .spanning (from: DateBoundary.empty, to: DateBoundary.empty),
                 .exceptional (inYear: 0)]
     }
     
@@ -81,55 +81,72 @@ enum LifeExpenseTimeSpan: PickableIdentifiableEnum, Hashable {
                 return true
             
             case .periodic (let from, let period, let to):
-                return (from.year...to.year).contains {
+                guard to.year != nil && from.year != nil else {
+                    return false
+                }
+                return (from.year!...to.year!).contains {
                     let includesYear = $0 == year
-                    return includesYear && (($0 - from.year) % period == 0)
+                    return includesYear && (($0 - from.year!) % period == 0)
             }
             
             case .starting (let from):
-                return year >= from.year
+                guard from.year != nil else {
+                    return false
+                }
+                return year >= from.year!
             
             case .ending (let to):
-                return year <= to.year
+                guard to.year != nil else {
+                    return false
+                }
+                return year <= to.year!
             
             case .spanning (let from, let to):
-                if from.year > to.year { return false }
-                return (from.year...to.year).contains(year)
+                guard to.year != nil && from.year != nil else {
+                    return false
+                }
+                if from.year! > to.year! { return false }
+                return (from.year!...to.year!).contains(year)
             
             case .exceptional(let inYear):
                 return year == inYear
         }
     }
     
-    var firstYear: Int { // computed
+    var firstYear: Int? { // computed
         switch self {
             case .permanent:
                 return Date.now.year
-            case .periodic(let from, period: _, to: _):
+                
+            case .ending(let to):
+                guard to.year != nil else {
+                    return nil
+                }
+                return min(Date.now.year, to.year!)
+                
+            case .periodic(let from, period: _, to: _),
+                 .starting(let from),
+                 .spanning(let from, to: _):
                 return from.year
-            case .starting(let from):
-                return from.year
-            case .ending(to: _):
-                return Date.now.year
-            case .spanning(let from, to: _):
-                return from.year
+                
             case .exceptional(let inYear):
                 return inYear
         }
     }
     
-    var lastYear: Int { // computed
+    var lastYear: Int? { // computed
         switch self {
             case .permanent:
                 return Date.now.year + 100
-            case .periodic(from: _, period: _, to: let to):
+            case .periodic(from: _, period: _, to: let to),
+                 .spanning(from: _,            to: let to),
+                 .ending(let to):
                 return to.year
-            case .starting(from: _):
+            case .starting(let from):
+                guard from.year != nil else {
+                    return nil
+                }
                 return Date.now.year + 100
-            case .ending(let to):
-                return to.year
-            case .spanning(from: _, to: let to):
-                return to.year
             case .exceptional(inYear: let inYear):
                 return inYear
         }
@@ -139,14 +156,14 @@ enum LifeExpenseTimeSpan: PickableIdentifiableEnum, Hashable {
         switch self {
             case .permanent:
                 return true
-            case .periodic(let from, _, let to):
-                return from.year <= to.year
+            case .periodic(let from, _, let to),
+                 .spanning(let from,    let to):
+                guard let fromYear = from.year, let toYear = to.year else { return false }
+                return fromYear <= toYear
             case .starting(from: _):
                 return true
             case .ending(to: _):
                 return true
-            case .spanning(let from, let to):
-                return from.year <= to.year
             case .exceptional(inYear: _):
             return true
         }
@@ -259,7 +276,7 @@ extension LifeExpenseTimeSpan: CustomStringConvertible{
                 case .starting (let from):
                     return "starting from \(from)"
                 case .ending (let to):
-                    return "ending in \(to.year) on event: \(String(describing: to.event))"
+                    return "ending in \(to.year ?? -1) on event: \(String(describing: to.event))"
                 case .spanning (let from, let to):
                     return "starting from \(from) - ending in \(to)"
                 case .exceptional(let inYear):

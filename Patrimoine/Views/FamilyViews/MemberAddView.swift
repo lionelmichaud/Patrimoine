@@ -18,7 +18,7 @@ class PersonViewModel: ObservableObject {
     @Published var birthDate  = Date()
     @Published var deathAge   = 81
     
-    // MARK: -  Initializers of ModelView from Model
+    // MARK: -  Initializers of ViewModel from Model
     
     init(from member: Person) {
         deathAge = member.ageOfDeath
@@ -26,7 +26,7 @@ class PersonViewModel: ObservableObject {
     
     // MARK: -  Methods
     
-    func updateFromModelView(member: Person) {
+    func updateFromViewModel(member: Person) {
         member.ageOfDeath = deathAge
     }
     
@@ -62,7 +62,7 @@ class AdultViewModel: ObservableObject {
     @Published var lastKnownPensionSituation = RegimeGeneralSituation()
     @Published var lastKnownAgircSituation   = RegimeAgircSituation()
     
-    // MARK: -  Initializers of ModelView from Model
+    // MARK: -  Initializers of ViewModel from Model
     
     init(from adult: Adult) {
         dateRetirement            = adult.dateOfRetirement
@@ -101,7 +101,7 @@ class AdultViewModel: ObservableObject {
     init() {
     }
     
-    func updateFromModelView(adult: Adult) {
+    func updateFromViewModel(adult: Adult) {
         adult.dateOfRetirement     = dateRetirement
         adult.causeOfRetirement    = causeOfRetirement
         if (causeOfRetirement == Unemployment.Cause.demission) {
@@ -222,7 +222,7 @@ struct MemberAddView: View {
                                       familyName : personViewModel.familyName.uppercased(),
                                       birthDate  : personViewModel.birthDate,
                                       ageOfDeath : personViewModel.deathAge)
-                adultViewModel.updateFromModelView(adult: newMember)
+                adultViewModel.updateFromViewModel(adult: newMember)
                 
                 // ajout du nouveau membre à la famille
                 family.addMember(newMember)
