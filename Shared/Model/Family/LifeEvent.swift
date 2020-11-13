@@ -150,6 +150,8 @@ enum GroupOfPersons: String, PickableEnum, Codable {
     case allChildrens = "Tous les Enfants"
     case allPersons   = "Toutes les Personnes"
     
+    // MARK: - Computed Properties
+    
     var pickerString: String {
         return self.rawValue
     }
@@ -160,6 +162,8 @@ enum GroupOfPersons: String, PickableEnum, Codable {
 enum SoonestLatest: String, PickableEnum, Codable {
     case soonest = "Date au plus tôt"
     case latest  = "Date au plus tard"
+    
+    // MARK: - Computed Properties
     
     var pickerString: String {
         return self.rawValue

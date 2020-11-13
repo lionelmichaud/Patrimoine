@@ -24,13 +24,20 @@ struct ExpenseSummaryView: View {
                        in    : minDate.double() ... maxDate.double(),
                        step  : 1,
                        onEditingChanged: {_ in
-                })
+                       })
                 Text(self.family.expenses.value(atEndOf: Int(self.uiState.expenseViewState.evalDate)).€String)
             }
-            // graphique
             .padding(.horizontal)
+            
+            // choix de la catégorie des dépenses
+            CasePicker(pickedCase: $uiState.expenseViewState.selectedCategory, label: "Catégories de dépenses")
+                .pickerStyle(SegmentedPickerStyle())
+                .padding(.horizontal)
+            
+            // graphique
             ExpenseSummaryChartView(endDate  : uiState.expenseViewState.endDate,
-                                    evalDate : uiState.expenseViewState.evalDate)
+                                    evalDate : uiState.expenseViewState.evalDate,
+                                    category : uiState.expenseViewState.selectedCategory)
                 .padding()
                 .navigationTitle("Résumé")
                 .navigationBarTitleDisplayMode(.inline)
@@ -42,7 +49,7 @@ struct ExpenseSummaryView: View {
                        step  : 5,
                        onEditingChanged: {
                         print("\($0)")
-                })
+                       })
                 Text(String(Int(uiState.expenseViewState.endDate)))
             }
             .padding(.horizontal)
@@ -58,7 +65,7 @@ struct ExpenseSummaryChartView: UIViewRepresentable {
     @EnvironmentObject var family : Family
     let endDate  : Double
     let evalDate : Double
-
+    let category : LifeExpenseCategory
 
     static let ColorsTable: [NSUIColor] = [UIColor(white: 1, alpha: 0),#colorLiteral(red: 0.9686274529, green: 0.78039217, blue: 0.3450980484, alpha: 1)]
     
@@ -75,7 +82,7 @@ struct ExpenseSummaryChartView: UIViewRepresentable {
         //  chercher le nom de la dépense
         //  chercher la position de la dépense dans le tableau des dépense
         //  chercher les dates de début et de fin
-        let namedValuedTimeFrameTable = family.expenses.namedValuedTimeFrameTable()
+        let namedValuedTimeFrameTable = family.expenses.namedValuedTimeFrameTable(category: category)
         
         // mettre à jour les noms des dépenses dans le formatteur de l'axe X
         formatter.names = namedValuedTimeFrameTable.map { (name, value, prop, idx, firstYearDuration) in

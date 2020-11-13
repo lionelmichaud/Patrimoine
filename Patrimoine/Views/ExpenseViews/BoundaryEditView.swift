@@ -212,6 +212,7 @@ struct BoundaryEditView: View {
             boundaryVM.fixedYear = Date.now.year
         }
     }
+    
     func updateGroup(isAssociatedToGroup: Bool) {
         if isAssociatedToGroup {
             if boundaryVM.event.isAdultEvent {

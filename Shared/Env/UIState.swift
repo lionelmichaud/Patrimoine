@@ -43,6 +43,7 @@ class UIState: ObservableObject {
         var colapseCategories : [Bool] = []
         var endDate           : Double = (Date.now.year + 25).double()
         var evalDate          : Double = Date.now.year.double()
+        var selectedCategory  : LifeExpenseCategory = .abonnements
     }
     
     // MARK: - Etat de la vue Scenario

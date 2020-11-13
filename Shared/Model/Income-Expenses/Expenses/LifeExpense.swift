@@ -16,28 +16,51 @@ typealias LifeExpensesDic = DictionaryOfItemArray<LifeExpenseCategory, ExpenseAr
 extension LifeExpensesDic {
     /// Utiliser pour générer le graphe de la vue de synthèses des dépenses
     /// - Returns: table
-    func namedValuedTimeFrameTable()
+    func namedValuedTimeFrameTable(category: LifeExpenseCategory?)
     -> [(name: String,
          value: Double,
          prop: Bool,
          idx: Int,
          firstYearDuration: [Int])] {
         var table = [(name: String, value: Double, prop: Bool, idx: Int, firstYearDuration: [Int])]()
-        var idx = 0
-        perCategory.sortedReversed(by: \.key.displayString).forEach { (category, expenseArray) in
-            let nbItem = expenseArray.items.count
-            for expIdx in 0..<nbItem {
-                if let firstYear = expenseArray[nbItem - 1 - expIdx].firstYear,
-                   let lastYear  = expenseArray[nbItem - 1 - expIdx].lastYear {
-                    table.append((name              : expenseArray[nbItem - 1 - expIdx].name,
-                                  value             : expenseArray[nbItem - 1 - expIdx].value,
-                                  prop              : expenseArray[nbItem - 1 - expIdx].proportional,
-                                  idx               : idx,
-                                  firstYearDuration : [firstYear, lastYear - firstYear + 1]))
+        
+        if category == nil {
+            // on prend toutes les catégories
+            var idx = 0
+            perCategory.sortedReversed(by: \.key.displayString).forEach { (category, expenseArray) in
+                let nbItem = expenseArray.items.count
+                for expIdx in 0..<nbItem {
+                    if let firstYear = expenseArray[nbItem - 1 - expIdx].firstYear,
+                       let lastYear  = expenseArray[nbItem - 1 - expIdx].lastYear {
+                        table.append((name              : expenseArray[nbItem - 1 - expIdx].name.truncate(to: 20, addEllipsis: true),
+                                      value             : expenseArray[nbItem - 1 - expIdx].value,
+                                      prop              : expenseArray[nbItem - 1 - expIdx].proportional,
+                                      idx               : idx,
+                                      firstYearDuration : [firstYear, lastYear - firstYear + 1]))
+                    }
+                    idx += 1
                 }
-                idx += 1
+            }
+            
+        } else {
+            // on prend une seule catégorie
+            var idx = 0
+            if let expenseArray = perCategory[category!] {
+                let nbItem = expenseArray.items.count
+                for expIdx in 0..<nbItem {
+                    if let firstYear = expenseArray[nbItem - 1 - expIdx].firstYear,
+                       let lastYear  = expenseArray[nbItem - 1 - expIdx].lastYear {
+                        table.append((name              : expenseArray[nbItem - 1 - expIdx].name.truncate(to: 20, addEllipsis: true),
+                                      value             : expenseArray[nbItem - 1 - expIdx].value,
+                                      prop              : expenseArray[nbItem - 1 - expIdx].proportional,
+                                      idx               : idx,
+                                      firstYearDuration : [firstYear, lastYear - firstYear + 1]))
+                    }
+                    idx += 1
+                }
             }
         }
+        
         return table
     }
 }
