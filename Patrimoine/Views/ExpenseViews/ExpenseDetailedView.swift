@@ -8,19 +8,67 @@
 
 import SwiftUI
 
+// MARK: - View Model for LifeExpense
+
+class LifeExpenseViewModel: ObservableObject {
+    
+    // MARK: - Properties
+    
+    @Published var name         : String = ""
+    @Published var value        : Double = 0.0
+    @Published var proportional : Bool   = false
+    @Published var timeSpanVM   : TimeSpanViewModel
+    
+    // MARK: - Computed properties
+    
+    // construire l'objet de type LifeExpense correspondant au ViewModel
+    var lifeExpense: LifeExpense {
+        return LifeExpense(name         : self.name,
+                           timeSpan     : self.timeSpanVM.timeSpan,
+                           proportional : self.proportional,
+                           value        : self.value)
+    }
+    
+    // MARK: - Initializers of ViewModel from Model
+
+    internal init(from expense: LifeExpense) {
+        self.name         = expense.name
+        self.value        = expense.value
+        self.proportional = expense.proportional
+        self.timeSpanVM   = TimeSpanViewModel(from: expense.timeSpan)
+    }
+    
+    internal init() {
+        self.timeSpanVM   = TimeSpanViewModel()
+    }
+
+    // MARK: - Methods
+    
+    func differs(from thisLifeExpense: LifeExpense) -> Bool {
+        return
+            self.name         != thisLifeExpense.name ||
+            self.value        != thisLifeExpense.value ||
+            self.proportional != thisLifeExpense.proportional ||
+            self.timeSpanVM   != TimeSpanViewModel(from: thisLifeExpense.timeSpan)
+    }
+}
+    
+// MARK: - View
+
 struct ExpenseDetailedView: View {
     @EnvironmentObject var family     : Family
     @EnvironmentObject var simulation : Simulation
     @EnvironmentObject var patrimoine : Patrimoin
     @EnvironmentObject var uiState    : UIState
     @Environment(\.presentationMode) var presentationMode
+    
     private var originalItem     : LifeExpense?
     private let category         : LifeExpenseCategory
+    @StateObject var expenseVM   : LifeExpenseViewModel
     @State private var alertItem : AlertItem?
     @State private var index     : Int?
-    @State private var localItem = LifeExpense(name     : "",
-                                               timeSpan : .permanent,
-                                               value    : 0.0)
+
+    // MARK: - Computed Properties
     
     var body: some View {
         Form {
@@ -28,19 +76,19 @@ struct ExpenseDetailedView: View {
             HStack{
                 Text("Nom")
                     .frame(width: 70, alignment: .leading)
-                TextField("obligatoire", text: $localItem.name)
+                TextField("obligatoire", text: $expenseVM.name)
             }
             
             /// montant de la dépense
             AmountEditView(label: "Montant annuel",
-                           amount: $localItem.value)
+                           amount: $expenseVM.value)
             
             /// proportionnalité de la dépense aux nb de membres de la famille
             Toggle("Proportionnel au nombre de membres à charge de la famille",
-                   isOn: $localItem.proportional)
+                   isOn: $expenseVM.proportional)
             
             /// plage de temps
-            TimeSpanEditView(timeSpan: $localItem.timeSpan)
+            TimeSpanEditView(timeSpanVM: $expenseVM.timeSpanVM)
         }
         .textFieldStyle(RoundedBorderTextFieldStyle())
         .navigationBarTitle(Text("Dépense " + category.displayString),
@@ -60,50 +108,66 @@ struct ExpenseDetailedView: View {
         .alert(item: $alertItem, content: myAlert)
     }
     
-    init(category: LifeExpenseCategory, item: LifeExpense?, family: Family) {
+    // MARK: - Initializers
+    
+    init(category : LifeExpenseCategory,
+         item     : LifeExpense?,
+         family   : Family) {
         self.originalItem = item
         self.category     = category
         if let initialItemValue = item {
             // modification d'un élément existant
-            _localItem = State(initialValue: initialItemValue)
+            _expenseVM = StateObject(wrappedValue: LifeExpenseViewModel(from: initialItemValue))
             _index     = State(initialValue: family.expenses.perCategory[category]?.items.firstIndex(of: initialItemValue))
         } else {
             // création d'un nouvel élément
+            _expenseVM = StateObject(wrappedValue: LifeExpenseViewModel(from: LifeExpense()))
             index = nil
         }
     }
     
+    // MARK: - Methods
+    
     func duplicate() {
+        var localItem = expenseVM.lifeExpense
         // générer un nouvel identifiant pour la copie
         localItem.id = UUID()
         localItem.name += "-copie"
-        // revenir à l'élement avant duplication
+        // ajouter la copie créée
         family.expenses.perCategory[self.category]?.add(localItem,
                                                         fileNamePrefix : self.category.pickerString + "_")
-        // revenir à l'élement avant duplication
-        localItem = originalItem!
     }
     
     // sauvegarder les changements
     func applyChanges() {
-        guard localItem.timeSpan.isValid else {
-            self.alertItem = AlertItem(title         : Text("La date de début doit être antérieure ou égale à la date de fin"),
+        guard let firstYear = expenseVM.timeSpanVM.timeSpan.firstYear else {
+            self.alertItem = AlertItem(title         : Text("La date de début doit être définie"),
                                        dismissButton : .default(Text("OK")))
             return
         }
-        guard localItem.name != "" else {
+        guard let lastYear = expenseVM.timeSpanVM.timeSpan.lastYear else {
+            self.alertItem = AlertItem(title         : Text("La date de fin doit être définie"),
+                                       dismissButton : .default(Text("OK")))
+            return
+        }
+        guard expenseVM.timeSpanVM.timeSpan.isValid else {
+            self.alertItem = AlertItem(title         : Text("La date de début (\(firstYear)) doit être antérieure ou égale à la date de fin (\(lastYear))"),
+                                       dismissButton : .default(Text("OK")))
+            return
+        }
+        guard expenseVM.name != "" else {
             self.alertItem = AlertItem(title         : Text("Le nom est obligatoire"),
                                        dismissButton : .default(Text("OK")))
             return
         }
         if let index = index {
             // modifier un éléménet existant
-            family.expenses.perCategory[self.category]?.update(with           : localItem,
+            family.expenses.perCategory[self.category]?.update(with           : expenseVM.lifeExpense,
                                                                at             : index,
                                                                fileNamePrefix : self.category.pickerString + "_")
         } else {
             // créer un nouvel élément
-            family.expenses.perCategory[self.category]?.add(localItem,
+            family.expenses.perCategory[self.category]?.add(expenseVM.lifeExpense,
                                                             fileNamePrefix : self.category.pickerString + "_")
         }
         
@@ -115,7 +179,11 @@ struct ExpenseDetailedView: View {
     }
     
     func changeOccured() -> Bool {
-        return localItem != originalItem
+        if originalItem == nil {
+            return true
+        } else {
+            return expenseVM.differs(from: originalItem!)
+        }
     }
 }
 

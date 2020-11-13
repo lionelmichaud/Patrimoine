@@ -29,11 +29,11 @@ extension LifeExpensesDic {
             for expIdx in 0..<nbItem {
                 if let firstYear = expenseArray[nbItem - 1 - expIdx].firstYear,
                    let lastYear  = expenseArray[nbItem - 1 - expIdx].lastYear {
-                table.append((name              : expenseArray[nbItem - 1 - expIdx].name,
-                              value             : expenseArray[nbItem - 1 - expIdx].value,
-                              prop              : expenseArray[nbItem - 1 - expIdx].proportional,
-                              idx               : idx,
-                              firstYearDuration : [firstYear, lastYear - firstYear + 1]))
+                    table.append((name              : expenseArray[nbItem - 1 - expIdx].name,
+                                  value             : expenseArray[nbItem - 1 - expIdx].value,
+                                  prop              : expenseArray[nbItem - 1 - expIdx].proportional,
+                                  idx               : idx,
+                                  firstYearDuration : [firstYear, lastYear - firstYear + 1]))
                 }
                 idx += 1
             }
@@ -148,8 +148,13 @@ extension LifeExpensesDic {
 // MARK: - Tableau de Dépenses
 
 struct ExpenseArray: NameableValuableArray {
+    
+    // MARK: - Properties
+    
     var items             = [LifeExpense]()
     var fileNamePrefix    : String
+    
+    // MARK: - Initializers
     
     init(fileNamePrefix: String = "") {
         self = Bundle.main.decode(ExpenseArray.self,
@@ -190,7 +195,7 @@ struct LifeExpense: Identifiable, Codable, Hashable, NameableValuable {
     var value        : Double = 0.0
     var proportional : Bool   = false
     var timeSpan     : LifeExpenseTimeSpan
-
+    
     // MARK: - Computed properties
     
     var firstYear: Int? { // computed
@@ -201,13 +206,19 @@ struct LifeExpense: Identifiable, Codable, Hashable, NameableValuable {
         timeSpan.lastYear
     }
     
-    // MARK: - Initialization
+    // MARK: - Initializers
     
     init(name: String, timeSpan: LifeExpenseTimeSpan, proportional: Bool = false, value: Double) {
         self.name         = name
         self.value        = value
         self.proportional = proportional
         self.timeSpan     = timeSpan
+    }
+    
+    init() {
+        self = LifeExpense(name     : "",
+                           timeSpan : .permanent,
+                           value    : 0.0)
     }
     
     // MARK: - Methods

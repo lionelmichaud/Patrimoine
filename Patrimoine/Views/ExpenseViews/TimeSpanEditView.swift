@@ -8,21 +8,21 @@
 
 import SwiftUI
 
-// MARK: - View Model for DateBoundary
+// MARK: - View Model for LifeExpenseTimeSpan
 
-class TimeSpanViewModel: ObservableObject {
+struct TimeSpanViewModel: Equatable {
     
     // MARK: - Properties
     
-    @Published var caseIndex : Int
-    @Published var period    : Int
-    @Published var inYear    : Int
-    @Published var fromVM    : DateBoundaryViewModel?
-    @Published var toVM      : DateBoundaryViewModel?
+    var caseIndex : Int
+    var period    : Int
+    var inYear    : Int
+    var fromVM    : DateBoundaryViewModel?
+    var toVM      : DateBoundaryViewModel?
     
     // MARK: - Computed Properties
     
-    // construire l'objet de type DateBoundary correspondant au ViewModel
+    // construire l'objet de type LifeExpenseTimeSpan correspondant au ViewModel
     var timeSpan: LifeExpenseTimeSpan {
         switch caseIndex {
             case LifeExpenseTimeSpan.permanent.id:
@@ -50,10 +50,10 @@ class TimeSpanViewModel: ObservableObject {
                 fatalError("LifeExpenseTimeSpan : Case out of bound")
         }
     }
-
-        // MARK: -  Initializers of ViewModel from Model
     
-    init(from timeSpan: LifeExpenseTimeSpan) {
+    // MARK: - Initializers of ViewModel from Model
+    
+    internal init(from timeSpan: LifeExpenseTimeSpan) {
         self.caseIndex = timeSpan.id
         switch timeSpan {
             case .exceptional(let inYear):
@@ -84,18 +84,22 @@ class TimeSpanViewModel: ObservableObject {
                 self.toVM = nil
         }
     }
+    
+    internal init() {
+        self = TimeSpanViewModel(from: .permanent)
+    }
 }
+
+// MARK: - View
 
 struct TimeSpanEditView: View {
     
-    static let defaultToEvent   : LifeEvent = .deces
-    static let defaultFromEvent : LifeEvent = .cessationActivite
-
     // MARK: - Properties
     
-    @Binding var timeSpan       : LifeExpenseTimeSpan
-    @StateObject var timeSpanVM : TimeSpanViewModel
-
+    @Binding var timeSpanVM : TimeSpanViewModel
+    
+    // MARK: - Computed Properties
+    
     var body: some View {
         Group {
             Section(header: Text("PLAGE DE TEMPS")) {
@@ -139,22 +143,13 @@ struct TimeSpanEditView: View {
                             Text("\(timeSpanVM.period) ans").foregroundColor(.secondary)
                         }
                     })
-//                    .onChange(of: timeSpanVM.period, perform: updatePeriod)
                 }
                 
             } else if timeSpanVM.caseIndex == LifeExpenseTimeSpan.exceptional(inYear: 0).id {
                 // TimeSpan = .exceptional
                 IntegerEditView(label: "Durant l'année", integer: $timeSpanVM.inYear)
-//                    .onChange(of: timeSpanVM.inYear, perform: updateExceptionalYear)
             }
         }
-    }
-    
-    // MARK: - Initializers
-    
-    init(timeSpan : Binding<LifeExpenseTimeSpan>) {
-        _timeSpan   = timeSpan
-        _timeSpanVM = StateObject(wrappedValue : TimeSpanViewModel(from : timeSpan.wrappedValue))
     }
     
     // MARK: - Methods
@@ -163,39 +158,26 @@ struct TimeSpanEditView: View {
         switch id {
             case LifeExpenseTimeSpan.permanent.id:
                 ()
-
+                
             case LifeExpenseTimeSpan.periodic(from: DateBoundary.empty, period: 0, to: DateBoundary.empty).id:
                 self.timeSpanVM.fromVM = DateBoundaryViewModel(from: DateBoundary(year: Date.now.year))
                 self.timeSpanVM.toVM = DateBoundaryViewModel(from: DateBoundary(year: Date.now.year))
-
+                
             case LifeExpenseTimeSpan.starting(from: DateBoundary.empty).id:
                 self.timeSpanVM.fromVM = DateBoundaryViewModel(from: DateBoundary(year: Date.now.year))
-
+                
             case LifeExpenseTimeSpan.ending(to: DateBoundary.empty).id:
                 self.timeSpanVM.toVM = DateBoundaryViewModel(from: DateBoundary(year: Date.now.year))
-
+                
             case LifeExpenseTimeSpan.spanning(from: DateBoundary.empty, to: DateBoundary.empty).id:
                 self.timeSpanVM.fromVM = DateBoundaryViewModel(from: DateBoundary(year: Date.now.year))
                 self.timeSpanVM.toVM = DateBoundaryViewModel(from: DateBoundary(year: Date.now.year))
-
+                
             case LifeExpenseTimeSpan.exceptional(inYear:0).id:
                 self.timeSpanVM.inYear = Date.now.year
-
+                
             default:
                 ()
-        }
-    }
-    
-    func updateExceptionalYear(year: Int) {
-        self.timeSpan = .exceptional(inYear: year)
-    }
-    
-    func updatePeriod(period: Int) {
-        switch self.timeSpan {
-            case .periodic(let from, _, let to):
-                self.timeSpan = .periodic(from: from, period: period, to: to)
-            default:
-                fatalError("LifeExpenseTimeSpan : Case out of bound")
         }
     }
     
@@ -203,8 +185,9 @@ struct TimeSpanEditView: View {
 
 struct TimeSpanEditView_Previews: PreviewProvider {
     static var previews: some View {
-        TimeSpanEditView(timeSpan: .constant(LifeExpenseTimeSpan.spanning(from: DateBoundary(year: 2020),
-                                                                          to  : DateBoundary(year: 2022))))
+        TimeSpanEditView(
+            timeSpanVM: .constant(TimeSpanViewModel(from: LifeExpenseTimeSpan.permanent))
+        )
             .previewLayout(PreviewLayout.sizeThatFits)
             .padding([.bottom, .top])
             .previewDisplayName("TimeSpanEditView")

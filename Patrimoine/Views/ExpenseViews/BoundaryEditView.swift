@@ -10,7 +10,7 @@ import SwiftUI
 
 // MARK: - View Model for BoundaryEditView
 
-struct DateBoundaryViewModel {
+struct DateBoundaryViewModel: Equatable {
     
     // MARK: - Properties
     
@@ -58,6 +58,9 @@ struct DateBoundaryViewModel {
                         persons = LifeExpense.family?.members.filter {$0 is Child}
                         
                     case .allPersons:
+                        guard !event.isChildEvent && !event.isAdultEvent else {
+                            return nil
+                        }
                         persons = LifeExpense.family?.members
                 }
                 // rechercher l'année au plus tôt ou au plus tard
@@ -123,7 +126,7 @@ struct DateBoundaryViewModel {
                             order     : _order)
     }
     
-    // MARK: -  Initializers of ViewModel from Model
+    // MARK: - Initializers of ViewModel from Model
     
     internal init(from dateBoundary: DateBoundary) {
         self.fixedYear       = dateBoundary.fixedYear
@@ -137,6 +140,8 @@ struct DateBoundaryViewModel {
     
 }
     
+// MARK: - View
+
 struct BoundaryEditView: View {
     @EnvironmentObject var family         : Family
 
@@ -145,6 +150,8 @@ struct BoundaryEditView: View {
     let label                             : String
     @Binding var boundaryVM               : DateBoundaryViewModel
     @State private var presentGroupPicker : Bool = false // pour affichage local
+    
+    // MARK: - Computed Properties
     
     var body: some View {
         Section(header: Text("\(label) de période")) {
@@ -176,7 +183,7 @@ struct BoundaryEditView: View {
                     PersonPickerView(name: $boundaryVM.name, event: boundaryVM.event)
                 }
                 /// afficher la date résultante
-                if !self.boundaryDateIsComputable() {
+                if boundaryYear() == -1 {
                     Text("Choisir un événement et la personne ou le groupe associé")
                         .foregroundColor(.red)
                 } else {
