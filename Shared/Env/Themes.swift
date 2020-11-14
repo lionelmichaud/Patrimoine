@@ -52,7 +52,7 @@ struct ChartThemes {
             return [positiveColorsTable[0]]
         } else {
             for i in 0...number-1 {
-                colorTable.append(positiveColorsTable[i])
+                colorTable.append(positiveColorsTable[i % positiveColorsTable.count])
             }
         }
         return colorTable
@@ -64,7 +64,7 @@ struct ChartThemes {
             return [negativeColorsTable[0]]
         } else {
             for i in 0...number-1 {
-                colorTable.append(negativeColorsTable[i])
+                colorTable.append(negativeColorsTable[i % negativeColorsTable.count])
             }
         }
         return colorTable
@@ -77,12 +77,12 @@ struct ChartThemes {
         } else {
             if numberPositive != 0 {
                 for i in 0...numberPositive-1 {
-                    colorTable.append(positiveColorsTable[i])
+                    colorTable.append(positiveColorsTable[i % positiveColorsTable.count])
                 }
             }
             if numberNegative != 0 {
                 for i in 0...numberNegative-1 {
-                    colorTable.append(negativeColorsTable[i])
+                    colorTable.append(negativeColorsTable[i % negativeColorsTable.count])
                 }
             }
         }

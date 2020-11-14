@@ -31,7 +31,6 @@ struct SocialAccounts {
 
     /// Réinitialiser les comptes sociaux
     /// - Parameters:
-    ///   - family: la famille dont il faut faire le bilan
     ///   - patrimoine: le patrimoine
     mutating func reset(withPatrimoine patrimoine : Patrimoin) {
         cashFlowArray = CashFlowArray()

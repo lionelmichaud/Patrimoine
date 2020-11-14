@@ -213,7 +213,9 @@ extension SocialAccounts {
     /// - Parameters:
     ///   - categoryName: nom de la catégories
     /// - Returns: DataSet
-    func getCashFlowCategoryStackedBarChartDataSet(categoryName: String) -> BarChartDataSet? {
+    func getCashFlowCategoryStackedBarChartDataSet(categoryName            : String,
+                                                   expenses                : LifeExpensesDic,
+                                                   selectedExpenseCategory : LifeExpenseCategory? = nil) -> BarChartDataSet? {
         
         // si la table est vide alors quitter
         guard !cashFlowArray.isEmpty else {
@@ -288,18 +290,39 @@ extension SocialAccounts {
             dataSet.colors      = ChartThemes.negativeColors(number : dataSet.stackLabels.count)
             
         } else if categoryName == firstLine.lifeExpenses.summary.name {
-            /// rechercher les valeurs des dépenses
-            // customLog.log(level: .info, "Catégorie trouvée dans lifeExpenses : \(categoryName)")
-            let labelsInCategory = firstLine.lifeExpenses.namedValueTable.namesArray
-            print("  legende : ", labelsInCategory)
-            
-            // valeurs des dépenses
-            dataEntries = cashFlowArray.map { // pour chaque année
-                let y = $0.lifeExpenses.namedValueTable.valuesArray
-                return BarChartDataEntry(x       : $0.year.double(),
-                                         yValues : -y)
+            var labelsInCategory: [String]
+            if let expenseCategory = selectedExpenseCategory {
+                /// rechercher les valeurs de la seule catégorie de dépenses sélectionnée
+                let selectedExpensesNameArray = expenses.expensesNameArray(of: expenseCategory)
+                labelsInCategory = firstLine.lifeExpenses.namedValueTable.namesArray.filter { name in
+                    selectedExpensesNameArray.contains(name)
+                }
+                print("  legende : ", labelsInCategory)
+                
+                // valeurs des dépenses
+                dataEntries = cashFlowArray.map { cashFlowLine in// pour chaque année
+                    let selectedNamedValues = cashFlowLine.lifeExpenses.namedValueTable.namedValues
+                        .filter( { (name, _) in
+                            selectedExpensesNameArray.contains(name)
+                        })
+                    let y = selectedNamedValues.map(\.value)
+                    return BarChartDataEntry(x       : cashFlowLine.year.double(),
+                                             yValues : -y)
+                }
+                
+            } else {
+                /// rechercher les valeurs de toutes les dépenses
+                // customLog.log(level: .info, "Catégorie trouvée dans lifeExpenses : \(categoryName)")
+                labelsInCategory = firstLine.lifeExpenses.namedValueTable.namesArray
+                print("  legende : ", labelsInCategory)
+                
+                // valeurs des dépenses
+                dataEntries = cashFlowArray.map { // pour chaque année
+                    let y = $0.lifeExpenses.namedValueTable.valuesArray
+                    return BarChartDataEntry(x       : $0.year.double(),
+                                             yValues : -y)
+                }
             }
-            
             dataSet = BarChartDataSet(entries : dataEntries,
                                       label   : (labelsInCategory.count == 1 ? labelsInCategory.first : nil))
             dataSet.stackLabels = labelsInCategory

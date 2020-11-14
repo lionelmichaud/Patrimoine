@@ -76,6 +76,7 @@ class UIState: ObservableObject {
             let count = itemSelection.reduce(.zero, { result, element in result + (element.selected ? 1 : 0) } )
             return count == 1
         }
+        var selectedExpenseCategory: LifeExpenseCategory = .abonnements
     }
     
     @Published var selectedTab         = Tab.family

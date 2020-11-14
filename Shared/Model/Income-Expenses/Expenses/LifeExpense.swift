@@ -14,6 +14,21 @@ import SwiftUI
 typealias LifeExpensesDic = DictionaryOfItemArray<LifeExpenseCategory, ExpenseArray>
 
 extension LifeExpensesDic {
+    /// Retourne un tableau des noms des dépenses dans une catégorie donnée
+    func expensesNameArray(of thisCategory: LifeExpenseCategory) -> [String] {
+        var table = [String]()
+        // on prend une seule catégorie
+        var idx = 0
+        if let expenseArray = perCategory[thisCategory] {
+            let nbItem = expenseArray.items.count
+            for expIdx in 0..<nbItem {
+                table.append(expenseArray[nbItem - 1 - expIdx].name)
+                idx += 1
+            }
+        }
+        return table
+    }
+    
     /// Utiliser pour générer le graphe de la vue de synthèses des dépenses
     /// - Returns: table
     func namedValuedTimeFrameTable(category: LifeExpenseCategory?)

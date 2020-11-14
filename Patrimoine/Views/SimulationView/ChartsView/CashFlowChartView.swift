@@ -44,6 +44,7 @@ struct CashFlowGlobalChartView: View {
 
 /// Vue détaillée du cash flow: Revenus / Dépenses / Net
 struct CashFlowDetailedChartView: View {
+    @EnvironmentObject var family     : Family
     @EnvironmentObject var simulation : Simulation
     @EnvironmentObject var uiState    : UIState
     @State private var menuIsPresented = false
@@ -59,11 +60,31 @@ struct CashFlowDetailedChartView: View {
                         .padding(.horizontal)
                         .pickerStyle(SegmentedPickerStyle())
                     // graphique
-                    CashFlowStackedBarChartView(socialAccounts: self.$simulation.socialAccounts,
-                                                title         : self.simulation.title,
-                                                combination   : self.uiState.cfChartState.combination,
-                                                itemSelection : self.uiState.cfChartState.itemSelection)
-                        .padding(.trailing, 4)
+                    if self.uiState.cfChartState.itemSelection.onlyOneCategorySelected() {
+                        // il y a un seule catégorie de sélectionnée, afficher le détail
+                        if let categoryName = self.uiState.cfChartState.itemSelection.firstCategorySelected() {
+                            if categoryName == "Dépenses de vie" {
+                                // choix de la catégorie des dépenses
+                                CasePicker(pickedCase: $uiState.cfChartState.selectedExpenseCategory, label: "Catégories de dépenses")
+                                    .pickerStyle(SegmentedPickerStyle())
+                                    .padding(.horizontal)
+                                CashFlowStackedBarChartView(socialAccounts: self.$simulation.socialAccounts,
+                                                            title         : self.simulation.title,
+                                                            combination   : self.uiState.cfChartState.combination,
+                                                            itemSelection : self.uiState.cfChartState.itemSelection,
+                                                            expenses      : family.expenses,
+                                                            selectedExpenseCategory: self.uiState.cfChartState.selectedExpenseCategory)
+                                    .padding(.trailing, 4)
+                            }
+                        }
+                    } else {
+                        CashFlowStackedBarChartView(socialAccounts: self.$simulation.socialAccounts,
+                                                    title         : self.simulation.title,
+                                                    combination   : self.uiState.cfChartState.combination,
+                                                    itemSelection : self.uiState.cfChartState.itemSelection,
+                                                    expenses      : family.expenses)
+                            .padding(.trailing, 4)
+                    }
                 }
                 .frame(width: geometry.size.width, height: geometry.size.height)
                 .offset(x: self.menuIsPresented ? self.menuWidth : 0)
@@ -208,18 +229,24 @@ struct CashFlowStackedBarChartView: UIViewRepresentable {
     var title                   : String
     var combination             : SocialAccounts.CashCombination
     var itemSelectionList       : ItemSelectionList
+    var expenses                : LifeExpensesDic
+    var selectedExpenseCategory : LifeExpenseCategory?
 
     // initializers
     
-    internal init(socialAccounts : Binding<SocialAccounts>,
-                  title          : String,
-                  combination    : SocialAccounts.CashCombination,
-                  itemSelection  : ItemSelectionList) {
+    internal init(socialAccounts          : Binding<SocialAccounts>,
+                  title                   : String,
+                  combination             : SocialAccounts.CashCombination,
+                  itemSelection           : ItemSelectionList,
+                  expenses                : LifeExpensesDic,
+                  selectedExpenseCategory : LifeExpenseCategory? = nil) {
         CashFlowStackedBarChartView.titleStatic = title
-        self.title             = title
-        self.combination       = combination
-        self.itemSelectionList = itemSelection
-        self._socialAccounts   = socialAccounts
+        self.title                   = title
+        self.combination             = combination
+        self.itemSelectionList       = itemSelection
+        self.expenses                = expenses
+        self.selectedExpenseCategory = selectedExpenseCategory
+        self._socialAccounts         = socialAccounts
     }
     
     // type methods
@@ -307,7 +334,9 @@ struct CashFlowStackedBarChartView: UIViewRepresentable {
         if itemSelectionList.onlyOneCategorySelected() {
             // il y a un seule catégorie de sélectionnée, afficher le détail
             if let categoryName = itemSelectionList.firstCategorySelected() {
-                aDataSet = socialAccounts.getCashFlowCategoryStackedBarChartDataSet(categoryName: categoryName)
+                aDataSet = socialAccounts.getCashFlowCategoryStackedBarChartDataSet(categoryName           : categoryName,
+                                                                                    expenses               : expenses,
+                                                                                    selectedExpenseCategory: selectedExpenseCategory)
             } else {
                 customLog.log(level: .error,
                               "CashFlowStackedBarChartView : aDataSet = nil => graphique vide")

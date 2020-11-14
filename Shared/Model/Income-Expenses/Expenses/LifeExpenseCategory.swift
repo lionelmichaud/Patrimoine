@@ -24,7 +24,19 @@ enum LifeExpenseCategory: Int, PickableEnum, Codable {
     case vieQuotidienne
     case voyageTransport
     
-    // properties
+    // MARK: - Type Properties
+
+    static var allDisplayStrings: [String] {
+        allCases.map {
+            $0.displayString
+        }
+    }
+    
+    // MARK: - Computed Properties
+    
+    var pickerString: String {
+        displayString
+    }
     
     var id: Int {
         return self.rawValue
@@ -57,13 +69,8 @@ enum LifeExpenseCategory: Int, PickableEnum, Codable {
         }
     }
     
-    var pickerString: String {
-        displayString
-        
-    }
-    
-    // type methods
-    
+    // MARK: - Type Methods
+
     /// Cherche l'Enum correspondant au nom de la catégorie
     /// - Parameter name: nom de la catégorie (displayString)
     /// - Returns: Enum
