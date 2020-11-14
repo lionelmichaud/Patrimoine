@@ -85,8 +85,9 @@ struct BalanceSheetDetailedChartView: View {
                 },
                 label: {
                     HStack {
-                        Image(systemName: self.uiState.bsChartState.itemSelection.allCategoriesSelected() ?
-                                "loupe" : "loupe.fill")
+                        if !self.uiState.bsChartState.itemSelection.allCategoriesSelected()  {
+                            Image(systemName: "loupe")
+                        }
                         Text("Filtrer")
                     }
                 } ).capsuleButtonStyle(),

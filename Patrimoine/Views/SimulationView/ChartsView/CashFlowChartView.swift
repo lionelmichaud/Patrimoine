@@ -106,8 +106,9 @@ struct CashFlowDetailedChartView: View {
                 },
                 label : {
                     HStack {
-                        Image(systemName: self.uiState.cfChartState.itemSelection.allCategoriesSelected() ?
-                                "loupe" : "loupe.fill")
+                        if !self.uiState.cfChartState.itemSelection.allCategoriesSelected()  {
+                            Image(systemName: "loupe")
+                        }
                         Text("Filtrer")
                     }
                 } ).capsuleButtonStyle(),
