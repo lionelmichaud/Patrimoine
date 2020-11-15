@@ -224,8 +224,13 @@ public class LargeValueFormatter: NSObject, IValueFormatter, IAxisValueFormatter
     /// An appendix text to be added at the end of the formatted value.
     public var appendix: String?
     
-    public init(appendix: String? = nil) {
-        self.appendix = appendix
+    /// Nombre minimum de chiffres représentatifs à afficher = 3
+    public var min3digit: Bool = true
+    
+    public init(appendix  : String? = nil,
+                min3digit : Bool) {
+        self.appendix  = appendix
+        self.min3digit = min3digit
     }
     
     fileprivate func format(value: Double) -> String {
@@ -238,7 +243,28 @@ public class LargeValueFormatter: NSObject, IValueFormatter, IAxisValueFormatter
             length += 1
         }
         
-        var r = String(format: "%.f", sig) + suffix[length]
+        var r: String
+        if min3digit {
+            switch abs(sig) {
+                case 0.0:
+                    r = String(format: "%.0f", sig) + suffix[length]
+                    
+                case 0.0..<1.0:
+                    r = String(format: "%.3f", sig) + suffix[length]
+                    
+                case 1.0..<10.0:
+                    r = String(format: "%.2f", sig) + suffix[length]
+                    
+                case 10.0..<100.0:
+                    r = String(format: "%.1f", sig) + suffix[length]
+                    
+                default:
+                    r = String(format: "%.0f", sig) + suffix[length]
+            }
+        } else {
+            r = String(format: "%.0f", sig) + suffix[length]
+            
+        }
         
         if let appendix = appendix {
             r += appendix

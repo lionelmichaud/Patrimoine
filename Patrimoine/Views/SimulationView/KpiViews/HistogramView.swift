@@ -35,7 +35,7 @@ struct HistogramView : UIViewRepresentable {
     func makeUIView(context: Context) -> LineChartView {
         /// créer et configurer un nouveau graphique
         let chartView = LineChartView(title               : histogram.name,
-                                      axisFormatterChoice : .none)
+                                      axisFormatterChoice : AxisFormatterChoice.percent)
         
         /// créer les DataSet: LineChartDataSets
         let dataSets = histogram.getHistogramChartDataSets()

@@ -16,7 +16,7 @@ import Charts // https://github.com/danielgindi/Charts.git
 
 enum AxisFormatterChoice {
     case k€
-    case largeValue (appendix: String?)
+    case largeValue (appendix: String?, min3Digit: Bool)
     case percent
     case none
     
@@ -24,8 +24,8 @@ enum AxisFormatterChoice {
         switch self {
             case .k€:
                 return Kilo€Formatter()
-            case .largeValue (let appendix):
-                return LargeValueFormatter(appendix: appendix)
+            case .largeValue (let appendix, let minDigit):
+                return LargeValueFormatter(appendix: appendix, min3digit: minDigit)
             case .percent:
                 return PercentFormatter()
             case .none:

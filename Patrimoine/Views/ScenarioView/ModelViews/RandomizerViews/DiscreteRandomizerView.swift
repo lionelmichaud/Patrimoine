@@ -16,12 +16,12 @@ struct DiscreteRandomizerView: UIViewRepresentable {
     func makeUIView(context: Context) -> LineChartView {
         // créer et configurer un nouveau graphique
         let chartView = LineChartView(title               : "Distribution Discrète",
-                                      axisFormatterChoice : .none)
+                                      axisFormatterChoice : AxisFormatterChoice.percent)
         
         // créer les DataSet: LineChartDataSets
         let dataSets = getLineChartDataSets()
-        let leftAxis = chartView.leftAxis
-        leftAxis.valueFormatter = AxisFormatterChoice.percent.IaxisFormatter()
+//        let leftAxis = chartView.leftAxis
+//        leftAxis.valueFormatter = AxisFormatterChoice.percent.IaxisFormatter()
         
         // ajouter les DataSet au Chartdata
         let data = LineChartData(dataSets: dataSets)

@@ -166,7 +166,7 @@ struct BalanceSheetLineChartView: UIViewRepresentable {
     func makeUIView(context: Context) -> LineChartView {
         // créer et configurer un nouveau graphique
         let chartView = LineChartView(title               : "Actif/Passif",
-                                      axisFormatterChoice : .largeValue(appendix: "€"))
+                                      axisFormatterChoice : .largeValue(appendix: "€", min3Digit: true))
         
         // créer les DataSet: LineChartDataSets
         let dataSets = socialAccounts.getBalanceSheetLineChartDataSets()
@@ -273,7 +273,7 @@ struct BalanceSheetStackedBarChartView: UIViewRepresentable {
     func makeUIView(context: Context) -> BarChartView {
         // créer et configurer un nouveau bar graphique
         let chartView = BarChartView(title               : "Actif / Passif",
-                                     axisFormatterChoice : .largeValue(appendix: "€"))
+                                     axisFormatterChoice : .largeValue(appendix: "€", min3Digit: true))
         
         // créer le DataSet: BarChartDataSet
         let dataSet = socialAccounts.getBalanceSheetStackedBarChartDataSet(

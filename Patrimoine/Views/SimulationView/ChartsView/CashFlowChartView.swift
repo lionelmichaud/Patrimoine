@@ -178,7 +178,7 @@ struct CashFlowLineChartView: UIViewRepresentable {
     func makeUIView(context: Context) -> LineChartView {
         // créer et configurer un nouveau graphique
         let chartView = LineChartView(title               : "Revenu / Dépense",
-                                      axisFormatterChoice : .largeValue(appendix: "€"))
+                                      axisFormatterChoice : .largeValue(appendix: "€", min3Digit: true))
         
         // créer les DataSet: LineChartDataSets
         let dataSets = socialAccounts.getCashFlowLineChartDataSets()
@@ -291,7 +291,7 @@ struct CashFlowStackedBarChartView: UIViewRepresentable {
     func makeUIView(context: Context) -> BarChartView {
         // créer et configurer un nouveau bar graph
         let chartView = BarChartView(title               : "Revenus / Dépenses",
-                                     axisFormatterChoice : .largeValue(appendix: "€"))
+                                     axisFormatterChoice : .largeValue(appendix: "€", min3Digit: true))
 
         //: ### BarChartData
         let dataSet = socialAccounts.getCashFlowStackedBarChartDataSet(

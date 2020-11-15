@@ -84,9 +84,9 @@ struct UniformChartView : UIViewRepresentable {
     func makeUIView(context: Context) -> LineChartView {
         // créer et configurer un nouveau graphique
         let chartView = LineChartView(title               : "Distribution Uniforme",
-                                      axisFormatterChoice : .none)
-        let leftAxis = chartView.leftAxis
-        leftAxis.valueFormatter = AxisFormatterChoice.percent.IaxisFormatter()
+                                      axisFormatterChoice : AxisFormatterChoice.percent)
+//        let leftAxis = chartView.leftAxis
+//        leftAxis.valueFormatter = AxisFormatterChoice.percent.IaxisFormatter()
 
         // créer les DataSet: LineChartDataSets
         let dataSets = getUniformLineChartDataSets(minX : minX,  maxX: maxX)
@@ -233,12 +233,12 @@ struct DiscreteChartView : UIViewRepresentable {
     func makeUIView(context: Context) -> LineChartView {
         // créer et configurer un nouveau graphique
         let chartView = LineChartView(title              : "Distribution Discrète",
-                                     axisFormatterChoice : .none)
+                                     axisFormatterChoice : AxisFormatterChoice.percent)
         
         // créer les DataSet: LineChartDataSets
         let dataSets = getDiscreteChartDataSets(minX: minX, maxX: maxX)
-        let leftAxis = chartView.leftAxis
-        leftAxis.valueFormatter = AxisFormatterChoice.percent.IaxisFormatter()
+//        let leftAxis = chartView.leftAxis
+//        leftAxis.valueFormatter = AxisFormatterChoice.percent.IaxisFormatter()
 
         // ajouter les DataSet au Chartdata
         let data = LineChartData(dataSets: dataSets)
@@ -411,13 +411,13 @@ struct BetaGammaAssistantView : UIViewRepresentable {
     func makeUIView(context: Context) -> LineChartView {
         // créer et configurer un nouveau graphique
         let chartView = LineChartView(title               : "Distribution Beta",
-                                      axisFormatterChoice : .none)
+                                      axisFormatterChoice : AxisFormatterChoice.percent)
         
         // créer les DataSet: LineChartDataSets
         let dataSets = getBetaGammaLineChartDataSets(minX : minX,  maxX: maxX,
                                                      alpha: alpha, beta: beta)
-        let leftAxis = chartView.leftAxis
-        leftAxis.valueFormatter = AxisFormatterChoice.percent.IaxisFormatter()
+//        let leftAxis = chartView.leftAxis
+//        leftAxis.valueFormatter = AxisFormatterChoice.percent.IaxisFormatter()
 
         // ajouter les DataSet au Chartdata
         let data = LineChartData(dataSets: dataSets)
