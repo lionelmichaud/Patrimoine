@@ -59,32 +59,23 @@ struct CashFlowDetailedChartView: View {
                     CasePicker(pickedCase: self.$uiState.cfChartState.combination, label: "")
                         .padding(.horizontal)
                         .pickerStyle(SegmentedPickerStyle())
-                    // graphique
                     if self.uiState.cfChartState.itemSelection.onlyOneCategorySelected() {
-                        // il y a un seule catégorie de sélectionnée, afficher le détail
                         if let categoryName = self.uiState.cfChartState.itemSelection.firstCategorySelected() {
                             if categoryName == "Dépenses de vie" {
-                                // choix de la catégorie des dépenses
                                 CasePicker(pickedCase: $uiState.cfChartState.selectedExpenseCategory, label: "Catégories de dépenses")
                                     .pickerStyle(SegmentedPickerStyle())
                                     .padding(.horizontal)
-                                CashFlowStackedBarChartView(socialAccounts: self.$simulation.socialAccounts,
-                                                            title         : self.simulation.title,
-                                                            combination   : self.uiState.cfChartState.combination,
-                                                            itemSelection : self.uiState.cfChartState.itemSelection,
-                                                            expenses      : family.expenses,
-                                                            selectedExpenseCategory: self.uiState.cfChartState.selectedExpenseCategory)
-                                    .padding(.trailing, 4)
                             }
                         }
-                    } else {
-                        CashFlowStackedBarChartView(socialAccounts: self.$simulation.socialAccounts,
-                                                    title         : self.simulation.title,
-                                                    combination   : self.uiState.cfChartState.combination,
-                                                    itemSelection : self.uiState.cfChartState.itemSelection,
-                                                    expenses      : family.expenses)
-                            .padding(.trailing, 4)
                     }
+                    // graphique
+                    CashFlowStackedBarChartView(socialAccounts: self.$simulation.socialAccounts,
+                                                title         : self.simulation.title,
+                                                combination   : self.uiState.cfChartState.combination,
+                                                itemSelection : self.uiState.cfChartState.itemSelection,
+                                                expenses      : family.expenses,
+                                                selectedExpenseCategory: self.uiState.cfChartState.selectedExpenseCategory)
+                        .padding(.trailing, 4)
                 }
                 .frame(width: geometry.size.width, height: geometry.size.height)
                 .offset(x: self.menuIsPresented ? self.menuWidth : 0)
@@ -187,7 +178,7 @@ struct CashFlowLineChartView: UIViewRepresentable {
     func makeUIView(context: Context) -> LineChartView {
         // créer et configurer un nouveau graphique
         let chartView = LineChartView(title               : "Revenu / Dépense",
-                                      axisFormatterChoice : .k€)
+                                      axisFormatterChoice : .largeValue(appendix: "€"))
         
         // créer les DataSet: LineChartDataSets
         let dataSets = socialAccounts.getCashFlowLineChartDataSets()
@@ -299,8 +290,8 @@ struct CashFlowStackedBarChartView: UIViewRepresentable {
     /// - Returns: Graphique View
     func makeUIView(context: Context) -> BarChartView {
         // créer et configurer un nouveau bar graph
-        let chartView = BarChartView(title: "Revenus / Dépenses",
-                                     axisFormatterChoice: .k€)
+        let chartView = BarChartView(title               : "Revenus / Dépenses",
+                                     axisFormatterChoice : .largeValue(appendix: "€"))
 
         //: ### BarChartData
         let dataSet = socialAccounts.getCashFlowStackedBarChartDataSet(

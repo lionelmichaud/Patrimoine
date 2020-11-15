@@ -181,11 +181,11 @@ extension SocialAccounts {
             guard let category = AssetsCategory.category(of: categoryName) else {
                 return BarChartDataSet()
             }
-            print("  nom : \(category)")
+//            print("  nom : \(category)")
             guard let labelsInCategory = firstLine.assets.namesArray(category) else {
                 return BarChartDataSet()
             }
-            print("  legende : ", labelsInCategory)
+//            print("  legende : ", labelsInCategory)
             
             // valeurs des revenus de la catégorie
             dataEntries = balanceArray.map { // pour chaque année
@@ -204,11 +204,11 @@ extension SocialAccounts {
             guard let category = LiabilitiesCategory.category(of: categoryName) else {
                 return BarChartDataSet()
             }
-            print("  nom : \(category)")
+//            print("  nom : \(category)")
             guard let labelsInCategory = firstLine.liabilities.namesArray(category) else {
                 return BarChartDataSet()
             }
-            print("  legende : ", labelsInCategory)
+//            print("  legende : ", labelsInCategory)
             
             // valeurs des revenus de la catégorie
             dataEntries = balanceArray.map { // pour chaque année

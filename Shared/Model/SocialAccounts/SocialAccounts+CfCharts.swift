@@ -253,7 +253,7 @@ extension SocialAccounts {
             /// rechercher la catégorie dans les revenus de la SCI
             // customLog.log(level: .info, "Catégorie trouvée dans sciCashFlowLine : \(found.name)")
             let labelsInCategory = firstLine.sciCashFlowLine.namesFlatArray
-            print("  legende : ", labelsInCategory)
+//            print("  legende : ", labelsInCategory)
             
             // valeurs des dettes
             dataEntries = cashFlowArray.map { // pour chaque année
@@ -272,11 +272,11 @@ extension SocialAccounts {
             guard let category = TaxeCategory.category(of: categoryName) else {
                 return BarChartDataSet()
             }
-            print("  nom : \(category)")
+//            print("  nom : \(category)")
             guard let labelsInCategory = firstLine.taxes.perCategory[category]?.namesArray else {
                 return BarChartDataSet()
             }
-            print("  legende : ", labelsInCategory)
+//            print("  legende : ", labelsInCategory)
             
             // valeurs des revenus de la catégorie
             dataEntries = cashFlowArray.map { // pour chaque année
@@ -297,7 +297,7 @@ extension SocialAccounts {
                 labelsInCategory = firstLine.lifeExpenses.namedValueTable.namesArray.filter { name in
                     selectedExpensesNameArray.contains(name)
                 }
-                print("  legende : ", labelsInCategory)
+//                print("  legende : ", labelsInCategory)
                 
                 // valeurs des dépenses
                 dataEntries = cashFlowArray.map { cashFlowLine in// pour chaque année
@@ -314,7 +314,7 @@ extension SocialAccounts {
                 /// rechercher les valeurs de toutes les dépenses
                 // customLog.log(level: .info, "Catégorie trouvée dans lifeExpenses : \(categoryName)")
                 labelsInCategory = firstLine.lifeExpenses.namedValueTable.namesArray
-                print("  legende : ", labelsInCategory)
+//                print("  legende : ", labelsInCategory)
                 
                 // valeurs des dépenses
                 dataEntries = cashFlowArray.map { // pour chaque année
@@ -332,7 +332,7 @@ extension SocialAccounts {
             /// rechercher les valeurs des debtPayements
             // customLog.log(level: .info, "Catégorie trouvée dans debtPayements : \(categoryName)")
             let labelsInCategory = firstLine.debtPayements.namedValueTable.namesArray
-            print("  legende : ", labelsInCategory)
+//            print("  legende : ", labelsInCategory)
             
             // valeurs des dettes
             dataEntries = cashFlowArray.map { // pour chaque année
@@ -350,7 +350,7 @@ extension SocialAccounts {
             /// rechercher les valeurs des investPayements
             // customLog.log(level: .info, "Catégorie trouvée dans investPayements : \(categoryName)")
             let labelsInCategory = firstLine.investPayements.namedValueTable.namesArray
-            print("  legende : ", labelsInCategory)
+//            print("  legende : ", labelsInCategory)
             
             // valeurs des investissements
             dataEntries = cashFlowArray.map { // pour chaque année

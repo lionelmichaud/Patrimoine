@@ -24,7 +24,8 @@ var valueKilo€Formatter: NumberFormatter = {
     let numFormatter = NumberFormatter()
     
     // if number is less than 1 add 0 before decimal
-    numFormatter.minimumIntegerDigits = 1 // how many digits do want before decimal
+    numFormatter.minimumIntegerDigits = 1 // how many digits do you want before decimal point
+    //numFormatter.maximumFractionDigits = 1 // how many digits do you want after decimal point
     numFormatter.multiplier           = 0.001
     //numFormatter.thousandSeparator  = " "
     numFormatter.positiveSuffix       = " k€"

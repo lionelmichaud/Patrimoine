@@ -7,11 +7,14 @@
 //
 
 import Foundation
+import os
+
+fileprivate let customLog = Logger(subsystem: "me.michaud.lionel.Patrimoine", category: "Model.LifeExpenseTimeSpan")
 
 // MARK: - Elongation temporelle du poste de dépense
 
 enum LifeExpenseTimeSpan: PickableIdentifiableEnum, Hashable {
-    
+    // les années de début et de fin sont inclues
     case permanent
     case periodic (from: DateBoundary, period: Int, to: DateBoundary)
     case starting (from: DateBoundary)
@@ -29,9 +32,6 @@ enum LifeExpenseTimeSpan: PickableIdentifiableEnum, Hashable {
                 .spanning (from: DateBoundary.empty, to: DateBoundary.empty),
                 .exceptional (inYear: 0)]
     }
-    
-    @available(*, unavailable)
-    case all
     
     // MARK: - Computed properties
 
@@ -82,6 +82,11 @@ enum LifeExpenseTimeSpan: PickableIdentifiableEnum, Hashable {
             
             case .periodic (let from, let period, let to):
                 guard to.year != nil && from.year != nil else {
+                    customLog.log(level: .info, "contains: to.year = nil or from.year = nil")
+                    return false
+                }
+                guard from.year! <= to.year! else {
+                    customLog.log(level: .info, "contains: from.year \(from.year!) > to.year \(to.year!)")
                     return false
                 }
                 return (from.year!...to.year!).contains {
@@ -91,18 +96,21 @@ enum LifeExpenseTimeSpan: PickableIdentifiableEnum, Hashable {
             
             case .starting (let from):
                 guard from.year != nil else {
+                    customLog.log(level: .info, "contains: from.year = nil")
                     return false
                 }
                 return year >= from.year!
             
             case .ending (let to):
                 guard to.year != nil else {
+                    customLog.log(level: .info, "contains: to.year = nil")
                     return false
                 }
                 return year <= to.year!
             
             case .spanning (let from, let to):
                 guard to.year != nil && from.year != nil else {
+                    customLog.log(level: .info, "contains: to.year = nil or from.year = nil")
                     return false
                 }
                 if from.year! > to.year! { return false }
@@ -120,6 +128,7 @@ enum LifeExpenseTimeSpan: PickableIdentifiableEnum, Hashable {
                 
             case .ending(let to):
                 guard to.year != nil else {
+                    customLog.log(level: .info, "contains: to.year = nil")
                     return nil
                 }
                 return min(Date.now.year, to.year!)
@@ -144,6 +153,7 @@ enum LifeExpenseTimeSpan: PickableIdentifiableEnum, Hashable {
                 return to.year
             case .starting(let from):
                 guard from.year != nil else {
+                    customLog.log(level: .info, "contains: from.year = nil")
                     return nil
                 }
                 return Date.now.year + 100

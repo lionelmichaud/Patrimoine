@@ -13,17 +13,19 @@ class Kilo€Formatter: NSObject, IAxisValueFormatter, IValueFormatter {
     let numFormatter: NumberFormatter
 
     override init() {
-        numFormatter = NumberFormatter()
-
-        // if number is less than 1 add 0 before decimal
-        numFormatter.minimumIntegerDigits = 1 // how many digits do want before decimal
-        numFormatter.multiplier = 0.001
-        //numFormatter.thousandSeparator = " "
-        numFormatter.positiveSuffix = " k€"
-        numFormatter.negativeSuffix = " k€"
-        numFormatter.paddingPosition = .beforePrefix
-        numFormatter.paddingCharacter = "0"
-        //numFormatter.zeroSymbol = ""
+//        numFormatter = NumberFormatter()
+//
+//        // if number is less than 1 add 0 before decimal
+//        numFormatter.minimumIntegerDigits = 1 // how many digits do want before decimal
+//        numFormatter.multiplier = 0.001
+//        //numFormatter.thousandSeparator = " "
+//        numFormatter.positiveSuffix = " k€"
+//        numFormatter.negativeSuffix = " k€"
+//        numFormatter.paddingPosition = .beforePrefix
+//        numFormatter.paddingCharacter = "0"
+//        //numFormatter.zeroSymbol = ""
+        
+        numFormatter = valueKilo€Formatter
     }
 
     /// Called when a value from an axis is formatted before being drawn.
@@ -34,7 +36,8 @@ class Kilo€Formatter: NSObject, IAxisValueFormatter, IValueFormatter {
     /// - parameter value:           the value that is currently being drawn
     /// - parameter axis:            the axis that the value belongs to
     ///
-    public func stringForValue(_ value: Double, axis: AxisBase?) -> String {
+    public func stringForValue(_ value : Double,
+                               axis    : AxisBase?) -> String {
         return numFormatter.string(from: NSNumber(floatLiteral: value))!
     }
 
@@ -43,10 +46,10 @@ class Kilo€Formatter: NSObject, IAxisValueFormatter, IValueFormatter {
     ///   - dataSetIndex:    The index of the DataSet the entry in focus belongs to
     ///   - viewPortHandler: provides information about the current chart state (scale, translation, ...)
     /// - Returns:           The formatted label ready to be drawn
-    public func stringForValue(_ value: Double,
-                        entry: ChartDataEntry,
-                        dataSetIndex: Int,
-                        viewPortHandler: ViewPortHandler?) -> String {
+    public func stringForValue(_ value         : Double,
+                               entry           : ChartDataEntry,
+                               dataSetIndex    : Int,
+                               viewPortHandler : ViewPortHandler?) -> String {
             return numFormatter.string(from: NSNumber(floatLiteral: value))!
     }
 }
@@ -216,7 +219,7 @@ public class LargeValueFormatter: NSObject, IValueFormatter, IAxisValueFormatter
     /// Suffix to be appended after the values.
     ///
     /// **default**: suffix: ["", "k", "m", "b", "t"]
-    public var suffix = ["", "k", "m", "b", "t"]
+    public var suffix = ["", "K", "M", "G", "T"]
     
     /// An appendix text to be added at the end of the formatted value.
     public var appendix: String?
@@ -230,12 +233,12 @@ public class LargeValueFormatter: NSObject, IValueFormatter, IAxisValueFormatter
         var length = 0
         let maxLength = suffix.count - 1
         
-        while sig >= 1000.0 && length < maxLength {
+        while abs(sig) >= 1000.0 && length < maxLength {
             sig /= 1000.0
             length += 1
         }
         
-        var r = String(format: "%2.f", sig) + suffix[length]
+        var r = String(format: "%.f", sig) + suffix[length]
         
         if let appendix = appendix {
             r += appendix

@@ -183,6 +183,7 @@ struct RealEstateAsset: Identifiable, Codable, NameableValuable {
             // le bien est vendu
             return false
         } else if year >= buyingDate.year {
+            // le bien est déjà acheté
             return true
         } else {
             // le bien n'est pas encore acheté
