@@ -62,11 +62,11 @@ struct ExpenseDetailedView: View {
     @EnvironmentObject var uiState    : UIState
     @Environment(\.presentationMode) var presentationMode
     
-    private var originalItem     : LifeExpense?
-    private let category         : LifeExpenseCategory
-    @StateObject var expenseVM   : LifeExpenseViewModel
-    @State private var alertItem : AlertItem?
-    @State private var index     : Int?
+    private var originalItem           : LifeExpense?
+    private let category               : LifeExpenseCategory
+    @StateObject private var expenseVM : LifeExpenseViewModel
+    @State private var alertItem       : AlertItem?
+    @State private var index           : Int?
 
     // MARK: - Computed Properties
     

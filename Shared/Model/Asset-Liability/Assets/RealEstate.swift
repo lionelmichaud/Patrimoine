@@ -17,6 +17,13 @@ struct RealEstateAsset: Identifiable, Codable, NameableValuable {
     
     static var simulationMode : SimulationModeEnum = .deterministic
     
+    static let empty: RealEstateAsset = RealEstateAsset(name                 : "",
+                                                        note                 : "",
+                                                        buyingYear           : Date.now.year,
+                                                        buyingPrice          : 0,
+                                                        yearlyTaxeHabitation : 0,
+                                                        yearlyTaxeFonciere   : 0)
+    
     // MARK: - Static Methods
     
     // pas utilisé
@@ -32,35 +39,35 @@ struct RealEstateAsset: Identifiable, Codable, NameableValuable {
     var name                 : String
     var note                 : String
     // achat
-    var buyingDate           : Date {
+    var buyingYear           : Int {
         willSet {
-            if !willBeSold { sellingDate = newValue } // valeur par défaut
-            if !willBeInhabited { inhabitedFromDate = newValue } // valeur par défaut
-            if !willBeRented { rentalFromDate = newValue } // valeur par défaut
+            if !willBeSold { sellingYear = newValue } // valeur par défaut
+            //if !willBeInhabited { inhabitedFromYear = newValue } // valeur par défaut
+//            if !willBeRented { rentalFrom = newValue } // valeur par défaut
         }
     }
     var buyingPrice          : Double
     var yearlyTaxeHabitation : Double
     var yearlyTaxeFonciere   : Double
     // vente
-    var willBeSold            : Bool   = false
-    var sellingDate           : Date   = 100.years.fromNow! 
-    var sellingNetPrice       : Double = 0.0
-    var sellingPriceAfterTaxes: Double {
-        let detentionDuration = sellingDate.year - buyingDate.year
+    var willBeSold              : Bool   = false
+    var sellingYear             : Int    = Date.now.year + 100
+    var sellingNetPrice         : Double = 0.0
+    var sellingPriceAfterTaxes  : Double {
+        let detentionDuration = sellingYear - buyingYear
         let capitalGain       = self.sellingNetPrice - buyingPrice
         let socialTaxes       = Fiscal.model.socialTaxesOnEstateCapitalGain.socialTaxes (capitalGain: max(capitalGain,0.0), detentionDuration: detentionDuration)
         let irpp              = Fiscal.model.irppOnEstateCapitalGain.irpp (capitalGain: max(capitalGain,0.0), detentionDuration: detentionDuration)
         return self.sellingNetPrice - socialTaxes - irpp
     }
     // habitation
-    var willBeInhabited   : Bool = false
-    var inhabitedFromDate : Date = Date.now
-    var inhabitedToDate   : Date = 100.years.fromNow!
+    var willBeInhabited         : Bool         = false
+    var inhabitedFrom           : DateBoundary = DateBoundary.empty // année inclue
+    var inhabitedTo             : DateBoundary = DateBoundary.empty // année exclue
     // location
     var willBeRented            : Bool   = false
-    var rentalFromDate          : Date   = Date.now
-    var rentalToDate            : Date   = 100.years.fromNow!
+    var rentalFrom              : DateBoundary = DateBoundary.empty // année inclue
+    var rentalTo                : DateBoundary = DateBoundary.empty // année exclue
     var monthlyRentAfterCharges : Double = 0.0 // frais agence, taxe foncière et assurance déduite
     var yearlyRentAfterCharges  : Double {
         return monthlyRentAfterCharges * 12
@@ -75,10 +82,12 @@ struct RealEstateAsset: Identifiable, Codable, NameableValuable {
         return yearlyRentAfterCharges / (willBeSold ? sellingNetPrice : buyingPrice)
     }
     
-    // initialization
+    // MARK: - Initializers
     
-    // methods
+
+    // MARK: - Methods
     
+
     /// Valeur à la date spécifiée
     /// - Parameter year: fin de l'année
     func value(atEndOf year: Int) -> Double {
@@ -93,30 +102,33 @@ struct RealEstateAsset: Identifiable, Codable, NameableValuable {
     /// - Parameter fromDateComp: date de début de la période d'habitation
     /// - Parameter toDateComp: date de fin de la période d'habitation
     /// - Parameter yearlyLocalTaxes: impôts locaux annuels
-    mutating func setInhabitationPeriod(fromDate: Date, toDate: Date) {
-        self.willBeInhabited   = true
-        self.inhabitedFromDate = fromDate
-        self.inhabitedToDate   = toDate
-    }
+//    mutating func setInhabitationPeriod(fromYear : Int,
+//                                        toYear   : Int) {
+//        self.willBeInhabited   = true
+//        self.inhabitedFromYear = fromYear
+//        self.inhabitedToYear   = toYear
+//    }
     
     /// Définir la période de location
     /// - Parameter fromDateComp: date de début de la période de location
     /// - Parameter toDateComp: date de fin de la période de location
     /// - Parameter monthlyRentAfterCharges: loyer mensuel charges déduites
-    mutating func setRentalPeriod(fromDate: Date, toDate: Date,
-                                         monthlyRentAfterCharges: Double) {
-        self.willBeRented            = true
-        self.rentalFromDate          = fromDate
-        self.rentalToDate            = toDate
-        self.monthlyRentAfterCharges = monthlyRentAfterCharges
-    }
+//    mutating func setRentalPeriod(fromYear                : Int,
+//                                  toYear                  : Int,
+//                                  monthlyRentAfterCharges : Double) {
+//        self.willBeRented            = true
+//        self.rentalFrom          = fromYear
+//        self.rentalTo            = toYear
+//        self.monthlyRentAfterCharges = monthlyRentAfterCharges
+//    }
     
     /// Définir les conditions de vente
-    /// - Parameter sellingDateComp: date de la vente
+    /// - Parameter sellingYearComp: date de la vente
     /// - Parameter sellingNetPrice: produit net de la vente
-    mutating func setSale(sellingDate: Date, sellingNetPrice: Double) {
+    mutating func setSale(sellingYear     : Int,
+                          sellingNetPrice : Double) {
         self.willBeSold      = true
-        self.sellingDate     = sellingDate
+        self.sellingYear     = sellingYear
         self.sellingNetPrice = sellingNetPrice
     }
     
@@ -126,7 +138,7 @@ struct RealEstateAsset: Identifiable, Codable, NameableValuable {
         guard willBeInhabited && !isSold(before: year) else {
             return false
         }
-        return (inhabitedFromDate.year...inhabitedToDate.year).contains(year) // (inhabitedFromDate.year <= year) && (year <= inhabitedToDate.year)
+        return (inhabitedFrom.year! ..< inhabitedTo.year!).contains(year) // (inhabitedFromYear.year <= year) && (year <= inhabitedToYear.year)
     }
     
     /// Impôts locaux
@@ -149,7 +161,7 @@ struct RealEstateAsset: Identifiable, Codable, NameableValuable {
         guard willBeRented && !isSold(before: year) else {
             return false
         }
-        return (rentalFromDate.year...rentalToDate.year).contains(year) // (rentalFromDate.year <= year) && (year <= rentalToDate.year)
+        return (rentalFrom.year! ..< rentalTo.year!).contains(year) // (rentalFromYear.year <= year) && (year <= rentalToYear.year)
     }
     
     /// Revenus de location si year est dans la période de location
@@ -173,7 +185,7 @@ struct RealEstateAsset: Identifiable, Codable, NameableValuable {
         guard willBeSold else {
             return false
         }
-        return year > sellingDate.year
+        return year > sellingYear
     }
     
     /// true si le bien est en possession
@@ -182,7 +194,7 @@ struct RealEstateAsset: Identifiable, Codable, NameableValuable {
         if isSold(before: year) {
             // le bien est vendu
             return false
-        } else if year >= buyingDate.year {
+        } else if year >= buyingYear {
             // le bien est déjà acheté
             return true
         } else {
@@ -201,10 +213,10 @@ struct RealEstateAsset: Identifiable, Codable, NameableValuable {
      **/
     func liquidatedValue (_ year: Int) ->
         (revenue: Double, capitalGain: Double, netRevenue: Double, socialTaxes: Double, irpp: Double) {
-            guard (willBeSold && year == sellingDate.year) else {
+            guard (willBeSold && year == sellingYear) else {
                 return (0,0,0,0,0)
             }
-            let detentionDuration = sellingDate.year - buyingDate.year
+            let detentionDuration = sellingYear - buyingYear
             let capitalGain       = self.sellingNetPrice - buyingPrice
             let socialTaxes       = Fiscal.model.socialTaxesOnEstateCapitalGain.socialTaxes (capitalGain: max(capitalGain,0.0),
                                                                                     detentionDuration: detentionDuration)
@@ -219,23 +231,23 @@ struct RealEstateAsset: Identifiable, Codable, NameableValuable {
     
     func print() {
         Swift.print("    ", name)
-        Swift.print("       buying price: ", buyingPrice, "euro - date: ", buyingDate.stringShortDate)
+        Swift.print("       buying price: ", buyingPrice, "euro - année: ", buyingYear)
         if willBeInhabited {
             Swift.print("       inhabited:")
-            Swift.print("         from:", inhabitedFromDate.stringShortDate)
-            Swift.print("         to:  ", inhabitedToDate.stringShortDate)
+            Swift.print("         from:", inhabitedFrom)
+            Swift.print("         to:  ", inhabitedTo)
             Swift.print("         local taxes: ", yearlyLocalTaxes, "euro")
         }
         if willBeRented {
             Swift.print("       rented:")
-            Swift.print("         from:", rentalFromDate.stringShortDate)
-            Swift.print("         to:  ", rentalToDate.stringShortDate)
+            Swift.print("         from:", rentalFrom)
+            Swift.print("         to:  ", rentalTo)
             Swift.print("         monthly rental:        ", monthlyRentAfterCharges, "euro",
                         "         yearly rental:         ", yearlyRentAfterCharges, "euro",
                         "         yearly rental taxable: ", yearlyRentTaxableIrpp, "euro")
         }
         if willBeSold {
-            Swift.print("       selling price: \(sellingNetPrice) euro - date: \(sellingDate.stringShortDate)")
+            Swift.print("       selling price: \(sellingNetPrice) euro - année: \(sellingYear)")
         }
     }
 }
@@ -251,14 +263,14 @@ extension RealEstateAsset: CustomStringConvertible {
     var description: String {
         let s1 = """
         \(name)
-        buying price: \(buyingPrice.€String) date: \(buyingDate.stringShortDate) /n
+        buying price: \(buyingPrice.€String) année: \(buyingYear) /n
         """
         var s2: String = ""
         if willBeInhabited {
             s2 = """
                 inhabited:
-            from:" \(inhabitedFromDate.stringShortDate)
-            to:  " \(inhabitedToDate.stringShortDate)
+            from:" \(inhabitedFrom)
+            to:  " \(inhabitedTo)
                     local taxes: \(yearlyLocalTaxes(during: Date.now.year).€String) \n
             """
         }
@@ -267,8 +279,8 @@ extension RealEstateAsset: CustomStringConvertible {
         if willBeRented {
             s3 = """
                 rented:
-            from: \(rentalFromDate.stringShortDate)
-            to:   \(rentalToDate.stringShortDate)
+            from: \(rentalFrom)
+            to:   \(rentalTo)
                     monthly rental:        \(monthlyRentAfterCharges.€String)
                     yearly rental:         \(yearlyRentAfterCharges.€String)
                     yearly rental taxable: \(yearlyRentTaxableIrpp.€String) \n
@@ -277,7 +289,7 @@ extension RealEstateAsset: CustomStringConvertible {
 
         var s4: String = ""
         if willBeSold {
-            s4 = "    selling price: \(sellingNetPrice.€String) date: \(sellingDate.stringMediumDate) \n"
+            s4 = "    selling price: \(sellingNetPrice.€String) année: \(sellingYear) \n"
         }
 
         return s1 + s2 + s3 + s4

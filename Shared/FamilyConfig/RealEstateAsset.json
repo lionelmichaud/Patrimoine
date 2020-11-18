@@ -5,38 +5,71 @@
             "id"                      : "232D1AB2-D9B3-4D0A-A857-4153B3DCD6DA",
             "name"                    : "Maison Chatel",
             "note"                    : "Actualisé le 11/09/2020",
-            "buyingDate"              : "2005-09-30T22:00:00Z",
+            "buyingYear"              : 2005,
             "buyingPrice"             : 135000,
             "yearlyTaxeFonciere"      : 650,
+            
             "willBeInhabited"         : false,
-            "inhabitedFromDate"       : "2120-01-01T00:00:00Z",
-            "inhabitedToDate"         : "2120-01-01T00:00:00Z",
-            "yearlyTaxeHabitation"    : 500,
-            "willBeRented"            : true,
-            "rentalFromDate"          : "2005-09-30T22:00:00Z",
-            "rentalToDate"            : "2100-01-01T00:00:00Z",
+            "inhabitedFrom" :
+            {
+                "fixedYear" : 2020
+            },
+            "inhabitedTo"   :
+            {
+                "fixedYear": 2100
+            },
+            "yearlyTaxeHabitation" : 500,
+            
+            "willBeRented" : true,
+            "rentalFrom"   :
+            {
+                "fixedYear": 2005
+            },
+            "rentalTo"     :
+            {
+                "fixedYear": 2100
+            },
             "monthlyRentAfterCharges" : 710,
+            
             "willBeSold"              : false,
-            "sellingDate"             : "2024-09-30T22:00:00Z",
+            "sellingYear"             : 2100,
             "sellingNetPrice"         : 100000
         },
         {
             "id"                      : "C200EDBE-5307-4D68-9312-7643871358D7",
             "name"                    : "Maison Toulouse",
             "note"                    : "Actualisé le 11/09/2020",
-            "buyingDate"              : "2011-06-30T22:00:00Z",
+            "buyingYear"              : 2011,
             "buyingPrice"             : 620000,
             "yearlyTaxeFonciere"      : 2500,
+            
             "willBeInhabited"         : true,
-            "inhabitedFromDate"       : "2011-06-30T22:00:00Z",
-            "inhabitedToDate"         : "2061-12-31T22:00:00Z",
-            "yearlyTaxeHabitation"    : 2500,
-            "willBeRented"            : false,
-            "rentalFromDate"          : "2061-12-31T22:00:00Z",
-            "rentalToDate"            : "2100-01-01T00:00:00Z",
+            "inhabitedFrom"           :
+            {
+                "fixedYear": 2011
+            },
+            "inhabitedTo" : {
+                "fixedYear" : 0,
+                "event" : "Dépendance",
+                "group" : "Tous les Adultes",
+                "order" : "Date au plus tard"
+            },
+            "yearlyTaxeHabitation" : 2500,
+            
+            "willBeRented" : true,
+            "rentalFrom" : {
+                "fixedYear" : 0,
+                "event" : "Dépendance",
+                "group" : "Tous les Adultes",
+                "order" : "Date au plus tard"
+            },
+            "rentalTo"     :
+            {
+                "fixedYear": 2100
+            },
             "monthlyRentAfterCharges" : 2000,
             "willBeSold"              : false,
-            "sellingDate"             : "2061-12-31T22:00:00Z",
+            "sellingYear"             : 2100,
             "sellingNetPrice"         : 600000
         }
     ]

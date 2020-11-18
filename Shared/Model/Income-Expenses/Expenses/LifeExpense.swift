@@ -232,7 +232,7 @@ struct LifeExpense: Identifiable, Codable, Hashable, NameableValuable {
     var name         : String = ""
     var value        : Double = 0.0
     var proportional : Bool   = false
-    var timeSpan     : LifeExpenseTimeSpan
+    var timeSpan     : TimeSpan
     
     // MARK: - Computed properties
     
@@ -246,7 +246,7 @@ struct LifeExpense: Identifiable, Codable, Hashable, NameableValuable {
     
     // MARK: - Initializers
     
-    init(name: String, timeSpan: LifeExpenseTimeSpan, proportional: Bool = false, value: Double) {
+    init(name: String, timeSpan: TimeSpan, proportional: Bool = false, value: Double) {
         self.name         = name
         self.value        = value
         self.proportional = proportional

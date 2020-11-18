@@ -36,6 +36,7 @@ struct DateBoundaryViewModel: Equatable {
             return true
         }
     }
+    
     // date fixe ou calculée à partir d'un éventuel événement de vie d'une personne
     var year  : Int? {
         if isLinkedToEvent {
@@ -94,6 +95,7 @@ struct DateBoundaryViewModel: Equatable {
             return fixedYear
         }
     }
+    
     // construire l'objet de type DateBoundary correspondant au ViewModel
     var dateBoundary: DateBoundary {
         var _event : LifeEvent?
@@ -112,7 +114,7 @@ struct DateBoundaryViewModel: Equatable {
                 _group = nil
                 _order = nil
             }
-                
+            
         } else {
             _event = nil
             _name  = nil
@@ -126,6 +128,28 @@ struct DateBoundaryViewModel: Equatable {
                             order     : _order)
     }
     
+    var description : String {
+        guard let year = self.year else {
+            return "indéfini"
+        }
+        var description: String = ""
+        
+        if isLinkedToEvent {
+            description = event.displayString + " de "
+            if isLinkedToGroup {
+                description += group.displayString + (order == .soonest ? " (-)" : " (+)")
+                
+            } else {
+                description += name
+            }
+            return description + ": " + String(year)
+            
+        } else {
+            return String(year)
+        }
+    }
+
+
     // MARK: - Initializers of ViewModel from Model
     
     internal init(from dateBoundary: DateBoundary) {
@@ -137,7 +161,6 @@ struct DateBoundaryViewModel: Equatable {
         self.isLinkedToGroup = dateBoundary.group != nil
         self.order           = dateBoundary.order ?? .soonest
     }
-    
 }
     
 // MARK: - View
@@ -203,6 +226,11 @@ struct BoundaryEditView: View {
          boundary : Binding<DateBoundaryViewModel?>) {
         self.label  = label
         _boundaryVM = boundary ?? DateBoundaryViewModel(from: DateBoundary.empty)
+    }
+    init(label    : String,
+         boundary : Binding<DateBoundaryViewModel>) {
+        self.label  = label
+        _boundaryVM = boundary
     }
     
     // MARK: - Methods

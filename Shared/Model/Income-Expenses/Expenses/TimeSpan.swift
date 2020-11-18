@@ -9,11 +9,11 @@
 import Foundation
 import os
 
-fileprivate let customLog = Logger(subsystem: "me.michaud.lionel.Patrimoine", category: "Model.LifeExpenseTimeSpan")
+fileprivate let customLog = Logger(subsystem: "me.michaud.lionel.Patrimoine", category: "Model.TimeSpan")
 
 // MARK: - Elongation temporelle du poste de dépense
 
-enum LifeExpenseTimeSpan: PickableIdentifiableEnum, Hashable {
+enum TimeSpan: PickableIdentifiableEnum, Hashable {
     // les années de début et de fin sont inclues
     case permanent
     case periodic (from: DateBoundary, period: Int, to: DateBoundary)
@@ -24,7 +24,7 @@ enum LifeExpenseTimeSpan: PickableIdentifiableEnum, Hashable {
     
     // MARK: - Static properties
 
-    static var allCases: [LifeExpenseTimeSpan] {
+    static var allCases: [TimeSpan] {
         return [.permanent,
                 .periodic (from: DateBoundary.empty, period: 1, to: DateBoundary.empty),
                 .starting (from: DateBoundary.empty),
@@ -182,7 +182,7 @@ enum LifeExpenseTimeSpan: PickableIdentifiableEnum, Hashable {
 
 // MARK: - Extension: Codable
 
-extension LifeExpenseTimeSpan: Codable {
+extension TimeSpan: Codable {
     // coding keys
     private enum CodingKeys: String, CodingKey {
         case permanent, periodic_from, periodic_to, periodic_period, spanning_from, spanning_to
@@ -275,7 +275,7 @@ extension LifeExpenseTimeSpan: Codable {
 
 // MARK: - Extension: Description
 
-extension LifeExpenseTimeSpan: CustomStringConvertible{
+extension TimeSpan: CustomStringConvertible{
     public var description: String{
         get{
             switch self {
