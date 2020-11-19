@@ -44,7 +44,8 @@ struct RealEstateAsset: Identifiable, Codable, NameableValuable {
     var sellingYear             : DateBoundary = DateBoundary.empty // dernière année de possession (inclue)
     var sellingNetPrice         : Double = 0.0
     var sellingPriceAfterTaxes  : Double {
-        let detentionDuration = sellingYear.year! - buyingYear.year!
+        guard let sellingDate = sellingYear.year, let buyingDate = buyingYear.year else { return 0 }
+        let detentionDuration = sellingDate - buyingDate
         let capitalGain       = self.sellingNetPrice - buyingPrice
         let socialTaxes       = Fiscal.model.socialTaxesOnEstateCapitalGain.socialTaxes (capitalGain: max(capitalGain,0.0), detentionDuration: detentionDuration)
         let irpp              = Fiscal.model.irppOnEstateCapitalGain.irpp (capitalGain: max(capitalGain,0.0), detentionDuration: detentionDuration)
@@ -172,19 +173,22 @@ struct RealEstateAsset: Identifiable, Codable, NameableValuable {
     /// true si l'année est postérieure à l'année de vente
     /// - Parameter year: année
     func isSold(before year: Int) -> Bool {
-        guard willBeSold else {
+        guard willBeSold, let sellingDate = sellingYear.year else {
             return false
         }
-        return year > sellingYear.year!
+        return year > sellingDate
     }
     
     /// true si le bien est en possession
     /// - Parameter year: année
     func isOwned(before year: Int) -> Bool {
+        guard let buyingDate = buyingYear.year else {
+            return false
+        }
         if isSold(before: year) {
             // le bien est vendu
             return false
-        } else if year >= buyingYear.year! {
+        } else if year >= buyingDate {
             // le bien est déjà acheté
             return true
         } else {

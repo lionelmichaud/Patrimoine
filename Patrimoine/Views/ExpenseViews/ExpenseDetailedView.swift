@@ -140,6 +140,23 @@ struct ExpenseDetailedView: View {
     
     // sauvegarder les changements
     func applyChanges() {
+        /// vérifier que ke nom ne fait pas doublon
+        let nameAlreadyExists = family.expenses.perCategory.values.contains { arrayOfExpenses in
+            return arrayOfExpenses.items.contains { expense in
+                return expense.name == expenseVM.name
+            }
+        }
+        if nameAlreadyExists {
+            self.alertItem = AlertItem(title         : Text("Le nom existe déjà. Choisissez en un autre."),
+                                       dismissButton : .default(Text("OK")))
+            return
+        }
+        guard expenseVM.name != "" else {
+            self.alertItem = AlertItem(title         : Text("Le nom est obligatoire"),
+                                       dismissButton : .default(Text("OK")))
+            return
+        }
+        /// valider les dates
         guard let firstYear = expenseVM.timeSpanVM.timeSpan.firstYear else {
             self.alertItem = AlertItem(title         : Text("La date de début doit être définie"),
                                        dismissButton : .default(Text("OK")))
@@ -155,11 +172,8 @@ struct ExpenseDetailedView: View {
                                        dismissButton : .default(Text("OK")))
             return
         }
-        guard expenseVM.name != "" else {
-            self.alertItem = AlertItem(title         : Text("Le nom est obligatoire"),
-                                       dismissButton : .default(Text("OK")))
-            return
-        }
+
+        // tous les tests sont OK
         if let index = index {
             // modifier un éléménet existant
             family.expenses.perCategory[self.category]?.update(with           : expenseVM.lifeExpense,

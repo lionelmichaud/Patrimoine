@@ -60,7 +60,7 @@ class RealEstateViewModel: ObservableObject {
 struct RealEstateDetailedView: View {
     @EnvironmentObject var simulation : Simulation
     @EnvironmentObject var uiState    : UIState
-    
+
     private var originalItem: RealEstateAsset?
     // commun
     @EnvironmentObject var patrimoine: Patrimoin
@@ -69,7 +69,8 @@ struct RealEstateDetailedView: View {
     // à adapter
     @StateObject private var assetVM : RealEstateViewModel
     @State private var localItem     : RealEstateAsset
-    
+    @State private var alertItem     : AlertItem?
+
     var body: some View {
         Form {
             LabeledTextField(label: "Nom", defaultText: "obligatoire", text: $localItem.name)
@@ -165,6 +166,8 @@ struct RealEstateDetailedView: View {
                 .capsuleButtonStyle()
                 .disabled(!changeOccured())
         )
+        .alert(item: $alertItem, content: myAlert)
+
     }
     
     init(item: RealEstateAsset?, patrimoine: Patrimoin) {
@@ -195,7 +198,10 @@ struct RealEstateDetailedView: View {
     
     // sauvegarder les changements
     func applyChanges() {
-        // mettre à jour l'élément local à partir du ViwModel avant sauvegarde
+        // validation avant sauvegarde
+        self.validate()
+
+        // mettre à jour l'item à partir du ViewModel
         assetVM.update(thisAsset: &localItem)
         
         if let index = index {
@@ -214,6 +220,77 @@ struct RealEstateDetailedView: View {
         self.presentationMode.wrappedValue.dismiss()
     }
     
+    func validate() {
+        /// vérifier que toutes les dates sont déféinies
+        guard let _ = assetVM.buyingYearVM.year else {
+            self.alertItem = AlertItem(title         : Text("La date d'achat doit être définie"),
+                                       dismissButton : .default(Text("OK")))
+            return
+        }
+        if localItem.willBeInhabited {
+            guard let _ = assetVM.inhabitedFromVM.year else {
+                self.alertItem = AlertItem(title         : Text("La date de début d'habitation doit être définie"),
+                                           dismissButton : .default(Text("OK")))
+                return
+            }
+            guard let _ = assetVM.inhabitedToVM.year else {
+                self.alertItem = AlertItem(title         : Text("La date de fin d'habitation doit être définie"),
+                                           dismissButton : .default(Text("OK")))
+                return
+            }
+        }
+        if localItem.willBeRented {
+            guard let _ = assetVM.rentalFromVM.year else {
+                self.alertItem = AlertItem(title         : Text("La date de début de location doit être définie"),
+                                           dismissButton : .default(Text("OK")))
+                return
+            }
+            guard let _ = assetVM.rentalToVM.year else {
+                self.alertItem = AlertItem(title         : Text("La date de fin de location doit être définie"),
+                                           dismissButton : .default(Text("OK")))
+                return
+            }
+        }
+        if localItem.willBeSold {
+            guard let _ = assetVM.sellingYearVM.year else {
+                self.alertItem = AlertItem(title         : Text("La date de vente doit être définie"),
+                                           dismissButton : .default(Text("OK")))
+                return
+            }
+        }
+        
+        /// vérifier que les dates sont dans le bon ordre
+        if localItem.willBeSold {
+            if assetVM.buyingYearVM.year! > assetVM.sellingYearVM.year! {
+                self.alertItem = AlertItem(title         : Text("La date d'achat doit précéder la date de vente"),
+                                           dismissButton : .default(Text("OK")))
+                return
+            }
+        }
+        if localItem.willBeInhabited {
+            if assetVM.inhabitedFromVM.year! > assetVM.inhabitedToVM.year! {
+                self.alertItem = AlertItem(title         : Text("La date de début doit précéder la date de fin"),
+                                           dismissButton : .default(Text("OK")))
+                return
+            }
+        }
+        if localItem.willBeRented {
+            if assetVM.rentalFromVM.year! > assetVM.rentalToVM.year! {
+                self.alertItem = AlertItem(title         : Text("La date de début doit précéder la date de fin"),
+                                           dismissButton : .default(Text("OK")))
+                return
+            }
+        }
+        if localItem.willBeRented && localItem.willBeInhabited {
+            if (assetVM.rentalFromVM.year! ... assetVM.rentalToVM.year!)
+                .hasIntersection(with: assetVM.inhabitedFromVM.year! ... assetVM.inhabitedToVM.year!) {
+                self.alertItem = AlertItem(title         : Text("Les périodes de location et d'habitation ne doivent pas avoir de recouvrement"),
+                                           dismissButton : .default(Text("OK")))
+                return
+            }
+        }
+    }
+
     func changeOccured() -> Bool {
         if localItem != originalItem {
             return true
