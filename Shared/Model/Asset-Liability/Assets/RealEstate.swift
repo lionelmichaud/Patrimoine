@@ -18,11 +18,7 @@ struct RealEstateAsset: Identifiable, Codable, NameableValuable {
     static var simulationMode : SimulationModeEnum = .deterministic
     
     static let empty: RealEstateAsset = RealEstateAsset(name                 : "",
-                                                        note                 : "",
-                                                        buyingYear           : Date.now.year,
-                                                        buyingPrice          : 0,
-                                                        yearlyTaxeHabitation : 0,
-                                                        yearlyTaxeFonciere   : 0)
+                                                        note                 : "")
     
     // MARK: - Static Methods
     
@@ -39,33 +35,27 @@ struct RealEstateAsset: Identifiable, Codable, NameableValuable {
     var name                 : String
     var note                 : String
     // achat
-    var buyingYear           : Int {
-        willSet {
-            if !willBeSold { sellingYear = newValue } // valeur par défaut
-            //if !willBeInhabited { inhabitedFromYear = newValue } // valeur par défaut
-//            if !willBeRented { rentalFrom = newValue } // valeur par défaut
-        }
-    }
-    var buyingPrice          : Double
-    var yearlyTaxeHabitation : Double
-    var yearlyTaxeFonciere   : Double
+    var buyingYear           : DateBoundary = DateBoundary.empty // première année de possession (inclue)
+    var buyingPrice          : Double = 0.0
+    var yearlyTaxeHabitation : Double = 0.0
+    var yearlyTaxeFonciere   : Double = 0.0
     // vente
     var willBeSold              : Bool   = false
-    var sellingYear             : Int    = Date.now.year + 100
+    var sellingYear             : DateBoundary = DateBoundary.empty // dernière année de possession (inclue)
     var sellingNetPrice         : Double = 0.0
     var sellingPriceAfterTaxes  : Double {
-        let detentionDuration = sellingYear - buyingYear
+        let detentionDuration = sellingYear.year! - buyingYear.year!
         let capitalGain       = self.sellingNetPrice - buyingPrice
         let socialTaxes       = Fiscal.model.socialTaxesOnEstateCapitalGain.socialTaxes (capitalGain: max(capitalGain,0.0), detentionDuration: detentionDuration)
         let irpp              = Fiscal.model.irppOnEstateCapitalGain.irpp (capitalGain: max(capitalGain,0.0), detentionDuration: detentionDuration)
         return self.sellingNetPrice - socialTaxes - irpp
     }
     // habitation
-    var willBeInhabited         : Bool         = false
+    var willBeInhabited         : Bool = false
     var inhabitedFrom           : DateBoundary = DateBoundary.empty // année inclue
     var inhabitedTo             : DateBoundary = DateBoundary.empty // année exclue
     // location
-    var willBeRented            : Bool   = false
+    var willBeRented            : Bool = false
     var rentalFrom              : DateBoundary = DateBoundary.empty // année inclue
     var rentalTo                : DateBoundary = DateBoundary.empty // année exclue
     var monthlyRentAfterCharges : Double = 0.0 // frais agence, taxe foncière et assurance déduite
@@ -125,12 +115,12 @@ struct RealEstateAsset: Identifiable, Codable, NameableValuable {
     /// Définir les conditions de vente
     /// - Parameter sellingYearComp: date de la vente
     /// - Parameter sellingNetPrice: produit net de la vente
-    mutating func setSale(sellingYear     : Int,
-                          sellingNetPrice : Double) {
-        self.willBeSold      = true
-        self.sellingYear     = sellingYear
-        self.sellingNetPrice = sellingNetPrice
-    }
+//    mutating func setSale(sellingYear     : Int,
+//                          sellingNetPrice : Double) {
+//        self.willBeSold      = true
+//        self.sellingYear     = sellingYear
+//        self.sellingNetPrice = sellingNetPrice
+//    }
     
     /// true si year est dans la période d'habitation
     /// - Parameter year: année
@@ -185,7 +175,7 @@ struct RealEstateAsset: Identifiable, Codable, NameableValuable {
         guard willBeSold else {
             return false
         }
-        return year > sellingYear
+        return year > sellingYear.year!
     }
     
     /// true si le bien est en possession
@@ -194,7 +184,7 @@ struct RealEstateAsset: Identifiable, Codable, NameableValuable {
         if isSold(before: year) {
             // le bien est vendu
             return false
-        } else if year >= buyingYear {
+        } else if year >= buyingYear.year! {
             // le bien est déjà acheté
             return true
         } else {
@@ -212,11 +202,15 @@ struct RealEstateAsset: Identifiable, Codable, NameableValuable {
      - Parameter irpp: impôt sur le revenu payé sur sur la plus-value
      **/
     func liquidatedValue (_ year: Int) ->
-        (revenue: Double, capitalGain: Double, netRevenue: Double, socialTaxes: Double, irpp: Double) {
-            guard (willBeSold && year == sellingYear) else {
+        (revenue: Double,
+         capitalGain: Double,
+         netRevenue: Double,
+         socialTaxes: Double,
+         irpp: Double) {
+        guard (willBeSold && year == sellingYear.year!) else {
                 return (0,0,0,0,0)
             }
-            let detentionDuration = sellingYear - buyingYear
+        let detentionDuration = sellingYear.year! - buyingYear.year!
             let capitalGain       = self.sellingNetPrice - buyingPrice
             let socialTaxes       = Fiscal.model.socialTaxesOnEstateCapitalGain.socialTaxes (capitalGain: max(capitalGain,0.0),
                                                                                     detentionDuration: detentionDuration)

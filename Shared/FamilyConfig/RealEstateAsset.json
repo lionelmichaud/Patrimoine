@@ -5,7 +5,10 @@
             "id"                      : "232D1AB2-D9B3-4D0A-A857-4153B3DCD6DA",
             "name"                    : "Maison Chatel",
             "note"                    : "Actualisé le 11/09/2020",
-            "buyingYear"              : 2005,
+            "buyingYear"              :
+            {
+                "fixedYear": 2005
+            },
             "buyingPrice"             : 135000,
             "yearlyTaxeFonciere"      : 650,
             
@@ -32,14 +35,20 @@
             "monthlyRentAfterCharges" : 710,
             
             "willBeSold"              : false,
-            "sellingYear"             : 2100,
+            "sellingYear"             :
+            {
+                "fixedYear": 2100
+            },
             "sellingNetPrice"         : 100000
         },
         {
             "id"                      : "C200EDBE-5307-4D68-9312-7643871358D7",
             "name"                    : "Maison Toulouse",
             "note"                    : "Actualisé le 11/09/2020",
-            "buyingYear"              : 2011,
+            "buyingYear"              : 
+            {
+                "fixedYear": 2011
+            },
             "buyingPrice"             : 620000,
             "yearlyTaxeFonciere"      : 2500,
             
@@ -69,7 +78,10 @@
             },
             "monthlyRentAfterCharges" : 2000,
             "willBeSold"              : false,
-            "sellingYear"             : 2100,
+            "sellingYear"             :
+            {
+                "fixedYear": 2100
+            },
             "sellingNetPrice"         : 600000
         }
     ]

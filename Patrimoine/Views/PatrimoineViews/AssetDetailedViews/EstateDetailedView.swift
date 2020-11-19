@@ -16,16 +16,20 @@ class RealEstateViewModel: ObservableObject {
     
     @Published var inhabitedFromVM : DateBoundaryViewModel
     @Published var inhabitedToVM   : DateBoundaryViewModel
-    @Published var rentalFrom      : DateBoundaryViewModel
-    @Published var rentalTo        : DateBoundaryViewModel
-    
+    @Published var rentalFromVM    : DateBoundaryViewModel
+    @Published var rentalToVM      : DateBoundaryViewModel
+    @Published var buyingYearVM    : DateBoundaryViewModel
+    @Published var sellingYearVM   : DateBoundaryViewModel
+
     // MARK: - Initializers of ViewModel from Model
     
     internal init(from asset: RealEstateAsset) {
         self.inhabitedFromVM = DateBoundaryViewModel(from: asset.inhabitedFrom)
         self.inhabitedToVM   = DateBoundaryViewModel(from: asset.inhabitedTo)
-        self.rentalFrom      = DateBoundaryViewModel(from: asset.rentalFrom)
-        self.rentalTo        = DateBoundaryViewModel(from: asset.rentalTo  )
+        self.rentalFromVM    = DateBoundaryViewModel(from: asset.rentalFrom)
+        self.rentalToVM      = DateBoundaryViewModel(from: asset.rentalTo  )
+        self.buyingYearVM    = DateBoundaryViewModel(from: asset.buyingYear )
+        self.sellingYearVM   = DateBoundaryViewModel(from: asset.sellingYear)
     }
     
     // MARK: - Methods
@@ -34,16 +38,20 @@ class RealEstateViewModel: ObservableObject {
     func update(thisAsset asset: inout RealEstateAsset) {
         asset.inhabitedFrom = self.inhabitedFromVM.dateBoundary
         asset.inhabitedTo   = self.inhabitedToVM.dateBoundary
-        asset.rentalFrom    = self.rentalFrom.dateBoundary
-        asset.rentalTo      = self.rentalTo.dateBoundary
+        asset.rentalFrom    = self.rentalFromVM.dateBoundary
+        asset.rentalTo      = self.rentalToVM.dateBoundary
+        asset.buyingYear    = self.buyingYearVM.dateBoundary
+        asset.sellingYear   = self.sellingYearVM.dateBoundary
     }
     
     func differs(from thisAsset: RealEstateAsset) -> Bool {
         return
             self.inhabitedFromVM != DateBoundaryViewModel(from: thisAsset.inhabitedFrom) ||
-            self.inhabitedToVM != DateBoundaryViewModel(from: thisAsset.inhabitedTo) ||
-            self.rentalFrom != DateBoundaryViewModel(from: thisAsset.rentalFrom) ||
-            self.rentalTo   != DateBoundaryViewModel(from: thisAsset.rentalTo)
+            self.inhabitedToVM   != DateBoundaryViewModel(from: thisAsset.inhabitedTo) ||
+            self.rentalFromVM    != DateBoundaryViewModel(from: thisAsset.rentalFrom) ||
+            self.rentalToVM      != DateBoundaryViewModel(from: thisAsset.rentalTo) ||
+            self.buyingYearVM    != DateBoundaryViewModel(from: thisAsset.buyingYear ) ||
+            self.sellingYearVM   != DateBoundaryViewModel(from: thisAsset.sellingYear)
     }
 }
 
@@ -69,9 +77,18 @@ struct RealEstateDetailedView: View {
             
             /// acquisition
             Section(header: Text("ACQUISITION")) {
-                IntegerEditView(label: "Année d'acquisition", integer: $localItem.buyingYear)
-                AmountEditView(label: "Prix d'acquisition",
-                               amount: $localItem.buyingPrice)
+                Group {
+                    NavigationLink(destination: Form { BoundaryEditView(label    : "Première année de possession",
+                                                                        boundary : $assetVM.buyingYearVM) } ) {
+                        HStack {
+                            Text("Première année de possession")
+                            Spacer()
+                            Text(String((assetVM.buyingYearVM.description)))
+                        }.foregroundColor(.blue)
+                    }
+                    AmountEditView(label: "Prix d'acquisition",
+                                   amount: $localItem.buyingPrice)
+                }.padding(.leading)
             }
             
             /// taxe
@@ -97,8 +114,8 @@ struct RealEstateDetailedView: View {
                 Toggle("Période de location", isOn: $localItem.willBeRented)
                 if localItem.willBeRented {
                     Group {
-                        FromToEditView(from : $assetVM.rentalFrom,
-                                       to   : $assetVM.rentalTo  )
+                        FromToEditView(from : $assetVM.rentalFromVM,
+                                       to   : $assetVM.rentalToVM)
                         AmountEditView(label: "Loyer mensuel net de frais",
                                        amount: $localItem.monthlyRentAfterCharges)
                         AmountView(label: "Charges sociales annuelles sur loyers",
@@ -116,14 +133,20 @@ struct RealEstateDetailedView: View {
                 Toggle("Sera vendue", isOn: $localItem.willBeSold)
                 if localItem.willBeSold {
                     Group {
-                        IntegerEditView(label: "Année de vente", integer: $localItem.sellingYear)
+                        NavigationLink(destination: Form { BoundaryEditView(label    : "Dernière année de possession",
+                                                                            boundary : $assetVM.sellingYearVM) } ) {
+                            HStack {
+                                Text("Dernière année de possession")
+                                Spacer()
+                                Text(String((assetVM.sellingYearVM.description)))
+                            }.foregroundColor(.blue)
+                        }
                         AmountEditView(label: "Prix de vente net de frais",
                                        amount: $localItem.sellingNetPrice)
                         AmountView(label: "Produit net de charges et impôts",
                                    amount: localItem.sellingPriceAfterTaxes)
                             .foregroundColor(.secondary)
-                    }
-                    .padding(.leading)
+                    }.padding(.leading)
                 }
             }
         }
