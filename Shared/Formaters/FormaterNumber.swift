@@ -58,6 +58,19 @@ var percentFormatter: NumberFormatter = {
     return numFormatter
 }()
 
+var percentIntegerFormatter: NumberFormatter = {
+    let numFormatter = NumberFormatter()
+    numFormatter.locale                = Locale(identifier : "fr_FR") // French Locale (fr_FR)
+    numFormatter.isLenient             = true
+    numFormatter.numberStyle           = .percent
+    numFormatter.minimumIntegerDigits  = 1
+    numFormatter.maximumIntegerDigits  = 3
+    numFormatter.minimumFractionDigits = 0
+    numFormatter.maximumFractionDigits = 0
+    //numFormatter.positivePrefix      = "+"
+    return numFormatter
+}()
+
 var decimalFormatter: NumberFormatter = {
     let numFormatter = NumberFormatter()
     numFormatter.locale                = Locale(identifier : "fr_FR") // French Locale (fr_FR)
@@ -66,6 +79,31 @@ var decimalFormatter: NumberFormatter = {
     numFormatter.minimumIntegerDigits  = 1
     numFormatter.minimumFractionDigits = 2
     numFormatter.maximumFractionDigits = 2
+    //numFormatter.positivePrefix      = "+"
+    return numFormatter
+}()
+
+var decimalIntegerFormatter: NumberFormatter = {
+    let numFormatter = NumberFormatter()
+    numFormatter.locale                = Locale(identifier : "fr_FR") // French Locale (fr_FR)
+    numFormatter.isLenient             = true
+    numFormatter.numberStyle           = .decimal
+    numFormatter.minimumIntegerDigits  = 1
+    numFormatter.minimumFractionDigits = 0
+    numFormatter.maximumFractionDigits = 0
+    //numFormatter.positivePrefix      = "+"
+    return numFormatter
+}()
+
+var decimalX100IntegerFormatter: NumberFormatter = {
+    let numFormatter = NumberFormatter()
+    numFormatter.locale                = Locale(identifier : "fr_FR") // French Locale (fr_FR)
+    numFormatter.isLenient             = true
+    numFormatter.numberStyle           = .decimal
+    numFormatter.multiplier            = 100.0
+    numFormatter.minimumIntegerDigits  = 1
+    numFormatter.minimumFractionDigits = 0
+    numFormatter.maximumFractionDigits = 0
     //numFormatter.positivePrefix      = "+"
     return numFormatter
 }()

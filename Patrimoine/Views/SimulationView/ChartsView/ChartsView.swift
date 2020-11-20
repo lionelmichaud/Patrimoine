@@ -73,6 +73,15 @@ struct ChartsView: View {
                 }
                 .isDetailLink(true)
             }
+            
+            Section(header: Text("Graphes Fiscalité").font(.headline)) {
+                NavigationLink(destination : FiscalChartView(),
+                               tag         : .irppSynthesis,
+                               selection   : $uiState.simulationViewState.selectedItem) {
+                    Text("Synthèse")
+                }
+                .isDetailLink(true)
+            }
         }
     }
 }

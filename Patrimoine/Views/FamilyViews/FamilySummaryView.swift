@@ -111,7 +111,7 @@ struct RevenuSummarySection: View {
             }
             Section(header: header("FISCALITE FAMILLE")) {
                 IntegerView(label   : "Quotient familial",
-                            integer : Int(cashFlow!.taxes.familyQuotient))
+                            integer : Int(cashFlow!.taxes.irpp.familyQuotient))
                 // FIXME: donne un impot nul !
                 AmountView(label : "Montant de l'IRPP",
                            amount: cashFlow!.taxes.perCategory[.irpp]!.total)

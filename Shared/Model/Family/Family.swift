@@ -33,7 +33,7 @@ final class Family: ObservableObject, CustomStringConvertible {
     }
     // impots
     var irpp             : Double { // computed
-        Fiscal.model.incomeTaxes.irpp(taxableIncome: workTaxableIncome, nbAdults: nbOfAdults, nbChildren: nbOfChildren)
+        Fiscal.model.incomeTaxes.irpp(taxableIncome: workTaxableIncome, nbAdults: nbOfAdults, nbChildren: nbOfChildren).amount
     }
     var description      : String {
         return members.debugDescription + "\n"
@@ -136,6 +136,7 @@ final class Family: ObservableObject, CustomStringConvertible {
             taxableIncome : income(during : year).taxableIncome, // A CORRIGER
             nbAdults      : nbOfAdultAlive(atEndOf    : year),
             nbChildren    : nbOfFiscalChildren(during : year))
+            .amount
     }
     
     /// Pensions de retraite cumulées de la famille durant l'année

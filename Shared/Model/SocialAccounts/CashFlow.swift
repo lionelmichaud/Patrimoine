@@ -13,6 +13,8 @@ enum CashFlowError: Error {
 typealias CashFlowArray = [CashFlowLine]
 
 extension CashFlowArray {
+    /// Sauvegarder dans un fichier au format Excel CSV
+    /// - Parameter simulationTitle: titre de la simulation à utiliser dans le nom du fichier CSV créé
     func storeTableCSV(simulationTitle: String) {
         var heading = String()
         var rows    = [String]()
@@ -69,7 +71,7 @@ extension CashFlowArray {
             TaxeCategory.allCases.forEach { category in
                 heading += firstLine.taxes.perCategory[category]!.headerCSV + "; "
             }
-            let rowsCoef = self.map { "\($0.taxes.familyQuotient.roundedString); " }
+            let rowsCoef = self.map { "\($0.taxes.irpp.familyQuotient.roundedString); " }
             rows = zip(rows, rowsCoef).map(+)
             
             heading += "IMPOTS & TAXES TOTALES; "
@@ -191,9 +193,9 @@ extension CashFlowArray {
 
 struct CashFlowLine {
     
-    // nested types
+    // MARK: - nested types
     
-    // MARK: - agrégat des ages
+    // agrégat des ages
     struct AgeTable {
         
         // properties
@@ -239,6 +241,13 @@ struct CashFlowLine {
     
     // MARK: - initialization
     
+    /// Création et peuplement d'un année de Cash Flow
+    /// - Parameters:
+    ///   - year: année
+    ///   - family: famille à utiliser
+    ///   - patrimoine: patrmoine à utiliser
+    ///   - taxableIrppRevenueDelayedFromLastyear: revenus taxable à l'IRPP en report d'imposition de l'année précédente
+    /// - Throws: Si pas assez de capital -> CashFlowError.notEnoughCash(missingCash: amountRemainingToRemove)
     init(withYear       year                   : Int,
          withFamily     family                 : Family,
          withPatrimoine patrimoine             : Patrimoin,
@@ -271,12 +280,10 @@ struct CashFlowLine {
         // => ne génèrent des charges sociales et de l'IRPP qu'au moment de leur liquidation
         
         /// IRPP: calcule de l'impot sur l'ensemble des revenus
-        taxes.familyQuotient = Fiscal.model.incomeTaxes.familyQuotient(nbAdults   : family.nbOfAdultAlive(atEndOf: year),
-                                                                       nbChildren : family.nbOfFiscalChildren(during: year))
-        let irpp = Fiscal.model.incomeTaxes.irpp(taxableIncome : revenues.totalTaxableIrpp,
+        taxes.irpp = Fiscal.model.incomeTaxes.irpp(taxableIncome : revenues.totalTaxableIrpp,
                                                  nbAdults      : family.nbOfAdultAlive(atEndOf: year),
-                                                 nbChildren    : family.nbOfFiscalChildren(during: year)).rounded()
-        taxes.perCategory[.irpp]?.namedValues.append((name: "IRPP", value: irpp.rounded()))
+                                                 nbChildren    : family.nbOfFiscalChildren(during: year))
+        taxes.perCategory[.irpp]?.namedValues.append((name: "IRPP", value: taxes.irpp.amount.rounded()))
         
         /// EXPENSES: compute and populate family expenses
         lifeExpenses.namedValueTable.namedValues = family.expenses.namedValueTable(atEndOf: year)
