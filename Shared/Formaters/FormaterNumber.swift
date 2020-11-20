@@ -11,6 +11,7 @@ import Foundation
 var valueKiloFormatter: NumberFormatter = {
     let numFormatter = NumberFormatter()
     
+    numFormatter.locale                = Locale(identifier : "fr_FR") // French Locale (fr_FR)
     // if number is less than 1 add 0 before decimal
     numFormatter.minimumIntegerDigits = 1 // how many digits do want before decimal
     numFormatter.multiplier           = 0.001
@@ -23,6 +24,7 @@ var valueKiloFormatter: NumberFormatter = {
 var valueKilo€Formatter: NumberFormatter = {
     let numFormatter = NumberFormatter()
     
+    numFormatter.locale                = Locale(identifier : "fr_FR") // French Locale (fr_FR)
     // if number is less than 1 add 0 before decimal
     numFormatter.minimumIntegerDigits = 1 // how many digits do you want before decimal point
     //numFormatter.maximumFractionDigits = 1 // how many digits do you want after decimal point

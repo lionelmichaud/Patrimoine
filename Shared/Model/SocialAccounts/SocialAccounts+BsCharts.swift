@@ -276,7 +276,7 @@ extension SocialAccounts {
         
         //: ### Legend
         let legend = chartView.legend
-        legend.font                = ChartThemes.ChartDefaults.legendFont
+        legend.font                = ChartThemes.ChartDefaults.smallLegendFont
         legend.textColor           = ChartThemes.DarkChartColors.legendColor
         legend.form                = .square
         legend.drawInside          = false

@@ -46,14 +46,14 @@ struct ChartsView: View {
                 NavigationLink(destination : BalanceSheetGlobalChartView(),
                                tag         : .bilanSynthese,
                                selection   : $uiState.simulationViewState.selectedItem) {
-                    Text("Synthèse")
+                    Text("Synthèse de l'évolution")
                 }
                 .isDetailLink(true)
                 
                 NavigationLink(destination : BalanceSheetDetailedChartView(),
                                tag         : .bilanDetail,
                                selection   : $uiState.simulationViewState.selectedItem) {
-                    Text("Détails")
+                    Text("Détails de l'évolution")
                 }
                 .isDetailLink(true)
             }
@@ -62,14 +62,14 @@ struct ChartsView: View {
                 NavigationLink(destination : CashFlowGlobalChartView(),
                                tag         : .cfSynthese,
                                selection   : $uiState.simulationViewState.selectedItem) {
-                    Text("Synthèse")
+                    Text("Synthèse de l'évolution")
                 }
                 .isDetailLink(true)
                 
                 NavigationLink(destination : CashFlowDetailedChartView(),
                                tag         : .cfDetail,
                                selection   : $uiState.simulationViewState.selectedItem) {
-                    Text("Détails")
+                    Text("Détails de l'évolution")
                 }
                 .isDetailLink(true)
             }
@@ -78,7 +78,7 @@ struct ChartsView: View {
                 NavigationLink(destination : FiscalChartView(),
                                tag         : .irppSynthesis,
                                selection   : $uiState.simulationViewState.selectedItem) {
-                    Text("Synthèse")
+                    Text("Synthèse de l'évolution")
                 }
                 .isDetailLink(true)
             }

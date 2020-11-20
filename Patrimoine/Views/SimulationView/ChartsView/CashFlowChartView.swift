@@ -178,6 +178,7 @@ struct CashFlowLineChartView: UIViewRepresentable {
     func makeUIView(context: Context) -> LineChartView {
         // créer et configurer un nouveau graphique
         let chartView = LineChartView(title               : "Revenu / Dépense",
+                                      smallLegend         : false,
                                       axisFormatterChoice : .largeValue(appendix: "€", min3Digit: true))
         
         // créer les DataSet: LineChartDataSets

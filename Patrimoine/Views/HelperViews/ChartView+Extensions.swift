@@ -41,6 +41,7 @@ extension BarChartView {
     /// Création d'un BarChartView avec une présentation customisée
     /// - Parameter title: Titre du graphique
     convenience init (title               : String,
+                      smallLegend         : Bool = true,
                       axisFormatterChoice : AxisFormatterChoice) {
         self.init()
         
@@ -89,7 +90,7 @@ extension BarChartView {
         //: ### Legend
         let legend = self.legend
         legend.enabled             = true
-        legend.font                = ChartThemes.ChartDefaults.legendFont
+        legend.font                = smallLegend ? ChartThemes.ChartDefaults.smallLegendFont : ChartThemes.ChartDefaults.largeLegendFont
         legend.textColor           = ChartThemes.DarkChartColors.legendColor
         legend.form                = .square
         legend.drawInside          = false
@@ -114,13 +115,14 @@ extension BarChartView {
     }
 }
 
-// MARK: - Extension de BarChartView pour customizer la configuration des Graph de l'appli
+// MARK: - Extension de LineChartView pour customizer la configuration des Graph de l'appli
 
 extension LineChartView {
     
     /// Création d'un LineChartView avec une présentation customisée
     /// - Parameter title: Titre du graphique
     convenience init (title               : String,
+                      smallLegend         : Bool = true,
                       axisFormatterChoice : AxisFormatterChoice) {
         self.init()
         
@@ -175,7 +177,95 @@ extension LineChartView {
         
         //: ### Legend
         let legend = self.legend
-        legend.font                = ChartThemes.ChartDefaults.legendFont
+        legend.font                = smallLegend ? ChartThemes.ChartDefaults.smallLegendFont : ChartThemes.ChartDefaults.largeLegendFont
+        legend.textColor           = ChartThemes.DarkChartColors.legendColor
+        legend.form                = .square
+        legend.drawInside          = false
+        legend.orientation         = .horizontal
+        legend.verticalAlignment   = .bottom
+        legend.horizontalAlignment = .left
+        
+        //: ### ajouter un Marker
+        let marker = XYMarkerView(color: ChartThemes.BallonColors.color,
+                                  font: ChartThemes.ChartDefaults.baloonfont,
+                                  textColor: ChartThemes.BallonColors.textColor,
+                                  insets: UIEdgeInsets(top: 8, left: 8, bottom: 20, right: 8),
+                                  xAxisValueFormatter: xAxis.valueFormatter!,
+                                  yAxisValueFormatter: leftAxis.valueFormatter!)
+        marker.chartView = self
+        marker.minimumSize = CGSize(width: 80, height: 40)
+        self.marker = marker
+        
+        //: ### Description
+        self.chartDescription?.text = title
+        self.chartDescription?.enabled = true
+    }
+}
+
+// MARK: - Extension de CombinedChartView pour customizer la configuration des Graph de l'appli
+
+extension CombinedChartView {
+    
+    /// Création d'un LineChartView avec une présentation customisée
+    /// - Parameter title: Titre du graphique
+    convenience init (title                    : String,
+                      smallLegend              : Bool = true,
+                      leftAxisFormatterChoice  : AxisFormatterChoice = .none,
+                      rightAxisFormatterChoice : AxisFormatterChoice = .none) {
+        self.init()
+        
+        //: ### General
+        self.pinchZoomEnabled          = true
+        self.doubleTapToZoomEnabled    = true
+        self.dragEnabled               = true
+        self.setScaleEnabled (true)
+        self.drawGridBackgroundEnabled = false
+        self.backgroundColor           = ChartThemes.DarkChartColors.backgroundColor
+        self.borderColor               = ChartThemes.DarkChartColors.borderColor
+        self.borderLineWidth           = 1.0
+        self.drawBordersEnabled        = true
+        
+        //: ### xAxis
+        let xAxis = self.xAxis
+        xAxis.enabled                  = true
+        xAxis.drawLabelsEnabled        = true
+        xAxis.labelFont                = ChartThemes.ChartDefaults.labelFont
+        xAxis.labelTextColor           = ChartThemes.DarkChartColors.labelTextColor
+        xAxis.labelPosition            = .bottom // .insideChart
+        xAxis.labelRotationAngle       = -90
+        xAxis.granularityEnabled       = true
+        xAxis.granularity              = 1
+        xAxis.labelCount               = 200
+        //        xAxis.valueFormatter = IndexAxisValueFormatter(values : months)
+        //        xAxis.setLabelCount(months.count, force               : false)
+        xAxis.drawGridLinesEnabled     = true
+        xAxis.drawAxisLineEnabled      = true
+        //        xAxis.axisMinimum    = 0
+        
+        //: ### LeftAxis
+        let leftAxis = self.leftAxis
+        leftAxis.enabled               = true
+        leftAxis.labelFont             = ChartThemes.ChartDefaults.labelFont
+        leftAxis.labelTextColor        = ChartThemes.DarkChartColors.labelTextColor
+        leftAxis.valueFormatter        = leftAxisFormatterChoice.IaxisFormatter()
+        //        leftAxis.axisMaximum = 200.0
+        //        leftAxis.axisMinimum = 0.0
+        leftAxis.drawGridLinesEnabled  = true
+        leftAxis.drawZeroLineEnabled   = false
+        
+        //: ### RightAxis
+        let rightAxis = self.rightAxis
+        rightAxis.enabled              = true
+        rightAxis.labelFont            = ChartThemes.ChartDefaults.labelFont
+        rightAxis.labelTextColor       = #colorLiteral(red: 0.7254902124, green: 0.4784313738, blue: 0.09803921729, alpha: 1)
+        rightAxis.valueFormatter       = rightAxisFormatterChoice.IaxisFormatter()
+        rightAxis.axisMinimum          = 0.0
+        rightAxis.drawGridLinesEnabled = false
+        rightAxis.granularityEnabled   = false
+        
+        //: ### Legend
+        let legend = self.legend
+        legend.font                = smallLegend ? ChartThemes.ChartDefaults.smallLegendFont : ChartThemes.ChartDefaults.largeLegendFont
         legend.textColor           = ChartThemes.DarkChartColors.legendColor
         legend.form                = .square
         legend.drawInside          = false

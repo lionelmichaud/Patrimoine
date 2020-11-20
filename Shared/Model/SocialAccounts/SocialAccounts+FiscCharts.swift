@@ -57,7 +57,7 @@ extension SocialAccounts {
     
     /// Dessiner un graphe à lignes : taux d'imposition marginal + taux d'imposition moyen
     /// - Returns: tableau de LineChartDataSet
-    func getIrppCoefLineChartDataSets() -> [LineChartDataSet]? {
+    func getIrppRatesfLineChartDataSets() -> [LineChartDataSet]? {
         // si la table est vide alors quitter
         guard !cashFlowArray.isEmpty else { return nil }
         
@@ -76,10 +76,14 @@ extension SocialAccounts {
         let set1 = LineChartDataSet(entries: yVals1,
                                     label: "Taux Moyen",
                                     color: #colorLiteral(red: 1, green: 1, blue: 1, alpha: 1))
+        set1.axisDependency = .left
+        set1.lineWidth      = 3.0
         let set2 = LineChartDataSet(entries: yVals2,
                                     label: "Taux Marginal",
                                     color: #colorLiteral(red: 0.501960814, green: 0.501960814, blue: 0.501960814, alpha: 1))
-        
+        set2.axisDependency = .left
+        set2.lineWidth      = 3.0
+
         // ajouter les dataSet au dataSets
         var dataSets = [LineChartDataSet]()
         dataSets.append(set1)
@@ -88,4 +92,29 @@ extension SocialAccounts {
         return dataSets
     }
 
+    /// Dessiner un graphe à lignes : taux d'imposition marginal + taux d'imposition moyen
+    /// - Returns: tableau de LineChartDataSet
+    func getfamilyQotientBarChartDataSets() -> [BarChartDataSet]? {
+        // si la table est vide alors quitter
+        guard !cashFlowArray.isEmpty else { return nil }
+        
+        //: ### ChartDataEntry
+        // revenu imposable
+        let yVals1 = cashFlowArray.map { cfLine in // pour chaque année
+            BarChartDataEntry(x: cfLine.year.double(), y: cfLine.taxes.irpp.familyQuotient)
+        }
+        
+        let set1 = BarChartDataSet(entries : yVals1,
+                                   label   : "Quotient Familial")
+        set1.setColor(#colorLiteral(red: 0.5058823824, green: 0.3372549117, blue: 0.06666667014, alpha: 1))
+        set1.axisDependency    = .right
+        set1.drawValuesEnabled = false
+
+        // ajouter les dataSet au dataSets
+        var dataSets = [BarChartDataSet]()
+        dataSets.append(set1)
+        
+        return dataSets
+    }
+    
 }

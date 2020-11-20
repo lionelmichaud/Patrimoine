@@ -181,7 +181,7 @@ struct ExpenseSummaryChartView: UIViewRepresentable {
         //: ### Legend
         let legend = chartView.legend
         legend.enabled             = false
-        legend.font                = ChartThemes.ChartDefaults.legendFont
+        legend.font                = ChartThemes.ChartDefaults.smallLegendFont
         legend.textColor           = ChartThemes.DarkChartColors.legendColor
         legend.form                = .square
         legend.formSize            = 8

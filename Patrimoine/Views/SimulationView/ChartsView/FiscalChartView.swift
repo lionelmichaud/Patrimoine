@@ -29,7 +29,7 @@ struct FiscalChartView: View {
         .padding(.trailing, 4)
         .navigationTitle("Fiscalité")
         .navigationBarTitleDisplayMode(.inline)
-        .navigationBarItems(trailing: Button(action: saveImage,
+        .navigationBarItems(trailing: Button(action: saveImages,
                                              label : {
                                                 HStack {
                                                     Image(systemName: "square.and.arrow.up")
@@ -39,8 +39,9 @@ struct FiscalChartView: View {
         )
     }
     
-    func saveImage() {
+    func saveImages() {
         IrppParamLineChartView.saveImage()
+        IrppLineChartView.saveImage()
     }
 }
 
@@ -49,7 +50,7 @@ struct IrppParamLineChartView: UIViewRepresentable {
     @Binding var socialAccounts : SocialAccounts
     var title                   : String
     static var titleStatic      : String = "image"
-    static var uiView           : LineChartView?
+    static var uiView           : CombinedChartView?
     static var snapshotNb       : Int = 0
     
     internal init(socialAccounts : Binding<SocialAccounts>, title: String) {
@@ -98,19 +99,37 @@ struct IrppParamLineChartView: UIViewRepresentable {
         IrppParamLineChartView.snapshotNb += 1
     }
     
-    func makeUIView(context: Context) -> LineChartView {
+    func makeUIView(context: Context) -> CombinedChartView {
         // créer et configurer un nouveau graphique
-        let chartView = LineChartView(title               : "Paramètres Imposition",
-                                      axisFormatterChoice : .percent)
+        let chartView = CombinedChartView(title                   : "Paramètres Imposition",
+                                          smallLegend             : false,
+                                          leftAxisFormatterChoice : .percent)
         
-        // créer les DataSet: LineChartDataSets
-        let dataSets = socialAccounts.getIrppCoefLineChartDataSets()
+        // LIGNES
+        // créer les DataSet : LineChartDataSets
+        let lineDataSets = socialAccounts.getIrppRatesfLineChartDataSets()
+        // ajouter les DataSet au ChartData
+        let lineChartData = LineChartData(dataSets: lineDataSets)
+        lineChartData.setValueTextColor(ChartThemes.DarkChartColors.valueColor)
+        lineChartData.setValueFont(NSUIFont(name: "HelveticaNeue-Light", size: CGFloat(12.0))!)
+        lineChartData.setValueFormatter(DefaultValueFormatter(formatter: decimalX100IntegerFormatter))
         
-        // ajouter les DataSet au Chartdata
-        let data = LineChartData(dataSets: dataSets)
-        data.setValueTextColor(ChartThemes.DarkChartColors.valueColor)
-        data.setValueFont(NSUIFont(name: "HelveticaNeue-Light", size: CGFloat(12.0))!)
-        data.setValueFormatter(DefaultValueFormatter(formatter: decimalX100IntegerFormatter))
+        // BARRES
+        // créer les DataSet : BarChartDataSets
+        let barDataSets = socialAccounts.getfamilyQotientBarChartDataSets()
+        // ajouter les DataSet au ChartData
+        let barChartData = BarChartData(dataSets: barDataSets)
+        barChartData.setValueTextColor(ChartThemes.DarkChartColors.valueColor)
+        barChartData.setValueFont(NSUIFont(name: "HelveticaNeue-Light", size: CGFloat(12.0))!)
+        barChartData.setValueFormatter(DefaultValueFormatter(formatter: decimalFormatter))
+        
+        // combiner les ChartData
+        let data = CombinedChartData()
+        data.lineData = lineChartData
+        data.barData  = barChartData
+//        data.bubbleData = generateBubbleData()
+//        data.scatterData = generateScatterData()
+//        data.candleData = generateCandleData()
         
         // ajouter le Chartdata au ChartView
         chartView.data = data
@@ -123,7 +142,7 @@ struct IrppParamLineChartView: UIViewRepresentable {
         return chartView
     }
     
-    func updateUIView(_ uiView: LineChartView, context: Context) {
+    func updateUIView(_ uiView: CombinedChartView, context: Context) {
     }
 }
 
@@ -184,6 +203,7 @@ struct IrppLineChartView: UIViewRepresentable {
     func makeUIView(context: Context) -> LineChartView {
         // créer et configurer un nouveau graphique
         let chartView = LineChartView(title               : "Imposition",
+                                      smallLegend         : false,
                                       axisFormatterChoice : .largeValue(appendix: "€", min3Digit: true))
         
         // créer les DataSet: LineChartDataSets
