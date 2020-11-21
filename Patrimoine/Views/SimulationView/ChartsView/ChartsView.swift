@@ -75,10 +75,17 @@ struct ChartsView: View {
             }
             
             Section(header: Text("Graphes Fiscalité").font(.headline)) {
-                NavigationLink(destination : FiscalChartView(),
+                NavigationLink(destination : FiscalEvolutionChartView(),
                                tag         : .irppSynthesis,
                                selection   : $uiState.simulationViewState.selectedItem) {
                     Text("Synthèse de l'évolution")
+                }
+                .isDetailLink(true)
+                
+                NavigationLink(destination : FiscalSliceView(),
+                               tag         : .irppSlices,
+                               selection   : $uiState.simulationViewState.selectedItem) {
+                    Text("Décomposition par tranche")
                 }
                 .isDetailLink(true)
             }

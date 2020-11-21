@@ -200,24 +200,29 @@
             "childRebate"    :  1512.0,
             "irppGrid" : [
                 {
-                    "floor" : 9964.0,
-                    "rate"  : 0.15,
-                    "disc"  : 1395.0
+                    "floor" : 0,
+                    "rate"  : 0,
+                    "disc"  : 0
                 },
                 {
-                    "floor" : 27519.0,
+                    "floor" : 10064.0,
+                    "rate"  : 0.11,
+                    "disc"  : 0
+                },
+                {
+                    "floor" : 25659.0,
                     "rate"  : 0.3,
-                    "disc"  : 5798.0
+                    "disc"  : 0
                 },
                 {
-                    "floor" : 73779.0,
+                    "floor" : 73369.0,
                     "rate"  : 0.41,
-                    "disc"  : 13914.0
+                    "disc"  : 0
                 },
                 {
-                    "floor"  : 156244.0,
+                    "floor"  : 157806.0,
                     "rate"  : 0.45,
-                    "disc"  : 20163.0
+                    "disc"  : 0
                 }
             ]
         }

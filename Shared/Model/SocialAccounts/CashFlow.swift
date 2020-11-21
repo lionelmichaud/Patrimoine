@@ -13,6 +13,15 @@ enum CashFlowError: Error {
 typealias CashFlowArray = [CashFlowLine]
 
 extension CashFlowArray {
+    /// Rend la ligne de Cash Flow pour une année donnée
+    /// - Parameter year: l'année recherchée
+    /// - Returns: le cash flow de l'année
+    func yearCashFlow(for year: Int) -> CashFlowLine? {
+        return self.first { line in
+            line.year == year
+        }
+    }
+    
     /// Sauvegarder dans un fichier au format Excel CSV
     /// - Parameter simulationTitle: titre de la simulation à utiliser dans le nom du fichier CSV créé
     func storeTableCSV(simulationTitle: String) {
@@ -281,8 +290,8 @@ struct CashFlowLine {
         
         /// IRPP: calcule de l'impot sur l'ensemble des revenus
         taxes.irpp = Fiscal.model.incomeTaxes.irpp(taxableIncome : revenues.totalTaxableIrpp,
-                                                 nbAdults      : family.nbOfAdultAlive(atEndOf: year),
-                                                 nbChildren    : family.nbOfFiscalChildren(during: year))
+                                                   nbAdults      : family.nbOfAdultAlive(atEndOf: year),
+                                                   nbChildren    : family.nbOfFiscalChildren(during: year))
         taxes.perCategory[.irpp]?.namedValues.append((name: "IRPP", value: taxes.irpp.amount.rounded()))
         
         /// EXPENSES: compute and populate family expenses

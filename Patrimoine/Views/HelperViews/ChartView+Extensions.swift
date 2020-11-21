@@ -64,7 +64,7 @@ extension BarChartView {
         let xAxis = self.xAxis
         xAxis.enabled                   = true
         xAxis.drawLabelsEnabled         = true
-        xAxis.labelFont                 = ChartThemes.ChartDefaults.labelFont
+        xAxis.labelFont                 = ChartThemes.ChartDefaults.smallLabelFont
         xAxis.labelTextColor            = ChartThemes.DarkChartColors.labelTextColor
         xAxis.labelPosition             = .bottom // .insideChart
         xAxis.labelRotationAngle        = -90
@@ -81,7 +81,7 @@ extension BarChartView {
         //: ### LeftAxis
         let leftAxis = self.leftAxis
         leftAxis.enabled              = true
-        leftAxis.labelFont            = ChartThemes.ChartDefaults.labelFont
+        leftAxis.labelFont            = ChartThemes.ChartDefaults.smallLabelFont
         leftAxis.labelTextColor       = ChartThemes.DarkChartColors.labelTextColor
         leftAxis.valueFormatter       = axisFormatterChoice.IaxisFormatter()
         leftAxis.drawGridLinesEnabled = true
@@ -141,7 +141,7 @@ extension LineChartView {
         let xAxis = self.xAxis
         xAxis.enabled                  = true
         xAxis.drawLabelsEnabled        = true
-        xAxis.labelFont                = ChartThemes.ChartDefaults.labelFont
+        xAxis.labelFont                = ChartThemes.ChartDefaults.smallLabelFont
         xAxis.labelTextColor           = ChartThemes.DarkChartColors.labelTextColor
         xAxis.labelPosition            = .bottom // .insideChart
         xAxis.labelRotationAngle       = -90
@@ -157,7 +157,7 @@ extension LineChartView {
         //: ### LeftAxis
         let leftAxis = self.leftAxis
         leftAxis.enabled               = true
-        leftAxis.labelFont             = ChartThemes.ChartDefaults.labelFont
+        leftAxis.labelFont             = ChartThemes.ChartDefaults.smallLabelFont
         leftAxis.labelTextColor        = ChartThemes.DarkChartColors.labelTextColor
         leftAxis.valueFormatter        = axisFormatterChoice.IaxisFormatter()
         //        leftAxis.axisMaximum = 200.0
@@ -168,7 +168,7 @@ extension LineChartView {
         //: ### RightAxis
         let rightAxis = self.rightAxis
         rightAxis.enabled              = false
-        rightAxis.labelFont            = ChartThemes.ChartDefaults.labelFont
+        rightAxis.labelFont            = ChartThemes.ChartDefaults.smallLabelFont
         rightAxis.labelTextColor       = #colorLiteral(red     : 1, green     : 0.1474981606, blue     : 0, alpha     : 1)
         rightAxis.axisMaximum          = 900.0
         rightAxis.axisMinimum          = -200.0
@@ -229,7 +229,7 @@ extension CombinedChartView {
         let xAxis = self.xAxis
         xAxis.enabled                  = true
         xAxis.drawLabelsEnabled        = true
-        xAxis.labelFont                = ChartThemes.ChartDefaults.labelFont
+        xAxis.labelFont                = ChartThemes.ChartDefaults.smallLabelFont
         xAxis.labelTextColor           = ChartThemes.DarkChartColors.labelTextColor
         xAxis.labelPosition            = .bottom // .insideChart
         xAxis.labelRotationAngle       = -90
@@ -245,7 +245,7 @@ extension CombinedChartView {
         //: ### LeftAxis
         let leftAxis = self.leftAxis
         leftAxis.enabled               = true
-        leftAxis.labelFont             = ChartThemes.ChartDefaults.labelFont
+        leftAxis.labelFont             = ChartThemes.ChartDefaults.smallLabelFont
         leftAxis.labelTextColor        = ChartThemes.DarkChartColors.labelTextColor
         leftAxis.valueFormatter        = leftAxisFormatterChoice.IaxisFormatter()
         //        leftAxis.axisMaximum = 200.0
@@ -256,7 +256,7 @@ extension CombinedChartView {
         //: ### RightAxis
         let rightAxis = self.rightAxis
         rightAxis.enabled              = true
-        rightAxis.labelFont            = ChartThemes.ChartDefaults.labelFont
+        rightAxis.labelFont            = ChartThemes.ChartDefaults.smallLabelFont
         rightAxis.labelTextColor       = #colorLiteral(red: 0.7254902124, green: 0.4784313738, blue: 0.09803921729, alpha: 1)
         rightAxis.valueFormatter       = rightAxisFormatterChoice.IaxisFormatter()
         rightAxis.axisMinimum          = 0.0
@@ -323,7 +323,7 @@ extension ChartLimitLine {
         self.lineDashLengths = [10, 5]
         self.lineColor       = lineColor
         self.labelPosition   = .topRight
-        self.valueFont       = ChartThemes.ChartDefaults.labelFont
+        self.valueFont       = ChartThemes.ChartDefaults.smallLabelFont
         self.valueTextColor  = .white
     }
 }

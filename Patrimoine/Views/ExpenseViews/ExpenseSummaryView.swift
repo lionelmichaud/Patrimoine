@@ -140,7 +140,7 @@ struct ExpenseSummaryChartView: UIViewRepresentable {
         let xAxis = chartView.xAxis
         xAxis.drawAxisLineEnabled  = true
         xAxis.labelPosition        = .bottom
-        xAxis.labelFont            = ChartThemes.ChartDefaults.labelFont
+        xAxis.labelFont            = ChartThemes.ChartDefaults.smallLabelFont
         xAxis.labelTextColor       = ChartThemes.DarkChartColors.labelTextColor
         xAxis.granularityEnabled   = false
         xAxis.granularity          = 1
@@ -157,7 +157,7 @@ struct ExpenseSummaryChartView: UIViewRepresentable {
         leftAxis.enabled              = true
         leftAxis.drawAxisLineEnabled  = true
         leftAxis.drawGridLinesEnabled = true
-        leftAxis.labelFont            = ChartThemes.ChartDefaults.labelFont
+        leftAxis.labelFont            = ChartThemes.ChartDefaults.smallLabelFont
         leftAxis.labelTextColor       = ChartThemes.DarkChartColors.labelTextColor
         leftAxis.granularityEnabled   = true // autoriser la réducion du nombre de label
         leftAxis.granularity          = 1    // à utiliser sans dépasser .labelCount
@@ -170,7 +170,7 @@ struct ExpenseSummaryChartView: UIViewRepresentable {
         rightAxis.enabled              = true
         rightAxis.drawAxisLineEnabled  = true
         rightAxis.drawGridLinesEnabled = false
-        leftAxis.labelFont             = ChartThemes.ChartDefaults.labelFont
+        leftAxis.labelFont             = ChartThemes.ChartDefaults.smallLabelFont
         leftAxis.labelTextColor        = ChartThemes.DarkChartColors.labelTextColor
         rightAxis.granularityEnabled   = true // autoriser la réducion du nombre de label
         rightAxis.granularity          = 1    // à utiliser sans dépasser .labelCount

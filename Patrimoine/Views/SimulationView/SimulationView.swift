@@ -13,7 +13,7 @@ struct SimulationView: View {
     @EnvironmentObject var uiState    : UIState
     
     enum PushedItem {
-        case computationView, bilanSynthese, bilanDetail, cfSynthese, cfDetail, kpiSummaryView, shortGridView, irppSynthesis
+        case computationView, bilanSynthese, bilanDetail, cfSynthese, cfDetail, kpiSummaryView, shortGridView, irppSynthesis, irppSlices
     }
     
     var body: some View {

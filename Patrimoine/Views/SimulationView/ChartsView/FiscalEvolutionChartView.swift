@@ -11,12 +11,11 @@ import SwiftUI
 import Charts // https://github.com/danielgindi/Charts.git
 import Disk // https://github.com/saoudrizwan/Disk.git
 
-fileprivate let customLog = Logger(subsystem: "me.michaud.lionel.Patrimoine", category: "UI.FiscalChartView")
+fileprivate let customLog = Logger(subsystem: "me.michaud.lionel.Patrimoine", category: "UI.FiscalEvolutionChartView")
 
-// MARK: - Fiscalité Charts Views
+// MARK: - Evolution de la Fiscalité dans le temps Charts Views
 
-/// Vue globale du cash flow: Revenus / Dépenses / Net
-struct FiscalChartView: View {
+struct FiscalEvolutionChartView: View {
     @EnvironmentObject var simulation: Simulation
     
     var body: some View {
@@ -27,7 +26,7 @@ struct FiscalChartView: View {
                                   title           : simulation.title)
         }
         .padding(.trailing, 4)
-        .navigationTitle("Fiscalité")
+        .navigationTitle("Evolution de la Fiscalité")
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarItems(trailing: Button(action: saveImages,
                                              label : {
@@ -45,7 +44,7 @@ struct FiscalChartView: View {
     }
 }
 
-/// Wrapper de LineChartView
+/// Wrapper de CombinedChartView: EVOLUTION dans le temps des Taux d'imposition et du Quotient familial
 struct IrppParamLineChartView: UIViewRepresentable {
     @Binding var socialAccounts : SocialAccounts
     var title                   : String
@@ -79,7 +78,7 @@ struct IrppParamLineChartView: UIViewRepresentable {
         UIImageWriteToSavedPhotosAlbum(image, nil, nil, nil)
         
         // sauvegarder l'image dans le répertoire documents/image
-        let fileName = "Fiscalité-" + String(IrppParamLineChartView.snapshotNb) + ".png"
+        let fileName = "IRPP-Taux-" + String(IrppParamLineChartView.snapshotNb) + ".png"
         do {
             try Disk.save(image, to: .documents, as: Config.imagePath(titleStatic) + fileName)
             // impression debug
@@ -146,7 +145,7 @@ struct IrppParamLineChartView: UIViewRepresentable {
     }
 }
 
-/// Wrapper de LineChartView
+/// Wrapper de LineChartView: EVOLUTION dans le temps de l'IRPP
 struct IrppLineChartView: UIViewRepresentable {
     @Binding var socialAccounts : SocialAccounts
     var title                   : String
@@ -180,7 +179,7 @@ struct IrppLineChartView: UIViewRepresentable {
         UIImageWriteToSavedPhotosAlbum(image, nil, nil, nil)
         
         // sauvegarder l'image dans le répertoire documents/image
-        let fileName = "Fiscalité-" + String(IrppLineChartView.snapshotNb) + ".png"
+        let fileName = "IRPP-Evolution-" + String(IrppLineChartView.snapshotNb) + ".png"
         do {
             try Disk.save(image, to: .documents, as: Config.imagePath(titleStatic) + fileName)
             // impression debug

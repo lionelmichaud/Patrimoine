@@ -254,7 +254,7 @@ extension SocialAccounts {
         let xAxis = chartView.xAxis
         xAxis.enabled                 = true
         xAxis.drawLabelsEnabled       = true
-        xAxis.labelFont               = ChartThemes.ChartDefaults.labelFont
+        xAxis.labelFont               = ChartThemes.ChartDefaults.smallLabelFont
         xAxis.labelTextColor          = ChartThemes.DarkChartColors.labelTextColor
         xAxis.labelPosition           = .bottom // .insideChart
         xAxis.centerAxisLabelsEnabled = true
@@ -268,7 +268,7 @@ extension SocialAccounts {
         //: ### LeftAxis
         let leftAxis = chartView.leftAxis
         leftAxis.enabled              = true
-        leftAxis.labelFont            = ChartThemes.ChartDefaults.labelFont
+        leftAxis.labelFont            = ChartThemes.ChartDefaults.smallLabelFont
         leftAxis.labelTextColor       = #colorLiteral(red     : 0.215686274509804, green     : 0.709803921568627, blue     : 0.898039215686275, alpha     : 1.0)
         leftAxis.valueFormatter       = Kilo€Formatter()
         leftAxis.drawGridLinesEnabled = true

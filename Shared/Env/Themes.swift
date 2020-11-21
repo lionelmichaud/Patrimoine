@@ -36,7 +36,8 @@ struct ChartThemes {
     }
     
     struct ChartDefaults {
-        static let labelFont       : UIFont = .systemFont(ofSize: 12)
+        static let smallLabelFont  : UIFont = .systemFont(ofSize: 12)
+        static let largeLabelFont  : UIFont = .systemFont(ofSize: 13)
         static let smallLegendFont : UIFont = .systemFont(ofSize: 11)
         static let largeLegendFont : UIFont = .systemFont(ofSize: 13)
         static let baloonfont      : UIFont = .systemFont(ofSize: 13)
@@ -47,7 +48,7 @@ struct ChartThemes {
     
     static let negativeColorsTable: [NSUIColor] = [#colorLiteral(red: 0.3176470697, green: 0.07450980693, blue: 0.02745098062, alpha: 1),#colorLiteral(red: 0.521568656, green: 0.1098039225, blue: 0.05098039284, alpha: 1),#colorLiteral(red: 0.7450980544, green: 0.1568627506, blue: 0.07450980693, alpha: 1),#colorLiteral(red: 0.9254902005, green: 0.2352941185, blue: 0.1019607857, alpha: 1),#colorLiteral(red: 0.9411764741, green: 0.4980392158, blue: 0.3529411852, alpha: 1),#colorLiteral(red: 0.5058823824, green: 0.3372549117, blue: 0.06666667014, alpha: 1),#colorLiteral(red: 0.7254902124, green: 0.4784313738, blue: 0.09803921729, alpha: 1),#colorLiteral(red: 0.9529411793, green: 0.6862745285, blue: 0.1333333403, alpha: 1),#colorLiteral(red: 0.9764705896, green: 0.850980401, blue: 0.5490196347, alpha: 1),#colorLiteral(red: 0.2196078449, green: 0.007843137719, blue: 0.8549019694, alpha: 1),#colorLiteral(red: 0.3647058904, green: 0.06666667014, blue: 0.9686274529, alpha: 1),#colorLiteral(red: 0.5568627715, green: 0.3529411852, blue: 0.9686274529, alpha: 1)]
     
-    static func positiveColors (number: Int) -> [NSUIColor] {
+   static func positiveColors (number: Int) -> [NSUIColor] {
         var colorTable = [NSUIColor]()
         if number == 0 {
             return [positiveColorsTable[0]]
@@ -89,6 +90,26 @@ struct ChartThemes {
         }
         return colorTable
     }
+    
+    static let taxRateColorsTable: [NSUIColor] = [#colorLiteral(red: 0.9411764741, green: 0.4980392158, blue: 0.3529411852, alpha: 1),#colorLiteral(red: 0.9254902005, green: 0.2352941185, blue: 0.1019607857, alpha: 1),#colorLiteral(red: 0.7450980544, green: 0.1568627506, blue: 0.07450980693, alpha: 1),#colorLiteral(red: 0.521568656, green: 0.1098039225, blue: 0.05098039284, alpha: 1),#colorLiteral(red: 0.3176470697, green: 0.07450980693, blue: 0.02745098062, alpha: 1)]
+    
+    static func taxRateColor(rate: Double) -> NSUIColor {
+        switch rate * 100.0 {
+            case 0.0 ..< 10.0:
+                return taxRateColorsTable[0]
+            case 10.0 ..< 20.0:
+                return taxRateColorsTable[1]
+            case 20.0 ..< 35.0:
+                return taxRateColorsTable[2]
+            case 35.0 ..< 45.0:
+                return taxRateColorsTable[3]
+            case 45.0...Double.infinity :
+                return taxRateColorsTable[4]
+            default:
+                return #colorLiteral(red: 1, green: 1, blue: 1, alpha: 1)
+        }
+    }
+    
 }
 
 struct ListTheme {

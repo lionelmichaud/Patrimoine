@@ -79,6 +79,11 @@ class UIState: ObservableObject {
         var selectedExpenseCategory: LifeExpenseCategory = .abonnements
     }
     
+    // MARK: - Etat de la vue Expense
+    struct FiscalChartState {
+        var evalDate: Double = Date.now.year.double()
+    }
+
     @Published var selectedTab         = Tab.family
     @Published var patrimoineViewState = PatrimoineViewState()
     @Published var scenarioViewState   = ScenarioViewState()
@@ -87,7 +92,8 @@ class UIState: ObservableObject {
     @Published var computationState    = ComputationState()
     @Published var bsChartState        = BalanceSheetChartState()
     @Published var cfChartState        = CashFlowChartState()
-    
+    @Published var fiscalChartState    = FiscalChartState()
+
     init() {
         expenseViewState.colapseCategories = Array(repeating: true, count: LifeExpenseCategory.allCases.count)
     }
