@@ -25,11 +25,11 @@ struct FiscalSliceView: View {
             HStack {
                 Text("Evaluation en ") + Text(String(Int(uiState.fiscalChartState.evalDate)))
                 Slider(value : $uiState.fiscalChartState.evalDate,
-                       in    : simulation.socialAccounts.firstYear.double() ... simulation.socialAccounts.lastYear.double(),
+                       in    : (simulation.socialAccounts.cashFlowArray.first?.year.double())! ... (simulation.socialAccounts.cashFlowArray.last?.year.double())! - 1,
                        step  : 1,
                        onEditingChanged: {_ in
                        })
-                Text(String(simulation.socialAccounts.lastYear))
+                Text(String(simulation.socialAccounts.cashFlowArray.last!.year - 1))
             }
             .padding(.horizontal)
             IrppSlicesStackedBarChartView(family         : family,
@@ -169,5 +169,24 @@ struct IrppSlicesStackedBarChartView: UIViewRepresentable {
     ///   - uiView: Graphique View
     ///   - context:
     func updateUIView(_ uiView: BarChartView, context: Context) {
+        uiView.clear()
+
+        // créer le DataSet: BarChartDataSet
+        let year = Int(evalYear)
+        let dataSet = socialAccounts.getSlicedIrppBarChartDataSets(for        : year,
+                                                                   nbAdults   : family.nbOfAdultAlive(atEndOf: year),
+                                                                   nbChildren : family.nbOfFiscalChildren(during: year))
+        
+        // ajouter les DataSet au Chartdata
+        let data = BarChartData(dataSet: dataSet)
+        data.setValueTextColor(ChartThemes.DarkChartColors.valueColor)
+        data.setValueFont(UIFont(name:"HelveticaNeue-Light", size:12)!)
+        data.setValueFormatter(DefaultValueFormatter(formatter: valueKiloFormatter))
+        
+        // ajouter le dataset au graphique
+        uiView.data = data
+        
+        uiView.data?.notifyDataChanged()
+        uiView.notifyDataSetChanged()
     }
 }

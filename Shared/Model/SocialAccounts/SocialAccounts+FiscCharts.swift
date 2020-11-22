@@ -131,9 +131,9 @@ extension SocialAccounts {
                 case .bareme:
                     return "Barême"
                 case .withChildren:
-                    return "Quotient familial \n avec Enfants"
+                    return "Quotient Familial \n avec Enfants"
                 case .withoutChildren:
-                    return "Quotient familial \n sans Enfant"
+                    return "Quotient Familial \n sans Enfant"
             }
         }
     }
