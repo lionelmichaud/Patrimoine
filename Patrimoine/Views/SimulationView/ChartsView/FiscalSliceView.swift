@@ -38,7 +38,7 @@ struct FiscalSliceView: View {
                                           title          : simulation.title)
         }
         .padding(.trailing, 4)
-        .navigationTitle("Répartition de l'IRPP")
+        .navigationTitle("Décomposition par tranche d'imposition")
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarItems(trailing: Button(action: saveImages,
                                              label : {
@@ -139,9 +139,11 @@ struct IrppSlicesStackedBarChartView: UIViewRepresentable {
         
         // créer le DataSet: BarChartDataSet
         let year = Int(evalYear)
-        let dataSet = socialAccounts.getSlicedIrppBarChartDataSets(for        : year,
-                                                                   nbAdults   : family.nbOfAdultAlive(atEndOf: year),
-                                                                   nbChildren : family.nbOfFiscalChildren(during: year))
+        var maxCumulatedSlices: Double = 0.0
+        let dataSet = socialAccounts.getSlicedIrppBarChartDataSets(for                : year,
+                                                                   maxCumulatedSlices : &maxCumulatedSlices,
+                                                                   nbAdults           : family.nbOfAdultAlive(atEndOf: year),
+                                                                   nbChildren         : family.nbOfFiscalChildren(during: year))
         
         // ajouter les DataSet au Chartdata
         let data = BarChartData(dataSet: dataSet)
@@ -152,6 +154,7 @@ struct IrppSlicesStackedBarChartView: UIViewRepresentable {
         // ajouter le Chartdata au ChartView
         chartView.data = data
         chartView.leftAxis.axisMinimum     = 0
+        chartView.leftAxis.axisMaximum     = maxCumulatedSlices * 2
         chartView.xAxis.labelRotationAngle = 0
         chartView.xAxis.valueFormatter     = IrppValueFormatter()
         chartView.xAxis.labelFont          = ChartThemes.ChartDefaults.largeLegendFont
@@ -173,9 +176,11 @@ struct IrppSlicesStackedBarChartView: UIViewRepresentable {
 
         // créer le DataSet: BarChartDataSet
         let year = Int(evalYear)
-        let dataSet = socialAccounts.getSlicedIrppBarChartDataSets(for        : year,
-                                                                   nbAdults   : family.nbOfAdultAlive(atEndOf: year),
-                                                                   nbChildren : family.nbOfFiscalChildren(during: year))
+        var maxCumulatedSlices: Double = 0.0
+        let dataSet = socialAccounts.getSlicedIrppBarChartDataSets(for                : year,
+                                                                   maxCumulatedSlices : &maxCumulatedSlices,
+                                                                   nbAdults           : family.nbOfAdultAlive(atEndOf: year),
+                                                                   nbChildren         : family.nbOfFiscalChildren(during: year))
         
         // ajouter les DataSet au Chartdata
         let data = BarChartData(dataSet: dataSet)
@@ -185,7 +190,8 @@ struct IrppSlicesStackedBarChartView: UIViewRepresentable {
         
         // ajouter le dataset au graphique
         uiView.data = data
-        
+        uiView.leftAxis.axisMaximum = maxCumulatedSlices * 2
+
         uiView.data?.notifyDataChanged()
         uiView.notifyDataSetChanged()
     }

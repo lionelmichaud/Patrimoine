@@ -68,7 +68,7 @@ final class Simulation: ObservableObject {
     @Published var resultTable    = SimulationResultTable()
     @Published var title          = "Simulation"
     @Published var isComputed     = false
-    @Published var isComputing    = false
+//    @Published var isComputing    = false
     @Published var isSaved        = false
     @Published var firstYear      : Int?
     @Published var lastYear       : Int?
@@ -134,7 +134,7 @@ final class Simulation: ObservableObject {
                  nbOfRuns                  : Int,
                  withFamily family         : Family,
                  withPatrimoine patrimoine : Patrimoin) {
-        isComputing    = true
+//        isComputing    = true
         let monteCarlo = nbOfRuns > 1
         var dicoOfEconomyRandomVariables      = Economy.DictionaryOfRandomVariable()
         var dicoOfSocioEconomyRandomVariables = SocioEconomy.DictionaryOfRandomVariable()
@@ -195,19 +195,21 @@ final class Simulation: ObservableObject {
                     KpiArray.generateHistograms(ofTheseKPIs: &kpis)
                 }
             }
+            
+            print("Run : \(run)")
         }
         //propriétés indépendantes du nombre de run
         firstYear   = Date.now.year
         lastYear    = firstYear + nbOfYears - 1
         isComputed  = true
         isSaved     = false
-        isComputing = false
+//        isComputing = false
     }
     
     func replay(thisRun                   : SimulationResultLine,
                 withFamily family         : Family,
                 withPatrimoine patrimoine : Patrimoin) {
-        isComputing  = true
+//        isComputing  = true
         currentRunNb = 1
         let nbOfYears = lastYear - firstYear + 1
 
@@ -239,7 +241,7 @@ final class Simulation: ObservableObject {
         lastYear    = firstYear + nbOfYears - 1
         isComputed  = true
         isSaved     = false
-        isComputing = false
+//        isComputing = false
     }
     
     /// Sauvegarder les résultats de simulation dans des fchier CSV

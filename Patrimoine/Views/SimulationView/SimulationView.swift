@@ -32,13 +32,11 @@ struct SimulationView: View {
                     }
                     .isDetailLink(true)
                     
+                    // affichage des résultats des KPIs
+                    KpiView()
+                    
                     // affichage des résultats graphiques
                     ChartsView()
-                    
-                    // affichage des résultats tabulés de MontéCarlo
-                    if simulation.mode == .random {
-                        GridsView()
-                    }
                 }
                 .defaultSideBarListStyle()
                 //.listStyle(InsetGroupedListStyle())

@@ -41,7 +41,7 @@ extension SocialAccounts {
         }
         
         let set1 = LineChartDataSet(entries : yVals1,
-                                    label   : "Revenus",
+                                    label   : "Revenu Imposable",
                                     color   : #colorLiteral(red   : 0.2392156869, green   : 0.6745098233, blue   : 0.9686274529, alpha   : 1))
         let set2 = LineChartDataSet(entries : yVals2,
                                     label   : "IRPP",
@@ -138,9 +138,10 @@ extension SocialAccounts {
         }
     }
     
-    /// Dessiner un graphe à barres horizontales : imposition par tranche de taux d'imposition
+    /// Dessiner un graphe à barres verticales : imposition par tranche de taux d'imposition
     /// - Returns: tableau de BarChartDataSet
     func getSlicedIrppBarChartDataSets(for year   : Int,
+                                       maxCumulatedSlices: inout Double,
                                        nbAdults   : Int,
                                        nbChildren : Int) -> BarChartDataSet? {
         // si la table est vide alors quitter
@@ -151,6 +152,7 @@ extension SocialAccounts {
         let slicedIrpp = Fiscal.model.incomeTaxes.slicedIrpp(taxableIncome : cfLine.taxes.irpp.amount / cfLine.taxes.irpp.averageRate,
                                                              nbAdults      : nbAdults,
                                                              nbChildren    : nbChildren)
+        maxCumulatedSlices = 0.0
         let bars = IrppEnum.allCases.map { (xLabel) -> BarChartDataEntry in
             var yVals = [Double]()
             switch xLabel {
@@ -164,13 +166,14 @@ extension SocialAccounts {
                     }
                 case .withoutChildren:
                     yVals = slicedIrpp.map { // pour chaque tranche = série
-                        $0.sizeithoutChildren
+                        maxCumulatedSlices += $0.sizeithoutChildren
+                        return $0.sizeithoutChildren
                     }
             }
             return BarChartDataEntry(x       : Double(xLabel.id),
                                      yValues : yVals)
         }
-        let set = BarChartDataSet(entries: bars)
+        let set = BarChartDataSet(entries: bars, label: "Tranches par taux d'imposition")
         set.colors = slicedIrpp.map { // pour chaque tranche
             ChartThemes.taxRateColor(rate: $0.rate)
         }

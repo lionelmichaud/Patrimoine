@@ -23,22 +23,11 @@ struct ScenarioView: View {
                 ScenarioHeaderView()
                 
                 // liste des items de la side bar
-                ScenarioListView()
+                ScenarioModelListView()
             }
             .defaultSideBarListStyle()
             .environment(\.horizontalSizeClass, .regular)
             .navigationTitle("Scénario")
-            //            .navigationBarItems(
-            //                leading: EditButton(),
-            //                trailing: Button(
-            //                    action: {
-            //                        withAnimation {
-            //                            self.showingSheet = true
-            //                        }
-            //                    },
-            //                    label: {
-            //                        Image(systemName: "plus").padding()
-            //                    }))
             
             /// vue par défaut
             ScenarioSummaryView()
@@ -55,27 +44,7 @@ struct ScenarioHeaderView: View {
             NavigationLink(destination : ScenarioSummaryView(),
                            tag         : .summary,
                            selection   : $uiState.scenarioViewState.selectedItem) {
-                Text("Dernière Valeurs Utilisées")
-            }
-            .isDetailLink(true)
-        }
-    }
-}
-
-struct ScenarioListView: View {
-    @EnvironmentObject var uiState    : UIState
-    @EnvironmentObject var simulation : Simulation
-    
-    var body: some View {
-        // Vue des statistiques générées pour les modèles
-        ScenarioModelListView()
-        
-        // Vua assistant statistiques
-        Section(header: Text("Statistiques").font(.headline)) {
-            NavigationLink(destination : StatisticsChartsView(),
-                           tag         : .statisticsAssistant,
-                           selection   : $uiState.scenarioViewState.selectedItem) {
-                Text("Assistant Distributions")
+                Text("Dernières Valeurs Utilisées")
             }
             .isDetailLink(true)
         }

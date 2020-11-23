@@ -86,7 +86,7 @@ enum TimeSpan: PickableIdentifiableEnum, Hashable {
                     return false
                 }
                 guard from.year! <= to.year! else {
-                    customLog.log(level: .info, "contains: from.year \(from.year!) > to.year \(to.year!)")
+//                    customLog.log(level: .info, "contains: from.year \(from.year!) > to.year \(to.year!)")
                     return false
                 }
                 return (from.year!...to.year!).contains {

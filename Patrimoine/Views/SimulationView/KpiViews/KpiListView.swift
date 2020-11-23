@@ -74,7 +74,7 @@ struct KpiDetailedView: View {
     }
 }
 
-struct KpiView_Previews: PreviewProvider {
+struct KpiListView_Previews: PreviewProvider {
     static var simulation = Simulation()
     
     static func kpiDeter() -> KPI {

@@ -15,8 +15,9 @@ struct ComputationView: View {
     @EnvironmentObject var patrimoine       : Patrimoin
     @EnvironmentObject var simulation       : Simulation
     @State private var busySaveWheelAnimate : Bool = false
-    @State private var busyCompWheelAnimate : Bool = false
-    
+    @Environment(\.presentationMode) var presentationMode
+    @State private var alertItem       : AlertItem?
+
     struct ComputationForm: View {
         @EnvironmentObject var uiState    : UIState
         @EnvironmentObject var simulation : Simulation
@@ -134,9 +135,6 @@ struct ComputationView: View {
                     Button(action: computeSimulation,
                            label: {
                             HStack(alignment: .center) {
-                                if busyCompWheelAnimate {
-                                    ProgressView()
-                                }
                                 Image(systemName: "function")
                                     .imageScale(.large)
                                 Text("Calculer")
@@ -146,10 +144,10 @@ struct ComputationView: View {
                     .capsuleButtonStyle()
                 }
             }
+            .alert(item: $alertItem, content: myAlert)
     }
     
     func computeSimulation() {
-        busyCompWheelAnimate.toggle()
         // executer les calculs en tâche de fond
         //DispatchQueue.global(qos: .userInitiated).async {
         switch simulation.mode {
@@ -171,7 +169,11 @@ struct ComputationView: View {
         uiState.cfChartState.itemSelection = simulation.socialAccounts.getCashFlowLegend(.both)
         //}
         //}
-        busyCompWheelAnimate.toggle()
+
+        self.alertItem = AlertItem(title         : Text("Les calculs sont terminés. Vous pouvez visualiser les résultats."),
+                                   dismissButton : .default(Text("OK")))
+
+        self.presentationMode.wrappedValue.dismiss()
         #if DEBUG
         // self.simulation.socialAccounts.printBalanceSheetTable()
         #endif
