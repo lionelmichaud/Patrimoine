@@ -113,8 +113,16 @@ class Person : ObservableObject, Identifiable, CustomStringConvertible, Codable 
 
     let id                    = UUID()
     let sexe                  : Sexe
-    var name                  : PersonNameComponents
-    var birthDate             : Date
+    var name                  : PersonNameComponents {
+        didSet {
+            displayName = personNameFormatter.string(from: name)
+        }
+    }
+    var birthDate             : Date  {
+        didSet {
+            displayBirthDate = mediumDateFormatter.string(from: birthDate)
+        }
+    }
     var birthDateComponents   : DateComponents
     @Published var ageOfDeath : Int
     var yearOfDeath           : Int { // computed
@@ -130,17 +138,11 @@ class Person : ObservableObject, Identifiable, CustomStringConvertible, Codable 
                                      from: birthDateComponents,
                                      to: CalendarCst.endOfYearComp).year!
     }
-    var displayName           : String {
-        let formatter = PersonNameComponentsFormatter()
-        formatter.style = .long
-        return formatter.string(from: name)
-    }
-    var displayBirthDate      : String {
-        mediumDateFormatter.string(from: birthDate)
-    }
+    var displayName           : String = ""
+    var displayBirthDate      : String = ""
     var description           : String {
         return """
-        \(displayName)
+        NAME: \(displayName)
         seniority: \(String(describing: type(of: self)))
         sexe:      \(sexe)
         birthdate: \(mediumDateFormatter.string(from: birthDate))
@@ -157,8 +159,10 @@ class Person : ObservableObject, Identifiable, CustomStringConvertible, Codable 
     required init(from decoder: Decoder) throws {
         let container            = try decoder.container(keyedBy: CodingKeys.self)
         self.name                = try container.decode(PersonNameComponents.self, forKey: .name)
+        displayName = personNameFormatter.string(from: name) // disSet not executed during init
         self.sexe                = try container.decode(Sexe.self, forKey: .sexe)
         self.birthDate           = try container.decode(Date.self, forKey: .birth_Date)
+        displayBirthDate = mediumDateFormatter.string(from: birthDate) // disSet not executed during init
         self.birthDateComponents = Date.calendar.dateComponents([.year, .month, .day], from : birthDate)
         //        self.ageOfDeath          = try container.decode(Int.self, forKey: .age_Of_Death)
         // initialiser avec la valeur moyenne déterministe

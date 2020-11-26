@@ -15,9 +15,8 @@ struct ComputationView: View {
     @EnvironmentObject var patrimoine       : Patrimoin
     @EnvironmentObject var simulation       : Simulation
     @State private var busySaveWheelAnimate : Bool = false
-    @Environment(\.presentationMode) var presentationMode
-    @State private var alertItem       : AlertItem?
-
+    //@State private var busyCompWheelAnimate : Bool = false
+    
     struct ComputationForm: View {
         @EnvironmentObject var uiState    : UIState
         @EnvironmentObject var simulation : Simulation
@@ -135,6 +134,9 @@ struct ComputationView: View {
                     Button(action: computeSimulation,
                            label: {
                             HStack(alignment: .center) {
+//                                if busyCompWheelAnimate {
+//                                    ProgressView()
+//                                }
                                 Image(systemName: "function")
                                     .imageScale(.large)
                                 Text("Calculer")
@@ -144,12 +146,12 @@ struct ComputationView: View {
                     .capsuleButtonStyle()
                 }
             }
-            .alert(item: $alertItem, content: myAlert)
     }
     
     func computeSimulation() {
+//        busyCompWheelAnimate.toggle()
         // executer les calculs en tâche de fond
-        //DispatchQueue.global(qos: .userInitiated).async {
+//        DispatchQueue.global(qos: .userInitiated).async {
         switch simulation.mode {
             case .deterministic:
                 simulation.compute(nbOfYears      : Int(uiState.computationState.nbYears),
@@ -163,17 +165,13 @@ struct ComputationView: View {
                                    withFamily     : family,
                                    withPatrimoine : patrimoine)
         }
+//        }
         // mettre à jour les variables d'état dans le thread principal
         //DispatchQueue.main.async {
         uiState.bsChartState.itemSelection = simulation.socialAccounts.getBalanceSheetLegend(.both)
         uiState.cfChartState.itemSelection = simulation.socialAccounts.getCashFlowLegend(.both)
         //}
-        //}
-
-        self.alertItem = AlertItem(title         : Text("Les calculs sont terminés. Vous pouvez visualiser les résultats."),
-                                   dismissButton : .default(Text("OK")))
-
-        self.presentationMode.wrappedValue.dismiss()
+//        busyCompWheelAnimate.toggle()
         #if DEBUG
         // self.simulation.socialAccounts.printBalanceSheetTable()
         #endif

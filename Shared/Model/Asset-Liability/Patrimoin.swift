@@ -23,7 +23,7 @@ final class Patrimoin: ObservableObject {
     }
     
     // MARK: - Methods
-
+    
     func value(atEndOf year: Int) -> Double {
         assets.value(atEndOf: year) +
             liabilities.value(atEndOf: year)
@@ -130,14 +130,14 @@ final class Patrimoin: ObservableObject {
                             // IRPP: les plus values PEA ne sont pas imposables à l'IRPP
                             // Prélèvements sociaux: prélevés à la source sur le montant brut du retrait donc pas à payer dans le futur
                         }
-                }
+                    }
                 default:
                     ()
             }
             investements.append(invest)
         }
         assets.freeInvests.items = investements
-
+        
         investements = [FreeInvestement]()
         if amountRemainingToRemove > 0.0 {
             // si le solde des PEA n'était pas suffisant alors retirer de l'Assurances vie procurant le moins bon rendement
@@ -160,13 +160,13 @@ final class Patrimoin: ObservableObject {
                                 totalTaxableInterests += taxableInterests
                                 // Prélèvements sociaux => prélevés à la source sur le montant brut du retrait donc pas à payer dans le futur
                             }
-                    }
+                        }
                     default:
                         ()
                 }
                 investements.append(invest)
             }
-            assets.freeInvests.items = investements
+            self.assets.freeInvests.items = investements
         }
         
         // TODO: - Si pas assez alors prendre sur la trésorerie

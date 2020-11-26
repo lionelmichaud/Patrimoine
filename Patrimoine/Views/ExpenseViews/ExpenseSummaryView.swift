@@ -25,7 +25,9 @@ struct ExpenseSummaryView: View {
                        step  : 1,
                        onEditingChanged: {_ in
                        })
-                Text(self.family.expenses.value(atEndOf: Int(self.uiState.expenseViewState.evalDate)).€String)
+                if let expenses = self.family.expenses.perCategory[uiState.expenseViewState.selectedCategory] {
+                    Text(expenses.value(atEndOf: Int(self.uiState.expenseViewState.evalDate)).€String)
+                }
             }
             .padding(.horizontal)
             

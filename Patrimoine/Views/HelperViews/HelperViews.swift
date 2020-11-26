@@ -478,7 +478,7 @@ struct MenuContentView: View {
                     },
                     label: {
                         HStack {
-                            Text("Tout")
+                            Text("Tout").font(.callout)
                             Image(systemName: "checkmark.square")
                         }
                     }).capsuleButtonStyle()
@@ -489,7 +489,7 @@ struct MenuContentView: View {
                     },
                     label: {
                         HStack {
-                            Text("Rien")
+                            Text("Rien").font(.callout)
                             Image(systemName: "square")
                         }
                     }).capsuleButtonStyle()

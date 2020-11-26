@@ -73,7 +73,9 @@ struct SocialAccounts {
         
         firstYear = Date.now.year
         lastYear  = firstYear + nbOfYears - 1
-        
+        cashFlowArray.reserveCapacity(nbOfYears)
+        balanceArray.reserveCapacity(nbOfYears)
+
         var currentKPIs = DictionaryOfKpiResults()
         
         for year in firstYear ... lastYear {
@@ -99,6 +101,7 @@ struct SocialAccounts {
                 /// il n'y a plus de Cash => on arrête la simulation
                 customLog.log(level: .info , "Nombre d'adulte survivants inatendu: \(family.nbOfAdultAlive(atEndOf: year), privacy: .public) dans \(Self.self, privacy: .public)")
                 Swift.print("Arrêt de la construction de la table de Comptes sociaux: Actifs financiers = 0")
+                
                 lastYear = year
                 // mémoriser le montant de l'Actif financier Net
                 switch family.nbOfAdultAlive(atEndOf: year) {
@@ -140,7 +143,7 @@ struct SocialAccounts {
             let newLine = BalanceSheetLine(withYear       : year,
                                            withPatrimoine : patrimoine)
             balanceArray.append(newLine)
-            
+
             /// gérer les KPI n°1, 2, 3 au décès de l'un ou des 2 conjoints
             //----------------------------------------------------
             if family.nbOfAdultAlive(atEndOf: year) < family.nbOfAdultAlive(atEndOf: year-1) {

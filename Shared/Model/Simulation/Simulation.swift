@@ -36,7 +36,7 @@ enum SimulationKPIEnum: Int, PickableEnum, Codable, Hashable {
     case minimumAsset = 0
     case assetAt1stDeath
     case assetAt2ndtDeath
-
+    
     // properties
     
     var id: Int {
@@ -116,7 +116,7 @@ final class Simulation: ObservableObject {
         if includingKPIs {
             KpiArray.reset(theseKPIs: &kpis, withMode: mode)
         }
-
+        
         firstYear    = nil
         lastYear     = nil
         isComputed   = false
@@ -160,10 +160,10 @@ final class Simulation: ObservableObject {
                 // réinitialiser les propriétés aléatoires du modèle socio économique
                 dicoOfSocioEconomyRandomVariables = SocioEconomy.model.next()
             }
-
+            
             // Réinitialiser la simulation
-            self.reset(withPatrimoine : patrimoine,
-                       includingKPIs  : run == 1 ? true : false)
+            reset(withPatrimoine : patrimoine,
+                  includingKPIs  : run == 1 ? true : false)
             
             // construire les comptes sociaux du patrimoine de la famille:
             // - personnes
@@ -192,11 +192,9 @@ final class Simulation: ObservableObject {
                 // Dernier run, créer les histogrammes et y ranger
                 // les échantillons de KPIs si on est en mode Aléatoire
                 if run == nbOfRuns {
-                    KpiArray.generateHistograms(ofTheseKPIs: &kpis)
+                    KpiArray.generateHistograms(ofTheseKPIs: &self.kpis)
                 }
             }
-            
-            print("Run : \(run)")
         }
         //propriétés indépendantes du nombre de run
         firstYear   = Date.now.year
@@ -212,7 +210,7 @@ final class Simulation: ObservableObject {
 //        isComputing  = true
         currentRunNb = 1
         let nbOfYears = lastYear - firstYear + 1
-
+        
         // fixer tous les paramètres du run à rejouer
         Economy.model.setRandomValue(to: thisRun.dicoOfEconomyRandomVariables)
         SocioEconomy.model.setRandomValue(to: thisRun.dicoOfSocioEconomyRandomVariables)
@@ -222,7 +220,7 @@ final class Simulation: ObservableObject {
                 adult.nbOfYearOfDependency = thisRun.dicoOfAdultsRandomProperties[adult.displayName]!.nbOfYearOfDependency
             }
         }
-
+        
         // Réinitialiser la simulation
         self.reset(withPatrimoine : patrimoine,
                    includingKPIs  : false)
@@ -235,7 +233,7 @@ final class Simulation: ObservableObject {
                                  withPatrimoine : patrimoine,
                                  withKPIs       : &kpis,
                                  withMode       : mode)
-
+        
         // propriétés indépendantes du nombre de run
         firstYear   = Date.now.year
         lastYear    = firstYear + nbOfYears - 1
