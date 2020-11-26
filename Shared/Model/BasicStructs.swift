@@ -157,19 +157,48 @@ extension ItemSelectionList {
     
 }
 
+// MARK: - Versioning
+
+///  - Note: [Reference](https://en.wikipedia.org/wiki/Software_versioning)
 struct Version: Codable {
-    let version : String?
+    let version : String? // "Major.Minor.Patch"
     let date    : Date?
     let comment : String?
     var major   : Int? {
-        return nil
+        guard let version = version else { return nil }
+        if let major = version.split(whereSeparator: { $0 == "." }).first {
+            return Int(major)
+        } else {
+            return nil
+        }
     }
     var minor    : Int? {
-        return nil
+        guard let version = version else { return nil }
+        let parts = version.split(whereSeparator: { $0 == "." })
+        if parts.count >= 1 {
+            return Int(parts[1])
+        } else {
+            return nil
+        }
+    }
+    var patch    : Int? {
+        guard let version = version else { return nil }
+        let parts = version.split(whereSeparator: { $0 == "." })
+        if parts.count >= 2 {
+            return Int(parts[2])
+        } else {
+            return nil
+        }
     }
     static func toVersion(major: Int,
-                          minor: Int) -> String {
-        return String(major) + "." + String(minor)
+                          minor: Int,
+                          patch: Int?) -> String {
+        if let patch = patch {
+            return String(major) + "." + String(minor) + "." + String(patch)
+        } else {
+            return String(major) + "." + String(minor)
+        }
+
     }
 }
 

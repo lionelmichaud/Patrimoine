@@ -157,10 +157,10 @@ struct CashFlowLineChartView: UIViewRepresentable {
         // sauvegarder l'image dans le répertoire documents/image
         let fileName = "CashFlow-" + String(CashFlowLineChartView.snapshotNb) + ".png"
         do {
-            try Disk.save(image, to: .documents, as: Config.imagePath(titleStatic) + fileName)
+            try Disk.save(image, to: .documents, as: AppSettings.imagePath(titleStatic) + fileName)
             // impression debug
             #if DEBUG
-            Swift.print("saving image to file: ", Config.imagePath(titleStatic) + fileName)
+            Swift.print("saving image to file: ", AppSettings.imagePath(titleStatic) + fileName)
             #endif
         }
         catch let error as NSError {
@@ -266,10 +266,10 @@ struct CashFlowStackedBarChartView: UIViewRepresentable {
         // sauvegarder l'image dans le répertoire documents/image
         let fileName = "CashFlow-detailed-" + String(CashFlowStackedBarChartView.snapshotNb) + ".png"
         do {
-            try Disk.save(image, to: .documents, as: Config.imagePath(titleStatic) + fileName)
+            try Disk.save(image, to: .documents, as: AppSettings.imagePath(titleStatic) + fileName)
             // impression debug
             #if DEBUG
-            Swift.print("saving image to file: ", Config.imagePath(titleStatic) + fileName)
+            Swift.print("saving image to file: ", AppSettings.imagePath(titleStatic) + fileName)
             #endif
         }
         catch let error as NSError {

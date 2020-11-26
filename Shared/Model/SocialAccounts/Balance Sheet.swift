@@ -96,9 +96,9 @@ extension BalanceSheetArray {
         do {
             try Disk.save(Data(csvString.utf8),
                           to: .documents,
-                          as: Config.csvPath(simulationTitle) + fileName)
+                          as: AppSettings.csvPath(simulationTitle) + fileName)
             #if DEBUG
-            Swift.print("saving 'BalanceSheet.csv' to file: ", Config.csvPath(simulationTitle) + fileName)
+            Swift.print("saving 'BalanceSheet.csv' to file: ", AppSettings.csvPath(simulationTitle) + fileName)
             #endif
             
         }

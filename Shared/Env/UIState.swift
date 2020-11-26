@@ -10,7 +10,7 @@ import Foundation
 
 class UIState: ObservableObject {
     enum Tab: Int {
-        case family, expense, asset, scenario, simulation
+        case userSettings, family, expense, asset, scenario, simulation
     }
     
     // MARK: - Etat de la vue Patrimoine
@@ -84,7 +84,7 @@ class UIState: ObservableObject {
         var evalDate: Double = Date.now.year.double()
     }
 
-    @Published var selectedTab         = Tab.family
+    @Published var selectedTab         = Tab.userSettings
     @Published var patrimoineViewState = PatrimoineViewState()
     @Published var scenarioViewState   = ScenarioViewState()
     @Published var simulationViewState = SimulationViewState()
