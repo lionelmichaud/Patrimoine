@@ -202,6 +202,8 @@ struct Version: Codable {
     }
 }
 
+// MARK: - Point(x, y)
+
 struct Point: Codable, ExpressibleByArrayLiteral {
     typealias ArrayLiteralElement = Double
     
@@ -218,6 +220,8 @@ struct Point: Codable, ExpressibleByArrayLiteral {
         self.y = y
     }
 }
+
+// MARK: - Ordre de tri
 
 enum SortingOrder {
     case ascending

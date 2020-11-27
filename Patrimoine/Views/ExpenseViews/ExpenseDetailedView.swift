@@ -15,6 +15,7 @@ class LifeExpenseViewModel: ObservableObject {
     // MARK: - Properties
     
     @Published var name         : String = ""
+    @Published var note         : String = ""
     @Published var value        : Double = 0.0
     @Published var proportional : Bool   = false
     @Published var timeSpanVM   : TimeSpanViewModel
@@ -24,6 +25,7 @@ class LifeExpenseViewModel: ObservableObject {
     // construire l'objet de type LifeExpense correspondant au ViewModel
     var lifeExpense: LifeExpense {
         return LifeExpense(name         : self.name,
+                           note         : self.note,
                            timeSpan     : self.timeSpanVM.timeSpan,
                            proportional : self.proportional,
                            value        : self.value)
@@ -33,6 +35,7 @@ class LifeExpenseViewModel: ObservableObject {
 
     internal init(from expense: LifeExpense) {
         self.name         = expense.name
+        self.note         = expense.note
         self.value        = expense.value
         self.proportional = expense.proportional
         self.timeSpanVM   = TimeSpanViewModel(from: expense.timeSpan)
@@ -47,6 +50,7 @@ class LifeExpenseViewModel: ObservableObject {
     func differs(from thisLifeExpense: LifeExpense) -> Bool {
         return
             self.name         != thisLifeExpense.name ||
+            self.note         != thisLifeExpense.note ||
             self.value        != thisLifeExpense.value ||
             self.proportional != thisLifeExpense.proportional ||
             self.timeSpanVM   != TimeSpanViewModel(from: thisLifeExpense.timeSpan)
@@ -78,7 +82,8 @@ struct ExpenseDetailedView: View {
                     .frame(width: 70, alignment: .leading)
                 TextField("obligatoire", text: $expenseVM.name)
             }
-            
+            LabeledTextEditor(label: "Note", text: $expenseVM.note)
+
             /// montant de la dépense
             AmountEditView(label: "Montant annuel",
                            amount: $expenseVM.value)
@@ -140,16 +145,18 @@ struct ExpenseDetailedView: View {
     
     // sauvegarder les changements
     func applyChanges() {
-        /// vérifier que ke nom ne fait pas doublon
-        let nameAlreadyExists = family.expenses.perCategory.values.contains { arrayOfExpenses in
-            return arrayOfExpenses.items.contains { expense in
-                return expense.name == expenseVM.name
+        /// vérifier que le nom ne fait pas doublon si l'élément est nouveau ou si le nom a été modifié
+        if (originalItem == nil) || (expenseVM.name != originalItem?.name) {
+            let nameAlreadyExists = family.expenses.perCategory.values.contains { arrayOfExpenses in
+                return arrayOfExpenses.items.contains { expense in
+                    return expense.name == expenseVM.name
+                }
             }
-        }
-        if nameAlreadyExists {
-            self.alertItem = AlertItem(title         : Text("Le nom existe déjà. Choisissez en un autre."),
-                                       dismissButton : .default(Text("OK")))
-            return
+            if nameAlreadyExists {
+                self.alertItem = AlertItem(title         : Text("Le nom existe déjà. Choisissez en un autre."),
+                                           dismissButton : .default(Text("OK")))
+                return
+            }
         }
         guard expenseVM.name != "" else {
             self.alertItem = AlertItem(title         : Text("Le nom est obligatoire"),
@@ -209,7 +216,8 @@ struct ExpenseDetailedView_Previews: PreviewProvider {
     
     static var previews: some View {
         ExpenseDetailedView(category : .autres,
-                            item     : LifeExpense(name    : "Test",
+                            item     : LifeExpense(name    : "Un nom",
+                                                   note    : "une note",
                                                    timeSpan: .permanent,
                                                    value   : 1234.0),
                             family   : family)

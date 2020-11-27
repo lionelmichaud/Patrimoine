@@ -5,6 +5,7 @@
             "value" : 0,
             "proportional" : false,
             "name" : "Argent de poche",
+            "note" : "Actualisé le ",
             "timeSpan" : {
                 "spanning_from" :
                 {
@@ -27,6 +28,7 @@
             "value" : 0,
             "proportional" : false,
             "name" : "Etudes (formation, fournitures, cantine...)",
+            "note" : "Actualisé le ",
             "timeSpan" : {
                 "spanning_from" :
                 {
@@ -49,6 +51,7 @@
             "value" : 0,
             "proportional" : false,
             "name" : "Pension",
+            "note" : "Actualisé le ",
             "timeSpan" : {
                 "spanning_from" :
                 {
@@ -71,6 +74,7 @@
             "value" : 0,
             "proportional" : false,
             "name" : "Famille Autres",
+            "note" : "Actualisé le ",
             "timeSpan" : {
                 "spanning_from" :
                 {

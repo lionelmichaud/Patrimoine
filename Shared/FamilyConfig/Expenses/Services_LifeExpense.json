@@ -5,6 +5,7 @@
             "value" : 380,
             "proportional" : true,
             "name" : "Services financiers",
+            "note" : "Actualisé le ",
             "timeSpan" : {
                 "ending_to" :
                 {
@@ -20,6 +21,7 @@
             "value" : 968,
             "proportional" : true,
             "name" : "Frais bancaires et de gestion",
+            "note" : "Actualisé le ",
             "timeSpan" : {
                 "ending_to" :
                 {
@@ -35,6 +37,7 @@
             "value" : 210,
             "proportional" : true,
             "name" : "Services pro (avocat, notaire, compatble...)",
+            "note" : "Actualisé le ",
             "timeSpan" : {
                 "ending_to" :
                 {
@@ -50,6 +53,7 @@
             "value" : 210,
             "proportional" : true,
             "name" : "Services Autres",
+            "note" : "Actualisé le ",
             "timeSpan" : {
                 "ending_to" :
                 {

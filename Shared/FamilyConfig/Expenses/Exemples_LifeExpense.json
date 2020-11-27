@@ -5,6 +5,7 @@
             "value" : 0,
             "proportional" : false,
             "name" : "Depuis",
+            "note" : "Actualisé le ",
             "timeSpan" : {
                 "starting_from" :
                 {
@@ -21,6 +22,7 @@
             "value" : 0,
             "proportional" : false,
             "name" : "Jusqu'à",
+            "note" : "Actualisé le ",
             "timeSpan" : {
                 "ending_to" :
                 {
@@ -36,6 +38,7 @@
             "value" : 0,
             "proportional" : false,
             "name" : "De...à...",
+            "note" : "Actualisé le ",
             "timeSpan" : {
                 "spanning_from" :
                 {
@@ -58,6 +61,7 @@
             "value" : 0,
             "proportional" : false,
             "name" : "Exceptionnelle",
+            "note" : "Actualisé le ",
             "timeSpan" : {
                 "exceptional_in" : 2026
             }
@@ -67,6 +71,7 @@
             "value" : 0,
             "proportional" : false,
             "name" : "Périodique",
+            "note" : "Actualisé le ",
             "timeSpan" : {
                 "periodic_period" : 7,
                 "periodic_from" :
@@ -90,6 +95,7 @@
             "value" : 1500,
             "proportional" : true,
             "name" : "Adultes",
+            "note" : "Actualisé le ",
             "timeSpan" : {
                 "permanent" : true
             }

@@ -5,6 +5,7 @@
             "value" : 0,
             "proportional" : false,
             "name" : "Nettoyage et services à domicile",
+            "note" : "Actualisé le ",
             "timeSpan" : {
                 "ending_to" :
                 {
@@ -20,6 +21,7 @@
             "value" : 0,
             "proportional" : false,
             "name" : "Assurances habitation",
+            "note" : "Actualisé le ",
             "timeSpan" : {
                 "ending_to" :
                 {
@@ -35,6 +37,7 @@
             "value" : 0,
             "proportional" : false,
             "name" : "Eau",
+            "note" : "Actualisé le ",
             "timeSpan" : {
                 "ending_to" :
                 {
@@ -50,6 +53,7 @@
             "value" : 0,
             "proportional" : false,
             "name" : "Gaz",
+            "note" : "Actualisé le ",
             "timeSpan" : {
                 "ending_to" :
                 {
@@ -65,6 +69,7 @@
             "value" : 0,
             "proportional" : false,
             "name" : "Electricité",
+            "note" : "Actualisé le ",
             "timeSpan" : {
                 "ending_to" :
                 {
@@ -80,6 +85,7 @@
             "value" : 0,
             "proportional" : false,
             "name" : "Travaux, réparation, entretien, aménagement...",
+            "note" : "Actualisé le ",
             "timeSpan" : {
                 "ending_to" :
                 {
@@ -95,6 +101,7 @@
             "value" : 0,
             "proportional" : false,
             "name" : "Logement Autres",
+            "note" : "Actualisé le ",
             "timeSpan" : {
                 "ending_to" :
                 {

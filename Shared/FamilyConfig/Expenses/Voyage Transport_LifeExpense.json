@@ -5,6 +5,7 @@
             "value" : 1000,
             "proportional" : true,
             "name" : "Petit voyage d'été",
+            "note" : "Actualisé le ",
             "timeSpan" : {
                 "periodic_period" : 2,
                 "periodic_from" :
@@ -28,6 +29,7 @@
             "value" : 3000,
             "proportional" : true,
             "name" : "Grand voyage d'été",
+            "note" : "Actualisé le ",
             "timeSpan" : {
                 "periodic_period" : 2,
                 "periodic_from" :
@@ -51,6 +53,7 @@
             "value" : 800,
             "proportional" : true,
             "name" : "Vacances ski",
+            "note" : "Actualisé le ",
             "timeSpan" : {
                 "spanning_from" :
                 {
@@ -73,6 +76,7 @@
             "value" : 100,
             "proportional" : true,
             "name" : "Week Ends",
+            "note" : "Actualisé le ",
             "timeSpan" : {
                 "spanning_from" :
                 {
@@ -95,6 +99,7 @@
             "value" : 0,
             "proportional" : false,
             "name" : "Location de véhicule",
+            "note" : "Actualisé le ",
             "timeSpan" : {
                 "spanning_from" :
                 {
@@ -117,6 +122,7 @@
             "value" : 0,
             "proportional" : true,
             "name" : "Transport longue distance (avion, train)",
+            "note" : "Actualisé le ",
             "timeSpan" : {
                 "spanning_from" :
                 {
@@ -139,6 +145,7 @@
             "value" : 0,
             "proportional" : true,
             "name" : "Transport quotidien (métro, bus, taxi)",
+            "note" : "Actualisé le ",
             "timeSpan" : {
                 "spanning_from" :
                 {
@@ -161,6 +168,7 @@
             "value" : 0,
             "proportional" : false,
             "name" : "Voyage Autres",
+            "note" : "Actualisé le ",
             "timeSpan" : {
                 "spanning_from" :
                 {

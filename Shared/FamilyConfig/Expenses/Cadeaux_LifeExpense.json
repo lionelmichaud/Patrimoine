@@ -5,6 +5,7 @@
             "value" : 555,
             "proportional" : false,
             "name" : "Cadeaux - Dons",
+            "note" : "Actualisé le ",
             "timeSpan" : {
                 "ending_to" :
                 {

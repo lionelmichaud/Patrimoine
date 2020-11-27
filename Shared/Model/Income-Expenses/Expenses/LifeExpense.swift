@@ -127,6 +127,7 @@ struct LifeExpense: Identifiable, Codable, Hashable, NameableValuable {
     
     var id           = UUID()
     var name         : String = ""
+    var note         : String
     var value        : Double = 0.0
     var proportional : Bool   = false
     var timeSpan     : TimeSpan
@@ -143,15 +144,17 @@ struct LifeExpense: Identifiable, Codable, Hashable, NameableValuable {
     
     // MARK: - Initializers
     
-    init(name: String, timeSpan: TimeSpan, proportional: Bool = false, value: Double) {
+    init(name: String, note: String, timeSpan: TimeSpan, proportional: Bool = false, value: Double) {
         self.name         = name
         self.value        = value
+        self.note         = note
         self.proportional = proportional
         self.timeSpan     = timeSpan
     }
     
     init() {
         self = LifeExpense(name     : "",
+                           note     : "",
                            timeSpan : .permanent,
                            value    : 0.0)
     }
