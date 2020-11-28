@@ -37,6 +37,7 @@ struct FamilySummaryView: View {
         Form {
             FamilySummarySection()
             RevenuSummarySection(cashFlow: cashFlow)
+            FiscalSummarySection(cashFlow: cashFlow)
             SciSummarySection(cashFlow: cashFlow)
         }
         .navigationTitle("Résumé")
@@ -68,17 +69,6 @@ struct FamilySummarySection: View {
     }
 }
 
-struct SciSummarySection: View {
-    var cashFlow : CashFlowLine?
-    
-    var body: some View {
-        Section(header: header("FISCALITE SCI")) {
-            AmountView(label : "IS de la SCI",
-                       amount: cashFlow!.sciCashFlowLine.IS)
-        }
-    }
-}
-
 struct RevenuSummarySection: View {
     var cashFlow : CashFlowLine?
     @EnvironmentObject var family: Family
@@ -90,12 +80,6 @@ struct RevenuSummarySection: View {
                            amount: family.income(during: Date.now.year).netIncome)
                 AmountView(label : "Revenu imposable à l'IRPP",
                            amount: family.income(during: Date.now.year).taxableIncome)
-            }
-            Section(header: header("FISCALITE DES REVENUS DU TRAVAIL")) {
-                IntegerView(label   : "Quotient familial",
-                            integer : Int(family.familyQuotient(during: Date.now.year)))
-                AmountView(label : "Montant de l'IRPP",
-                           amount: family.irpp(for: Date.now.year))
             }
         } else {
             Section(header: header("REVENUS")) {
@@ -109,12 +93,41 @@ struct RevenuSummarySection: View {
                 AmountView(label : "Revenu imposable à l'IRPP",
                            amount: cashFlow!.revenues.totalTaxableIrpp)
             }
-            Section(header: header("FISCALITE FAMILLE")) {
+        }
+    }
+}
+
+struct FiscalSummarySection: View {
+    var cashFlow : CashFlowLine?
+    @EnvironmentObject var family: Family
+
+    var body: some View {
+        if cashFlow == nil {
+            Section(header: header("FISCALITE DES REVENUS DU TRAVAIL")) {
+                AmountView(label : "Montant de l'IRPP",
+                           amount: family.irpp(for: Date.now.year))
                 IntegerView(label   : "Quotient familial",
-                            integer : Int(cashFlow!.taxes.irpp.familyQuotient))
-                // FIXME: donne un impot nul !
+                            integer : Int(family.familyQuotient(during: Date.now.year)))
+                    .padding(.leading)
+            }
+        } else {
+            Section(header: header("FISCALITE FAMILLE")) {
                 AmountView(label : "Montant de l'IRPP",
                            amount: cashFlow!.taxes.perCategory[.irpp]!.total)
+                IntegerView(label   : "Quotient familial",
+                            integer : Int(cashFlow!.taxes.irpp.familyQuotient))
+                    .padding(.leading)
+                IntegerView(label   : "Atux moyen d'imposition",
+                            integer : Int(cashFlow!.taxes.irpp.averageRate))
+                    .padding(.leading)
+                AmountView(label : "Montant de l'ISF",
+                           amount: cashFlow!.taxes.perCategory[.isf]!.total)
+                AmountView(label  : "Assiette ISF",
+                           amount : cashFlow!.taxes.isf.taxable)
+                    .padding(.leading)
+                PercentView(label   : "Taux ISF",
+                            percent : cashFlow!.taxes.isf.marginalRate)
+                    .padding(.leading)
                 AmountView(label : "Taxes locales",
                            amount: cashFlow!.taxes.perCategory[.localTaxes]!.total)
                 AmountView(label : "Prélevements Sociaux",
@@ -126,6 +139,18 @@ struct RevenuSummarySection: View {
         }
     }
 }
+
+struct SciSummarySection: View {
+    var cashFlow : CashFlowLine?
+    
+    var body: some View {
+        Section(header: header("FISCALITE SCI")) {
+            AmountView(label : "Montant de l'IS de la SCI",
+                       amount: cashFlow!.sciCashFlowLine.IS)
+        }
+    }
+}
+
 
 struct FamilySummaryView_Previews: PreviewProvider {
     static var family     = Family()
