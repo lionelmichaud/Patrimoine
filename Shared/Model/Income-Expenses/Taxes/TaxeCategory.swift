@@ -13,6 +13,8 @@ import Foundation
 /// Catégories de dépenses
 enum TaxeCategory: Int, PickableEnum, Codable, Hashable {
     case irpp
+    case isf
+    case succession
     case socialTaxes
     case localTaxes
 
@@ -26,6 +28,10 @@ enum TaxeCategory: Int, PickableEnum, Codable, Hashable {
         switch self {
             case .irpp:
                 return "IRPP"
+            case .isf:
+                return "ISF"
+            case .succession:
+                return "Droits Succession"
             case .socialTaxes:
                 return "Prélev Sociaux"
             case .localTaxes:

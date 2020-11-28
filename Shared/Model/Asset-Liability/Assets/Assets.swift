@@ -45,4 +45,19 @@ struct Assets {
         sum += sci.scpis.value(atEndOf: year)
         return sum
     }
+    
+    func valueOfRealEstateAssets(atEndOf year: Int) -> Double {
+        realEstates.value(atEndOf: year) +
+            scpis.value(atEndOf: year) +
+            sci.scpis.value(atEndOf: year)
+    }
+    
+    func valueOfInhabitedRealEstateAssets(atEndOf year: Int) -> Double {
+        return realEstates.items.reduce(.zero, {result, element in
+            element.isInhabited(during: year) ?
+                result + element.value(atEndOf: year) :
+                result
+        })
+        
+    }
 }

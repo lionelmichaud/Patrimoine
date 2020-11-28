@@ -17,11 +17,15 @@ struct ValuedTaxes: DictionaryOfNamedValueTable {
     var name           : String = ""
     var perCategory    : [TaxeCategory: NamedValueTable] = [:]
     var irpp           : IncomeTaxes.IRPP
+    var isf            : IsfModel.ISF
 
     init() {
         self.irpp = (amount         : 0,
                      familyQuotient : 0,
                      marginalRate   : 0,
                      averageRate    : 0)
+        self.isf = (amount       : 0,
+                    taxable      : 0,
+                    marginalRate : 0)
     }
 }

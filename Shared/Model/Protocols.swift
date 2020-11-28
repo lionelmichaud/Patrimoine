@@ -25,7 +25,10 @@ extension Array where Element: NameableValuable {
     ///
     /// - Returns: Somme de toutes les valeurs d'un Array
     func sum (atEndOf year: Int) -> Double {
-        return reduce(.zero, {result, element in result + element.value(atEndOf: year)})
+        return reduce(.zero, {result, element in
+            result + element.value(atEndOf: year)
+            
+        })
     }
 }
 

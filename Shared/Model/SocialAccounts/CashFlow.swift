@@ -138,7 +138,7 @@ extension CashFlowArray {
         
         // somme des rentrées de trésorerie
         heading += "RENTREES TOTAL; "
-        rows = zip(rows, self.map { "\($0.sumOfrevenues); " }).map(+)
+        rows = zip(rows, self.map { "\($0.sumOfrevenues.roundedString); " }).map(+)
 
         // construire la partie Dépenses de vie du tableau
         buildLifeExpensesTableCSV(firstLine: firstLine)
@@ -154,11 +154,11 @@ extension CashFlowArray {
  
         // somme des sorties de trésoreries
         heading += "SORTIES TOTAL; "
-        rows = zip(rows, self.map { "\($0.sumOfExpenses); " }).map(+)
+        rows = zip(rows, self.map { "\($0.sumOfExpenses.roundedString); " }).map(+)
         
         // Net cashflow
         heading += "NET CASHFLOW"
-        rows = zip(rows, self.map { "\($0.netCashFlow)" }).map(+)
+        rows = zip(rows, self.map { "\($0.netCashFlow.roundedString)" }).map(+)
         
         // Turn all of the rows into one big string
         let csvString = heading + "\n" + rows.joined(separator: "\n")
@@ -289,10 +289,12 @@ struct CashFlowLine {
         // => ne génèrent des charges sociales et de l'IRPP qu'au moment de leur liquidation
         
         /// IRPP: calcule de l'impot sur l'ensemble des revenus
-        taxes.irpp = Fiscal.model.incomeTaxes.irpp(taxableIncome : revenues.totalTaxableIrpp,
-                                                   nbAdults      : family.nbOfAdultAlive(atEndOf: year),
-                                                   nbChildren    : family.nbOfFiscalChildren(during: year))
-        taxes.perCategory[.irpp]?.namedValues.append((name: "IRPP", value: taxes.irpp.amount.rounded()))
+        populateIrpp(of: family)
+        
+        /// ISF: calcule de l'impot sur la fortune
+        populateISF(of   : family,
+                    with : patrimoine,
+                    for  : year)
         
         /// EXPENSES: compute and populate family expenses
         lifeExpenses.namedValueTable.namedValues = family.expenses.namedValueTable(atEndOf: year)
@@ -312,6 +314,22 @@ struct CashFlowLine {
     
     // MARK: - methods
     
+    fileprivate mutating func populateIrpp(of family: Family) {
+        taxes.irpp = Fiscal.model.incomeTaxes.irpp(taxableIncome : revenues.totalTaxableIrpp,
+                                                   nbAdults      : family.nbOfAdultAlive(atEndOf: year),
+                                                   nbChildren    : family.nbOfFiscalChildren(during: year))
+        taxes.perCategory[.irpp]?.namedValues.append((name: "IRPP", value: taxes.irpp.amount.rounded()))
+    }
+    
+    fileprivate mutating func populateISF(of family       : Family,
+                                          with patrimoine : Patrimoin,
+                                          for year        : Int) {
+        let taxableAsset   = patrimoine.netValueOfRealEstateAssets(atEndOf : year)
+        let inhabitedAsset = patrimoine.assets.valueOfInhabitedRealEstateAssets(atEndOf : year)
+        taxes.isf = Fiscal.model.isf.isf(taxableAsset   : taxableAsset,
+                                         inhabitedAsset : inhabitedAsset)
+        taxes.perCategory[.isf]?.namedValues.append((name: "ISF", value: taxes.isf.amount.rounded()))
+    }
     /// Populate Ages and Work incomes
     /// - Parameter family: de la famille
     fileprivate mutating func populateIncomes(of family: Family) {

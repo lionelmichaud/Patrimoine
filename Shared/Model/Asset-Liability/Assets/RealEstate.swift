@@ -83,7 +83,7 @@ struct RealEstateAsset: Identifiable, Codable, NameableValuable {
     /// - Parameter year: fin de l'année
     func value(atEndOf year: Int) -> Double {
         if isOwned(before: year) {
-            return (sellingNetPrice == 0 ? buyingPrice : sellingNetPrice)
+            return (willBeSold ? sellingNetPrice : buyingPrice)
         } else {
             return 0.0
         }

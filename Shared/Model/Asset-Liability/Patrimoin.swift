@@ -29,6 +29,11 @@ final class Patrimoin: ObservableObject {
             liabilities.value(atEndOf: year)
     }
     
+    func netValueOfRealEstateAssets(atEndOf year: Int) -> Double {
+        assets.valueOfRealEstateAssets(atEndOf: year) +
+            liabilities.valueOfLoans(atEndOf: year)
+    }
+    
     /// Réinitialiser les valeurs courantes des investissements libres
     func resetFreeInvestementCurrentValue() {
         var investements = [FreeInvestement]()
