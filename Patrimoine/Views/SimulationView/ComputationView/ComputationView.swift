@@ -16,7 +16,9 @@ struct ComputationView: View {
     @EnvironmentObject var simulation       : Simulation
     @State private var busySaveWheelAnimate : Bool = false
     //@State private var busyCompWheelAnimate : Bool = false
-    
+    @Environment(\.presentationMode) var presentationMode
+    @State private var alertItem            : AlertItem?
+
     struct ComputationForm: View {
         @EnvironmentObject var uiState    : UIState
         @EnvironmentObject var simulation : Simulation
@@ -146,6 +148,7 @@ struct ComputationView: View {
                     .capsuleButtonStyle()
                 }
             }
+            .alert(item: $alertItem, content: myAlert)
     }
     
     func computeSimulation() {
@@ -172,6 +175,10 @@ struct ComputationView: View {
         uiState.cfChartState.itemSelection = simulation.socialAccounts.getCashFlowLegend(.both)
         //}
 //        busyCompWheelAnimate.toggle()
+        self.alertItem = AlertItem(title         : Text("Les calculs sont terminés. Vous pouvez visualiser les résultats."),
+                                   dismissButton : .default(Text("OK")))
+        
+        self.presentationMode.wrappedValue.dismiss()
         #if DEBUG
         // self.simulation.socialAccounts.printBalanceSheetTable()
         #endif

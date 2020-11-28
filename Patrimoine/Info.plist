@@ -30,18 +30,6 @@
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>
 		<false/>
-		<key>UISceneConfigurations</key>
-		<dict>
-			<key>UIWindowSceneSessionRoleApplication</key>
-			<array>
-				<dict>
-					<key>UISceneConfigurationName</key>
-					<string>Default Configuration</string>
-					<key>UISceneDelegateClassName</key>
-					<string>$(PRODUCT_MODULE_NAME).SceneDelegate</string>
-				</dict>
-			</array>
-		</dict>
 	</dict>
 	<key>UIFileSharingEnabled</key>
 	<true/>
@@ -49,20 +37,6 @@
 	<dict>
 		<key>UIColorName</key>
 		<string>launchScreenBackground</string>
-		<key>UIImageName</key>
-		<string>LaunchImage</string>
-		<key>UIImageRespectsSafeAreaInsets</key>
-		<true/>
-		<key>UITabBar</key>
-		<dict>
-			<key>UIImageName</key>
-			<string></string>
-		</dict>
-		<key>UIToolbar</key>
-		<dict>
-			<key>UIImageName</key>
-			<string></string>
-		</dict>
 	</dict>
 	<key>UIRequiredDeviceCapabilities</key>
 	<array>

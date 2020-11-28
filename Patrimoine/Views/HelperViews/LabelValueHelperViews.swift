@@ -420,6 +420,7 @@ struct TextView_Previews: View {
             LabeledTextField(label: "Label", labelWidth: 70, defaultText: "Obligatoire", text: .constant("text"))
                 .previewDisplayName("LabeledTextField")
             LabeledTextEditor(label: "Label", labelWidth: 70, text: .constant("text"))
+                .previewDisplayName("LabeledTextEditor")
         }
     }
 }

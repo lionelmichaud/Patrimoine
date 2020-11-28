@@ -24,7 +24,11 @@ struct Fiscal: Codable {
         var layOffTaxes                    : LayOffTaxes
         var lifeInsuranceTaxes             : LifeInsuranceTaxes
         var incomeTaxes                    : IncomeTaxes
+        var isf                            : IsfModel
         var companyProfitTaxes             : CompanyProfitTaxes
+        var demembrement                   : DemembrementModel
+        var successionDonation             : DroitsSuccessionDonation
+        var lifeInsuranceSuccession        : LifeInsuranceSuccession
     }
     
     // static method
@@ -35,6 +39,8 @@ struct Fiscal: Codable {
                                        dateDecodingStrategy : .iso8601,
                                        keyDecodingStrategy  : .useDefaultKeys)
         model.incomeTaxes.initialize()
+        model.isf.initialize()
+        model.successionDonation.initialize()
         return model
     }
     
@@ -422,7 +428,7 @@ struct LifeInsuranceTaxes: Codable {
 }
 
 // MARK: - Impôts sur le revenu
-// impots sur le revenu
+
 struct IncomeTaxes: Codable {
     
     // nested types
@@ -638,14 +644,105 @@ struct IncomeTaxes: Codable {
                             marginalRate   : irppSlice.rate,
                             averageRate    : irpp / taxableIncome)
                 }
+            } else {
+                fatalError()
             }
-            fatalError()
-//            return (amount: 0.0, familyQuotient: familyQuotient, marginalRate: irppSlice.rate, averageRate: 0.0)
         }
         return (amount         : 0.0,
                 familyQuotient : familyQuotient,
                 marginalRate   : 0.0,
                 averageRate    : 0.0)
+    }
+}
+
+// MARK: - Impôts sur la fortune
+
+struct IsfModel: Codable {
+    
+    // nested types
+    
+    typealias ISF = (amount       : Double,
+                     taxable      : Double,
+                     marginalRate : Double)
+    
+    typealias SlicedISF = [(size                : Double,
+                            sizeithChildren     : Double,
+                            sizeithoutChildren  : Double,
+                            rate                : Double,
+                            irppMax             : Double,
+                            irppWithChildren    : Double,
+                            irppWithoutChildren : Double)]
+    
+    // tranche de barême de l'ISF
+    struct IsfSlice: Codable {
+        let floor : Double // euro
+        let rate  : Double // %
+        var disc  : Double // euro
+    }
+    
+    struct Model: Codable, Versionable {
+        var version         : Version
+        var isfGrid         : [IsfSlice]
+        let seuil           : Double // 1_300_000 // €
+        var seuil2          : Double // 1_400_000 // €
+        // Un système de décote a été mis en place pour les patrimoines nets taxables compris entre 1,3 million et 1,4 million d’euros.
+        // Le montant de la décote est calculé selon la formule 17 500 – (1,25 % x montant du patrimoine net taxable).
+        let decote€         : Double // 17_500 // €
+        let decoteCoef      : Double // 1.25 // %
+        // décote sur la résidence principale
+        let decoteResidence : Double // 30% // %
+    }
+    
+    // properties
+    
+    // barême de l'exoneration de charges sociale sur les plus-values immobilières
+    var model: Model
+    
+    // methods
+    
+    /// Initializer les paramètres calculés pour les tranches d'imposition à partir des seuils et des taux
+    mutating func initialize() {
+        for idx in model.isfGrid.startIndex ..< model.isfGrid.endIndex {
+            if idx == 0 {
+                model.isfGrid[idx].disc = model.isfGrid[idx].floor * (model.isfGrid[idx].rate - 0)
+            } else {
+                model.isfGrid[idx].disc =
+                    model.isfGrid[idx-1].disc +
+                    model.isfGrid[idx].floor * (model.isfGrid[idx].rate - model.isfGrid[idx-1].rate)
+            }
+        }
+        model.seuil2 = model.decote€ / (model.decoteCoef/100.0)
+    }
+    
+    /// Impôt sur le revenu
+    /// - Parameters:
+    ///   - taxableAsset: actif net imposable en €
+    ///   - inhabitedAsset: valeur nette de la résidence principale en €
+    /// - Returns: Impôt sur le revenu
+    func isf (taxableAsset asset : Double,
+              inhabitedAsset     : Double) -> ISF {
+        // FIXME: Vérifier calcul
+        // décote résidence principale
+        let taxableAsset = asset - model.decoteResidence/100.0 * inhabitedAsset
+        
+        // seuil d'imposition
+        guard taxableAsset > model.seuil else {
+            return (amount       : 0,
+                    taxable      : 0,
+                    marginalRate : 0)
+        }
+        
+        if let isfSlice = model.isfGrid.last(where: { $0.floor < taxableAsset }) {
+            let marginalRate = isfSlice.rate
+            var isf = taxableAsset * isfSlice.rate - isfSlice.disc
+            // decote sur le montant de l'impot
+            isf -= max(model.decote€ - taxableAsset * model.decoteCoef/100.0, 0.0)
+            return (amount       : isf,
+                    taxable      : taxableAsset,
+                    marginalRate : marginalRate)
+        } else {
+            fatalError()
+        }
     }
 }
 
@@ -676,4 +773,187 @@ struct CompanyProfitTaxes: Codable {
     func IS(_ brut: Double) -> Double {
         brut * model.rate / 100.0
     }
+}
+
+// MARK: - Démembrement de propriété
+///  - Note: [Reference](https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000006310173/)
+struct DemembrementModel: Codable {
+    // nested types
+    
+    // tranche de barême de l'IRPP
+    struct slice: Codable {
+        let floor    : Int // ans
+        let usuFruit : Double // %
+        var nueProp  : Double // %
+    }
+    
+    struct Model: Codable, Versionable {
+        var version : Version
+        var grid    : [slice]
+    }
+    
+    // properties
+    
+    var model: Model
+    
+    // methods
+    
+    func demembrement(of assetValue  : Double,
+                      usufruitierAge : Int)
+    -> (usuFruit : Double,
+        nueProp  : Double) {
+        
+        if let slice = model.grid.last(where: { $0.floor < usufruitierAge }) {
+            return (usuFruit : assetValue * slice.usuFruit,
+                    nueProp  : assetValue * slice.nueProp)
+        } else {
+            fatalError()
+        }
+    }
+}
+
+// MARK: - Droits de succession en ligne directe et de donation au conjoint
+///  - Note: [Reference](https://www.service-public.fr/particuliers/vosdroits/F14198)
+struct DroitsSuccessionDonation: Codable {
+    // nested types
+    
+    // tranche de barême
+    struct slice: Codable {
+        let floor : Double // €
+        let rate  : Double // %
+        var disc  : Double // euro
+    }
+    
+    struct Model: Codable, Versionable {
+        var version              : Version
+        var gridDonationConjoint : [slice]
+        var abatConjoint         : Double //  80_724€
+        var gridLigneDirecte     : [slice]
+        var abatLigneDirecte     : Double // 100_000€
+        let fraisFunéraires      : Double //   1_500€
+        let decoteResidence      : Double // 20% // %
+    }
+    
+    // properties
+    
+    var model: Model
+    
+    // methods
+    
+    /// Initializer les paramètres calculés pour les tranches d'imposition à partir des seuils et des taux
+    mutating func initialize() {
+        for idx in model.gridLigneDirecte.startIndex ..< model.gridLigneDirecte.endIndex {
+            if idx == 0 {
+                model.gridLigneDirecte[idx].disc = model.gridLigneDirecte[idx].floor * (model.gridLigneDirecte[idx].rate - 0)
+            } else {
+                model.gridLigneDirecte[idx].disc =
+                    model.gridLigneDirecte[idx-1].disc +
+                    model.gridLigneDirecte[idx].floor * (model.gridLigneDirecte[idx].rate - model.gridLigneDirecte[idx-1].rate)
+            }
+        }
+        for idx in model.gridDonationConjoint.startIndex ..< model.gridDonationConjoint.endIndex {
+            if idx == 0 {
+                model.gridDonationConjoint[idx].disc = model.gridDonationConjoint[idx].floor * (model.gridDonationConjoint[idx].rate - 0)
+            } else {
+                model.gridDonationConjoint[idx].disc =
+                    model.gridDonationConjoint[idx-1].disc +
+                    model.gridDonationConjoint[idx].floor * (model.gridDonationConjoint[idx].rate - model.gridDonationConjoint[idx-1].rate)
+            }
+        }
+   }
+    
+    func heritageToChild(partSuccession: Double)
+    -> (netAmount : Double,
+        taxe      : Double) {
+        // abattement avant application du barême
+        let taxable = partSuccession - model.abatLigneDirecte
+        
+        // application du barême
+        if let slice = model.gridLigneDirecte.last(where: { $0.floor < taxable }) {
+            let taxe = taxable * slice.rate - slice.disc
+            let net  = taxable - taxe
+            return (netAmount : net,
+                    taxe      : taxe)
+        } else {
+            fatalError()
+        }
+    }
+    
+    func donationToConjoint(donation: Double)
+    -> (netAmount : Double,
+        taxe      : Double) {
+        // abattement avant application du barême
+        let taxable = donation - model.abatConjoint
+        
+        // application du barême
+        if let slice = model.gridLigneDirecte.last(where: { $0.floor < taxable }) {
+            let taxe = taxable * slice.rate - slice.disc
+            let net  = taxable - taxe
+            return (netAmount : net,
+                    taxe      : taxe)
+        } else {
+            fatalError()
+        }
+    }
+}
+
+// MARK: - Droits de succession sur assurance vie
+///  - Note: [Reference](https://www.impots.gouv.fr/portail/international-particulier/questions/comment-sont-imposees-les-assurances-vie-en-cas-de-deces-du)
+struct LifeInsuranceSuccession: Codable {
+    // nested types
+    
+    // tranche de barême
+    struct slice: Codable {
+        let floor : Double // €
+        let rate  : Double // %
+        var disc  : Double // euro
+    }
+    
+    struct Model: Codable, Versionable {
+        var version    : Version
+        var grid       : [slice]
+    }
+    
+    // properties
+    
+    var model: Model
+    
+    // methods
+    
+    /// Initializer les paramètres calculés pour les tranches d'imposition à partir des seuils et des taux
+    mutating func initialize() {
+        for idx in model.grid.startIndex ..< model.grid.endIndex {
+            if idx == 0 {
+                model.grid[idx].disc = model.grid[idx].floor * (model.grid[idx].rate - 0)
+            } else {
+                model.grid[idx].disc =
+                    model.grid[idx-1].disc +
+                    model.grid[idx].floor * (model.grid[idx].rate - model.grid[idx-1].rate)
+            }
+        }
+    }
+    
+    func heritageToChild(partSuccession: Double)
+    -> (netAmount : Double,
+        taxe      : Double) {
+        // application du barême
+        if let slice = model.grid.last(where: { $0.floor < partSuccession }) {
+            let taxe = partSuccession * slice.rate - slice.disc
+            let net  = partSuccession - taxe
+            return (netAmount : net,
+                    taxe      : taxe)
+        } else {
+            fatalError()
+        }
+    }
+    
+    func heritageToConjoint(partSuccession: Double)
+    -> (netAmount : Double,
+        taxe      : Double) {
+        // les sommes héritées par le conjoint, par le partenaire pacsé et sous certaines conditions
+        // par les frères et sœurs, sont totalement exonérées de droits de succession.
+        return (netAmount : partSuccession,
+                taxe      : 0.0)
+    }
+    
 }
