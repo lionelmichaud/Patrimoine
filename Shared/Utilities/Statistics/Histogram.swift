@@ -9,14 +9,14 @@
 import Foundation
 import SigmaSwiftStatistics
 
-enum DistributionType {
-    case continuous
-    case discrete
+enum DistributionType: String, Codable {
+    case continuous = "Continue"
+    case discrete   = "Discrète"
 }
 
 // MARK: - Bucket
 
-struct Bucket {
+struct Bucket: Codable {
     
     // MARK: - Properties
     
@@ -121,7 +121,7 @@ extension BucketsArray {
 ///     let cdf = histogram.xCDF
 /// ```
 ///
-struct Histogram {
+struct Histogram: Codable {
     
     // MARK: - Properties
     

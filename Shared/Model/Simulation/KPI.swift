@@ -82,7 +82,7 @@ extension KpiArray {
 ///       objectiveIsReached = kpi.objectiveIsReachedWithLastValue(withMode: .random)
 ///
 ///       // récupère la valeur déterministe du KPI
-///       // ou valeur du KPI statistique atteinte avec la proba objectif
+///       // ou valeur du KPI statistique atteinte avec la proba objectif (withProbability)
 ///       let kpiValue = kpi.value()
 ///
 ///       // valeur du KPI atteinte avec la proba 95%
@@ -92,7 +92,7 @@ extension KpiArray {
 ///       kpi.reset()
 /// ```
 ///
-struct KPI: Identifiable {
+struct KPI: Identifiable, Codable {
     
     // MARK: - Static Properties
     
@@ -101,7 +101,7 @@ struct KPI: Identifiable {
     // MARK: - Properties
     
     var id = UUID()
-    var name: String
+    var name            : String
     // objectif à atteindre
     var objective       : Double
     // probability d'atteindre l'objectif

@@ -191,6 +191,17 @@ struct SocialAccounts {
         return currentKPIs
     }
     
+    /// Sauvegarder les résultats de simulation dans des fchier CSV
+    ///
+    /// - un fichier pour le Cash Flow
+    /// - un fichier pour le Bilan
+    ///
+    /// - Parameter simulationTitle: Titre de la simulation utilisé pour générer les nom de répertoire
+    func save(simulationTitle: String) {
+        balanceArray.storeTableCSV(simulationTitle: simulationTitle)
+        cashFlowArray.storeTableCSV(simulationTitle: simulationTitle)
+    }
+    
     // MARK: - Impression écran
     func printBalanceSheetTable() {
         Swift.print("================================================")

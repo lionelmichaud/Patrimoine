@@ -59,6 +59,11 @@ enum SimulationKPIEnum: Int, PickableEnum, Codable, Hashable {
 
 final class Simulation: ObservableObject {
     
+    //#if DEBUG
+    /// URL du fichier de stockage du résultat de calcul au format CSV
+    static let monteCarloFileUrl = Bundle.main.url(forResource: "Monté-Carlo Kpi.csv", withExtension: nil)
+    //#endif
+
     // MARK: - Properties
     
     @Published var mode           : SimulationModeEnum = .deterministic
@@ -243,12 +248,14 @@ final class Simulation: ObservableObject {
     }
     
     /// Sauvegarder les résultats de simulation dans des fchier CSV
-    ///
-    /// - un fichier pour le Cash Flow
-    /// - un fichier pour le Bilan
-    ///
     func save() {
-        socialAccounts.balanceArray.storeTableCSV(simulationTitle: title)
-        socialAccounts.cashFlowArray.storeTableCSV(simulationTitle: title)
+        /// - un fichier pour le Cash Flow
+        /// - un fichier pour le Bilan
+        socialAccounts.save(simulationTitle: title)
+        
+        /// - un fichier pour le tableau de résultat de Monté-Carlo
+        if !resultTable.isEmpty {
+            resultTable.save(simulationTitle: title)
+        }
     }
 }

@@ -7,10 +7,11 @@
 //
 
 import Foundation
+import Disk
 
 // MARK: - KPI results
 
-struct KpiResult: Hashable {
+struct KpiResult: Hashable, Codable {
     var value              : Double
     var objectiveIsReached : Bool
 }
@@ -32,7 +33,7 @@ extension DictionaryOfKpiResults {
     }
 }
 
-enum KpiSortCriteriaEnum {
+enum KpiSortCriteriaEnum: String, Codable {
     case byRunNumber
     case byKpi1
     case byKpi2
@@ -41,13 +42,13 @@ enum KpiSortCriteriaEnum {
 
 // MARK: - Runs results
 
-enum RunResult {
+enum RunResult: String, Codable {
     case allObjectivesReached
     case someObjectiveMissed
     case someObjectiveUndefined
 }
 
-enum RunFilterEnum {
+enum RunFilterEnum: String, Codable {
     case all
     case someBad
     case somUnknown
@@ -55,7 +56,7 @@ enum RunFilterEnum {
 
 // MARK: - Propriétés aléatoires d'un Adult
 
-struct AdultRandomProperties: Hashable {
+struct AdultRandomProperties: Hashable, Codable {
     var ageOfDeath           : Int
     var nbOfYearOfDependency : Int
 }
@@ -69,6 +70,38 @@ struct SimulationResultLine: Hashable {
     var dicoOfEconomyRandomVariables      : Economy.DictionaryOfRandomVariable
     var dicoOfSocioEconomyRandomVariables : SocioEconomy.DictionaryOfRandomVariable
     var dicoOfKpiResults                  : DictionaryOfKpiResults
+    var valuesCSV: String {
+        let separator = "; "
+        var line = String(runNumber) + separator
+        // propriétés aléatoires des adultes
+        for name in dicoOfAdultsRandomProperties.keys.sorted() {
+            line += String(dicoOfAdultsRandomProperties[name]!.ageOfDeath) + separator
+            line += String(dicoOfAdultsRandomProperties[name]!.nbOfYearOfDependency) + separator
+        }
+        // valeurs aléatoires de conditions économiques
+        for variableEnum in Economy.RandomVariable.allCases {
+            line += (dicoOfEconomyRandomVariables[variableEnum]?.percentString(digit: 1) ?? "") + separator
+        }
+        // valeurs aléatoires de conditions socio-économiques
+        for variableEnum in SocioEconomy.RandomVariable.allCases {
+            switch variableEnum {
+                case .nbTrimTauxPlein:
+                    line += dicoOfSocioEconomyRandomVariables[variableEnum]!.roundedString + separator
+                    
+                default:
+                    line += dicoOfSocioEconomyRandomVariables[variableEnum]!.percentString(digit: 1) + separator
+            }
+        }
+        // valeurs résultantes des KPIs
+        for kpiEnum in SimulationKPIEnum.allCases {
+            if let kpiResult = dicoOfKpiResults[kpiEnum] {
+                line += kpiResult.value.roundedString + separator
+            } else {
+                line += "indéfini" + separator
+            }
+        }
+        return line
+    }
 }
 
 typealias SimulationResultTable = Array<SimulationResultLine>
@@ -126,4 +159,65 @@ extension SimulationResultTable {
         }
     }
     
+    func save(simulationTitle: String) {
+        let separator = "; "
+        let lineBreak = "\n"
+        
+        func header() -> String {
+            var header = "Run" + separator
+            // propriétés aléatoires des adultes
+            for name in self.first!.dicoOfAdultsRandomProperties.keys.sorted() {
+                header += "Durée de Vie " + name + separator
+                header += "Dépendance " + name + separator
+            }
+            // valeurs aléatoires de conditions économiques
+            for variableEnum in Economy.RandomVariable.allCases {
+                header += variableEnum.pickerString + separator
+            }
+            // valeurs aléatoires de conditions socio-économiques
+            for variableEnum in SocioEconomy.RandomVariable.allCases {
+                header += variableEnum.pickerString + separator
+            }
+            // valeurs résultantes des KPIs
+            for variableEnum in SimulationKPIEnum.allCases {
+                header += variableEnum.pickerString + separator
+            }
+            return header
+        }
+        
+        let csvString = self.reduce(header() + lineBreak, { result, element in result + element.valuesCSV + lineBreak} )
+//        print(csvString)
+
+        #if DEBUG
+        // sauvegarder le fichier dans le répertoire Bundle/csv
+        do {
+            try csvString.write(to: SocialAccounts.cashFlowFileUrl!,
+                                atomically: true ,
+                                encoding: .utf8)
+        }
+        catch {
+            print("error creating file: \(error)")
+        }
+        #endif
+        
+        // sauvegarder le fichier dans le répertoire documents/csv
+        let fileName = "Monté-Carlo Kpi.csv"
+        do {
+            try Disk.save(Data(csvString.utf8),
+                          to: .documents,
+                          as: AppSettings.csvPath(simulationTitle) + fileName)
+            #if DEBUG
+            Swift.print("saving 'Monté-Carlo Kpi.csv' to file: ", AppSettings.csvPath(simulationTitle) + fileName)
+            #endif
+        }
+        catch let error as NSError {
+            fatalError("""
+                Domain         : \(error.domain)
+                Code           : \(error.code)
+                Description    : \(error.localizedDescription)
+                Failure Reason : \(error.localizedFailureReason ?? "")
+                Suggestions    : \(error.localizedRecoverySuggestion ?? "")
+                """)
+        }
+    }
 }

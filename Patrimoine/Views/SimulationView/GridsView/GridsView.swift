@@ -13,15 +13,13 @@ struct GridsView: View {
     @EnvironmentObject var uiState    : UIState
     
     var body: some View {
-        if simulation.isComputed {
-            Section(header: Text("Tableaux").font(.headline)) {
-                NavigationLink(destination : ShortGridView(),
-                               tag         : .shortGridView,
-                               selection   : $uiState.simulationViewState.selectedItem) {
-                    Text("Synthèse")
-                }
-                .isDetailLink(true)
+        if simulation.mode == .random && simulation.isComputed {
+            NavigationLink(destination : ShortGridView(),
+                           tag         : .shortGridView,
+                           selection   : $uiState.simulationViewState.selectedItem) {
+                Text("Tableau détaillé des runs")
             }
+            .isDetailLink(true)
         } else {
             EmptyView()
         }

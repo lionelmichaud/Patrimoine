@@ -27,7 +27,7 @@ struct ScenarioView: View {
             }
             .defaultSideBarListStyle()
             .environment(\.horizontalSizeClass, .regular)
-            .navigationTitle("Scénario")
+            .navigationTitle("Scénarios")
             
             /// vue par défaut
             ScenarioSummaryView()

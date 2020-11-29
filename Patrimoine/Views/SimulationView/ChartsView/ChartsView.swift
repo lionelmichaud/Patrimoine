@@ -35,7 +35,7 @@ struct ChartsView: View {
                                     .isDetailLink(true)
                                 },
                                 label: {
-                                    Text("Bilan").font(.headline)
+                                    Text("Bilan")//.font(.headline)
                                 })
             }
             
@@ -57,7 +57,7 @@ struct ChartsView: View {
                                     .isDetailLink(true)
                                 },
                                 label: {
-                                    Text("Cash Flow").font(.headline)
+                                    Text("Cash Flow")//.font(.headline)
                                 })
             }
             
@@ -79,7 +79,7 @@ struct ChartsView: View {
                                     .isDetailLink(true)
                                 },
                                 label: {
-                                    Text("Fiscalité").font(.headline)
+                                    Text("Fiscalité")//.font(.headline)
                                 })
             }
         } else {

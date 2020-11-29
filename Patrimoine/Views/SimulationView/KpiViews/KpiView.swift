@@ -27,36 +27,28 @@ struct KpiView: View {
                 // synthèse des KPIs
                 DisclosureGroup(isExpanded: $isKpiExpanded,
                                 content: {
-                NavigationLink(destination : KpiListSummaryView(),
-                               tag         : .kpiSummaryView,
-                               selection   : $uiState.simulationViewState.selectedItem) {
-                    HStack {
-                        if let allObjectivesAreReached = simulation.kpis.allObjectivesAreReached(withMode: simulation.mode) {
-                            Image(systemName: allObjectivesAreReached ? "checkmark.circle.fill" : "multiply.circle.fill")
-                                .imageScale(.medium)
-                                .foregroundColor(allObjectivesAreReached ? .green : .red)
-                        }
-                        Text("Synthèse des KPIs")
-                    }
-                }
-                .isDetailLink(true)
-                
-                // Liste des KPIs
-                KpiListView()
-                
-                // Résultats tabulés des runs de MontéCarlo
-                if simulation.mode == .random {
-                    NavigationLink(destination : ShortGridView(),
-                                   tag         : .shortGridView,
-                                   selection   : $uiState.simulationViewState.selectedItem) {
-                        Text("Tableau détaillé des runs")
-                    }
-                    .isDetailLink(true)
-                }
-
+                                    NavigationLink(destination : KpiListSummaryView(),
+                                                   tag         : .kpiSummaryView,
+                                                   selection   : $uiState.simulationViewState.selectedItem) {
+                                        HStack {
+                                            if let allObjectivesAreReached = simulation.kpis.allObjectivesAreReached(withMode: simulation.mode) {
+                                                Image(systemName: allObjectivesAreReached ? "checkmark.circle.fill" : "multiply.circle.fill")
+                                                    .imageScale(.medium)
+                                                    .foregroundColor(allObjectivesAreReached ? .green : .red)
+                                            }
+                                            Text("Synthèse des KPIs")
+                                        }
+                                    }
+                                    .isDetailLink(true)
+                                    
+                                    // Liste des KPIs
+                                    KpiListView()
+                                    
+                                    // Résultats tabulés des runs de MontéCarlo
+                                    GridsView()
                                 },
                                 label: {
-                                    Text("KPI").font(.headline)
+                                    Text("KPI")//.font(.headline)
                                 })
             }
         }
