@@ -89,7 +89,7 @@ struct RealEstateDetailedView: View {
                     }
                     AmountEditView(label: "Prix d'acquisition",
                                    amount: $localItem.buyingPrice)
-                }.padding(.leading)
+                }//.padding(.leading)
             }
             
             /// taxe

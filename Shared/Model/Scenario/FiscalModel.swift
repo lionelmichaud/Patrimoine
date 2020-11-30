@@ -777,6 +777,7 @@ struct CompanyProfitTaxes: Codable {
 
 // MARK: - Démembrement de propriété
 ///  - Note: [Reference](https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000006310173/)
+
 struct DemembrementModel: Codable {
     // nested types
     
@@ -800,12 +801,12 @@ struct DemembrementModel: Codable {
     
     func demembrement(of assetValue  : Double,
                       usufruitierAge : Int)
-    -> (usuFruit : Double,
-        nueProp  : Double) {
+    -> (usufructValue : Double,
+        bareValue     : Double) {
         
         if let slice = model.grid.last(where: { $0.floor < usufruitierAge }) {
-            return (usuFruit : assetValue * slice.usuFruit,
-                    nueProp  : assetValue * slice.nueProp)
+            return (usufructValue : assetValue * slice.usuFruit,
+                    bareValue     : assetValue * slice.nueProp)
         } else {
             fatalError()
         }
