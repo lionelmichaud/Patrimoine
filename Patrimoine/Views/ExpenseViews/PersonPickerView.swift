@@ -18,37 +18,38 @@ struct PersonPickerView: View {
             // événement pour adulte seulement
             return Picker(selection: $name, label: Text("Personne")) {
                 ForEach(family.members.filter {$0 is Adult}) { person in
-                    Row(member: person)
+                    PersonNameRow(member: person)
                 }
             }
         } else if event.isChildEvent {
             // événement pour enfant seulement
             return Picker(selection: $name, label: Text("Personne")) {
                 ForEach(family.members.filter {$0 is Child}) { person in
-                    Row(member: person)
+                    PersonNameRow(member: person)
                 }
             }
         } else {
             // événement pour les deux
             return Picker(selection: $name, label: Text("Personne")) {
                 ForEach(family.members) { person in
-                    Row(member: person)
+                    PersonNameRow(member: person)
                 }
             }
         }
     }
 }
 
-fileprivate struct Row : View {
+struct PersonNameRow : View {
     var member: Person
     
     var body: some View {
-        HStack {
-            Image(systemName: "person.fill")
-                .padding(.trailing)
-                .foregroundColor(Color.blue)
-            Text(member.displayName)
-        }
+//        HStack {
+//            Image(systemName: "person.fill")
+//                .padding(.trailing)
+//                .foregroundColor(Color.blue)
+//            Text(member.displayName)
+//        }
+        Label(member.displayName, systemImage: "person.fill")
         .tag(member.displayName)
     }
 }

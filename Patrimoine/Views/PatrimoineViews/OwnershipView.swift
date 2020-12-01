@@ -55,8 +55,11 @@ struct ExampleView: View {
 
 
 struct OwnerGroupBox: View {
-    let title: String
-    let owner: Owner
+    private let title        : String
+    let updateSharedValues : () -> () // methode permettant de mettre à jour les valeurs
+    private let index        : Int
+    @Binding var owners      : Owners
+    @State private var owner : Owner
     
     var body: some View {
         GroupBox(label: Text(title)) {
@@ -66,13 +69,28 @@ struct OwnerGroupBox: View {
                     Spacer()
                     Text(String(owner.age) + " ans")
                 }.padding(.top, 8)
+                
                 HStack {
-                    Text("Fraction détenue: ") + Text((owner.fraction * 100.0).percentString() + " %").bold()
-                    Menu("Modifier") {
-                        /*@START_MENU_TOKEN@*/Text("Menu Item 1")/*@END_MENU_TOKEN@*/
-                        /*@START_MENU_TOKEN@*/Text("Menu Item 2")/*@END_MENU_TOKEN@*/
-                        /*@START_MENU_TOKEN@*/Text("Menu Item 3")/*@END_MENU_TOKEN@*/
-                    }
+                    Stepper(value: $owner.fraction,
+                            in: 0.0...100.0,
+                            step: 5.0,
+                            onEditingChanged:
+                                { started in
+                                    if !started {
+                                        // mettre à jour la liste contenant le owner pour forcer l'update de la View
+                                        owners[index].fraction = owner.fraction
+                                        // mettre à jour les valeurs en conséquence
+                                        updateSharedValues()
+                                    }
+                                },
+                            label:
+                                {
+                                    Text("Fraction détenue: ") +
+                                        Text((owner.fraction).percentString() + " %")
+                                        .bold()
+                                        .foregroundColor(percentagesOk() ? .blue : .red)
+                                })
+                        .frame(width: 300, alignment: .leading)
                     Spacer()
                     Text("Valeur détenue: ") + Text(owner.ownedValue.€String).bold()
                 }
@@ -81,26 +99,44 @@ struct OwnerGroupBox: View {
         }
         .groupBoxStyle(DefaultGroupBoxStyle())
     }
+    
+    internal init(title              : String,
+                  owner              : Owner,
+                  owners             : Binding<Owners>,
+                  updateSharedValues : @escaping () -> ()) {
+        self.title   = title
+        self._owner  = State(initialValue : owner)
+        self._owners = owners
+        self.index   = owners.wrappedValue.firstIndex(of: owner)!
+        self.updateSharedValues = updateSharedValues
+    }
+    
+    func percentagesOk() -> Bool {
+        owners.sumOfOwnedFractions == 100.0
+    }
+    
 }
 
 struct OwnersListView : View {
-    let title              : String
-    let updateSharedValues : () -> ()
-    @Binding var owners    : Owners
-    @State private var showingSheet = false
-    @Environment(\.presentationMode) var presentationMode
+    @EnvironmentObject var family: Family
+    let title                    : String
+    let updateSharedValues       : () -> () // methode permettant de mettre à jour les valeurs
+    @Binding var owners          : Owners
     @State private var alertItem : AlertItem?
+    @State private var name      : String = ""
 
     var body: some View {
         List {
+            Text(family.members.first!.displayName)
             ForEach(owners, id: \.self) { owner in
-                OwnerGroupBox(title: title,
-                              owner: owner)
+                OwnerGroupBox(title  : title,
+                              owner  : owner,
+                              owners : $owners,
+                              updateSharedValues: updateSharedValues)
             }
-            .onDelete(perform: deleteMember)
-            .onMove(perform: moveMembers)
+            .onDelete(perform: deleteOwner)
+            .onMove(perform: moveOwners)
             AmountView(label: "Total " + title + "s", amount: owners.sumOfOwnedValues)
-            
         }
         .navigationTitle(title+"s")
         .navigationBarTitleDisplayMode(.inline)
@@ -109,25 +145,26 @@ struct OwnersListView : View {
                 EditButton()
             }
             ToolbarItem(placement: .automatic) {
-                Button(
-                    action: {
-                        withAnimation {
-                            self.showingSheet = true
-                        }
-                    },
-                    label: {
-                        Image(systemName: "plus").padding()
-                    })
+                Menu(content: menuContents, label: menuLabel)
             }
         }
-        // Vue modale de saisie d'un nouveau membre de la famille
-        .sheet(isPresented: $showingSheet) {
-            EmptyView()
-        }
+        .onChange(of: name, perform: addOwner)
         .alert(item: $alertItem, content: myAlert)
     }
     
-    func deleteMember(at offsets: IndexSet) {
+    func addOwner(newPersonName: String) {
+        let newPerson    = family.member(withName: newPersonName)
+        let newPersonAge = newPerson?.age(atEndOf: Date.now.year)
+        let newOwner     = Owner(name: newPersonName, age: newPersonAge!, fraction: 0.0, ownedValue: 0.0)
+        // ajouter le nouveau copropriétaire
+        owners.append(newOwner)
+        // et recalculculer les valeurs de chaque personne en conséquence
+//        owners.updateOwnersFraction(updateSharedValues: {
+//            updateSharedValues()
+//        } )
+    }
+    
+    func deleteOwner(at offsets: IndexSet) {
         // Empêcher de supprimer la dernière personne
         guard owners.count > 1 else {
             self.alertItem = AlertItem(title         : Text("Il doit y a voir au moins un " + title),
@@ -136,27 +173,45 @@ struct OwnersListView : View {
         }
         // retirer la personne de la liste
         owners.remove(atOffsets: offsets)
-        // TODO: - Réattribuer les % de la personne supprimée aux personnes restantes
-        owners.updateOwnersFraction(updateSharedValues: { updateSharedValues() } )
-        // TODO: - recalculculer les valeurs de chaque personne en conséquence
+        // Réattribuer les % de la personne supprimée aux personnes restantes
+        // et recalculculer les valeurs de chaque personne en conséquence
+//        owners.updateOwnersFraction(updateSharedValues: {
+//            updateSharedValues()
+//        } )
         
         // TODO: - Demander à l'utilisateur de mettre à jour les % manuellement
-        
-        self.presentationMode.wrappedValue.dismiss()
     }
     
-    func moveMembers(from indexes: IndexSet, to destination: Int) {
+    func moveOwners(from indexes: IndexSet, to destination: Int) {
         owners.move(fromOffsets: indexes, toOffset: destination)
     }
     
+    func isAnOwner(_ name: String) -> Bool {
+        owners.contains(where: { $0.name == name })
+    }
+    
+    @ViewBuilder func menuLabel() -> some View {
+        Image(systemName: "plus")
+            .imageScale(.large)
+            .padding()
+    }
+    
+    @ViewBuilder func menuContents() -> some View {
+        Picker(selection: $name, label: Text("Personne")) {
+            ForEach(family.members.filter { !isAnOwner($0.displayName) }) { person in
+                PersonNameRow(member: person)
+            }
+        }
+    }
 }
 
 struct OwnershipView: View {
+    @EnvironmentObject var family: Family
     @Binding var ownership: Ownership
     let usufruitierStr  = "Usufruitier"
     let proprietaireStr = "Propriétaire"
     let nuPropStr       = "Nu-Propriétaire"
-
+    
     var body: some View {
         Section(header: Text("PROPRIETE")) {
             Toggle("Démembrement de propriété", isOn: $ownership.isDismembered)
@@ -165,14 +220,14 @@ struct OwnershipView: View {
                 Group {
                     NavigationLink(destination: OwnersListView(title              : usufruitierStr,
                                                                updateSharedValues : { ownership.updateSharedValues() },
-                                                               owners             : $ownership.usufructOwners)) {
+                                                               owners             : $ownership.usufructOwners).environmentObject(family)) {
                         AmountView(label  : usufruitierStr+"s",
                                    amount : ownership.usufructOwners.sumOfOwnedValues)
                             .foregroundColor(.blue)
                     }
                     NavigationLink(destination: OwnersListView(title              : nuPropStr,
                                                                updateSharedValues : { ownership.updateSharedValues() },
-                                                               owners             : $ownership.bareOwners)) {
+                                                               owners             : $ownership.bareOwners).environmentObject(family)) {
                         AmountView(label  : nuPropStr+"s",
                                    amount : ownership.bareOwners.sumOfOwnedValues)
                             .foregroundColor(.blue)
@@ -182,41 +237,52 @@ struct OwnershipView: View {
             } else {
                 /// pleine propriété
                 NavigationLink(destination: OwnersListView(title              : proprietaireStr,
-                                                           updateSharedValues : { ownership.updateSharedValues() },
-                                                           owners             : $ownership.fullOwners)) {
+                                                           updateSharedValues : {
+                                                            ownership.updateSharedValues()
+                                                           },
+                                                           owners             : $ownership.fullOwners).environmentObject(family)) {
                     AmountView(label  : proprietaireStr+"s",
                                amount : ownership.fullOwners.sumOfOwnedValues)
                         .foregroundColor(.blue)
                 }.padding(.leading)
             }
         }
+        .onAppear(perform: { ownership.updateSharedValues() })
     }
 }
 
 struct OwnershipView_Previews: PreviewProvider {
+    static var family  = Family()
+
     struct Container: View {
-        @State var ownership = Ownership()
+        @State var ownership: Ownership
+        @StateObject var family = Family()
+
         var body: some View {
-            OwnershipView(ownership: $ownership)
-                .onAppear(perform: { ownership.updateTotalValue(with: 100.0) })
+            VStack {
+                Button("incrémenter Valeur", action: { ownership.totalValue += 100.0})
+                Form {
+                    OwnershipView(ownership: $ownership)
+                        .environmentObject(family)
+                }
+            }
         }
     }
     
     static var previews: some View {
         Group {
-            ExampleView()
+            //ExampleView()
             NavigationView() {
                 Form {
                     OwnershipView(ownership: .constant(Ownership()))
+                        .environmentObject(family)
                 }
             }
             .previewDevice("iPhone Xs")
-            NavigationView() {
-                Form {
-                    Container(ownership: Ownership())
-                }
-            }
             
+            NavigationView() {
+                Container(ownership: Ownership(totalValue: 100.0))
+            }
         }
     }
 }
