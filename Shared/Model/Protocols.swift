@@ -16,6 +16,10 @@ protocol NameableValuable {
     func print()
 }
 
+protocol Ownable {
+    var ownership: Ownership { get set }
+}
+
 extension Array where Element: NameableValuable {
     /// Somme de toutes les valeurs d'un Array
     ///

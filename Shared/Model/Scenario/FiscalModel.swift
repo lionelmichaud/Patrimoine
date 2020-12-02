@@ -799,6 +799,11 @@ struct DemembrementModel: Codable {
     
     // methods
     
+    /// Calcule les valeurs démembrées d'un bien en fonction de l'age de l'usufruitier
+    /// - Parameters:
+    ///   - assetValue: valeur du bien en pleine propriété
+    ///   - usufruitierAge: age de l'usufruitier
+    /// - Returns: velurs de l'usufruit et de la nue-propriété
     func demembrement(of assetValue  : Double,
                       usufruitierAge : Int)
     -> (usufructValue : Double,
