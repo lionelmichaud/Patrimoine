@@ -33,9 +33,9 @@ struct OwnerGroupBox: View {
                                 Text("Fraction détenue: ") +
                                     Text((owner.fraction).percentString() + " %")
                                     .bold()
-                                    .foregroundColor(percentagesOk() ? .blue : .red)
+                                    .foregroundColor(owners.percentageOk ? .blue : .red)
                             })
-                    .frame(width: 300)
+                    .frame(maxWidth: 300)
             }
             .padding(.leading)
         }
@@ -49,10 +49,6 @@ struct OwnerGroupBox: View {
         self._owner  = State(initialValue : owner)
         self._owners = owners
         self.index   = owners.wrappedValue.firstIndex(of: owner)!
-    }
-    
-    func percentagesOk() -> Bool {
-        owners.sumOfOwnedFractions == 100.0
     }
 }
 
@@ -95,7 +91,7 @@ struct OwnersListView : View {
     }
     
     func checkPercentageOfOwnership() {
-        if !owners.isEmpty && owners.sumOfOwnedFractions == 100.0 {
+        if !owners.isEmpty && !(owners.sumOfOwnedFractions == 100.0) {
             self.alertItem = AlertItem(title         : Text("Vérifier la part en % de chaque " + title),
                                        dismissButton : .default(Text("OK")))
         }
@@ -116,10 +112,14 @@ struct OwnersListView : View {
         }
         // retirer la personne de la liste
         owners.remove(atOffsets: offsets)
-
-        // demander à l'utilisateur de mettre à jour les % manuellement
-        self.alertItem = AlertItem(title         : Text("Vérifier la part en % de chaque " + title),
-                                   dismissButton : .default(Text("OK")))
+        
+        if owners.count == 1 {
+            owners[0].fraction = 100.0
+        } else {
+            // demander à l'utilisateur de mettre à jour les % manuellement
+            self.alertItem = AlertItem(title         : Text("Vérifier la part en % de chaque " + title),
+                                       dismissButton : .default(Text("OK")))
+        }
     }
     
     func moveOwners(from indexes: IndexSet, to destination: Int) {
@@ -160,21 +160,15 @@ struct OwnershipView: View {
                 Group {
                     NavigationLink(destination: OwnersListView(title  : usufruitierStr,
                                                                owners : $ownership.usufructOwners).environmentObject(family)) {
-//                        Text(usufruitierStr+"s")
-//                            .foregroundColor(.blue)
                         PercentView(label  : usufruitierStr+"s",
                                     percent : ownership.demembrementPercentage(atEndOf: Date.now.year).usufructPercent / 100.0)
                             .foregroundColor(.blue)
                     }
                     NavigationLink(destination: OwnersListView(title  : nuPropStr,
                                                                owners : $ownership.bareOwners).environmentObject(family)) {
-//                        Text(nuPropStr+"s")
                         PercentView(label  : nuPropStr+"s",
                                     percent : ownership.demembrementPercentage(atEndOf: Date.now.year).bareValuePercent / 100.0)
                             .foregroundColor(.blue)
-//                        AmountView(label  : nuPropStr+"s",
-//                                   amount : ownership.bareOwners.sumOfOwnedValues)
-//                            .foregroundColor(.blue)
                     }
                 }.padding(.leading)
                 
@@ -201,8 +195,6 @@ struct OwnershipView_Previews: PreviewProvider {
     struct Container: View {
         @State var ownership  : Ownership
         @State var totalValue : Double = 100.0
-        //@StateObject var family = Family()
-        
 
         var body: some View {
             VStack {
@@ -210,6 +202,12 @@ struct OwnershipView_Previews: PreviewProvider {
                 Form {
                     OwnershipView(ownership: $ownership)
                         .environmentObject(family)
+                    ForEach(OwnershipView_Previews.family.members) { member in
+                        AmountView(label: member.displayName,
+                                   amount: ownership.ownedValue(by: member.displayName,
+                                                                ofValue: 100.0,
+                                                                atEndOf: Date.now.year) )
+                    }
                 }
             }
         }
@@ -228,6 +226,7 @@ struct OwnershipView_Previews: PreviewProvider {
             NavigationView() {
                 Container(ownership: Ownership(ageOf: ageOf))
             }
+            .preferredColorScheme(.dark)
         }
     }
 }

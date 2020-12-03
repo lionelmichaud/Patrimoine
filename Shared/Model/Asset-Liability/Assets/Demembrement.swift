@@ -37,6 +37,9 @@ extension Owners {
     var sumOfOwnedFractions: Double {
         self.sum(for: \.fraction)
     }
+    var percentageOk: Bool {
+        sumOfOwnedFractions.isApproximatelyEqual(to: 100.0, absoluteTolerance: 0.0001)
+    }
     var isvalid: Bool {
         guard !self.isEmpty else {
             return true
@@ -46,10 +49,10 @@ extension Owners {
             result && owner.isValid
         }
         // somes des parts = 100%
-        validity = validity && sumOfOwnedFractions.isApproximatelyEqual(to: 100.0, absoluteTolerance: 0.0001)
+        validity = validity && percentageOk
         return validity
     }
-    
+
     // MARK: - Methods
     
 }
@@ -69,7 +72,7 @@ struct Ownership: Codable {
         didSet {
             if isDismembered {
                 usufructOwners = fullOwners
-                bareOwners = [ ]
+                bareOwners     = fullOwners
             } else {
                 fullOwners = usufructOwners
             }
@@ -156,6 +159,7 @@ struct Ownership: Codable {
             // démembrement
             var usufructValue : Double = 0.0
             var bareValue     : Double = 0.0
+            var value         : Double = 0.0
             // calculer les valeurs des usufruit et nue prop
             usufructOwners.forEach { usufruitier in
                 // prorata détenu par l'usufruitier
@@ -172,21 +176,19 @@ struct Ownership: Codable {
             
             if let owner = bareOwners.first(where: { $0.name == ownerName }) {
                 // on a trouvé un nue-propriétaire
-                return owner.ownedValue(from: bareValue)
-                
-            } else if let owner = usufructOwners.first(where: { $0.name == ownerName }) {
+                value += owner.ownedValue(from: bareValue)
+            }
+            if let owner = usufructOwners.first(where: { $0.name == ownerName }) {
                 // on a trouvé un usufruitier
                 // prorata détenu par l'usufruitier
                 let ownedValue = totalValue * owner.fraction / 100.0
                 // valeur de son usufuit
                 let usufruiterAge = ageOf!(owner.name, year)
                 
-                return Fiscal.model.demembrement.demembrement(of             : ownedValue,
-                                                              usufruitierAge : usufruiterAge).usufructValue
-                
-            } else {
-                return 0.0
+                value += Fiscal.model.demembrement.demembrement(of             : ownedValue,
+                                                                     usufruitierAge : usufruiterAge).usufructValue
             }
+            return value
             
         } else {
             // pleine propriété
