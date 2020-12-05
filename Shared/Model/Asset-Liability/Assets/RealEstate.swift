@@ -11,14 +11,11 @@ import Foundation
 typealias RealEstateArray = ItemArray<RealEstateAsset>
 
 // MARK: - Actif immobilier physique
-struct RealEstateAsset: Identifiable, Codable, NameableValuable {
+struct RealEstateAsset: Identifiable, Codable, Equatable, NameableValuable, Ownable {
     
     // MARK: - Static Properties
     
     static var simulationMode : SimulationModeEnum = .deterministic
-    
-    static let empty: RealEstateAsset = RealEstateAsset(name: "",
-                                                        note: "")
     
     // MARK: - Static Methods
     
@@ -31,9 +28,11 @@ struct RealEstateAsset: Identifiable, Codable, NameableValuable {
     
     var id                   = UUID()
     var name                 : String
-    var note                 : String
+    var note                 : String = ""
     // propriétaires
-    //    var ownership            : Ownership = Ownership()
+    // attention: par défaut la méthode delegate pour ageOf = nil
+    // c'est au créateur de l'objet (View ou autre objet du Model) de le faire
+    var ownership            : Ownership = Ownership()
     // achat
     var buyingYear           : DateBoundary = DateBoundary.empty // première année de possession (inclue)
     var buyingPrice          : Double = 0.0
@@ -91,40 +90,6 @@ struct RealEstateAsset: Identifiable, Codable, NameableValuable {
             return 0.0
         }
     }
-    
-    /// Définir la période d'habitation
-    /// - Parameter fromDateComp: date de début de la période d'habitation
-    /// - Parameter toDateComp: date de fin de la période d'habitation
-    /// - Parameter yearlyLocalTaxes: impôts locaux annuels
-    //    mutating func setInhabitationPeriod(fromYear : Int,
-    //                                        toYear   : Int) {
-    //        self.willBeInhabited   = true
-    //        self.inhabitedFromYear = fromYear
-    //        self.inhabitedToYear   = toYear
-    //    }
-    
-    /// Définir la période de location
-    /// - Parameter fromDateComp: date de début de la période de location
-    /// - Parameter toDateComp: date de fin de la période de location
-    /// - Parameter monthlyRentAfterCharges: loyer mensuel charges déduites
-    //    mutating func setRentalPeriod(fromYear                : Int,
-    //                                  toYear                  : Int,
-    //                                  monthlyRentAfterCharges : Double) {
-    //        self.willBeRented            = true
-    //        self.rentalFrom          = fromYear
-    //        self.rentalTo            = toYear
-    //        self.monthlyRentAfterCharges = monthlyRentAfterCharges
-    //    }
-    
-    /// Définir les conditions de vente
-    /// - Parameter sellingYearComp: date de la vente
-    /// - Parameter sellingNetPrice: produit net de la vente
-    //    mutating func setSale(sellingYear     : Int,
-    //                          sellingNetPrice : Double) {
-    //        self.willBeSold      = true
-    //        self.sellingYear     = sellingYear
-    //        self.sellingNetPrice = sellingNetPrice
-    //    }
     
     /// true si year est dans la période d'habitation
     /// - Parameter year: année

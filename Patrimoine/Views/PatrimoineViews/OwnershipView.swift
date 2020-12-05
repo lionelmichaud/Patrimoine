@@ -160,15 +160,31 @@ struct OwnershipView: View {
                 Group {
                     NavigationLink(destination: OwnersListView(title  : usufruitierStr,
                                                                owners : $ownership.usufructOwners).environmentObject(family)) {
-                        PercentView(label  : usufruitierStr+"s",
-                                    percent : ownership.demembrementPercentage(atEndOf: Date.now.year).usufructPercent / 100.0)
-                            .foregroundColor(.blue)
+                        if ownership.isvalid {
+                            PercentView(label  : usufruitierStr+"s",
+                                        percent : ownership.demembrementPercentage(atEndOf: Date.now.year).usufructPercent / 100.0)
+                                .foregroundColor(.blue)
+                        } else {
+                            if !ownership.usufructOwners.isEmpty && ownership.usufructOwners.isvalid {
+                                Text(usufruitierStr+"s").foregroundColor(.blue)
+                            } else {
+                                Text(usufruitierStr+"s").foregroundColor(.red)
+                            }
+                        }
                     }
                     NavigationLink(destination: OwnersListView(title  : nuPropStr,
                                                                owners : $ownership.bareOwners).environmentObject(family)) {
-                        PercentView(label  : nuPropStr+"s",
-                                    percent : ownership.demembrementPercentage(atEndOf: Date.now.year).bareValuePercent / 100.0)
-                            .foregroundColor(.blue)
+                        if ownership.isvalid {
+                            PercentView(label  : nuPropStr+"s",
+                                        percent : ownership.demembrementPercentage(atEndOf: Date.now.year).bareValuePercent / 100.0)
+                                .foregroundColor(.blue)
+                        } else {
+                            if !ownership.bareOwners.isEmpty && ownership.bareOwners.isvalid  {
+                                Text(nuPropStr+"s").foregroundColor(.blue)
+                            } else {
+                                Text(nuPropStr+"s").foregroundColor(.red)
+                            }
+                        }
                     }
                 }.padding(.leading)
                 
@@ -177,7 +193,7 @@ struct OwnershipView: View {
                 NavigationLink(destination: OwnersListView(title  : proprietaireStr,
                                                            owners : $ownership.fullOwners).environmentObject(family)) {
                     Text(proprietaireStr+"s")
-                        .foregroundColor(.blue)
+                        .foregroundColor(ownership.isvalid ? .blue : .red)
                 }.padding(.leading)
             }
         }

@@ -65,6 +65,8 @@ final class Family: ObservableObject, CustomStringConvertible {
         LifeExpense.family = self
         // injection de family dans la propriété statique de Person pour lier les évenements à des personnes
         Person.family = self
+        // injection de family dans la propriété statique de Person pour lier les évenements à des personnes
+        Patrimoin.family = self
     }
     
     // MARK: - Methodes
@@ -168,6 +170,11 @@ final class Family: ObservableObject, CustomStringConvertible {
     /// - Returns: membre de la famille trouvé ou nil
     func member(withName name: String) -> Person? {
         self.members.first(where: { $0.displayName == name })
+    }
+    
+    func ageOf(_ name: String, _ year: Int) -> Int {
+        let person = member(withName: name)
+        return person?.age(atEndOf: Date.now.year) ?? -1
     }
     
     /// Ajouter un membre à la famille

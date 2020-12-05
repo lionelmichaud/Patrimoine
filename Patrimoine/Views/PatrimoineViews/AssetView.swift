@@ -60,6 +60,7 @@ struct AssetView: View {
     }
 }
 struct RealEstateView: View {
+    @EnvironmentObject var family     : Family
     @EnvironmentObject var simulation : Simulation
     @EnvironmentObject var patrimoine : Patrimoin
     @EnvironmentObject var uiState    : UIState
@@ -86,8 +87,9 @@ struct RealEstateView: View {
                                 header      : true)
             if !uiState.patrimoineViewState.assetViewState.colapseEstate {
                 // ajout d'un nouvel item à la liste
-                NavigationLink(destination: RealEstateDetailedView(item: nil,
-                                                                   patrimoine: patrimoine)) {
+                NavigationLink(destination : RealEstateDetailedView(item      : nil,
+                                                                    family     : family,
+                                                                    patrimoine : patrimoine)) {
                     HStack {
                         Image(systemName: "plus.circle.fill")
                             .imageScale(.large)
@@ -98,8 +100,9 @@ struct RealEstateView: View {
                 
                 // liste des items
                 ForEach(patrimoine.assets.realEstates.items) { item in
-                    NavigationLink(destination: RealEstateDetailedView(item: item,
-                                                                       patrimoine: self.patrimoine)) {
+                    NavigationLink(destination: RealEstateDetailedView(item       : item,
+                                                                       family     : family,
+                                                                       patrimoine : patrimoine)) {
                         LabeledValueRowView(colapse     : self.$uiState.patrimoineViewState.assetViewState.colapseEstate,
                                             label       : item.name,
                                             value       : item.value(atEndOf: Date.now.year),

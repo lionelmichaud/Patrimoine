@@ -12,7 +12,7 @@ typealias ScpiArray = ItemArray<SCPI>
 
 // MARK: - SCPI à revenus périodiques, annuels et fixes
 
-struct SCPI: Identifiable, Codable, NameableValuable {
+struct SCPI: Identifiable, Codable, Equatable, NameableValuable {
     
     // MARK: - Static Properties
     
@@ -29,13 +29,13 @@ struct SCPI: Identifiable, Codable, NameableValuable {
     
     var id           = UUID()
     var name         : String
-    var note         : String
+    var note         : String = ""
     // achat
     var buyingDate   : Date
-    var buyingPrice  : Double
+    var buyingPrice  : Double = 0.0
     // rendement
-    var interestRate : Double // %
-    var revaluatRate : Double // %
+    var interestRate : Double = 0.0 // %
+    var revaluatRate : Double = 0.0 // %
     // vente
     var willBeSold   : Bool = false
     var sellingDate  : Date = 100.years.fromNow!

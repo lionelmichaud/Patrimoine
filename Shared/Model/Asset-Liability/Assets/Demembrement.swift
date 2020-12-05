@@ -41,6 +41,7 @@ extension Owners {
         sumOfOwnedFractions.isApproximatelyEqual(to: 100.0, absoluteTolerance: 0.0001)
     }
     var isvalid: Bool {
+        // il la liste est vide alors elle est valide
         guard !self.isEmpty else {
             return true
         }
@@ -81,23 +82,30 @@ struct Ownership: Codable {
     var fullOwners     : Owners = []
     var bareOwners     : Owners = []
     var usufructOwners : Owners = []
+    // fonction qui donne l'age d'une personne à la fin d'une année donnée
+    var ageOf          : ((_ name: String, _ year: Int) -> Int)? = nil
     var isvalid        : Bool {
         if isDismembered {
-            return fullOwners.isvalid
+            return (!bareOwners.isEmpty && bareOwners.isvalid) &&
+                (!usufructOwners.isEmpty && usufructOwners.isvalid)
         } else {
-            return bareOwners.isvalid && usufructOwners.isvalid
+            return !fullOwners.isEmpty && fullOwners.isvalid
         }
     }
-    // fonction qui donne l'age d'une personne à la fin d'une année donnée
-    var ageOf : ((_ name: String, _ year: Int) -> Int)? = nil
-    
+
     // MARK: - Initializers
     
     init(ageOf: @escaping (_ name: String, _ year: Int) -> Int) {
         self.ageOf = ageOf
     }
     
+    init() {    }
+    
     // MARK: - Methods
+    
+    mutating func setDelegateForAgeOf(delegate: ((_ name: String, _ year: Int) -> Int)?) {
+        ageOf = delegate
+    }
     
     /// Calcule les valeurs démembrées d'un bien en fonction de la date d'évaluation
     /// - Parameters:

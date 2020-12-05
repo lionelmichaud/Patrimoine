@@ -11,8 +11,11 @@ import Foundation
 // MARK: - Patrimoine constitué d'un Actif et d'un Passif
 
 final class Patrimoin: ObservableObject {
-    @Published var assets      = Assets()
-    @Published var liabilities = Liabilities()
+    
+    // MARK: - Static properties
+    
+    // doit être injecté depuis l'extérieur avant toute instanciation de la classe
+    static var family: Family?
     
     // MARK: - Static Methods
     
@@ -21,6 +24,11 @@ final class Patrimoin: ObservableObject {
     static func setSimulationMode(to simulationMode : SimulationModeEnum) {
         Assets.setSimulationMode(to: simulationMode)
     }
+    
+    // MARK: - Properties
+    
+    @Published var assets      = Assets(family: Patrimoin.family)
+    @Published var liabilities = Liabilities()
     
     // MARK: - Methods
     

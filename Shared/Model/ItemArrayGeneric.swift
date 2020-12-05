@@ -94,3 +94,22 @@ struct ItemArray<E>: Codable where E: Codable, E: Identifiable, E: NameableValua
         }
     }
 }
+
+extension ItemArray where E: Ownable {
+    // MARK: - Initializers
+    
+    init(fileNamePrefix: String = "",
+         family        : Family?) {
+        self = Bundle.main.decode(ItemArray.self,
+                                  from                 : fileNamePrefix + String(describing: E.self) + ".json",
+                                  dateDecodingStrategy : .iso8601,
+                                  keyDecodingStrategy  : .useDefaultKeys)
+        // injecter le délégué pour la méthode family.ageOf qui par défaut est nil à la création de l'objet
+        for idx in 0..<items.count {
+            if let family = family {
+                items[idx].ownership.setDelegateForAgeOf(delegate: family.ageOf)
+            }
+        }
+    }
+    
+}

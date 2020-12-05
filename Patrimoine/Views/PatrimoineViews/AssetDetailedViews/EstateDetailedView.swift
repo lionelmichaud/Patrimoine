@@ -58,18 +58,18 @@ class RealEstateViewModel: ObservableObject {
 // MARK: - View
 
 struct RealEstateDetailedView: View {
+    @EnvironmentObject var family     : Family
+    @EnvironmentObject var patrimoine : Patrimoin
     @EnvironmentObject var simulation : Simulation
     @EnvironmentObject var uiState    : UIState
 
-    private var originalItem: RealEstateAsset?
     // commun
-    @EnvironmentObject var patrimoine: Patrimoin
-    @Environment(\.presentationMode) var presentationMode
-    @State private var index: Int?
+    private var originalItem          : RealEstateAsset?
+    @State private var localItem      : RealEstateAsset
+    @State private var alertItem      : AlertItem?
+    @State private var index          : Int?
     // à adapter
     @StateObject private var assetVM : RealEstateViewModel
-    @State private var localItem     : RealEstateAsset
-    @State private var alertItem     : AlertItem?
 
     var body: some View {
         Form {
@@ -91,6 +91,9 @@ struct RealEstateDetailedView: View {
                                    amount: $localItem.buyingPrice)
                 }//.padding(.leading)
             }
+            
+            /// propriété
+            OwnershipView(ownership: $localItem.ownership)
             
             /// taxe
             Section(header: Text("TAXES")) {
@@ -170,7 +173,9 @@ struct RealEstateDetailedView: View {
 
     }
     
-    init(item: RealEstateAsset?, patrimoine: Patrimoin) {
+    init(item       : RealEstateAsset?,
+         family     : Family,
+         patrimoine : Patrimoin) {
         self.originalItem = item
         if let initialItemValue = item {
             // modification d'un élément existant
@@ -178,10 +183,15 @@ struct RealEstateDetailedView: View {
             _assetVM   = StateObject(wrappedValue: RealEstateViewModel(from: initialItemValue))
             _index     = State(initialValue: patrimoine.assets.realEstates.items.firstIndex(of: initialItemValue))
             // specific
+//            // définir le délégué pour la méthode ageOf qui par défaut est nil à la création de l'objet
+            localItem.ownership.setDelegateForAgeOf(delegate: family.ageOf)
         } else {
             // création d'un nouvel élément
-            _localItem = State(initialValue: RealEstateAsset.empty)
-            _assetVM   = StateObject(wrappedValue : RealEstateViewModel(from : RealEstateAsset.empty))
+            var newItem = RealEstateAsset(name: "")
+            // définir le délégué pour la méthode ageOf qui par défaut est nil à la création de l'objet
+            newItem.ownership.setDelegateForAgeOf(delegate: family.ageOf)
+            _localItem = State(initialValue: newItem)
+            _assetVM   = StateObject(wrappedValue : RealEstateViewModel(from : newItem))
             index      = nil
         }
     }
@@ -199,7 +209,7 @@ struct RealEstateDetailedView: View {
     // sauvegarder les changements
     func applyChanges() {
         // validation avant sauvegarde
-        self.validate()
+        guard self.isValid() else { return }
 
         // mettre à jour l'item à partir du ViewModel
         assetVM.update(thisAsset: &localItem)
@@ -208,54 +218,55 @@ struct RealEstateDetailedView: View {
             // modifier un éléménet existant
             patrimoine.assets.realEstates.update(with: localItem, at: index)
         } else {
-            // créer un nouvel élément
+            // générer un nouvel identifiant pour le nouvel item
+            localItem.id = UUID()
+            // définir le délégué pour la méthode ageOf qui par défaut est nil à la création de l'objet
+            localItem.ownership.setDelegateForAgeOf(delegate: family.ageOf)
+            // ajouter le nouvel élément à la liste
             patrimoine.assets.realEstates.add(localItem)
         }
         
         // remettre à zéro la simulation et sa vue
         simulation.reset(withPatrimoine: patrimoine)
         uiState.resetSimulation()
-        
-        //patrimoine.assets.realEstates.storeItemsToFile()
-        self.presentationMode.wrappedValue.dismiss()
     }
     
-    func validate() {
-        /// vérifier que toutes les dates sont déféinies
+    func isValid() -> Bool {
+        /// vérifier que toutes les dates sont définies
         guard let _ = assetVM.buyingYearVM.year else {
             self.alertItem = AlertItem(title         : Text("La date d'achat doit être définie"),
                                        dismissButton : .default(Text("OK")))
-            return
+            return false
         }
         if localItem.willBeInhabited {
             guard let _ = assetVM.inhabitedFromVM.year else {
                 self.alertItem = AlertItem(title         : Text("La date de début d'habitation doit être définie"),
                                            dismissButton : .default(Text("OK")))
-                return
+                return false
             }
             guard let _ = assetVM.inhabitedToVM.year else {
                 self.alertItem = AlertItem(title         : Text("La date de fin d'habitation doit être définie"),
                                            dismissButton : .default(Text("OK")))
-                return
+                return false
             }
         }
         if localItem.willBeRented {
             guard let _ = assetVM.rentalFromVM.year else {
                 self.alertItem = AlertItem(title         : Text("La date de début de location doit être définie"),
                                            dismissButton : .default(Text("OK")))
-                return
+                return false
             }
             guard let _ = assetVM.rentalToVM.year else {
                 self.alertItem = AlertItem(title         : Text("La date de fin de location doit être définie"),
                                            dismissButton : .default(Text("OK")))
-                return
+                return false
             }
         }
         if localItem.willBeSold {
             guard let _ = assetVM.sellingYearVM.year else {
                 self.alertItem = AlertItem(title         : Text("La date de vente doit être définie"),
                                            dismissButton : .default(Text("OK")))
-                return
+                return false
             }
         }
         
@@ -264,21 +275,21 @@ struct RealEstateDetailedView: View {
             if assetVM.buyingYearVM.year! > assetVM.sellingYearVM.year! {
                 self.alertItem = AlertItem(title         : Text("La date d'achat doit précéder la date de vente"),
                                            dismissButton : .default(Text("OK")))
-                return
+                return false
             }
         }
         if localItem.willBeInhabited {
             if assetVM.inhabitedFromVM.year! > assetVM.inhabitedToVM.year! {
                 self.alertItem = AlertItem(title         : Text("La date de début doit précéder la date de fin"),
                                            dismissButton : .default(Text("OK")))
-                return
+                return false
             }
         }
         if localItem.willBeRented {
             if assetVM.rentalFromVM.year! > assetVM.rentalToVM.year! {
                 self.alertItem = AlertItem(title         : Text("La date de début doit précéder la date de fin"),
                                            dismissButton : .default(Text("OK")))
-                return
+                return false
             }
         }
         if localItem.willBeRented && localItem.willBeInhabited {
@@ -286,9 +297,25 @@ struct RealEstateDetailedView: View {
                 .hasIntersection(with: assetVM.inhabitedFromVM.year! ... assetVM.inhabitedToVM.year!) {
                 self.alertItem = AlertItem(title         : Text("Les périodes de location et d'habitation ne doivent pas avoir de recouvrement"),
                                            dismissButton : .default(Text("OK")))
-                return
+                return false
             }
         }
+        
+        /// vérifier que le nom n'est pas vide
+        guard localItem.name != "" else {
+            self.alertItem = AlertItem(title         : Text("Donner un nom"),
+                                       dismissButton : .default(Text("OK")))
+            return false
+        }
+        
+        /// vérifier que les propriétaires sont correctements définis
+        guard localItem.ownership.isvalid else {
+            self.alertItem = AlertItem(title         : Text("Les propriétaires ne sont pas correctements définis"),
+                                       dismissButton : .default(Text("OK")))
+            return false
+        }
+        
+        return true
     }
 
     func changeOccured() -> Bool {
@@ -328,12 +355,16 @@ struct FromToEditView: View {
 }
 
 struct RealEstateDetailedView_Previews: PreviewProvider {
-    static var patrimoine  = Patrimoin()
-    
+    static var family     = Family()
+    static var patrimoine = Patrimoin()
+
     static var previews: some View {
         return
             NavigationView() {
-                RealEstateDetailedView(item: patrimoine.assets.realEstates[0], patrimoine: patrimoine)
+                RealEstateDetailedView(item       : patrimoine.assets.realEstates[0],
+                                       family     : family,
+                                       patrimoine : patrimoine)
+                    .environmentObject(family)
                     .environmentObject(patrimoine)
             }
             .previewDisplayName("RealEstateDetailedView")

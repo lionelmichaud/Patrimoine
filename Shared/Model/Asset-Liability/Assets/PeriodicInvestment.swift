@@ -8,18 +8,6 @@
 
 import Foundation
 
-//struct PeriodicInvestementArray: NameableValuableArray {
-//    var items             = [PeriodicInvestement]()
-//    var fileNamePrefix    : String
-//
-//    init(fileNamePrefix: String = "") {
-//        self = Bundle.main.decode(PeriodicInvestementArray.self,
-//                                  from                 : fileNamePrefix + String(describing: Item.self) + ".json",
-//                                  dateDecodingStrategy : .iso8601,
-//                                  keyDecodingStrategy  : .useDefaultKeys)
-//    }
-//
-//}
 typealias PeriodicInvestementArray = ItemArray<PeriodicInvestement>
 
 // MARK: - Placement à versements périodiques, fixes, annuels et à taux fixe

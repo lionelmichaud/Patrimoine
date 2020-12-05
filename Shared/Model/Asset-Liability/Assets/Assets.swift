@@ -13,12 +13,6 @@ import Foundation
 //typealias Assets = DictionaryOfItemArray<AssetsCategory,
 
 struct Assets {
-    var periodicInvests = PeriodicInvestementArray()
-    var freeInvests     = FreeInvestmentArray()
-    var realEstates     = RealEstateArray()
-    var scpis           = ScpiArray() // SCPI hors de la SCI
-    var sci             = SCI()
-
     // MARK: - Static Methods
     
     /// Définir le mode de simulation à utiliser pour tous les calculs futurs
@@ -36,6 +30,24 @@ struct Assets {
     }
     
     // MARK: - Properties
+    
+    var periodicInvests : PeriodicInvestementArray
+    var freeInvests     : FreeInvestmentArray
+    var realEstates     : RealEstateArray
+    var scpis           : ScpiArray // SCPI hors de la SCI
+    var sci             : SCI
+
+    // MARK: - Initializers
+    
+    internal init(family: Family?) {
+        self.periodicInvests = PeriodicInvestementArray()
+        self.freeInvests     = FreeInvestmentArray()
+        self.realEstates     = RealEstateArray(family: family)
+        self.scpis           = ScpiArray() // SCPI hors dscpis
+        self.sci             = SCI()
+    }
+    
+    // MARK: - Methods
     
     func value(atEndOf year: Int) -> Double {
         var sum = realEstates.value(atEndOf: year)

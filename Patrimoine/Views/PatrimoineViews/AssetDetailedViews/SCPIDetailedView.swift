@@ -9,25 +9,20 @@
 import SwiftUI
 
 struct SCPIDetailedView: View {
+    @EnvironmentObject var family     : Family
     @EnvironmentObject var patrimoine : Patrimoin
     @EnvironmentObject var simulation : Simulation
     @EnvironmentObject var uiState    : UIState
     
-    private var originalItem: SCPI?
-    var updateItem: (_ item: SCPI, _ index: Int) -> ()
-    var addItem: (_ item: SCPI) -> ()
     // commun
-    @EnvironmentObject var family: Family
-    @Environment(\.presentationMode) var presentationMode
-    @State private var index: Int?
+    private var originalItem      : SCPI?
+    @State private var localItem  : SCPI
+    @State private var alertItem  : AlertItem?
+    @State private var index      : Int?
     // à adapter
-    @State private var localItem = SCPI(name         : "",
-                                        note         : "",
-                                        buyingDate   : Date.now,
-                                        buyingPrice  : 0,
-                                        interestRate : 0,
-                                        revaluatRate : 0)
-    
+    var updateItem : (_ item: SCPI, _ index: Int) -> ()
+    var addItem    : (_ item: SCPI) -> ()
+
     var body: some View {
         Form {
             LabeledTextField(label: "Nom", defaultText: "obligatoire", text: $localItem.name)
@@ -93,6 +88,7 @@ struct SCPIDetailedView: View {
                 .capsuleButtonStyle()
                 .disabled(!changeOccured())
         )
+        .alert(item: $alertItem, content: myAlert)
     }
     
     init(item       : SCPI?,
@@ -111,6 +107,8 @@ struct SCPIDetailedView: View {
             // specific
         } else {
             // création d'un nouvel élément
+            let newItem = SCPI(name: "", buyingDate: Date.now)
+            _localItem = State(initialValue: newItem)
             index = nil
         }
     }
@@ -127,21 +125,42 @@ struct SCPIDetailedView: View {
     
     // sauvegarder les changements
     func applyChanges() {
+        // validation avant sauvegarde
+        guard self.isValid() else { return }
+        
         if let index = index {
             // modifier un éléménet existant
             updateItem(localItem, index)
         } else {
-            // créer un nouvel élément
+            // générer un nouvel identifiant pour le nouvel item
+            localItem.id = UUID()
+            // ajouter le nouvel élément à la liste
             addItem(localItem)
         }
         
         // remettre à zéro la simulation et sa vue
         simulation.reset(withPatrimoine: patrimoine)
         uiState.resetSimulation()
-        
-        self.presentationMode.wrappedValue.dismiss()
     }
     
+    func isValid() -> Bool {
+        /// vérifier que le nom n'est pas vide
+        guard localItem.name != "" else {
+            self.alertItem = AlertItem(title         : Text("Donner un nom"),
+                                       dismissButton : .default(Text("OK")))
+            return false
+        }
+        
+        /// vérifier que les propriétaires sont correctements définis
+//        guard localItem.ownership.isvalid else {
+//            self.alertItem = AlertItem(title         : Text("Les propriétaires ne sont pas correctements définis"),
+//                                       dismissButton : .default(Text("OK")))
+//            return false
+//        }
+        
+        return true
+    }
+
     func changeOccured() -> Bool {
         return localItem != originalItem
     }
