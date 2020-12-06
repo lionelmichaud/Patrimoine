@@ -33,7 +33,7 @@ struct SCPI: Identifiable, Codable, Equatable, NameableValuable, Ownable {
     // propriétaires
     // attention: par défaut la méthode delegate pour ageOf = nil
     // c'est au créateur de l'objet (View ou autre objet du Model) de le faire
-    var ownership            : Ownership = Ownership()
+    var ownership    : Ownership = Ownership()
     // achat
     var buyingDate   : Date
     var buyingPrice  : Double = 0.0
@@ -89,7 +89,7 @@ struct SCPI: Identifiable, Codable, Equatable, NameableValuable, Ownable {
         if isSold(before: year) {
             // le bien est vendu
             return false
-        } else if year >= buyingDate.year {
+        } else if (buyingDate.year...).contains(year) {
             return true
         } else {
             // le bien n'est pas encore acheté

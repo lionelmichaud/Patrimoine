@@ -17,7 +17,7 @@ struct ItemArray<E>: Codable where E: Codable, E: Identifiable, E: NameableValua
     var items          = [E]()
     var fileNamePrefix : String
     var currentValue   : Double {
-        items.sum(atEndOf: Date.now.year)
+        items.sumOfValues(atEndOf: Date.now.year)
     } // computed
     
     // MARK: - Subscript
@@ -77,7 +77,7 @@ struct ItemArray<E>: Codable where E: Codable, E: Identifiable, E: NameableValua
     }
     
     func value(atEndOf: Int) -> Double {
-        items.sum(atEndOf: atEndOf)
+        items.sumOfValues(atEndOf: atEndOf)
     }
     
     func namedValueTable(atEndOf: Int) -> NamedValueArray {
@@ -112,4 +112,36 @@ extension ItemArray where E: Ownable {
         }
     }
     
+    /// Calcule la valeur d'un bien possédée par un personne donnée à une date donnée
+    /// selon la régle générale ou selon la règle de l'IFI.
+    ///  - Note:
+    ///  Pour l'IFI:
+    ///
+    ///  Foyer taxable:
+    ///  - adultes + enfants non indépendants
+    ///
+    ///  Patrimoine taxable à l'IFI =
+    ///  - tous les actifs immobiliers dont un propriétaire ou usufruitier
+    ///  est un membre du foyer taxable
+    ///
+    ///  Valeur retenue:
+    ///  - actif détenu en pleine-propriété: valeur de la part détenue en PP
+    ///  - actif détenu en usufuit : valeur de la part détenue en PP
+    ///  - la résidence principale faire l’objet d’une décote de 30 %
+    ///  - les immeubles que vous donnez en location peuvent faire l’objet d’une décote de 10 % à 30 % environ
+    ///  - en indivision : dans ce cas, ils sont imposables à hauteur de votre quote-part minorée d’une décote de l’ordre de 30 % pour tenir compte des contraintes liées à l’indivision)
+    ///
+    /// - Parameters:
+    ///   - ownerName: nom de la personne recherchée
+    ///   - year: date d'évaluation
+    ///   - evaluationMethod: méthode d'évaluation de la valeure des bien
+    /// - Returns: valeur du bien possédée (part d'usufruit + part de nue-prop)
+    func ownedValue(by ownerName     : String,
+                    atEndOf year     : Int,
+                    evaluationMethod : EvaluationMethod) -> Double {
+        items.sumOfOwnedValues(by               : ownerName,
+                               atEndOf          : year,
+                               evaluationMethod : evaluationMethod)
+    }
+
 }

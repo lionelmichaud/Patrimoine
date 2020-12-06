@@ -14,7 +14,7 @@ typealias PeriodicInvestementArray = ItemArray<PeriodicInvestement>
 
 /// Placement à versements périodiques, fixes, annuels et à taux fixe
 /// Tous les intérêts sont capitalisés
-struct PeriodicInvestement: Identifiable, Codable, NameableValuable {
+struct PeriodicInvestement: Identifiable, Codable, NameableValuable, Ownable {
     
     // MARK: - Static Properties
     

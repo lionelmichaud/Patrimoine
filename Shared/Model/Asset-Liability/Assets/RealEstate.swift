@@ -91,6 +91,45 @@ struct RealEstateAsset: Identifiable, Codable, Equatable, NameableValuable, Owna
         }
     }
     
+    /// calcule la valeur d'un bien à l'IFI ou à l'ISF
+    ///  - Note:
+    ///  Pour l'IFI:
+    ///
+    ///  Valeur retenue:
+    ///  - la résidence principale faire l’objet d’une décote de 30 %
+    ///  - les immeubles que vous donnez en location peuvent faire l’objet d’une décote de 10 % à 30 % environ
+    ///  - en indivision : dans ce cas, ils sont imposables à hauteur de votre quote-part minorée d’une décote de l’ordre de 30 % pour tenir compte des contraintes liées à l’indivision)
+    func ifiValue(atEndOf year: Int) -> Double {
+        if self.isInhabited(during: year) {
+            // decote de la résience principale
+            return value(atEndOf: year) * (1.0 - Fiscal.model.isf.model.decoteResidence/100.0)
+
+        } else if self.isRented(during: year) {
+            // decote d'un bien en location
+            return value(atEndOf: year) * (1.0 - Fiscal.model.isf.model.decoteLocation/100.0)
+
+        } else {
+            return value(atEndOf: year)
+        }
+    }
+    
+    func ownedValue(by ownerName     : String,
+                    atEndOf year     : Int,
+                    evaluationMethod : EvaluationMethod) -> Double {
+        var evaluatedValue : Double
+
+        switch evaluationMethod {
+            case .ifi, .isf:
+                evaluatedValue = ifiValue(atEndOf: year)
+            default:
+                evaluatedValue = value(atEndOf: year)
+        }
+        return evaluatedValue == 0 ? 0 : ownership.ownedValue(by               : ownerName,
+                                                              ofValue          : evaluatedValue,
+                                                              atEndOf          : year,
+                                                              evaluationMethod : evaluationMethod)
+    }
+
     /// true si year est dans la période d'habitation
     /// - Parameter year: année
     func isInhabited(during year: Int) -> Bool {

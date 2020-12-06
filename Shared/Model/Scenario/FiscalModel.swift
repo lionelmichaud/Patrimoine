@@ -691,6 +691,10 @@ struct IsfModel: Codable {
         let decoteCoef      : Double // 1.25 // %
         // décote sur la résidence principale
         let decoteResidence : Double // 30% // %
+        // décote d'un bien en location
+        let decoteLocation  : Double // 10% à 30% // %
+        // décote d'un bien en location
+        let decoteIndivision: Double // 30% // %
     }
     
     // properties
@@ -719,12 +723,8 @@ struct IsfModel: Codable {
     ///   - taxableAsset: actif net imposable en €
     ///   - inhabitedAsset: valeur nette de la résidence principale en €
     /// - Returns: Impôt sur le revenu
-    func isf (taxableAsset asset : Double,
-              inhabitedAsset     : Double) -> ISF {
+    func isf (taxableAsset : Double) -> ISF {
         // FIXME: Vérifier calcul
-        // décote résidence principale
-        let taxableAsset = asset - model.decoteResidence/100.0 * inhabitedAsset
-        
         // seuil d'imposition
         guard taxableAsset > model.seuil else {
             return (amount       : 0,

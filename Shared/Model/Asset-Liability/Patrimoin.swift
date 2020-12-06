@@ -8,6 +8,26 @@
 
 import Foundation
 
+enum EvaluationMethod: PickableEnum {
+    case ifi
+    case isf
+    case succession
+    case patrimoine
+    
+    var pickerString: String {
+        switch self {
+            case .ifi:
+                return "IFI"
+            case .isf:
+                return "ISF"
+            case .succession:
+                return "Succession"
+            case .patrimoine:
+                return "Patrimoniale"
+        }
+    }
+}
+
 // MARK: - Patrimoine constitué d'un Actif et d'un Passif
 
 final class Patrimoin: ObservableObject {
@@ -37,8 +57,30 @@ final class Patrimoin: ObservableObject {
             liabilities.value(atEndOf: year)
     }
     
-    func netValueOfRealEstateAssets(atEndOf year: Int) -> Double {
-        assets.valueOfRealEstateAssets(atEndOf: year) +
+    /// Valeur nette taxable à l'IFI du patrimoine immobilier de la famille
+    ///  - Note:
+    ///  Pour l'IFI:
+    ///
+    ///  Foyer taxable:
+    ///  - adultes + enfants non indépendants
+    ///
+    ///  Patrimoine taxable à l'IFI =
+    ///  - tous les actifs immobiliers dont un propriétaire ou usufruitier
+    ///  est un membre du foyer taxable
+    ///
+    ///  Valeur retenue:
+    ///  - actif détenu en pleine-propriété: valeur de la part détenue en PP
+    ///  - actif détenu en usufuit : valeur de la part détenue en PP
+    ///  - la résidence principale faire l’objet d’une décote de 30 %
+    ///  - les immeubles que vous donnez en location peuvent faire l’objet d’une décote de 10 % à 30 % environ
+    ///  - en indivision : dans ce cas, ils sont imposables à hauteur de votre quote-part minorée d’une décote de l’ordre de 30 % pour tenir compte des contraintes liées à l’indivision)
+    ///
+    /// - Parameter year: année d'évaluation
+    /// - Returns: assiette nette IFI
+    func netValueOfRealEstateAssets(atEndOf year     : Int,
+                                    evaluationMethod : EvaluationMethod) -> Double {
+        assets.valueOfRealEstateAssets(atEndOf          : year,
+                                       evaluationMethod : evaluationMethod) +
             liabilities.valueOfLoans(atEndOf: year)
     }
     

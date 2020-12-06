@@ -91,7 +91,8 @@ struct SciCashFlowLine {
     
     // MARK: - Initializers
 
-    init(withYear year: Int, withSCI sci: SCI) {
+    init(withYear year : Int,
+         withSCI sci   : SCI) {
         self.year = year
         
         // populate produit de vente, dividendes des SCPI

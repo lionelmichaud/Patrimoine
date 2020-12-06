@@ -196,7 +196,6 @@ class Person : ObservableObject, Identifiable, CustomStringConvertible, Codable 
         try container.encode(name, forKey: .name)
         try container.encode(sexe, forKey: .sexe)
         try container.encode(birthDate, forKey: .birth_Date)
-//        try container.encode(ageOfDeath, forKey: .age_Of_Death)
     }
     
     func age(atEndOf year: Int) -> Int {

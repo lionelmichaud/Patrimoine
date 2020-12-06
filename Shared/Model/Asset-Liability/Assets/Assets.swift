@@ -36,7 +36,7 @@ struct Assets {
     var realEstates     : RealEstateArray
     var scpis           : ScpiArray // SCPI hors de la SCI
     var sci             : SCI
-
+    
     // MARK: - Initializers
     
     internal init(family: Family?) {
@@ -58,10 +58,72 @@ struct Assets {
         return sum
     }
     
-    func valueOfRealEstateAssets(atEndOf year: Int) -> Double {
-        realEstates.value(atEndOf: year) +
-            scpis.value(atEndOf: year) +
-            sci.scpis.value(atEndOf: year)
+    /// Valeur nette taxable à l'IFI du patrimoine immobilier de la famille
+    ///  - Note:
+    ///  Pour l'IFI:
+    ///
+    ///  Foyer taxable:
+    ///  - adultes + enfants non indépendants
+    ///
+    ///  Patrimoine taxable à l'IFI =
+    ///  - tous les actifs immobiliers dont un propriétaire ou usufruitier
+    ///  est un membre du foyer taxable
+    ///
+    ///  Valeur retenue:
+    ///  - actif détenu en pleine-propriété: valeur de la part détenue en PP
+    ///  - actif détenu en usufuit : valeur de la part détenue en PP
+    ///  - la résidence principale faire l’objet d’une décote de 30 %
+    ///  - les immeubles que vous donnez en location peuvent faire l’objet d’une décote de 10 % à 30 % environ
+    ///  - en indivision : dans ce cas, ils sont imposables à hauteur de votre quote-part minorée d’une décote de l’ordre de 30 % pour tenir compte des contraintes liées à l’indivision)
+    ///
+    /// - Parameters:
+    ///   - year: année d'évaluation
+    ///   - evaluationMethod: méthode d'évaluation de la valeure des bien
+    ///   - Returns: assiette nette IFI
+    func valueOfRealEstateAssets(atEndOf year     : Int,
+                                 evaluationMethod : EvaluationMethod) -> Double {
+        switch evaluationMethod {
+            case .ifi, .isf :
+                /// on prend la valeure IFI des biens immobiliers
+                /// pour: adultes + enfants non indépendants
+                guard let family = Patrimoin.family else {return 0.0}
+                
+                var cumulatedvalue: Double = 0.0
+                
+                for member in family.members {
+                    var toBeConsidered : Bool
+                    
+                    if (member is Adult) {
+                        toBeConsidered = true
+                    } else if (member is Child) {
+                        let child = member as! Child
+                        toBeConsidered = !child.isIndependant(during: year)
+                    } else {
+                        toBeConsidered = false
+                    }
+                    
+                    if toBeConsidered {
+                        cumulatedvalue +=
+                            realEstates.ownedValue(by               : member.displayName,
+                                                   atEndOf          : year,
+                                                   evaluationMethod : evaluationMethod) +
+                            scpis.ownedValue(by               : member.displayName,
+                                             atEndOf          : year,
+                                             evaluationMethod : evaluationMethod) +
+                            sci.scpis.ownedValue(by               : member.displayName,
+                                                 atEndOf          : year,
+                                                 evaluationMethod : evaluationMethod)
+                    }
+                }
+                return cumulatedvalue
+
+            default:
+                /// on prend la valeure totale de tous les biens immobiliers
+                return
+                    realEstates.value(atEndOf: year) +
+                    scpis.value(atEndOf: year) +
+                    sci.scpis.value(atEndOf: year)
+        }
     }
     
     func valueOfInhabitedRealEstateAssets(atEndOf year: Int) -> Double {

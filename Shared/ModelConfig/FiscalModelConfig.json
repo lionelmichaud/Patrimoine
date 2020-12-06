@@ -243,6 +243,8 @@
             "decote€"         : 17500.0,
             "decoteCoef"      : 1.25,
             "decoteResidence" : 30.0,
+            "decoteLocation"  : 20.0,
+            "decoteIndivision": 30.0,
             "isfGrid" : [
                 {
                     "floor" : 0,

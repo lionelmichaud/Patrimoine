@@ -8,7 +8,7 @@
 
 import Foundation
 
-// MARK: Protocol d'Item Valuable and Namable
+// MARK: Protocol d'Item Valuable et Nameable
 
 protocol NameableValuable {
     var name: String { get }
@@ -16,22 +16,99 @@ protocol NameableValuable {
     func print()
 }
 
-protocol Ownable {
-    var ownership: Ownership { get set }
-}
-
 extension Array where Element: NameableValuable {
     /// Somme de toutes les valeurs d'un Array
     ///
     /// Usage:
     ///
-    ///     items.sum(atEndOf: 2020)
+    ///     total = items.sumOfValues(atEndOf: 2020)
     ///
     /// - Returns: Somme de toutes les valeurs d'un Array
-    func sum (atEndOf year: Int) -> Double {
+    func sumOfValues (atEndOf year: Int) -> Double {
         return reduce(.zero, {result, element in
             result + element.value(atEndOf: year)
             
+        })
+    }
+}
+
+// MARK: Protocol d'Item qui peut être Possédé, Valuable et Nameable
+
+protocol Ownable: NameableValuable {
+    var ownership: Ownership { get set }
+    /// Calcule la valeur d'un bien possédée par un personne donnée à une date donnée
+    /// selon la régle générale ou selon la règle de l'IFI.
+    ///  - Note:
+    ///  Pour l'IFI:
+    ///
+    ///  Foyer taxable:
+    ///  - adultes + enfants non indépendants
+    ///
+    ///  Patrimoine taxable à l'IFI =
+    ///  - tous les actifs immobiliers dont un propriétaire ou usufruitier
+    ///  est un membre du foyer taxable
+    ///
+    ///  Valeur retenue:
+    ///  - actif détenu en pleine-propriété: valeur de la part détenue en PP
+    ///  - actif détenu en usufuit : valeur de la part détenue en PP
+    ///  - la résidence principale faire l’objet d’une décote de 30 %
+    ///  - les immeubles que vous donnez en location peuvent faire l’objet d’une décote de 10 % à 30 % environ
+    ///  - en indivision : dans ce cas, ils sont imposables à hauteur de votre quote-part minorée d’une décote de l’ordre de 30 % pour tenir compte des contraintes liées à l’indivision)
+    ///
+    /// - Parameters:
+    ///   - ownerName: nom de la personne recherchée
+    ///   - year: date d'évaluation
+    ///   - evaluationMethod: méthode d'évaluation de la valeure des bien
+    /// - Returns: valeur du bien possédée (part d'usufruit + part de nue-prop)
+    func ownedValue(by ownerName     : String,
+                    atEndOf year     : Int,
+                    evaluationMethod : EvaluationMethod) -> Double
+}
+extension Ownable {
+    // implémentation par défaut
+    func ownedValue(by ownerName     : String,
+                    atEndOf year     : Int,
+                    evaluationMethod : EvaluationMethod) -> Double {
+        let evaluatedValue = value(atEndOf: year)
+        return evaluatedValue == 0 ? 0 : ownership.ownedValue(by               : ownerName,
+                                                              ofValue          : evaluatedValue,
+                                                              atEndOf          : year,
+                                                              evaluationMethod : evaluationMethod)
+    }
+}
+
+extension Array where Element: Ownable {
+    /// Calcule la valeur d'un bien possédée par un personne donnée à une date donnée
+    /// selon la régle générale ou selon la règle de l'IFI.
+    ///  - Note:
+    ///  Pour l'IFI:
+    ///
+    ///  Foyer taxable:
+    ///  - adultes + enfants non indépendants
+    ///
+    ///  Patrimoine taxable à l'IFI =
+    ///  - tous les actifs immobiliers dont un propriétaire ou usufruitier
+    ///  est un membre du foyer taxable
+    ///
+    ///  Valeur retenue:
+    ///  - actif détenu en pleine-propriété: valeur de la part détenue en PP
+    ///  - actif détenu en usufuit : valeur de la part détenue en PP
+    ///  - la résidence principale faire l’objet d’une décote de 30 %
+    ///  - les immeubles que vous donnez en location peuvent faire l’objet d’une décote de 10 % à 30 % environ
+    ///  - en indivision : dans ce cas, ils sont imposables à hauteur de votre quote-part minorée d’une décote de l’ordre de 30 % pour tenir compte des contraintes liées à l’indivision)
+    ///
+    /// - Parameters:
+    ///   - ownerName: nom de la personne recherchée
+    ///   - year: date d'évaluation
+    ///   - evaluationMethod: méthode d'évaluation de la valeure des bien
+    /// - Returns: valeur du bien possédée (part d'usufruit + part de nue-prop)
+    func sumOfOwnedValues (by ownerName     : String,
+                           atEndOf year     : Int,
+                           evaluationMethod : EvaluationMethod) -> Double {
+        return reduce(.zero, {result, element in
+            return result + element.ownedValue(by               : ownerName,
+                                               atEndOf          : year,
+                                               evaluationMethod : evaluationMethod)
         })
     }
 }
@@ -80,7 +157,7 @@ protocol NameableValuableArray: Codable {
 // implémntation par défaut
 extension NameableValuableArray {
     var currentValue      : Double {
-        items.sum(atEndOf : Date.now.year)
+        items.sumOfValues(atEndOf : Date.now.year)
     }
     
     subscript(idx: Int) -> Item {
@@ -128,7 +205,7 @@ extension NameableValuableArray {
     }
     
     func value(atEndOf: Int) -> Double {
-        items.sum(atEndOf: atEndOf)
+        items.sumOfValues(atEndOf: atEndOf)
     }
     
     func namedValueTable(atEndOf: Int) -> NamedValueArray {

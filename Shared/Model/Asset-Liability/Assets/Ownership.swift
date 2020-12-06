@@ -154,50 +154,68 @@ struct Ownership: Codable {
                 bareValuePercent: dem.bareValue)
     }
     
-    /// Calcul la valeur d'un bien possédée par un personne donnée à une date donnée
+    /// Calcule la valeur d'un bien possédée par un personne donnée à une date donnée
+    /// selon la régle générale ou selon la règle de l'IFI.
     /// - Parameters:
     ///   - ownerName: nom de la personne recherchée
-    ///   - totalValue: valeur du bien en pleine propriété
+    ///   - totalValue: valeure totale du bien
     ///   - year: date d'évaluation
-    /// - Returns: valeur possédée
+    ///   - forIFI: calcul à faire selon les régles de l'IFI
+    /// - Returns: valeur du bien possédée (part d'usufruit + part de nue-prop)
     func ownedValue(by ownerName       : String,
                     ofValue totalValue : Double,
-                    atEndOf year       : Int) -> Double {
+                    atEndOf year       : Int,
+                    evaluationMethod   : EvaluationMethod) -> Double {
         if isDismembered {
-            // démembrement
-            var usufructValue : Double = 0.0
-            var bareValue     : Double = 0.0
-            var value         : Double = 0.0
-            // calculer les valeurs des usufruit et nue prop
-            usufructOwners.forEach { usufruitier in
-                // prorata détenu par l'usufruitier
-                let ownedValue = totalValue * usufruitier.fraction / 100.0
-                // valeur de son usufuit
-                let usufruiterAge = ageOf!(usufruitier.name, year)
-                let (usuFruit, nueProp) = Fiscal.model.demembrement.demembrement(of             : ownedValue,
-                                                                                 usufruitierAge : usufruiterAge)
-                usufructValue += usuFruit
-                bareValue     += nueProp
+            switch evaluationMethod {
+                case .ifi, .isf :
+                    // calcul de la part de pleine-propriété détenue
+                    if let owner = usufructOwners.first(where: { $0.name == ownerName }) {
+                        // on a trouvé un usufruitier
+                        return owner.ownedValue(from: totalValue)
+                    } else {
+                        return 0.0
+                    }
+                    
+                default:
+                    // démembrement
+                    var usufructValue : Double = 0.0
+                    var bareValue     : Double = 0.0
+                    var value         : Double = 0.0
+                    // calculer les valeurs des usufruit et nue prop
+                    usufructOwners.forEach { usufruitier in
+                        // prorata détenu par l'usufruitier
+                        let ownedValue = totalValue * usufruitier.fraction / 100.0
+                        // valeur de son usufuit
+                        let usufruiterAge = ageOf!(usufruitier.name, year)
+                        let (usuFruit, nueProp) = Fiscal.model.demembrement.demembrement(of             : ownedValue,
+                                                                                         usufruitierAge : usufruiterAge)
+                        usufructValue += usuFruit
+                        bareValue     += nueProp
+                    }
+                    let check = totalValue - (usufructValue + bareValue)
+                    print("check = totalValue - (usufructValue + bareValue) = \(check)")
+                    
+                    // calcul de la part de nue-propriété détenue
+                    if let owner = bareOwners.first(where: { $0.name == ownerName }) {
+                        // on a trouvé un nue-propriétaire
+                        value += owner.ownedValue(from: bareValue)
+                    }
+                    
+                    // calcul de la part d'usufuit détenue
+                    if let owner = usufructOwners.first(where: { $0.name == ownerName }) {
+                        // on a trouvé un usufruitier
+                        // prorata détenu par l'usufruitier
+                        let ownedValue = totalValue * owner.fraction / 100.0
+                        // valeur de son usufuit
+                        let usufruiterAge = ageOf!(owner.name, year)
+                        
+                        value += Fiscal.model.demembrement.demembrement(of             : ownedValue,
+                                                                        usufruitierAge : usufruiterAge).usufructValue
+                    }
+                    return value
             }
-            let check = totalValue - (usufructValue + bareValue)
-            print("check = totalValue - (usufructValue + bareValue) = \(check)")
-            
-            if let owner = bareOwners.first(where: { $0.name == ownerName }) {
-                // on a trouvé un nue-propriétaire
-                value += owner.ownedValue(from: bareValue)
-            }
-            if let owner = usufructOwners.first(where: { $0.name == ownerName }) {
-                // on a trouvé un usufruitier
-                // prorata détenu par l'usufruitier
-                let ownedValue = totalValue * owner.fraction / 100.0
-                // valeur de son usufuit
-                let usufruiterAge = ageOf!(owner.name, year)
-                
-                value += Fiscal.model.demembrement.demembrement(of             : ownedValue,
-                                                                     usufruitierAge : usufruiterAge).usufructValue
-            }
-            return value
-            
+
         } else {
             // pleine propriété
             if let owner = fullOwners.first(where: { $0.name == ownerName }) {

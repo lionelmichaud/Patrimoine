@@ -220,9 +220,10 @@ struct OwnershipView_Previews: PreviewProvider {
                         .environmentObject(family)
                     ForEach(OwnershipView_Previews.family.members) { member in
                         AmountView(label: member.displayName,
-                                   amount: ownership.ownedValue(by: member.displayName,
+                                   amount: ownership.ownedValue(by     : member.displayName,
                                                                 ofValue: 100.0,
-                                                                atEndOf: Date.now.year) )
+                                                                atEndOf: Date.now.year,
+                                                                evaluationMethod: .ifi) )
                     }
                 }
             }
