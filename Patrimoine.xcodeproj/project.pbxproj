@@ -172,7 +172,7 @@
 		79B44A9A24BB7B67001C8767 /* StepperHelperViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79B44A9924BB7B67001C8767 /* StepperHelperViews.swift */; };
 		79B46F9E25378CF300D6FFEF /* InterestRateType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79B46F9D25378CF300D6FFEF /* InterestRateType.swift */; };
 		79B46FA12537A56500D6FFEF /* InterestRateTypeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79B46FA02537A56500D6FFEF /* InterestRateTypeView.swift */; };
-		79BF6FAF25740CE200F19A81 /* Demembrement.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79BF6FAE25740CE200F19A81 /* Demembrement.swift */; };
+		79BF6FAF25740CE200F19A81 /* Ownership.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79BF6FAE25740CE200F19A81 /* Ownership.swift */; };
 		79BF6FB22574112800F19A81 /* OwnershipView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79BF6FB12574112800F19A81 /* OwnershipView.swift */; };
 		79C26F082566CE5F0016B3F5 /* Extensions+Ranges.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79C26F072566CE5F0016B3F5 /* Extensions+Ranges.swift */; };
 		79C6FC0D24BF9D0400D99594 /* UnemployementDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79C6FC0C24BF9D0400D99594 /* UnemployementDetailView.swift */; };
@@ -368,7 +368,7 @@
 		79B44A9924BB7B67001C8767 /* StepperHelperViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StepperHelperViews.swift; sourceTree = "<group>"; };
 		79B46F9D25378CF300D6FFEF /* InterestRateType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InterestRateType.swift; sourceTree = "<group>"; };
 		79B46FA02537A56500D6FFEF /* InterestRateTypeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InterestRateTypeView.swift; sourceTree = "<group>"; };
-		79BF6FAE25740CE200F19A81 /* Demembrement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Demembrement.swift; sourceTree = "<group>"; };
+		79BF6FAE25740CE200F19A81 /* Ownership.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Ownership.swift; sourceTree = "<group>"; };
 		79BF6FB12574112800F19A81 /* OwnershipView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OwnershipView.swift; sourceTree = "<group>"; };
 		79C26F072566CE5F0016B3F5 /* Extensions+Ranges.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Extensions+Ranges.swift"; sourceTree = "<group>"; };
 		79C6FC0C24BF9D0400D99594 /* UnemployementDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnemployementDetailView.swift; sourceTree = "<group>"; };
@@ -841,7 +841,7 @@
 				79B46F9D25378CF300D6FFEF /* InterestRateType.swift */,
 				79948940249E4FC200DAFF1E /* SCI.swift */,
 				79D2BF85251A8CEC009028A0 /* ValuedAssets.swift */,
-				79BF6FAE25740CE200F19A81 /* Demembrement.swift */,
+				79BF6FAE25740CE200F19A81 /* Ownership.swift */,
 			);
 			path = Assets;
 			sourceTree = "<group>";
@@ -1134,7 +1134,7 @@
 				79948963249E4FC200DAFF1E /* PatrimoineSummaryView.swift in Sources */,
 				79A423912516673E008383A1 /* AssetsCategory.swift in Sources */,
 				7997F99F251FA9F500A79194 /* Distributions.swift in Sources */,
-				79BF6FAF25740CE200F19A81 /* Demembrement.swift in Sources */,
+				79BF6FAF25740CE200F19A81 /* Ownership.swift in Sources */,
 				79F655C32517D005008F9159 /* ChartView+Extensions.swift in Sources */,
 				791D70B0250E4DFB000A20D0 /* Extensions+Bundle.swift in Sources */,
 				79948965249E4FC200DAFF1E /* LoanDetailedView.swift in Sources */,

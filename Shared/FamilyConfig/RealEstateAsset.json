@@ -12,11 +12,11 @@
                 [
                     {
                         "name"     : "M. Lionel MICHAUD",
-                        "fraction" : 50.0
+                        "fraction" : 70
                     },
                     {
                         "name"     : "Mme. Vanessa MICHAUD",
-                        "fraction" : 50.0
+                        "fraction" : 30
                     }
                 ],
                 "nue_propriétaires"   :
@@ -68,31 +68,23 @@
             "note"                    : "Actualisé le 11/09/2020",
             "ownership"               :
             {
-                "est_démembré"        : true,
+                "est_démembré"        : false,
                 "plein_propriétaires" :
-                [
-                ],
-                "usufruitiers"     :
                 [
                     {
                         "name"     : "M. Lionel MICHAUD",
-                        "fraction" : 50.0
+                        "fraction" : 70
                     },
                     {
                         "name"     : "Mme. Vanessa MICHAUD",
-                        "fraction" : 50.0
+                        "fraction" : 30
                     }
                 ],
-                "nue_propriétaires":
+                "nue_propriétaires"   :
                 [
-                    {
-                        "name"     : "M. Arthur MICHAUD",
-                        "fraction" : 50.0
-                    },
-                    {
-                        "name"     : "Mme Lou-Ann MICHAUD",
-                        "fraction" : 50.0
-                    }
+                ],
+                "usufruitiers"        :
+                [
                 ]
             },
             "buyingYear"              : 

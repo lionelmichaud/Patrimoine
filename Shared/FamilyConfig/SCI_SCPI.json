@@ -5,21 +5,63 @@
             "id"           : "282CC28F-0BC2-4323-AEA3-1FD3FD6E0EBF",
             "name"         : "EPARGNE PIERRE-Voisin",
             "note"         : "Actualisé le 11/09/2020",
+            "ownership"               :
+            {
+                "est_démembré"        : false,
+                "plein_propriétaires" :
+                [
+                    {
+                        "name"     : "M. Lionel MICHAUD",
+                        "fraction" : 90
+                    },
+                    {
+                        "name"     : "Mme. Vanessa MICHAUD",
+                        "fraction" : 10
+                    }
+                ],
+                "nue_propriétaires"   :
+                [
+                ],
+                "usufruitiers"        :
+                [
+                ]
+            },
             "buyingDate"   : "2019-09-30T21  :53  :04Z",
             "buyingPrice"  : 72365,
             "willBeSold"   : false,
-            "sellingDate"  : "2022-04-23T21 :53 :04Z",
+            "sellingDate"  : "2100-04-23T21 :53 :04Z",
             "revaluatRate" : 0,
             "interestRate" : 5.35
         },
         {
             "id"           : "282CC28F-0BC2-4323-AEA3-1FD3FD6E0EBA",
             "name"         : "PIERVAL SANTE-Euryale",
-            "note"         : "Actualisé le 11/09/2020",
+            "note"         : "Actualisé le 05/12/2020",
+            "ownership"               :
+            {
+                "est_démembré"        : false,
+                "plein_propriétaires" :
+                [
+                    {
+                        "name"     : "M. Lionel MICHAUD",
+                        "fraction" : 90
+                    },
+                    {
+                        "name"     : "Mme. Vanessa MICHAUD",
+                        "fraction" : 10
+                    }
+                ],
+                "nue_propriétaires"   :
+                [
+                ],
+                "usufruitiers"        :
+                [
+                ]
+            },
             "buyingDate"   : "2019-10-11T21  :53  :04Z",
-            "buyingPrice"  : 73000,
+            "buyingPrice"  : 107000,
             "willBeSold"   : false,
-            "sellingDate"  : "2022-04-23T21 :53 :04Z",
+            "sellingDate"  : "2100-04-23T21 :53 :04Z",
             "revaluatRate" : 0,
             "interestRate" : 5.0
         },
@@ -27,10 +69,31 @@
             "id"           : "282CC28F-0BC2-4323-AEA3-1FD3FD6E0EBB",
             "name"         : "EFIMMO 1-Sofidy",
             "note"         : "Actualisé le 11/09/2020",
+            "ownership"               :
+            {
+                "est_démembré"        : false,
+                "plein_propriétaires" :
+                [
+                    {
+                        "name"     : "M. Lionel MICHAUD",
+                        "fraction" : 90
+                    },
+                    {
+                        "name"     : "Mme. Vanessa MICHAUD",
+                        "fraction" : 10
+                    }
+                ],
+                "nue_propriétaires"   :
+                [
+                ],
+                "usufruitiers"        :
+                [
+                ]
+            },
             "buyingDate"   : "2019-10-31T21  :53  :04Z",
             "buyingPrice"  : 65175,
             "willBeSold"   : false,
-            "sellingDate"  : "2022-04-23T21 :53 :04Z",
+            "sellingDate"  : "2100-04-23T21 :53 :04Z",
             "revaluatRate" : 0,
             "interestRate" : 4.5
         },
@@ -38,10 +101,31 @@
             "id"           : "282CC28F-0BC2-4323-AEA3-1FD3FD6E0ECB",
             "name"         : "IMMORENTE-Sofidy",
             "note"         : "Actualisé le 11/09/2020",
+            "ownership"               :
+            {
+                "est_démembré"        : false,
+                "plein_propriétaires" :
+                [
+                    {
+                        "name"     : "M. Lionel MICHAUD",
+                        "fraction" : 90
+                    },
+                    {
+                        "name"     : "Mme. Vanessa MICHAUD",
+                        "fraction" : 10
+                    }
+                ],
+                "nue_propriétaires"   :
+                [
+                ],
+                "usufruitiers"        :
+                [
+                ]
+            },
             "buyingDate"   : "2019-11-15T21  :53  :04Z",
             "buyingPrice"  : 65715,
             "willBeSold"   : false,
-            "sellingDate"  : "2022-04-23T21 :53 :04Z",
+            "sellingDate"  : "2100-04-23T21 :53 :04Z",
             "revaluatRate" : 0,
             "interestRate" : 4.5
         },
@@ -49,12 +133,65 @@
             "id"           : "282CC28F-0BC2-4323-AEA3-1FD3FD6E0EDB",
             "name"         : "PATRIMMO COMMERCE-Primonial",
             "note"         : "Actualisé le 11/09/2020",
+            "ownership"               :
+            {
+                "est_démembré"        : false,
+                "plein_propriétaires" :
+                [
+                    {
+                        "name"     : "M. Lionel MICHAUD",
+                        "fraction" : 90
+                    },
+                    {
+                        "name"     : "Mme. Vanessa MICHAUD",
+                        "fraction" : 10
+                    }
+                ],
+                "nue_propriétaires"   :
+                [
+                ],
+                "usufruitiers"        :
+                [
+                ]
+            },
             "buyingDate"   : "2019-10-31T21  :53  :04Z",
             "buyingPrice"  : 36248,
             "willBeSold"   : false,
-            "sellingDate"  : "2022-04-23T21 :53 :04Z",
+            "sellingDate"  : "2100-04-23T21 :53 :04Z",
             "revaluatRate" : 0,
             "interestRate" : 4.5
+        },
+        {
+            "id"           : "282CC28F-0BC2-4323-AEA3-0FD3FD6E0EAB",
+            "name"         : "FONCIÈRE DES PRATICIENS",
+            "note"         : "Actualisé le 05/12/2020",
+            "ownership"               :
+            {
+                "est_démembré"        : false,
+                "plein_propriétaires" :
+                [
+                    {
+                        "name"     : "M. Lionel MICHAUD",
+                        "fraction" : 90
+                    },
+                    {
+                        "name"     : "Mme. Vanessa MICHAUD",
+                        "fraction" : 10
+                    }
+                ],
+                "nue_propriétaires"   :
+                [
+                ],
+                "usufruitiers"        :
+                [
+                ]
+            },
+            "buyingDate"   : "2020-10-03T21  :53  :04Z",
+            "buyingPrice"  : 53900,
+            "willBeSold"   : false,
+            "sellingDate"  : "2100-04-23T21 :53 :04Z",
+            "revaluatRate" : 0,
+            "interestRate" : 5.0
         }
 
 

@@ -28,7 +28,7 @@ struct SCPIDetailedView: View {
             LabeledTextField(label: "Nom", defaultText: "obligatoire", text: $localItem.name)
             LabeledTextEditor(label: "Note", text: $localItem.note)
             
-            // acquisition
+            /// acquisition
             Section(header: Text("ACQUISITION")) {
                 DatePicker(selection: $localItem.buyingDate,
                            displayedComponents: .date,
@@ -36,7 +36,11 @@ struct SCPIDetailedView: View {
                 AmountEditView(label: "Prix d'acquisition",
                                amount: $localItem.buyingPrice)
             }
-            // taxe
+
+            /// propriété
+            OwnershipView(ownership: $localItem.ownership)
+            
+            /// rendement
             Section(header: Text("RENDEMENT")) {
                 PercentEditView(label: "Taux de rendement annuel brut",
                                 percent: $localItem.interestRate)
@@ -52,7 +56,8 @@ struct SCPIDetailedView: View {
                 PercentEditView(label: "Taux de réévaluation annuel",
                                 percent: $localItem.revaluatRate)
             }
-            // vente
+            
+            /// vente
             Section(header: Text("VENTE")) {
                 Toggle("Sera vendue", isOn: $localItem.willBeSold)
                 if localItem.willBeSold {
@@ -73,7 +78,6 @@ struct SCPIDetailedView: View {
             }
         }
         .textFieldStyle(RoundedBorderTextFieldStyle())
-        //.onAppear(perform: onAppear)
         .navigationTitle("SCPI")
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarItems(
@@ -94,6 +98,7 @@ struct SCPIDetailedView: View {
     init(item       : SCPI?,
          updateItem : @escaping (SCPI, Int) -> (),
          addItem    : @escaping (SCPI) -> (),
+         family     : Family,
          firstIndex : (SCPI) -> Int?) {
         // store closure to differentiate between SCPI and SCI.SCPI
         self.updateItem = updateItem
@@ -107,7 +112,9 @@ struct SCPIDetailedView: View {
             // specific
         } else {
             // création d'un nouvel élément
-            let newItem = SCPI(name: "", buyingDate: Date.now)
+            var newItem = SCPI(name: "", buyingDate: Date.now)
+            // définir le délégué pour la méthode ageOf qui par défaut est nil à la création de l'objet
+            newItem.ownership.setDelegateForAgeOf(delegate: family.ageOf)
             _localItem = State(initialValue: newItem)
             index = nil
         }
@@ -134,6 +141,8 @@ struct SCPIDetailedView: View {
         } else {
             // générer un nouvel identifiant pour le nouvel item
             localItem.id = UUID()
+            // définir le délégué pour la méthode ageOf qui par défaut est nil à la création de l'objet
+            localItem.ownership.setDelegateForAgeOf(delegate: family.ageOf)
             // ajouter le nouvel élément à la liste
             addItem(localItem)
         }
@@ -152,11 +161,11 @@ struct SCPIDetailedView: View {
         }
         
         /// vérifier que les propriétaires sont correctements définis
-//        guard localItem.ownership.isvalid else {
-//            self.alertItem = AlertItem(title         : Text("Les propriétaires ne sont pas correctements définis"),
-//                                       dismissButton : .default(Text("OK")))
-//            return false
-//        }
+        guard localItem.ownership.isvalid else {
+            self.alertItem = AlertItem(title         : Text("Les propriétaires ne sont pas correctements définis"),
+                                       dismissButton : .default(Text("OK")))
+            return false
+        }
         
         return true
     }
@@ -167,19 +176,22 @@ struct SCPIDetailedView: View {
 }
 
 struct SCPIDetailedView_Previews: PreviewProvider {
-    static var patrimoine  = Patrimoin()
+    static var family     = Family()
+    static var patrimoine = Patrimoin()
     
     static var previews: some View {
         return
             Group {
-//                NavigationView() {
+                NavigationView() {
                     SCPIDetailedView(item       : patrimoine.assets.scpis[0],
                                      //patrimoine     : patrimoine,
                                      updateItem : { (localItem, index) in patrimoine.assets.scpis.update(with: localItem, at: index) },
                                      addItem    : { (localItem) in patrimoine.assets.scpis.add(localItem) },
+                                     family     : family,
                                      firstIndex : { (localItem) in patrimoine.assets.scpis.items.firstIndex(of: localItem) })
+                        .environmentObject(family)
                         .environmentObject(patrimoine)
-//                }
+                }
                 .previewDisplayName("SCPIDetailedView")
             }
     }

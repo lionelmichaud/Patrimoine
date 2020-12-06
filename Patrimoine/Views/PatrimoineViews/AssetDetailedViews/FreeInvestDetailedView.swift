@@ -9,32 +9,31 @@
 import SwiftUI
 
 struct FreeInvestDetailedView: View {
+    @EnvironmentObject var family     : Family
+    @EnvironmentObject var patrimoine : Patrimoin
     @EnvironmentObject var simulation : Simulation
     @EnvironmentObject var uiState    : UIState
     
-    private var originalItem: FreeInvestement?
     // commun
-    @EnvironmentObject var patrimoine: Patrimoin
-    @Environment(\.presentationMode) var presentationMode
-    @State private var index: Int?
+    private var originalItem     : FreeInvestement?
+    @State private var localItem : FreeInvestement
+    @State private var alertItem : AlertItem?
+    @State private var index     : Int?
     // à adapter
     @State private var totalValue : Double = 0.0
-    @State private var localItem = FreeInvestement(year             : Date.now.year - 1,
-                                                   name             : "",
-                                                   note             : "",
-                                                   type             : .other,
-                                                   interestRateType : .contractualRate(fixedRate: 0.0),
-                                                   initialValue     : 0,
-                                                   initialInterest  : 0)
 
     var body: some View {
         Form {
             LabeledTextField(label: "Nom", defaultText: "obligatoire", text: $localItem.name)
             LabeledTextEditor(label: "Note", text: $localItem.note)
-            // acquisition
+            
+            /// propriété
+            OwnershipView(ownership: $localItem.ownership)
+            
             Section(header: Text("TYPE")) {
                 TypeInvestEditView(investType: $localItem.type)
             }
+            
             Section(header: Text("INITIALISATION")) {
                 YearPicker(title    : "Année d'actualisation",
                            inRange  : Date.now.year - 20...Date.now.year + 100,
@@ -50,6 +49,7 @@ struct FreeInvestDetailedView: View {
                         localItem.initialState.investment = totalValue - newValue
                     }
             }
+            
             Section(header: Text("RENTABILITE")) {
                 InterestRateTypeEditView(rateType: $localItem.interestRateType)
                 PercentView(label: "Rendement net d'inflation",
@@ -72,9 +72,12 @@ struct FreeInvestDetailedView: View {
                 .capsuleButtonStyle()
                 .disabled(!changeOccured())
         )
+        .alert(item: $alertItem, content: myAlert)
     }
     
-    init(item: FreeInvestement?, patrimoine: Patrimoin) {
+    init(item       : FreeInvestement?,
+         family     : Family,
+         patrimoine : Patrimoin) {
         self.originalItem = item
         if let initialItemValue = item {
             // modification d'un élément existant
@@ -83,7 +86,17 @@ struct FreeInvestDetailedView: View {
             _totalValue = State(initialValue: initialItemValue.initialState.value)
             // specific
         } else {
-            // nouvel élément
+            // création d'un nouvel élément
+            var newItem = FreeInvestement(year             : Date.now.year - 1,
+                                          name             : "",
+                                          note             : "",
+                                          type             : .other,
+                                          interestRateType : .contractualRate(fixedRate: 0.0),
+                                          initialValue     : 0,
+                                          initialInterest  : 0)
+            // définir le délégué pour la méthode ageOf qui par défaut est nil à la création de l'objet
+            newItem.ownership.setDelegateForAgeOf(delegate: family.ageOf)
+            _localItem = State(initialValue: newItem)
             index = nil
         }
     }
@@ -100,19 +113,42 @@ struct FreeInvestDetailedView: View {
     
     // sauvegarder les changements
     func applyChanges() {
+        // validation avant sauvegarde
+        guard self.isValid() else { return }
+        
         if let index = index {
             // modifier un éléménet existant
             patrimoine.assets.freeInvests.update(with: localItem, at: index)
         } else {
-            // créer un nouvel élément
+            // générer un nouvel identifiant pour le nouvel item
+            localItem.id = UUID()
+            // définir le délégué pour la méthode ageOf qui par défaut est nil à la création de l'objet
+            localItem.ownership.setDelegateForAgeOf(delegate: family.ageOf)
+            // ajouter le nouvel élément à la liste
             patrimoine.assets.freeInvests.add(localItem)
         }
         
         // remettre à zéro la simulation et sa vue
         simulation.reset(withPatrimoine: patrimoine)
         uiState.resetSimulation()
+    }
+    
+    func isValid() -> Bool {
+        /// vérifier que le nom n'est pas vide
+        guard localItem.name != "" else {
+            self.alertItem = AlertItem(title         : Text("Donner un nom"),
+                                       dismissButton : .default(Text("OK")))
+            return false
+        }
         
-        self.presentationMode.wrappedValue.dismiss()
+        /// vérifier que les propriétaires sont correctements définis
+        guard localItem.ownership.isvalid else {
+            self.alertItem = AlertItem(title         : Text("Les propriétaires ne sont pas correctements définis"),
+                                       dismissButton : .default(Text("OK")))
+            return false
+        }
+        
+        return true
     }
     
     func changeOccured() -> Bool {
@@ -121,16 +157,19 @@ struct FreeInvestDetailedView: View {
 }
 
 struct FreeInvestDetailedView_Previews: PreviewProvider {
-    static var patrimoine  = Patrimoin()
-    
+    static var family     = Family()
+    static var patrimoine = Patrimoin()
+
     static var previews: some View {
         return
             Group {
-                NavigationView() {
-                    FreeInvestDetailedView(item: patrimoine.assets.freeInvests[0], patrimoine: patrimoine)
+//                NavigationView() {
+                    FreeInvestDetailedView(item       : patrimoine.assets.freeInvests[0],
+                                           family     : family,
+                                           patrimoine : patrimoine)
                         .environmentObject(patrimoine)
                 }
                 .previewDisplayName("FreeInvestDetailedView")
-            }
+//            }
     }
 }

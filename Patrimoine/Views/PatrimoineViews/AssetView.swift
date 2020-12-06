@@ -119,6 +119,7 @@ struct RealEstateView: View {
 }
 
 struct ScpiView: View {
+    @EnvironmentObject var family     : Family
     @EnvironmentObject var simulation : Simulation
     @EnvironmentObject var patrimoine : Patrimoin
     @EnvironmentObject var uiState    : UIState
@@ -152,6 +153,7 @@ struct ScpiView: View {
                                                                 self.patrimoine.assets.scpis.update(with: localItem, at: index) },
                                                              addItem    : { (localItem) in
                                                                 self.patrimoine.assets.scpis.add(localItem) },
+                                                             family     : family,
                                                              firstIndex : { (localItem) in
                                                                 self.patrimoine.assets.scpis.items.firstIndex(of: localItem) })) {
                     HStack {
@@ -170,6 +172,7 @@ struct ScpiView: View {
                                                                     self.patrimoine.assets.scpis.update(with: localItem, at: index) },
                                                                  addItem    : { (localItem) in
                                                                     self.patrimoine.assets.scpis.add(localItem) },
+                                                                 family     : family,
                                                                  firstIndex : { (localItem) in
                                                                     self.patrimoine.assets.scpis.items.firstIndex(of: localItem) })) {
                         LabeledValueRowView(colapse     : self.$uiState.patrimoineViewState.assetViewState.colapseSCPI,
@@ -188,6 +191,7 @@ struct ScpiView: View {
 }
 
 struct PeriodicInvestView: View {
+    @EnvironmentObject var family     : Family
     @EnvironmentObject var patrimoine : Patrimoin
     @EnvironmentObject var simulation : Simulation
     @EnvironmentObject var uiState    : UIState
@@ -215,8 +219,9 @@ struct PeriodicInvestView: View {
             // items
             if !uiState.patrimoineViewState.assetViewState.colapsePeriodic {
                 // ajout d'un nouvel item à la liste
-                NavigationLink(destination: PeriodicInvestDetailedView(item: nil,
-                                                                       patrimoine: patrimoine)) {
+                NavigationLink(destination: PeriodicInvestDetailedView(item       : nil,
+                                                                       family     : family,
+                                                                       patrimoine : patrimoine)) {
                     HStack {
                         Image(systemName: "plus.circle.fill")
                             .imageScale(.large)
@@ -227,8 +232,9 @@ struct PeriodicInvestView: View {
                 
                 // liste des items
                 ForEach(patrimoine.assets.periodicInvests.items) { item in
-                    NavigationLink(destination: PeriodicInvestDetailedView(item: item,
-                                                                           patrimoine: self.patrimoine)) {
+                    NavigationLink(destination: PeriodicInvestDetailedView(item       : item,
+                                                                           family     : family,
+                                                                           patrimoine : self.patrimoine)) {
                         LabeledValueRowView(colapse     : self.$uiState.patrimoineViewState.assetViewState.colapsePeriodic,
                                             label       : item.name,
                                             value       : item.value(atEndOf: Date.now.year),
@@ -245,8 +251,9 @@ struct PeriodicInvestView: View {
 }
 
 struct FreeInvestView: View {
-    @EnvironmentObject var simulation : Simulation
+    @EnvironmentObject var family     : Family
     @EnvironmentObject var patrimoine : Patrimoin
+    @EnvironmentObject var simulation : Simulation
     @EnvironmentObject var uiState    : UIState
 
     func removeItems(at offsets: IndexSet) {
@@ -273,8 +280,9 @@ struct FreeInvestView: View {
             // items
             if !uiState.patrimoineViewState.assetViewState.colapseFree {
                 // ajout d'un nouvel item à la liste
-                NavigationLink(destination: FreeInvestDetailedView(item  : nil,
-                                                                   patrimoine: patrimoine)) {
+                NavigationLink(destination: FreeInvestDetailedView(item       : nil,
+                                                                   family     : family,
+                                                                   patrimoine : patrimoine)) {
                     HStack {
                         Image(systemName: "plus.circle.fill")
                             .imageScale(.large)
@@ -285,8 +293,9 @@ struct FreeInvestView: View {
                 
                 // liste des items
                 ForEach(patrimoine.assets.freeInvests.items) { item in
-                    NavigationLink(destination: FreeInvestDetailedView(item: item,
-                                                                       patrimoine: self.patrimoine)) {
+                    NavigationLink(destination: FreeInvestDetailedView(item       : item,
+                                                                       family     : family,
+                                                                       patrimoine : self.patrimoine)) {
                         LabeledValueRowView(colapse     : self.$uiState.patrimoineViewState.assetViewState.colapseFree,
                                             label       : item.name,
                                             value       : item.value(atEndOf: Date.now.year),
@@ -303,6 +312,7 @@ struct FreeInvestView: View {
 }
 
 struct SciScpiView: View {
+    @EnvironmentObject var family     : Family
     @EnvironmentObject var simulation : Simulation
     @EnvironmentObject var patrimoine : Patrimoin
     @EnvironmentObject var uiState    : UIState
@@ -336,6 +346,7 @@ struct SciScpiView: View {
                                                                 self.patrimoine.assets.sci.scpis.update(with: localItem, at: index) },
                                                              addItem    : { (localItem) in
                                                                 self.patrimoine.assets.sci.scpis.add(localItem) },
+                                                             family     : family,
                                                              firstIndex : { (localItem) in
                                                                 self.patrimoine.assets.sci.scpis.items.firstIndex(of: localItem) })) {
                     HStack {
@@ -354,6 +365,7 @@ struct SciScpiView: View {
                                                                     self.patrimoine.assets.sci.scpis.update(with: localItem, at: index) },
                                                                  addItem    : { (localItem) in
                                                                     self.patrimoine.assets.sci.scpis.add(localItem) },
+                                                                 family     : family,
                                                                  firstIndex : { (localItem) in
                                                                     self.patrimoine.assets.sci.scpis.items.firstIndex(of: localItem) })) {
                         LabeledValueRowView(colapse     : self.$uiState.patrimoineViewState.assetViewState.colapseSCISCPI,

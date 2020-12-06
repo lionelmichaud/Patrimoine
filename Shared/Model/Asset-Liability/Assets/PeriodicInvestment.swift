@@ -40,17 +40,21 @@ struct PeriodicInvestement: Identifiable, Codable, NameableValuable {
     
     var id              = UUID()
     var name            : String
-    var note            : String
+    var note            : String = ""
+    // propriétaires
+    // attention: par défaut la méthode delegate pour ageOf = nil
+    // c'est au créateur de l'objet (View ou autre objet du Model) de le faire
+    var ownership       : Ownership = Ownership()
     var type            : InvestementType
-    var yearlyPayement  : Double // versements nets de frais
-    var yearlyCost      : Double // Frais sur versements
+    var yearlyPayement  : Double = 0.0 // versements nets de frais
+    var yearlyCost      : Double = 0.0 // Frais sur versements
     // Ouverture
     var firstYear       : Int // au 31 décembre
-    var initialValue    : Double
-    var initialInterest : Double // portion of interests included in the initialValue
+    var initialValue    : Double = 0.0
+    var initialInterest : Double = 0.0 // portion of interests included in the initialValue
     // rendement
     var interestRateType: InterestRateType // type de taux de rendement
-    var interestRate         : Double {// % avant charges sociales si prélevées à la source annuellement
+    var interestRate    : Double {// % avant charges sociales si prélevées à la source annuellement
         switch interestRateType {
             case .contractualRate( let fixedRate):
                 return fixedRate - PeriodicInvestement.inflation

@@ -170,7 +170,6 @@ struct RealEstateDetailedView: View {
                 .disabled(!changeOccured())
         )
         .alert(item: $alertItem, content: myAlert)
-
     }
     
     init(item       : RealEstateAsset?,

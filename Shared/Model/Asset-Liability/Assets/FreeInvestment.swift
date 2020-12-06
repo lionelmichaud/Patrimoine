@@ -54,6 +54,10 @@ struct FreeInvestement: Identifiable, Codable, NameableValuable {
     var id                   = UUID()
     var name                 : String
     var note                 : String
+    // propriétaires
+    // attention: par défaut la méthode delegate pour ageOf = nil
+    // c'est au créateur de l'objet (View ou autre objet du Model) de le faire
+    var ownership            : Ownership = Ownership()
     var type                 : InvestementType // type de l'investissement
     var interestRateType     : InterestRateType // type de taux de rendement
     var interestRate         : Double {// % avant charges sociales si prélevées à la source annuellement

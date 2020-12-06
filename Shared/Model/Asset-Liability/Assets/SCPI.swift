@@ -12,7 +12,7 @@ typealias ScpiArray = ItemArray<SCPI>
 
 // MARK: - SCPI à revenus périodiques, annuels et fixes
 
-struct SCPI: Identifiable, Codable, Equatable, NameableValuable {
+struct SCPI: Identifiable, Codable, Equatable, NameableValuable, Ownable {
     
     // MARK: - Static Properties
     
@@ -30,6 +30,10 @@ struct SCPI: Identifiable, Codable, Equatable, NameableValuable {
     var id           = UUID()
     var name         : String
     var note         : String = ""
+    // propriétaires
+    // attention: par défaut la méthode delegate pour ageOf = nil
+    // c'est au créateur de l'objet (View ou autre objet du Model) de le faire
+    var ownership            : Ownership = Ownership()
     // achat
     var buyingDate   : Date
     var buyingPrice  : Double = 0.0

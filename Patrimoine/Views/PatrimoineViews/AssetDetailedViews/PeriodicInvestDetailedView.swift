@@ -9,26 +9,26 @@
 import SwiftUI
 
 struct PeriodicInvestDetailedView: View {
+    @EnvironmentObject var family     : Family
+    @EnvironmentObject var patrimoine : Patrimoin
     @EnvironmentObject var simulation : Simulation
     @EnvironmentObject var uiState    : UIState
     
-    private var originalItem: PeriodicInvestement?
     // commun
-    @EnvironmentObject var patrimoine: Patrimoin
-    @Environment(\.presentationMode) var presentationMode
-    @State private var index: Int?
+    private var originalItem     : PeriodicInvestement?
+    @State private var localItem : PeriodicInvestement
+    @State private var alertItem : AlertItem?
+    @State private var index     : Int?
     // à adapter
-    @State private var localItem = PeriodicInvestement(name             : "",
-                                                       note             : "",
-                                                       type             : .other,
-                                                       firstYear        : Date.now.year,
-                                                       lastYear         : Date.now.year + 100,
-                                                       interestRateType : .contractualRate(fixedRate: 0.0))
-    
+
     var body: some View {
         Form {
             LabeledTextField(label: "Nom", defaultText: "obligatoire", text: $localItem.name)
             LabeledTextEditor(label: "Note", text: $localItem.note)
+            
+            /// propriété
+            OwnershipView(ownership: $localItem.ownership)
+            
             // acquisition
             Section(header: Text("TYPE")) {
                 TypeInvestEditView(investType: $localItem.type)
@@ -37,6 +37,7 @@ struct PeriodicInvestDetailedView: View {
                 AmountEditView(label: "Frais annuels sur versements",
                                amount: $localItem.yearlyCost)
             }
+            
             Section(header: Text("INITIALISATION")) {
                 YearPicker(title: "Année de départ (fin d'année)",
                            inRange: Date.now.year - 20...Date.now.year + 100,
@@ -46,12 +47,14 @@ struct PeriodicInvestDetailedView: View {
                 AmountEditView(label: "Intérêts initiaux",
                                amount: $localItem.initialInterest)
             }
+            
             Section(header: Text("RENTABILITE")) {
                 InterestRateTypeEditView(rateType: $localItem.interestRateType)
                 PercentView(label: "Rendement net d'inflation",
                             percent: localItem.interestRateNet/100.0)
                     .foregroundColor(.secondary)
             }
+            
             Section(header: Text("LIQUIDATION")) {
                 YearPicker(title: "Année de liquidation (fin d'année)",
                            inRange: localItem.firstYear...localItem.firstYear + 100,
@@ -91,9 +94,12 @@ struct PeriodicInvestDetailedView: View {
                 .capsuleButtonStyle()
                 .disabled(!changeOccured())
         )
+        .alert(item: $alertItem, content: myAlert)
     }
     
-    init(item: PeriodicInvestement?, patrimoine: Patrimoin) {
+    init(item       : PeriodicInvestement?,
+         family     : Family,
+         patrimoine : Patrimoin) {
         self.originalItem = item
         if let initialItemValue = item {
             // modification d'un élément existant
@@ -101,6 +107,16 @@ struct PeriodicInvestDetailedView: View {
             _index     = State(initialValue: patrimoine.assets.periodicInvests.items.firstIndex(of: initialItemValue))
             // specific
         } else {
+            // création d'un nouvel élément
+            var newItem = PeriodicInvestement(name             : "",
+                                              note             : "",
+                                              type             : .other,
+                                              firstYear        : Date.now.year,
+                                              lastYear         : Date.now.year + 100,
+                                              interestRateType : .contractualRate(fixedRate: 0.0))
+            // définir le délégué pour la méthode ageOf qui par défaut est nil à la création de l'objet
+            newItem.ownership.setDelegateForAgeOf(delegate: family.ageOf)
+            _localItem = State(initialValue: newItem)
             // création d'un nouvel élément
             index = nil
         }
@@ -118,19 +134,42 @@ struct PeriodicInvestDetailedView: View {
     
     // sauvegarder les changements
     func applyChanges() {
+        // validation avant sauvegarde
+        guard self.isValid() else { return }
+        
         if let index = index {
             // modifier un éléménet existant
             patrimoine.assets.periodicInvests.update(with: localItem, at: index)
         } else {
-            // créer un nouvel élément
+            // générer un nouvel identifiant pour le nouvel item
+            localItem.id = UUID()
+            // définir le délégué pour la méthode ageOf qui par défaut est nil à la création de l'objet
+            localItem.ownership.setDelegateForAgeOf(delegate: family.ageOf)
+            // ajouter le nouvel élément à la liste
             patrimoine.assets.periodicInvests.add(localItem)
         }
         
         // remettre à zéro la simulation et sa vue
         simulation.reset(withPatrimoine: patrimoine)
         uiState.resetSimulation()
+    }
+    
+    func isValid() -> Bool {
+        /// vérifier que le nom n'est pas vide
+        guard localItem.name != "" else {
+            self.alertItem = AlertItem(title         : Text("Donner un nom"),
+                                       dismissButton : .default(Text("OK")))
+            return false
+        }
         
-        self.presentationMode.wrappedValue.dismiss()
+        /// vérifier que les propriétaires sont correctements définis
+        guard localItem.ownership.isvalid else {
+            self.alertItem = AlertItem(title         : Text("Les propriétaires ne sont pas correctements définis"),
+                                       dismissButton : .default(Text("OK")))
+            return false
+        }
+        
+        return true
     }
     
     func changeOccured() -> Bool {
@@ -165,13 +204,16 @@ struct PeriodicInvestDetailedView: View {
 }
 
 struct PeriodicInvestDetailedView_Previews: PreviewProvider {
-    static var patrimoine  = Patrimoin()
-    
+    static var family     = Family()
+    static var patrimoine = Patrimoin()
+
     static var previews: some View {
         return
             Group {
 //                NavigationView() {
-                    PeriodicInvestDetailedView(item: patrimoine.assets.periodicInvests[0], patrimoine: patrimoine)
+                    PeriodicInvestDetailedView(item       : patrimoine.assets.periodicInvests[0],
+                                               family     : family,
+                                               patrimoine : patrimoine)
                         .environmentObject(patrimoine)
                 }
                 .previewDisplayName("PeriodicInvestDetailedView")
