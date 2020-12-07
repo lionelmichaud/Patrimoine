@@ -125,6 +125,7 @@ struct Ownership: Codable {
         guard ageOf != nil else {
             fatalError("Pas de closure permettant de calculer l'age d'un propriétaire")
         }
+        
         // démembrement
         var usufructValue : Double = 0.0
         var bareValue     : Double = 0.0
@@ -140,9 +141,6 @@ struct Ownership: Codable {
             usufructValue += usuFruit
             bareValue     += nueProp
         }
-        let check = totalValue - (usufructValue + bareValue)
-        print("check = totalValue - (usufructValue + bareValue) = \(check)")
-        
         return (usufructValue: usufructValue, bareValue: bareValue)
     }
     
@@ -193,9 +191,7 @@ struct Ownership: Codable {
                         usufructValue += usuFruit
                         bareValue     += nueProp
                     }
-                    let check = totalValue - (usufructValue + bareValue)
-                    print("check = totalValue - (usufructValue + bareValue) = \(check)")
-                    
+
                     // calcul de la part de nue-propriété détenue
                     if let owner = bareOwners.first(where: { $0.name == ownerName }) {
                         // on a trouvé un nue-propriétaire

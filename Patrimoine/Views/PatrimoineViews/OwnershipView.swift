@@ -146,8 +146,9 @@ struct OwnersListView : View {
 }
 
 struct OwnershipView: View {
-    @EnvironmentObject var family: Family
-    @Binding var ownership: Ownership
+    @EnvironmentObject var family : Family
+    @Binding var ownership        : Ownership
+    var totalValue                : Double
     let usufruitierStr  = "Usufruitier"
     let proprietaireStr = "Propriétaire"
     let nuPropStr       = "Nu-Propriétaire"
@@ -161,8 +162,9 @@ struct OwnershipView: View {
                     NavigationLink(destination: OwnersListView(title  : usufruitierStr,
                                                                owners : $ownership.usufructOwners).environmentObject(family)) {
                         if ownership.isvalid {
-                            PercentView(label  : usufruitierStr+"s",
-                                        percent : ownership.demembrementPercentage(atEndOf: Date.now.year).usufructPercent / 100.0)
+                            AmountView(label   : usufruitierStr+"s",
+                                       amount  : (ownership.demembrementPercentage(atEndOf : Date.now.year).usufructPercent / 100.0) * totalValue,
+                                       comment : ownership.demembrementPercentage(atEndOf : Date.now.year).usufructPercent.percentString(digit : 2)+"%")
                                 .foregroundColor(.blue)
                         } else {
                             if !ownership.usufructOwners.isEmpty && ownership.usufructOwners.isvalid {
@@ -175,8 +177,9 @@ struct OwnershipView: View {
                     NavigationLink(destination: OwnersListView(title  : nuPropStr,
                                                                owners : $ownership.bareOwners).environmentObject(family)) {
                         if ownership.isvalid {
-                            PercentView(label  : nuPropStr+"s",
-                                        percent : ownership.demembrementPercentage(atEndOf: Date.now.year).bareValuePercent / 100.0)
+                            AmountView(label   : nuPropStr+"s",
+                                       amount  : (ownership.demembrementPercentage(atEndOf : Date.now.year).bareValuePercent / 100.0) * totalValue,
+                                       comment : ownership.demembrementPercentage(atEndOf : Date.now.year).bareValuePercent.percentString(digit : 2)+"%")
                                 .foregroundColor(.blue)
                         } else {
                             if !ownership.bareOwners.isEmpty && ownership.bareOwners.isvalid  {
@@ -216,7 +219,7 @@ struct OwnershipView_Previews: PreviewProvider {
             VStack {
                 Button("incrémenter Valeur", action: { totalValue += 100.0})
                 Form {
-                    OwnershipView(ownership: $ownership)
+                    OwnershipView(ownership: $ownership, totalValue: totalValue)
                         .environmentObject(family)
                     ForEach(OwnershipView_Previews.family.members) { member in
                         AmountView(label: member.displayName,
@@ -234,7 +237,7 @@ struct OwnershipView_Previews: PreviewProvider {
         Group {
             NavigationView() {
                 Form {
-                    OwnershipView(ownership: .constant(Ownership(ageOf: ageOf)))
+                    OwnershipView(ownership: .constant(Ownership(ageOf: ageOf)), totalValue: 1000.0)
                         .environmentObject(family)
                 }
             }

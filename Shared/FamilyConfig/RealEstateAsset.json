@@ -60,7 +60,9 @@
             {
                 "fixedYear": 2100
             },
-            "sellingNetPrice"         : 100000
+            "sellingNetPrice"         : 100000,
+            
+            "estimatedValue"          : 100000
         },
         {
             "id"                      : "C200EDBE-5307-4D68-9312-7643871358D7",
@@ -119,12 +121,15 @@
                 "fixedYear": 2100
             },
             "monthlyRentAfterCharges" : 2000,
+            
             "willBeSold"              : false,
             "sellingYear"             :
             {
                 "fixedYear": 2100
             },
-            "sellingNetPrice"         : 600000
+            "sellingNetPrice"         : 600000,
+            
+            "estimatedValue"          : 600000
         }
     ]
 }

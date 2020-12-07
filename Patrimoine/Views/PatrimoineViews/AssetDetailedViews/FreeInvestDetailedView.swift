@@ -28,7 +28,8 @@ struct FreeInvestDetailedView: View {
             LabeledTextEditor(label: "Note", text: $localItem.note)
             
             /// propriété
-            OwnershipView(ownership: $localItem.ownership)
+            OwnershipView(ownership  : $localItem.ownership,
+                          totalValue : localItem.value(atEndOf  : Date.now.year))
             
             Section(header: Text("TYPE")) {
                 TypeInvestEditView(investType: $localItem.type)

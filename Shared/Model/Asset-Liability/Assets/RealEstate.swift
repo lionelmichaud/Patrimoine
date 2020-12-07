@@ -38,6 +38,8 @@ struct RealEstateAsset: Identifiable, Codable, Equatable, NameableValuable, Owna
     var buyingPrice          : Double = 0.0
     var yearlyTaxeHabitation : Double = 0.0
     var yearlyTaxeFonciere   : Double = 0.0
+    // valeur vénale estimée courante
+    var estimatedValue       : Double = 0.0
     // vente
     var willBeSold              : Bool   = false
     var sellingYear             : DateBoundary = DateBoundary.empty // dernière année de possession (inclue)
@@ -72,7 +74,7 @@ struct RealEstateAsset: Identifiable, Codable, Equatable, NameableValuable, Owna
     }
     // profitabilité nette de charges (frais agence, taxe foncière et assurance)
     var profitability           : Double {
-        return yearlyRentAfterCharges / (willBeSold ? sellingNetPrice : buyingPrice)
+        return yearlyRentAfterCharges / (estimatedValue == 0 ? buyingPrice : estimatedValue)
     }
     
     // MARK: - Initializers
@@ -85,7 +87,7 @@ struct RealEstateAsset: Identifiable, Codable, Equatable, NameableValuable, Owna
     /// - Parameter year: fin de l'année
     func value(atEndOf year: Int) -> Double {
         if isOwned(before: year) {
-            return (willBeSold ? sellingNetPrice : buyingPrice)
+            return (estimatedValue == 0 ? buyingPrice : estimatedValue)
         } else {
             return 0.0
         }

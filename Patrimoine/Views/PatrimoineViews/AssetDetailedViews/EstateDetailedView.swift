@@ -91,9 +91,16 @@ struct RealEstateDetailedView: View {
                                    amount: $localItem.buyingPrice)
                 }//.padding(.leading)
             }
+
+            /// valeur vénale courante estimée
+            Section(header: Text("VALEUR VENALE")) {
+                AmountEditView(label: "Valeur vénale courante estimée",
+                               amount: $localItem.estimatedValue)
+            }
             
             /// propriété
-            OwnershipView(ownership: $localItem.ownership)
+            OwnershipView(ownership  : $localItem.ownership,
+                          totalValue : localItem.value(atEndOf : Date.now.year))
             
             /// taxe
             Section(header: Text("TAXES")) {

@@ -27,7 +27,8 @@ struct PeriodicInvestDetailedView: View {
             LabeledTextEditor(label: "Note", text: $localItem.note)
             
             /// propriété
-            OwnershipView(ownership: $localItem.ownership)
+            OwnershipView(ownership  : $localItem.ownership,
+                          totalValue : localItem.value(atEndOf  : Date.now.year))
             
             // acquisition
             Section(header: Text("TYPE")) {

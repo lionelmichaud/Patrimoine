@@ -38,7 +38,8 @@ struct SCPIDetailedView: View {
             }
 
             /// propriété
-            OwnershipView(ownership: $localItem.ownership)
+            OwnershipView(ownership  : $localItem.ownership,
+                          totalValue : localItem.value(atEndOf : Date.now.year))
             
             /// rendement
             Section(header: Text("RENDEMENT")) {
