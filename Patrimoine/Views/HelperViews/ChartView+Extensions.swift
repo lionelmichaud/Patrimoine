@@ -170,8 +170,9 @@ extension LineChartView {
         rightAxis.enabled              = false
         rightAxis.labelFont            = ChartThemes.ChartDefaults.smallLabelFont
         rightAxis.labelTextColor       = #colorLiteral(red     : 1, green     : 0.1474981606, blue     : 0, alpha     : 1)
-        rightAxis.axisMaximum          = 900.0
-        rightAxis.axisMinimum          = -200.0
+        leftAxis.valueFormatter        = axisFormatterChoice.IaxisFormatter()
+//        rightAxis.axisMaximum          = 900.0
+//        rightAxis.axisMinimum          = -200.0
         rightAxis.drawGridLinesEnabled = false
         rightAxis.granularityEnabled   = false
         

@@ -724,11 +724,10 @@ struct IsfModel: Codable {
     ///   - inhabitedAsset: valeur nette de la résidence principale en €
     /// - Returns: Impôt sur le revenu
     func isf (taxableAsset : Double) -> ISF {
-        // FIXME: Vérifier calcul
         // seuil d'imposition
         guard taxableAsset > model.seuil else {
             return (amount       : 0,
-                    taxable      : 0,
+                    taxable      : taxableAsset,
                     marginalRate : 0)
         }
         

@@ -9,11 +9,12 @@
 import SwiftUI
 
 struct ChartsView: View {
-    @EnvironmentObject var simulation   : Simulation
-    @EnvironmentObject var uiState      : UIState
-    @State private var isBsExpanded     : Bool = false
-    @State private var isCfExpanded     : Bool = false
-    @State private var isFiscalExpanded : Bool = false
+    @EnvironmentObject var simulation : Simulation
+    @EnvironmentObject var uiState    : UIState
+    @State private var isBsExpanded   : Bool = false
+    @State private var isCfExpanded   : Bool = false
+    @State private var isIrppExpanded : Bool = false
+    @State private var isIsfExpanded  : Bool = false
 
     var body: some View {
         if simulation.isComputed {
@@ -62,16 +63,16 @@ struct ChartsView: View {
             }
             
             Section {
-                DisclosureGroup(isExpanded: $isFiscalExpanded,
+                DisclosureGroup(isExpanded: $isIrppExpanded,
                                 content: {
-                                    NavigationLink(destination : FiscalEvolutionChartView(),
+                                    NavigationLink(destination : IrppEvolutionChartView(),
                                                    tag         : .irppSynthesis,
                                                    selection   : $uiState.simulationViewState.selectedItem) {
                                         Text("Synthèse de l'évolution")
                                     }
                                     .isDetailLink(true)
                                     
-                                    NavigationLink(destination : FiscalSliceView(),
+                                    NavigationLink(destination : IrppSliceView(),
                                                    tag         : .irppSlices,
                                                    selection   : $uiState.simulationViewState.selectedItem) {
                                         Text("Décomposition par tranche")
@@ -79,7 +80,22 @@ struct ChartsView: View {
                                     .isDetailLink(true)
                                 },
                                 label: {
-                                    Text("Fiscalité")//.font(.headline)
+                                    Text("Impôt sur le Revenu")//.font(.headline)
+                                })
+            }
+            
+            Section {
+                DisclosureGroup(isExpanded: $isIsfExpanded,
+                                content: {
+                                    NavigationLink(destination : IsfEvolutionChartView(),
+                                                   tag         : .isfSynthesis,
+                                                   selection   : $uiState.simulationViewState.selectedItem) {
+                                        Text("Synthèse de l'évolution")
+                                    }
+                                    .isDetailLink(true)
+                                },
+                                label: {
+                                    Text("Impôt sur la Fortune")//.font(.headline)
                                 })
             }
         } else {
