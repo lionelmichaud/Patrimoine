@@ -41,6 +41,7 @@
 		7975E4E6252E20400036C1F5 /* HumanLifeModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7975E4E5252E20400036C1F5 /* HumanLifeModel.swift */; };
 		7975E4EA252E21B30036C1F5 /* HumanLifeModelConfig.json in Resources */ = {isa = PBXBuildFile; fileRef = 7975E4E9252E21B30036C1F5 /* HumanLifeModelConfig.json */; };
 		7975E4ED252E21D00036C1F5 /* SocioEconomyModelConfig.json in Resources */ = {isa = PBXBuildFile; fileRef = 7975E4EC252E21D00036C1F5 /* SocioEconomyModelConfig.json */; };
+		79785D5C257FAFDA00E8E35D /* FiscalHousehold.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79785D5B257FAFDA00E8E35D /* FiscalHousehold.swift */; };
 		798C790325117231003BF2AA /* RandomGenerators.swift in Sources */ = {isa = PBXBuildFile; fileRef = 798C790225117231003BF2AA /* RandomGenerators.swift */; };
 		799488B0249E4F4600DAFF1E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 799488AF249E4F4600DAFF1E /* Assets.xcassets */; };
 		799488B3249E4F4600DAFF1E /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 799488B2249E4F4600DAFF1E /* Preview Assets.xcassets */; };
@@ -241,6 +242,7 @@
 		7975E4E5252E20400036C1F5 /* HumanLifeModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HumanLifeModel.swift; sourceTree = "<group>"; };
 		7975E4E9252E21B30036C1F5 /* HumanLifeModelConfig.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = HumanLifeModelConfig.json; sourceTree = "<group>"; };
 		7975E4EC252E21D00036C1F5 /* SocioEconomyModelConfig.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = SocioEconomyModelConfig.json; sourceTree = "<group>"; };
+		79785D5B257FAFDA00E8E35D /* FiscalHousehold.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FiscalHousehold.swift; sourceTree = "<group>"; };
 		798C790225117231003BF2AA /* RandomGenerators.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RandomGenerators.swift; sourceTree = "<group>"; };
 		799488A6249E4F4600DAFF1E /* Patrimoine.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Patrimoine.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		799488AF249E4F4600DAFF1E /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -818,6 +820,7 @@
 				79948939249E4FC200DAFF1E /* Patrimoin.swift */,
 				7994893A249E4FC200DAFF1E /* Assets */,
 				79948936249E4FC200DAFF1E /* Liabilities */,
+				79785D5B257FAFDA00E8E35D /* FiscalHousehold.swift */,
 			);
 			path = "Asset-Liability";
 			sourceTree = "<group>";
@@ -1247,6 +1250,7 @@
 				79CC729D24BC6B0D000302C5 /* UnemploymentModel.swift in Sources */,
 				790AECCD2533454C00CD1C76 /* ChildDetailView.swift in Sources */,
 				7994898C249E4FC200DAFF1E /* BasicStructs.swift in Sources */,
+				79785D5C257FAFDA00E8E35D /* FiscalHousehold.swift in Sources */,
 				79AA94C624BA7CC900BD3FCD /* PersonLifeLineView.swift in Sources */,
 				79D84E2924A28E6300CBC78E /* Adult.swift in Sources */,
 				7994895C249E4FC200DAFF1E /* PatrimoineView.swift in Sources */,

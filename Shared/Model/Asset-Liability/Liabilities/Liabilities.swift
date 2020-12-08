@@ -44,8 +44,7 @@ struct Liabilities {
             case .ifi, .isf :
                 /// on prend la valeure IFI des emprunts
                 /// pour: le foyer fiscal
-                return Patrimoin.foyerFiscalValue(atEndOf: year,
-                                                  evaluationMethod: evaluationMethod) { name in
+                return FiscalHousehold.value(atEndOf: year) { name in
                     loans.ownedValue(by               : name,
                                      atEndOf          : year,
                                      evaluationMethod : evaluationMethod)

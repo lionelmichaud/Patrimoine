@@ -45,34 +45,6 @@ final class Patrimoin: ObservableObject {
         Assets.setSimulationMode(to: simulationMode)
     }
     
-    static func foyerFiscalValue(atEndOf year     : Int,
-                                 evaluationMethod : EvaluationMethod,
-                                 ownedValue: (String) -> Double) -> Double {
-        /// pour: adultes + enfants non indépendants
-        guard let family = Patrimoin.family else {return 0.0}
-        
-        var cumulatedvalue: Double = 0.0
-        
-        for member in family.members {
-            var toBeConsidered : Bool
-            
-            if (member is Adult) {
-                toBeConsidered = true
-            } else if (member is Child) {
-                let child = member as! Child
-                toBeConsidered = !child.isIndependant(during: year)
-            } else {
-                toBeConsidered = false
-            }
-            
-            if toBeConsidered {
-                cumulatedvalue +=
-                    ownedValue(member.displayName)
-            }
-        }
-        return cumulatedvalue
-    }
-    
     // MARK: - Properties
     
     @Published var assets      = Assets(family: Patrimoin.family)
