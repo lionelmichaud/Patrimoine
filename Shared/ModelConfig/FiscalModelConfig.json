@@ -354,7 +354,7 @@
         }
     },
     
-    "successionDonation" :
+    "inheritanceDonation" :
     {
         "model" :
         {
@@ -445,7 +445,7 @@
        }
     },
 
-    "lifeInsuranceSuccession" :
+    "lifeInsuranceInheritance" :
     {
         "model" :
         {

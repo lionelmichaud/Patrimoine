@@ -48,7 +48,7 @@ final class Patrimoin: ObservableObject {
     // MARK: - Properties
     
     @Published var assets      = Assets(family: Patrimoin.family)
-    @Published var liabilities = Liabilities()
+    @Published var liabilities = Liabilities(family: Patrimoin.family)
     
     // MARK: - Methods
     
@@ -57,7 +57,19 @@ final class Patrimoin: ObservableObject {
             liabilities.value(atEndOf: year)
     }
     
-    /// Valeur nette taxable à l'IFI du patrimoine immobilier de la famille
+    /// Calcule l'actif net taxable à la succession d'une personne
+    /// - Note: [Reference](https://www.service-public.fr/particuliers/vosdroits/F14198)
+    /// - Parameters:
+    ///   - year: année d'évaluation
+    ///   - thisPerson: personne dont on calcule la succession
+    /// - Returns: actif net taxable à la succession
+    func taxableInheritanceValue(of decedent  : Person,
+                                 atEndOf year : Int) -> Double {
+        assets.taxableInheritanceValue(of: decedent, atEndOf: year) +
+            liabilities.taxableInheritanceValue(of: decedent, atEndOf: year)
+    }
+    
+    /// Calcule  la valeur nette taxable à l'IFI du patrimoine immobilier de la famille
     ///  - Note:
     ///  Pour l'IFI:
     ///
@@ -75,13 +87,16 @@ final class Patrimoin: ObservableObject {
     ///  - les immeubles que vous donnez en location peuvent faire l’objet d’une décote de 10 % à 30 % environ
     ///  - en indivision : dans ce cas, ils sont imposables à hauteur de votre quote-part minorée d’une décote de l’ordre de 30 % pour tenir compte des contraintes liées à l’indivision)
     ///
-    /// - Parameter year: année d'évaluation
+    /// - Parameters:
+    ///   - year: année d'évaluation
+    ///   - evaluationMethod: méthode d'évalution des biens
     /// - Returns: assiette nette IFI
-    func netValueOfRealEstateAssets(atEndOf year     : Int,
-                                    evaluationMethod : EvaluationMethod) -> Double {
+    func valueOfRealEstateAssets(atEndOf year     : Int,
+                                 evaluationMethod : EvaluationMethod) -> Double {
         assets.valueOfRealEstateAssets(atEndOf          : year,
                                        evaluationMethod : evaluationMethod) +
-            liabilities.valueOfLoans(atEndOf: year)
+            liabilities.valueOfRealEstateLiabilities(atEndOf          : year,
+                                                     evaluationMethod : evaluationMethod)
     }
     
     /// Réinitialiser les valeurs courantes des investissements libres

@@ -40,11 +40,11 @@ struct Assets {
     // MARK: - Initializers
     
     internal init(family: Family?) {
-        self.periodicInvests = PeriodicInvestementArray()
-        self.freeInvests     = FreeInvestmentArray()
+        self.periodicInvests = PeriodicInvestementArray(family: family)
+        self.freeInvests     = FreeInvestmentArray(family: family)
         self.realEstates     = RealEstateArray(family: family)
-        self.scpis           = ScpiArray() // SCPI hors dscpis
-        self.sci             = SCI()
+        self.scpis           = ScpiArray(family: family) // SCPI hors dscpis
+        self.sci             = SCI(family: family)
     }
     
     // MARK: - Methods
@@ -126,12 +126,14 @@ struct Assets {
         }
     }
     
-    func valueOfInhabitedRealEstateAssets(atEndOf year: Int) -> Double {
-        return realEstates.items.reduce(.zero, {result, element in
-            element.isInhabited(during: year) ?
-                result + element.value(atEndOf: year) :
-                result
-        })
-        
+    /// Calcule l'actif  taxable à la succession d'une personne
+    /// - Note: [Reference](https://www.service-public.fr/particuliers/vosdroits/F14198)
+    /// - Parameters:
+    ///   - year: année d'évaluation
+    ///   - thisPerson: personne dont on calcule la succession
+    /// - Returns: actif taxable à la succession
+    func taxableInheritanceValue(of decedent  : Person,
+                                 atEndOf year : Int) -> Double {
+        return 0
     }
 }

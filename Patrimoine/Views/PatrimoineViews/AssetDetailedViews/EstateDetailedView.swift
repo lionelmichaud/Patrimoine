@@ -189,8 +189,6 @@ struct RealEstateDetailedView: View {
             _assetVM   = StateObject(wrappedValue: RealEstateViewModel(from: initialItemValue))
             _index     = State(initialValue: patrimoine.assets.realEstates.items.firstIndex(of: initialItemValue))
             // specific
-//            // définir le délégué pour la méthode ageOf qui par défaut est nil à la création de l'objet
-//            localItem.ownership.setDelegateForAgeOf(delegate: family.ageOf)
         } else {
             // création d'un nouvel élément
             var newItem = RealEstateAsset(name: "")

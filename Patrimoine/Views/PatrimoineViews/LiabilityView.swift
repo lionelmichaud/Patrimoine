@@ -29,6 +29,7 @@ struct LiabilityView: View {
 }
 
 struct LoanView: View {
+    @EnvironmentObject var family     : Family
     @EnvironmentObject var patrimoine : Patrimoin
     @EnvironmentObject var uiState    : UIState
 
@@ -52,8 +53,9 @@ struct LoanView: View {
             // items
             if !uiState.patrimoineViewState.liabViewState.colapseEmpruntlist {
                 // ajout d'un nouvel item à la liste
-                NavigationLink(destination: LoanDetailedView(item  : nil,
-                                                             patrimoine: patrimoine)) {
+                NavigationLink(destination: LoanDetailedView(item       : nil,
+                                                             family     : family,
+                                                             patrimoine : patrimoine)) {
                     HStack {
                         Image(systemName: "plus.circle.fill")
                             .imageScale(.large)
@@ -64,8 +66,9 @@ struct LoanView: View {
                 
                 // liste des items
                 ForEach(patrimoine.liabilities.loans.items) { item in
-                    NavigationLink(destination: LoanDetailedView(item  : item,
-                                                                 patrimoine: self.patrimoine)) {
+                    NavigationLink(destination: LoanDetailedView(item       : item,
+                                                                 family     : family,
+                                                                 patrimoine : self.patrimoine)) {
                         LabeledValueRowView(colapse     : self.$uiState.patrimoineViewState.liabViewState.colapseEmpruntlist,
                                             label       : item.name,
                                             value       : item.value(atEndOf: Date.now.year),
@@ -82,6 +85,7 @@ struct LoanView: View {
 }
 
 struct DebtView: View {
+    @EnvironmentObject var family     : Family
     @EnvironmentObject var patrimoine : Patrimoin
     @EnvironmentObject var uiState    : UIState
 
@@ -105,8 +109,9 @@ struct DebtView: View {
             // items
             if !uiState.patrimoineViewState.liabViewState.colapseDetteListe {
                 // ajout d'un nouvel item à la liste
-                NavigationLink(destination: DebtDetailedView(item      : nil,
-                                                             patrimoine: patrimoine)) {
+                NavigationLink(destination: DebtDetailedView(item       : nil,
+                                                             family     : family,
+                                                             patrimoine : patrimoine)) {
                     HStack {
                         Image(systemName: "plus.circle.fill")
                             .imageScale(.large)
@@ -117,8 +122,9 @@ struct DebtView: View {
                 
                 // liste des items
                 ForEach(patrimoine.liabilities.debts.items) { item in
-                    NavigationLink(destination: DebtDetailedView(item      : item,
-                                                                 patrimoine: self.patrimoine)) {
+                    NavigationLink(destination: DebtDetailedView(item       : item,
+                                                                 family     : family,
+                                                                 patrimoine : self.patrimoine)) {
                         LabeledValueRowView(colapse     : self.$uiState.patrimoineViewState.liabViewState.colapseDetteListe,
                                             label       : item.name,
                                             value       : item.value(atEndOf: Date.now.year),

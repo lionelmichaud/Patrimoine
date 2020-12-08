@@ -5,6 +5,27 @@
             "id"    : "817D4F52-3764-44A5-9B5B-93E7EBB405B8",
             "name"  : "IRPP et Impôts locaux",
             "note"  : "Actualisé le 11/09/2020",
+            "ownership"               :
+            {
+                "est_démembré"        : false,
+                "plein_propriétaires" :
+                [
+                    {
+                        "name"     : "M. Lionel MICHAUD",
+                        "fraction" : 70
+                    },
+                    {
+                        "name"     : "Mme. Vanessa MICHAUD",
+                        "fraction" : 30
+                    }
+                ],
+                "nue_propriétaires"   :
+                [
+                ],
+                "usufruitiers"        :
+                [
+                ]
+            },
             "value" : -16000
         }
     ]

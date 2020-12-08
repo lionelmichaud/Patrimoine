@@ -144,8 +144,16 @@ struct SCI {
     
     // MARK: - Properties
 
-    var scpis       = ScpiArray(fileNamePrefix: "SCI_")
-    var bankAccount = 0.0
+    var scpis       : ScpiArray
+    var bankAccount : Double
+    
+    // MARK: - Initializers
+    
+    internal init(family: Family?) {
+        self.scpis       = ScpiArray(fileNamePrefix : "SCI_",
+                                     family         : family)
+        self.bankAccount = 0
+    }
     
     // MARK: - Methods
 

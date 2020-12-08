@@ -11,19 +11,25 @@ import Foundation
 typealias LoanArray = ItemArray<Loan>
 
 // MARK: - Emprunt à remboursement constant, périodique, annuel et à taux fixe
+
 /// Emprunt à remboursement constant, périodique, annuel et à taux fixe
-struct Loan: Codable, Identifiable, NameableValuable {
+struct Loan: Codable, Identifiable, NameableValuable, Ownable {
     
-    // properties
-    
+    // MARK: - Properties
+
     var id                = UUID()
-    var name              : String
-    var note              : String
+    var name              : String = ""
+    var note              : String = ""
+    // propriétaires
+    // attention: par défaut la méthode delegate pour ageOf = nil
+    // c'est au créateur de l'objet (View ou autre objet du Model) de le faire
+    var ownership            : Ownership = Ownership()
+
     var firstYear         : Int // au 31 décembre
     var lastYear          : Int // au 31 décembre
-    var loanedValue       : Double // negative number
-    var interestRate      : Double// %
-    var monthlyInsurance  : Double // cout mensuel
+    var loanedValue       : Double = 0 // negative number
+    var interestRate      : Double = 0// %
+    var monthlyInsurance  : Double = 0 // cout mensuel
     private var nbPeriod  : Int {
         (lastYear - firstYear + 1)
     }
@@ -40,26 +46,10 @@ struct Loan: Codable, Identifiable, NameableValuable {
         totalPayement + loanedValue
     }
 
-    // initialization
-    
-    init(name             : String,
-         note             : String,
-         firstYear        : Int,
-         lastYear         : Int,
-         initialValue     : Double,
-         interestRate     : Double,
-         monthlyInsurance : Double) {
-        self.name             = name
-        self.note             = note
-        self.firstYear        = firstYear
-        self.lastYear         = lastYear
-        self.loanedValue      = initialValue
-        self.interestRate     = interestRate
-        self.monthlyInsurance = monthlyInsurance
-    }
-    
-    // methods
-    
+    // MARK: - Initializers
+
+    // MARK: - Methods
+
     /// Montant du remboursement périodique (capital + intérêts)
     /// - Parameter year: année courante
     func yearlyPayement(_ year: Int) -> Double {

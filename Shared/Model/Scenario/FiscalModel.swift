@@ -27,8 +27,8 @@ struct Fiscal: Codable {
         var isf                            : IsfModel
         var companyProfitTaxes             : CompanyProfitTaxes
         var demembrement                   : DemembrementModel
-        var successionDonation             : DroitsSuccessionDonation
-        var lifeInsuranceSuccession        : LifeInsuranceSuccession
+        var inheritanceDonation            : InheritanceDonation
+        var lifeInsuranceInheritance       : LifeInsuranceInheritance
     }
     
     // static method
@@ -40,7 +40,8 @@ struct Fiscal: Codable {
                                        keyDecodingStrategy  : .useDefaultKeys)
         model.incomeTaxes.initialize()
         model.isf.initialize()
-        model.successionDonation.initialize()
+        model.inheritanceDonation.initialize()
+        model.lifeInsuranceInheritance.initialize()
         return model
     }
     
@@ -819,7 +820,7 @@ struct DemembrementModel: Codable {
 
 // MARK: - Droits de succession en ligne directe et de donation au conjoint
 ///  - Note: [Reference](https://www.service-public.fr/particuliers/vosdroits/F14198)
-struct DroitsSuccessionDonation: Codable {
+struct InheritanceDonation: Codable {
     // nested types
     
     // tranche de barême
@@ -904,7 +905,7 @@ struct DroitsSuccessionDonation: Codable {
 
 // MARK: - Droits de succession sur assurance vie
 ///  - Note: [Reference](https://www.impots.gouv.fr/portail/international-particulier/questions/comment-sont-imposees-les-assurances-vie-en-cas-de-deces-du)
-struct LifeInsuranceSuccession: Codable {
+struct LifeInsuranceInheritance: Codable {
     // nested types
     
     // tranche de barême

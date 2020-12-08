@@ -324,7 +324,7 @@ struct CashFlowLine {
     fileprivate mutating func populateISF(of family       : Family,
                                           with patrimoine : Patrimoin,
                                           for year        : Int) {
-        let taxableAsset = patrimoine.netValueOfRealEstateAssets(atEndOf          : year,
+        let taxableAsset = patrimoine.valueOfRealEstateAssets(atEndOf          : year,
                                                                  evaluationMethod : .ifi)
         taxes.isf = Fiscal.model.isf.isf(taxableAsset: taxableAsset)
         taxes.perCategory[.isf]?.namedValues.append((name: "ISF", value: taxes.isf.amount.rounded()))
