@@ -24,9 +24,11 @@ struct Assets {
         PeriodicInvestement.simulationMode = simulationMode
         FreeInvestement.simulationMode     = simulationMode
         // on suppose que les loyers des biens immobiliers physiques sont réévalués de l'inflation
+        ()
         // on suppose que les valeurs de vente des biens immobiliers physiques et papier sont réévalués de l'inflation
-        RealEstateAsset.simulationMode     = simulationMode
+        () // RealEstateAsset.simulationMode     = simulationMode
         // on suppose que les salaires et les chiffres d'affaires sont réévalués de l'inflation
+        ()
     }
     
     // MARK: - Properties
@@ -39,6 +41,10 @@ struct Assets {
     
     // MARK: - Initializers
     
+    /// Charger les actifs stockés en fichier JSON
+    /// - Parameter family: famille à laquelle associer le patrimoine
+    /// - Note: family est utilisée pour injecter dans chaque actif un délégué family.ageOf
+    ///         permettant de calculer les valeurs respectives des Usufruits et Nu-Propriétés
     internal init(family: Family?) {
         self.periodicInvests = PeriodicInvestementArray(family: family)
         self.freeInvests     = FreeInvestmentArray(family: family)
@@ -58,7 +64,7 @@ struct Assets {
         return sum
     }
     
-    /// Valeur nette taxable à l'IFI du patrimoine immobilier de la famille
+    /// Calcule  la valeur nette taxable du patrimoine immobilier de la famille selon la méthode de calcul choisie
     ///  - Note:
     ///  Pour l'IFI:
     ///
@@ -79,43 +85,25 @@ struct Assets {
     /// - Parameters:
     ///   - year: année d'évaluation
     ///   - evaluationMethod: méthode d'évaluation de la valeure des bien
-    ///   - Returns: assiette nette IFI
-    func valueOfRealEstateAssets(atEndOf year     : Int,
-                                 evaluationMethod : EvaluationMethod) -> Double {
+    ///   - Returns: assiette nette fiscale calculée selon la méthode choisie
+    func realEstateValue(atEndOf year     : Int,
+                         evaluationMethod : EvaluationMethod) -> Double {
         switch evaluationMethod {
             case .ifi, .isf :
                 /// on prend la valeure IFI des biens immobiliers
-                /// pour: adultes + enfants non indépendants
-                guard let family = Patrimoin.family else {return 0.0}
-                
-                var cumulatedvalue: Double = 0.0
-                
-                for member in family.members {
-                    var toBeConsidered : Bool
-                    
-                    if (member is Adult) {
-                        toBeConsidered = true
-                    } else if (member is Child) {
-                        let child = member as! Child
-                        toBeConsidered = !child.isIndependant(during: year)
-                    } else {
-                        toBeConsidered = false
-                    }
-                    
-                    if toBeConsidered {
-                        cumulatedvalue +=
-                            realEstates.ownedValue(by               : member.displayName,
-                                                   atEndOf          : year,
-                                                   evaluationMethod : evaluationMethod) +
-                            scpis.ownedValue(by               : member.displayName,
+                /// pour: le foyer fiscal
+                return Patrimoin.foyerFiscalValue(atEndOf: year,
+                                                  evaluationMethod: evaluationMethod) { name in
+                    realEstates.ownedValue(by               : name,
+                                           atEndOf          : year,
+                                           evaluationMethod : evaluationMethod) +
+                        scpis.ownedValue(by               : name,
+                                         atEndOf          : year,
+                                         evaluationMethod : evaluationMethod) +
+                        sci.scpis.ownedValue(by               : name,
                                              atEndOf          : year,
-                                             evaluationMethod : evaluationMethod) +
-                            sci.scpis.ownedValue(by               : member.displayName,
-                                                 atEndOf          : year,
-                                                 evaluationMethod : evaluationMethod)
-                    }
+                                             evaluationMethod : evaluationMethod)
                 }
-                return cumulatedvalue
 
             default:
                 /// on prend la valeure totale de tous les biens immobiliers
@@ -126,11 +114,11 @@ struct Assets {
         }
     }
     
-    /// Calcule l'actif  taxable à la succession d'une personne
+    /// Calcule l'actif taxable à la succession d'une personne
     /// - Note: [Reference](https://www.service-public.fr/particuliers/vosdroits/F14198)
     /// - Parameters:
     ///   - year: année d'évaluation
-    ///   - thisPerson: personne dont on calcule la succession
+    ///   - decedent: personne dont on calcule la succession
     /// - Returns: actif taxable à la succession
     func taxableInheritanceValue(of decedent  : Person,
                                  atEndOf year : Int) -> Double {

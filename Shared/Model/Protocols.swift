@@ -16,22 +16,6 @@ protocol NameableValuable {
     func print()
 }
 
-extension Array where Element: NameableValuable {
-    /// Somme de toutes les valeurs d'un Array
-    ///
-    /// Usage:
-    ///
-    ///     total = items.sumOfValues(atEndOf: 2020)
-    ///
-    /// - Returns: Somme de toutes les valeurs d'un Array
-    func sumOfValues (atEndOf year: Int) -> Double {
-        return reduce(.zero, {result, element in
-            result + element.value(atEndOf: year)
-            
-        })
-    }
-}
-
 // MARK: Protocol d'Item qui peut être Possédé, Valuable et Nameable
 
 protocol Ownable: NameableValuable {
@@ -74,6 +58,24 @@ extension Ownable {
                                                               ofValue          : evaluatedValue,
                                                               atEndOf          : year,
                                                               evaluationMethod : evaluationMethod)
+    }
+}
+
+// MARK: - Extensions de Array
+
+extension Array where Element: NameableValuable {
+    /// Somme de toutes les valeurs d'un Array
+    ///
+    /// Usage:
+    ///
+    ///     total = items.sumOfValues(atEndOf: 2020)
+    ///
+    /// - Returns: Somme de toutes les valeurs d'un Array
+    func sumOfValues (atEndOf year: Int) -> Double {
+        return reduce(.zero, {result, element in
+            result + element.value(atEndOf: year)
+            
+        })
     }
 }
 
@@ -123,6 +125,9 @@ protocol NameableValuableArray: Codable {
     var items          : [Item] { get set }
     var fileNamePrefix : String { get set }
     var currentValue   : Double { get }
+
+    // MARK: - Subscript
+    
     subscript(idx: Int) -> Item { get set }
     
     // MARK: - Initializers

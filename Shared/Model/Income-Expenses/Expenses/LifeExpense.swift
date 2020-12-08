@@ -106,7 +106,7 @@ struct LifeExpense: Identifiable, Codable, Hashable, NameableValuable {
     
     // MARK: - Static properties
     
-    static var family: Family?
+    static var family         : Family?
     static var simulationMode : SimulationModeEnum = .deterministic
     
     // MARK: - Static Methods

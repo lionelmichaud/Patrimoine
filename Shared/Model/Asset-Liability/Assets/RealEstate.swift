@@ -15,14 +15,14 @@ struct RealEstateAsset: Identifiable, Codable, Equatable, NameableValuable, Owna
     
     // MARK: - Static Properties
     
-    static var simulationMode : SimulationModeEnum = .deterministic
+//    static var simulationMode : SimulationModeEnum = .deterministic
     
     // MARK: - Static Methods
     
     // pas utilisé
     // on suppose que les loyers des biens immobiliers physiques sont réévalués de l'inflation
     // on suppose que les valeurs de vente des biens immobiliers physiques et papier sont réévalués de l'inflation
-    static var inflation: Double { Economy.model.inflation.value(withMode: simulationMode) }
+//    static var inflation: Double { Economy.model.inflation.value(withMode: simulationMode) }
     
     // MARK: - Properties
     

@@ -45,6 +45,34 @@ final class Patrimoin: ObservableObject {
         Assets.setSimulationMode(to: simulationMode)
     }
     
+    static func foyerFiscalValue(atEndOf year     : Int,
+                                 evaluationMethod : EvaluationMethod,
+                                 ownedValue: (String) -> Double) -> Double {
+        /// pour: adultes + enfants non indépendants
+        guard let family = Patrimoin.family else {return 0.0}
+        
+        var cumulatedvalue: Double = 0.0
+        
+        for member in family.members {
+            var toBeConsidered : Bool
+            
+            if (member is Adult) {
+                toBeConsidered = true
+            } else if (member is Child) {
+                let child = member as! Child
+                toBeConsidered = !child.isIndependant(during: year)
+            } else {
+                toBeConsidered = false
+            }
+            
+            if toBeConsidered {
+                cumulatedvalue +=
+                    ownedValue(member.displayName)
+            }
+        }
+        return cumulatedvalue
+    }
+    
     // MARK: - Properties
     
     @Published var assets      = Assets(family: Patrimoin.family)
@@ -61,7 +89,7 @@ final class Patrimoin: ObservableObject {
     /// - Note: [Reference](https://www.service-public.fr/particuliers/vosdroits/F14198)
     /// - Parameters:
     ///   - year: année d'évaluation
-    ///   - thisPerson: personne dont on calcule la succession
+    ///   - decedent: personne dont on calcule la succession
     /// - Returns: actif net taxable à la succession
     func taxableInheritanceValue(of decedent  : Person,
                                  atEndOf year : Int) -> Double {
@@ -69,7 +97,7 @@ final class Patrimoin: ObservableObject {
             liabilities.taxableInheritanceValue(of: decedent, atEndOf: year)
     }
     
-    /// Calcule  la valeur nette taxable à l'IFI du patrimoine immobilier de la famille
+    /// Calcule  la valeur nette taxable du patrimoine immobilier de la famille selon la méthode de calcul choisie
     ///  - Note:
     ///  Pour l'IFI:
     ///
@@ -90,13 +118,13 @@ final class Patrimoin: ObservableObject {
     /// - Parameters:
     ///   - year: année d'évaluation
     ///   - evaluationMethod: méthode d'évalution des biens
-    /// - Returns: assiette nette IFI
-    func valueOfRealEstateAssets(atEndOf year     : Int,
-                                 evaluationMethod : EvaluationMethod) -> Double {
-        assets.valueOfRealEstateAssets(atEndOf          : year,
-                                       evaluationMethod : evaluationMethod) +
-            liabilities.valueOfRealEstateLiabilities(atEndOf          : year,
-                                                     evaluationMethod : evaluationMethod)
+    /// - Returns: assiette nette fiscale calculée selon la méthode choisie
+    func realEstateValue(atEndOf year     : Int,
+                         evaluationMethod : EvaluationMethod) -> Double {
+        assets.realEstateValue(atEndOf          : year,
+                               evaluationMethod : evaluationMethod) +
+            liabilities.realEstateValue(atEndOf          : year,
+                                        evaluationMethod : evaluationMethod)
     }
     
     /// Réinitialiser les valeurs courantes des investissements libres
