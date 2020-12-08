@@ -18,6 +18,9 @@ struct AdultDetailView: View {
             
             /// Section: revenus
             RevenuSectionView()
+            
+            /// Section: succession
+            InheritanceSectionView()
         }
     }
 }
@@ -190,3 +193,28 @@ fileprivate struct RevenuSectionView: View {
     }
 }
 
+// MARK: - MemberDetailView / AdultDetailView / ScenarioSectionView
+
+fileprivate struct InheritanceSectionView: View {
+    @EnvironmentObject var patrimoine : Patrimoin
+    @EnvironmentObject var member     : Person
+    
+    var body: some View {
+        if member is Adult {
+            Section {
+                DisclosureGroup (
+                    content: {
+                        AmountView(label : "A la date d'aujourd'hui",
+                                   amount: patrimoine.taxableInheritanceValue(of: member, atEndOf: Date.now.year),
+                                   comment: "masse successorale")
+                        AmountView(label : "A l'âge de décès estimé \(member.ageOfDeath) ans en \(String(member.yearOfDeath))",
+                                   amount: patrimoine.taxableInheritanceValue(of: member, atEndOf: member.yearOfDeath),
+                                   comment: "masse successorale")
+                    },
+                    label: {
+                        Text("SUCCESSION").font(.headline)
+                    })
+            }
+        }
+    }
+}

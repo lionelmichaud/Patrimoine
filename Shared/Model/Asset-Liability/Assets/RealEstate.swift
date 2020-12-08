@@ -95,15 +95,13 @@ struct RealEstateAsset: Identifiable, Codable, Equatable, NameableValuable, Owna
     
     /// calcule la valeur d'un bien à l'IFI ou à l'ISF
     ///  - Note:
-    ///  Pour l'IFI:
-    ///
     ///  Valeur retenue:
     ///  - la résidence principale faire l’objet d’une décote de 30 %
     ///  - les immeubles que vous donnez en location peuvent faire l’objet d’une décote de 10 % à 30 % environ
     ///  - en indivision : dans ce cas, ils sont imposables à hauteur de votre quote-part minorée d’une décote de l’ordre de 30 % pour tenir compte des contraintes liées à l’indivision)
     func ifiValue(atEndOf year: Int) -> Double {
         if self.isInhabited(during: year) {
-            // decote de la résience principale
+            // decote de la résidence principale
             return value(atEndOf: year) * (1.0 - Fiscal.model.isf.model.decoteResidence/100.0)
 
         } else if self.isRented(during: year) {
@@ -111,10 +109,43 @@ struct RealEstateAsset: Identifiable, Codable, Equatable, NameableValuable, Owna
             return value(atEndOf: year) * (1.0 - Fiscal.model.isf.model.decoteLocation/100.0)
 
         } else {
+            // pas de décote
             return value(atEndOf: year)
         }
     }
     
+    /// calcule la valeur d'un bien selon les règle du droit de la succession
+    ///  - Note:
+    ///  Valeur retenue:
+    ///  La maison ou l'appartement, qui était la résidence principale du défunt, bénéficie d'un abattement de 20 %
+    ///  de sa valeur.
+    ///
+    ///  Il devait alors être aussi, le jour du décès, la résidence principale :
+    ///   - de l'époux(se) survivant(e)
+    ///   - ou du partenaire de Pacs
+    ///   - ou de l'enfant (mineur ou majeur protégé) du défunt, de son époux(se) ou partenaire de Pacs
+    ///   - ou de l'enfant majeur du défunt, de son époux(se) ou partenaire de Pacs dont l'infirmité physique ou mentale ne lui permettent pas d'avoir un revenu suffisant.
+    ///
+    ///  - les immeubles que vous donnez en location peuvent faire l’objet d’une décote de 10 % à 30 % environ
+    ///  - en indivision : dans ce cas, ils sont imposables à hauteur de votre quote-part minorée d’une décote de l’ordre de 30 % pour tenir compte des contraintes liées à l’indivision)
+    func inheritanceValue(atEndOf year: Int) -> Double {
+        if self.isInhabited(during: year) {
+            // decote de la résidence principale
+            return value(atEndOf: year) * (1.0 - Fiscal.model.inheritanceDonation.model.decoteResidence/100.0)
+            
+        } else {
+            // pas de décote
+            return value(atEndOf: year)
+        }
+    }
+    
+    /// Calcule la valeur d'un bien possédée par un personne donnée à une date donnée
+    /// selon la régle générale ou selon la règle de l'IFI, de l'ISF, de la succession...
+    /// - Parameters:
+    ///   - ownerName: nom de la personne recherchée
+    ///   - year: date d'évaluation
+    ///   - evaluationMethod: méthode d'évaluation de la valeure des bien
+    /// - Returns: valeur du bien possédée (part d'usufruit + part de nue-prop)
     func ownedValue(by ownerName     : String,
                     atEndOf year     : Int,
                     evaluationMethod : EvaluationMethod) -> Double {
@@ -122,10 +153,17 @@ struct RealEstateAsset: Identifiable, Codable, Equatable, NameableValuable, Owna
 
         switch evaluationMethod {
             case .ifi, .isf:
+                // appliquer la décote IFI
                 evaluatedValue = ifiValue(atEndOf: year)
+                
+            case .inheritance:
+            // appliquer la décote succession
+                evaluatedValue = inheritanceValue(atEndOf: year)
             default:
+                // pas de décote
                 evaluatedValue = value(atEndOf: year)
         }
+        // calculer la part de propriété
         return evaluatedValue == 0 ? 0 : ownership.ownedValue(by               : ownerName,
                                                               ofValue          : evaluatedValue,
                                                               atEndOf          : year,

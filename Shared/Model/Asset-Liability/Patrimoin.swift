@@ -11,7 +11,7 @@ import Foundation
 enum EvaluationMethod: PickableEnum {
     case ifi
     case isf
-    case succession
+    case inheritance
     case patrimoine
     
     var pickerString: String {
@@ -20,7 +20,7 @@ enum EvaluationMethod: PickableEnum {
                 return "IFI"
             case .isf:
                 return "ISF"
-            case .succession:
+            case .inheritance:
                 return "Succession"
             case .patrimoine:
                 return "Patrimoniale"

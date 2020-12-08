@@ -121,6 +121,20 @@ struct Assets {
     /// - Returns: actif taxable à la succession
     func taxableInheritanceValue(of decedent  : Person,
                                  atEndOf year : Int) -> Double {
-        return 0
+        realEstates.ownedValue(by               : decedent.displayName,
+                               atEndOf          : year,
+                               evaluationMethod : .inheritance) +
+            scpis.ownedValue(by               : decedent.displayName,
+                             atEndOf          : year,
+                             evaluationMethod : .inheritance) +
+            sci.scpis.ownedValue(by               : decedent.displayName,
+                                 atEndOf          : year,
+                                 evaluationMethod : .inheritance) +
+            periodicInvests.ownedValue(by               : decedent.displayName,
+                                       atEndOf          : year,
+                                       evaluationMethod : .inheritance) +
+            freeInvests.ownedValue(by               : decedent.displayName,
+                                   atEndOf          : year,
+                                   evaluationMethod : .inheritance)
     }
 }

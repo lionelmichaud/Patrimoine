@@ -113,7 +113,7 @@ extension ItemArray where E: Ownable {
     }
     
     /// Calcule la valeur d'un bien possédée par un personne donnée à une date donnée
-    /// selon la régle générale ou selon la règle de l'IFI.
+    /// selon la régle générale ou selon la règle de l'IFI, de l'ISF, de la succession...
     ///  - Note:
     ///  Pour l'IFI:
     ///

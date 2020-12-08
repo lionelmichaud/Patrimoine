@@ -64,8 +64,14 @@ struct Liabilities {
     /// - Returns: passif taxable à la succession
     func taxableInheritanceValue(of decedent  : Person,
                                  atEndOf year : Int) -> Double {
-        return 0
+        loans.ownedValue(by               : decedent.displayName,
+                         atEndOf          : year,
+                         evaluationMethod : .inheritance) +
+            debts.ownedValue(by               : decedent.displayName,
+                             atEndOf          : year,
+                             evaluationMethod : .inheritance)
     }
+    
     func valueOfDebts(atEndOf year: Int) -> Double {
         debts.value(atEndOf: year)
     }
