@@ -35,8 +35,6 @@ fileprivate struct ScenarioSectionView: View {
         return Section {
             DisclosureGroup (
                 content: {
-                    LabeledText(label: "Option fiscale retenue en cas de succession",
-                                text : adult.fiscalOption.displayString)
                     LabeledText(label: "Age de décès estimé",
                                 text : "\(member.ageOfDeath) ans en \(String(member.yearOfDeath))")
                     LabeledText(label: "Cessation d'activité",
@@ -206,12 +204,16 @@ fileprivate struct InheritanceSectionView: View {
             Section {
                 DisclosureGroup (
                     content: {
+                        if let adult = member as? Adult {
+                            LabeledText(label: "Option fiscale retenue en cas d'héritage",
+                                        text : adult.fiscalOption.displayString)
+                        }
                         AmountView(label : "A la date d'aujourd'hui",
                                    amount: patrimoine.taxableInheritanceValue(of: member, atEndOf: Date.now.year),
-                                   comment: "masse successorale")
+                                   comment: "masse successorale en cas de décès")
                         AmountView(label : "A l'âge de décès estimé \(member.ageOfDeath) ans en \(String(member.yearOfDeath))",
                                    amount: patrimoine.taxableInheritanceValue(of: member, atEndOf: member.yearOfDeath),
-                                   comment: "masse successorale")
+                                   comment: "masse successorale en cas de décès")
                     },
                     label: {
                         Text("SUCCESSION").font(.headline)

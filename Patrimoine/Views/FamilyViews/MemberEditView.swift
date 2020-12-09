@@ -155,9 +155,9 @@ fileprivate struct ScenarioSection: View {
                 }
             }
             HStack {
-                Text("Option fiscale de succession")
+                Text("Option fiscale retenue en cas d'héritage")
                 Spacer()
-                CasePicker(pickedCase: $adultViewModel.fiscalOption, label: "Option fiscale de succession")
+                CasePicker(pickedCase: $adultViewModel.fiscalOption, label: "Option fiscale retenue en cas d'héritage")
                     .pickerStyle(SegmentedPickerStyle())
             }
         }
