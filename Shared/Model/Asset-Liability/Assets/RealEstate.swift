@@ -150,6 +150,7 @@ struct RealEstateAsset: Identifiable, Codable, Equatable, NameableValuable, Owna
                     atEndOf year     : Int,
                     evaluationMethod : EvaluationMethod) -> Double {
         var evaluatedValue : Double
+        Swift.print("  Actif: \(name)")
 
         switch evaluationMethod {
             case .ifi, .isf:
@@ -157,19 +158,29 @@ struct RealEstateAsset: Identifiable, Codable, Equatable, NameableValuable, Owna
                 evaluatedValue = ifiValue(atEndOf: year)
                 
             case .inheritance:
-            // appliquer la décote succession
+                // le défunt est-il usufruitier ?
+                if ownership.isAnUsufructOwner(ownerName: ownerName) {
+                    // si oui alors l'usufruit rejoint la nu-propriété sans droit de succession
+                    // l'usufruit n'est donc pas intégré à la masse successorale du défunt
+                    Swift.print("  valeur: 0")
+                    return 0
+                }
+                // appliquer la décote succession
                 evaluatedValue = inheritanceValue(atEndOf: year)
+                
             default:
                 // pas de décote
                 evaluatedValue = value(atEndOf: year)
         }
         // calculer la part de propriété
-        return evaluatedValue == 0 ? 0 : ownership.ownedValue(by               : ownerName,
-                                                              ofValue          : evaluatedValue,
-                                                              atEndOf          : year,
-                                                              evaluationMethod : evaluationMethod)
+        let value = evaluatedValue == 0 ? 0 : ownership.ownedValue(by               : ownerName,
+                                                                   ofValue          : evaluatedValue,
+                                                                   atEndOf          : year,
+                                                                   evaluationMethod : evaluationMethod)
+        Swift.print("  valeur: \(value)")
+        return value
     }
-
+    
     /// true si year est dans la période d'habitation
     /// - Parameter year: année
     func isInhabited(during year: Int) -> Bool {

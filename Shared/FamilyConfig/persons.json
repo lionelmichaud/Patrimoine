@@ -8,8 +8,9 @@
             "givenName"  : "Lionel"
         },
         "sexe"                 : 0,
-        "birth_Date" : "1964-09-22T23:00:00+01:00",
-        "work_Income" : {
+        "birth_Date"    : "1964-09-22T23:00:00+01:00",
+        "fiscal_option" : "Quotité disponible",
+        "work_Income"   : {
             "salary_brutSalary"      : 98400,
             "salary_taxableSalary"   : 80712,
             "salary_netSalary"       : 77000,
@@ -75,8 +76,9 @@
             "givenName" : "Vanessa"
         },
         "sexe"                 : 1,
-        "birth_Date" : "1968-12-17T23:00:00+01:00",
-        "work_Income" : {
+        "birth_Date"    : "1968-12-17T23:00:00+01:00",
+        "fiscal_option" : "Quotité disponible",
+        "work_Income"   : {
             "turnOver_BNC" : 48000,
             "turnOver_incomeLossInsurance" : 1680
         },

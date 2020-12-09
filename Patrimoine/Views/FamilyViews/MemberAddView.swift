@@ -11,13 +11,13 @@ import SwiftUI
 // MARK: -  Person View Model
 
 class PersonViewModel: ObservableObject {
-    @Published var familyName = ""
-    @Published var givenName  = ""
-    @Published var sexe       = Sexe.male
-    @Published var seniority  = Seniority.enfant
-    @Published var birthDate  = Date()
-    @Published var deathAge   = 81
-    
+    @Published var familyName   = ""
+    @Published var givenName    = ""
+    @Published var sexe         = Sexe.male
+    @Published var seniority    = Seniority.enfant
+    @Published var birthDate    = Date()
+    @Published var deathAge     = 81
+
     // MARK: -  Initializers of ViewModel from Model
     
     init(from member: Person) {
@@ -43,6 +43,7 @@ class PersonViewModel: ObservableObject {
 // MARK: -  Adult View Model
 
 class AdultViewModel: ObservableObject {
+    @Published var fiscalOption              = InheritanceDonation.FiscalOption.fullUsufruct
     @Published var dateRetirement            = Date()
     @Published var causeOfRetirement         = Unemployment.Cause.demission
     @Published var hasAllocationSupraLegale  = false
@@ -65,6 +66,7 @@ class AdultViewModel: ObservableObject {
     // MARK: -  Initializers of ViewModel from Model
     
     init(from adult: Adult) {
+        fiscalOption              = adult.fiscalOption
         dateRetirement            = adult.dateOfRetirement
         causeOfRetirement         = adult.causeOfRetirement
         hasAllocationSupraLegale  = adult.layoffCompensationBonified != nil
@@ -75,7 +77,7 @@ class AdultViewModel: ObservableObject {
         agePension                = adult.ageOfPensionLiquidComp.year!
         trimPension               = adult.ageOfPensionLiquidComp.month! / 3
         lastKnownPensionSituation = adult.lastKnownPensionSituation
-        lastKnownAgircSituation = adult.lastKnownAgircPensionSituation
+        lastKnownAgircSituation   = adult.lastKnownAgircPensionSituation
         switch adult.workIncome {
             case let .salary(brutSalary, taxableSalary, netSalary, fromDate, healthInsurance):
                 revenueBrut    = brutSalary
@@ -83,12 +85,12 @@ class AdultViewModel: ObservableObject {
                 revenueNet     = netSalary
                 self.fromDate  = fromDate
                 insurance      = healthInsurance
-                revIndex = WorkIncomeType.salaryId
+                revIndex       = WorkIncomeType.salaryId
             case let .turnOver(BNC, incomeLossInsurance):
                 revenueBrut = BNC
                 revenueNet  = BNC
-                insurance = incomeLossInsurance
-                revIndex  = WorkIncomeType.turnOverId
+                insurance   = incomeLossInsurance
+                revIndex    = WorkIncomeType.turnOverId
             case .none:
                 revenueBrut    = 0
                 revenueTaxable = 0
@@ -102,8 +104,9 @@ class AdultViewModel: ObservableObject {
     }
     
     func updateFromViewModel(adult: Adult) {
-        adult.dateOfRetirement     = dateRetirement
-        adult.causeOfRetirement    = causeOfRetirement
+        adult.fiscalOption      = fiscalOption
+        adult.dateOfRetirement  = dateRetirement
+        adult.causeOfRetirement = causeOfRetirement
         if (causeOfRetirement == Unemployment.Cause.demission) {
             // pas d'indemnité de licenciement en cas de démission
             adult.layoffCompensationBonified = nil

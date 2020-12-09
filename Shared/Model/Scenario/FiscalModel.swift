@@ -802,14 +802,14 @@ struct DemembrementModel: Codable {
     /// Calcule les valeurs démembrées d'un bien en fonction de l'age de l'usufruitier
     /// - Parameters:
     ///   - assetValue: valeur du bien en pleine propriété
-    ///   - usufruitierAge: age de l'usufruitier
+    ///   - usufructuary: age de l'usufruitier
     /// - Returns: velurs de l'usufruit et de la nue-propriété
-    func demembrement(of assetValue  : Double,
-                      usufruitierAge : Int)
+    func demembrement(of assetValue   : Double,
+                      usufructuaryAge : Int)
     -> (usufructValue : Double,
         bareValue     : Double) {
         
-        if let slice = model.grid.last(where: { $0.floor < usufruitierAge }) {
+        if let slice = model.grid.last(where: { $0.floor < usufructuaryAge }) {
             return (usufructValue : assetValue * slice.usuFruit,
                     bareValue     : assetValue * slice.nueProp)
         } else {
@@ -822,6 +822,39 @@ struct DemembrementModel: Codable {
 ///  - Note: [Reference](https://www.service-public.fr/particuliers/vosdroits/F14198)
 struct InheritanceDonation: Codable {
     // nested types
+    
+    // options fiscale du conjoint à la succession
+    enum FiscalOption: String, PickableEnum, Codable {
+        case fullUsufruct      = "100% Usufruit"
+        case quotiteDisponible = "Quotité disponible"
+        case usufructPlusBare  = "1/4 PP + 3/4 UF"
+        
+        var pickerString: String {
+            self.rawValue
+        }
+        
+        func shares(nbChildren : Int,
+                    spouseAge  : Int)
+        -> (forChild  : Double,
+            forSpouse : Double) {
+            switch self {
+                case .fullUsufruct:
+                    let demembrement = Fiscal.model.demembrement.demembrement(of: 1.0, usufructuaryAge : spouseAge)
+                    return (forChild : demembrement.bareValue / nbChildren.double(),
+                            forSpouse: demembrement.usufructValue)
+                    
+                case .quotiteDisponible:
+                    return (forChild : 1.0 / (nbChildren + 1).double(),
+                            forSpouse: 1.0 / (nbChildren + 1).double())
+                    
+                case .usufructPlusBare:
+                    let demembrement = Fiscal.model.demembrement.demembrement(of: 1.0, usufructuaryAge : spouseAge)
+                    let spouseShare  = 0.25 + 0.75 * demembrement.usufructValue
+                    return (forChild : (1.0 - spouseShare) / nbChildren.double(),
+                            forSpouse: spouseShare)
+            }
+        }
+    }
     
     // tranche de barême
     struct slice: Codable {
@@ -885,7 +918,7 @@ struct InheritanceDonation: Codable {
         }
     }
     
-    func donationToConjoint(donation: Double)
+    func donationToSpouse(donation: Double)
     -> (netAmount : Double,
         taxe      : Double) {
         // abattement avant application du barême

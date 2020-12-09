@@ -53,13 +53,30 @@ extension Ownable {
     func ownedValue(by ownerName     : String,
                     atEndOf year     : Int,
                     evaluationMethod : EvaluationMethod) -> Double {
+        Swift.print("  Actif: \(name)")
+        switch evaluationMethod {
+            case .inheritance:
+                // cas particulier d'une succession:
+                //   le défunt est-il usufruitier ?
+                if ownership.isAnUsufructOwner(ownerName: ownerName) {
+                    // si oui alors l'usufruit rejoint la nu-propriété sans droit de succession
+                    // l'usufruit n'est donc pas intégré à la masse successorale du défunt
+                    Swift.print("  valeur: 0")
+                    return 0
+                }
+                
+            default:
+                ()
+        }
         // prendre la valeur totale du bien sans aucune décote (par défaut)
         let evaluatedValue = value(atEndOf: year)
         // prendre la part de pripriété
-        return evaluatedValue == 0 ? 0 : ownership.ownedValue(by               : ownerName,
-                                                              ofValue          : evaluatedValue,
-                                                              atEndOf          : year,
-                                                              evaluationMethod : evaluationMethod)
+        let value = evaluatedValue == 0 ? 0 : ownership.ownedValue(by               : ownerName,
+                                                                   ofValue          : evaluatedValue,
+                                                                   atEndOf          : year,
+                                                                   evaluationMethod : evaluationMethod)
+        Swift.print("  valeur: \(value)")
+        return value
     }
 }
 

@@ -136,8 +136,8 @@ struct Ownership: Codable {
             // valeur de son usufuit
             let usufruiterAge = ageOf!(usufruitier.name, year)
             
-            let (usuFruit, nueProp) = Fiscal.model.demembrement.demembrement(of             : ownedValue,
-                                                                             usufruitierAge : usufruiterAge)
+            let (usuFruit, nueProp) = Fiscal.model.demembrement.demembrement(of              : ownedValue,
+                                                                             usufructuaryAge : usufruiterAge)
             usufructValue += usuFruit
             bareValue     += nueProp
         }
@@ -186,8 +186,8 @@ struct Ownership: Codable {
                         let ownedValue = totalValue * usufruitier.fraction / 100.0
                         // valeur de son usufuit
                         let usufruiterAge = ageOf!(usufruitier.name, year)
-                        let (usuFruit, nueProp) = Fiscal.model.demembrement.demembrement(of             : ownedValue,
-                                                                                         usufruitierAge : usufruiterAge)
+                        let (usuFruit, nueProp) = Fiscal.model.demembrement.demembrement(of              : ownedValue,
+                                                                                         usufructuaryAge : usufruiterAge)
                         usufructValue += usuFruit
                         bareValue     += nueProp
                     }
@@ -206,8 +206,8 @@ struct Ownership: Codable {
                         // valeur de son usufuit
                         let usufruiterAge = ageOf!(owner.name, year)
                         
-                        value += Fiscal.model.demembrement.demembrement(of             : ownedValue,
-                                                                        usufruitierAge : usufruiterAge).usufructValue
+                        value += Fiscal.model.demembrement.demembrement(of              : ownedValue,
+                                                                        usufructuaryAge : usufruiterAge).usufructValue
                     }
                     return value
             }
@@ -220,6 +220,13 @@ struct Ownership: Codable {
                 return 0.0
             }
         }
+    }
+    
+    /// Retourne true si la personne est un des usufruitier du bien
+    /// - Parameter ownerName: nom de la personne
+    /// - Returns: true si la personne est un des usufruitiers du bien
+    func isAnUsufructOwner(ownerName: String) -> Bool {
+        return isDismembered && usufructOwners.contains(where: { $0.name == ownerName })
     }
 }
 

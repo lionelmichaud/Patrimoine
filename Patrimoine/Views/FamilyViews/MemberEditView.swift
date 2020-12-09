@@ -124,25 +124,27 @@ struct AdultEditView : View {
     var body: some View {
         Group {
             // Section scénario
-            ScenarioSection(personViewModel: personViewModel)
+            ScenarioSection(personViewModel : personViewModel,
+                            adultViewModel  : adultViewModel)
             
             // Section activité
             ActivitySection(adultViewModel: adultViewModel)
             
             // Section retraite
             RetirementEditView(personViewModel : personViewModel,
-                              adultViewModel  : adultViewModel)
+                              adultViewModel   : adultViewModel)
             
             // Section dépendance
-            DepedanceSection(adultViewModel  : adultViewModel)
+            DepedanceSection(adultViewModel: adultViewModel)
         }
     }
 }
 
 // MARK: - Saisie Adult / Section Scenario
 fileprivate struct ScenarioSection: View {
-    @ObservedObject var personViewModel: PersonViewModel
-    
+    @ObservedObject var personViewModel : PersonViewModel
+    @ObservedObject var adultViewModel  : AdultViewModel
+
     var body: some View {
         Section(header: Text("SCENARIO").font(.subheadline)) {
             Stepper(value: $personViewModel.deathAge, in: Date().year - personViewModel.birthDate.year ... 100) {
@@ -151,6 +153,12 @@ fileprivate struct ScenarioSection: View {
                     Spacer()
                     Text("\(personViewModel.deathAge) ans").foregroundColor(.secondary)
                 }
+            }
+            HStack {
+                Text("Option fiscale de succession")
+                Spacer()
+                CasePicker(pickedCase: $adultViewModel.fiscalOption, label: "Option fiscale de succession")
+                    .pickerStyle(SegmentedPickerStyle())
             }
         }
     }

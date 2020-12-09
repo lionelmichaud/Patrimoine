@@ -15,6 +15,7 @@ final class Adult: Person {
     
     private enum CodingKeys : String, CodingKey {
         case nb_Of_Child_Birth,
+             fiscal_option,
              date_Of_Retirement,
              cause_Retirement,
              layoff_Compensation_Bonified,
@@ -30,6 +31,10 @@ final class Adult: Person {
     
     // nombre d'enfants
     @Published var nbOfChildBirth: Int = 0
+    
+    /// SUCCESSION: option fiscale
+    @Published var fiscalOption : InheritanceDonation.FiscalOption = .fullUsufruct
+
     
     /// ACTIVITE: revenus du travail
     @Published var workIncome : WorkIncomeType?
@@ -364,6 +369,9 @@ final class Adult: Person {
         nbOfChildBirth =
             try container.decode(Int.self,
                                  forKey : .nb_Of_Child_Birth)
+        fiscalOption =
+            try container.decode(InheritanceDonation.FiscalOption.self,
+                                 forKey : .fiscal_option)
         dateOfRetirement =
             try container.decode(Date.self,
                                  forKey: .date_Of_Retirement)
@@ -413,6 +421,7 @@ final class Adult: Person {
         
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(nbOfChildBirth, forKey: .nb_Of_Child_Birth)
+        try container.encode(fiscalOption, forKey: .fiscal_option)
         try container.encode(dateOfRetirement, forKey: .date_Of_Retirement)
         try container.encode(causeOfRetirement, forKey: .cause_Retirement)
         try container.encode(layoffCompensationBonified, forKey: .layoff_Compensation_Bonified)

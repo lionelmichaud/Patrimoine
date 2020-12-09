@@ -35,6 +35,8 @@ fileprivate struct ScenarioSectionView: View {
         return Section {
             DisclosureGroup (
                 content: {
+                    LabeledText(label: "Option fiscale retenue en cas de succession",
+                                text : adult.fiscalOption.displayString)
                     LabeledText(label: "Age de décès estimé",
                                 text : "\(member.ageOfDeath) ans en \(String(member.yearOfDeath))")
                     LabeledText(label: "Cessation d'activité",

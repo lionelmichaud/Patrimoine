@@ -137,6 +137,54 @@ struct FreeInvestement: Identifiable, Codable, NameableValuable, Ownable {
         return currentState.value
     }
     
+    /// Calcule la valeur d'un bien possédée par un personne donnée à une date donnée
+    /// selon la régle générale ou selon la règle de l'IFI, de l'ISF, de la succession...
+    /// - Parameters:
+    ///   - ownerName: nom de la personne recherchée
+    ///   - year: date d'évaluation
+    ///   - evaluationMethod: méthode d'évaluation de la valeure des bien
+    /// - Returns: valeur du bien possédée (part d'usufruit + part de nue-prop)
+    /// - Warning: les assurance vie ne sont pas inclues car hors succession
+    func ownedValue(by ownerName     : String,
+                    atEndOf year     : Int,
+                    evaluationMethod : EvaluationMethod) -> Double {
+        var evaluatedValue : Double
+        Swift.print("  Actif: \(name)")
+
+        switch evaluationMethod {
+            case .inheritance:
+                // le bien est-il une assurance vie ?
+                switch type {
+                    case .lifeInsurance( _):
+                        // les assurance vie ne sont pas inclues car hors succession
+                        Swift.print("  valeur: 0")
+                        return 0
+
+                    default:
+                        // le défunt est-il usufruitier ?
+                        if ownership.isAnUsufructOwner(ownerName: ownerName) {
+                            // si oui alors l'usufruit rejoint la nu-propriété sans droit de succession
+                            // l'usufruit n'est donc pas intégré à la masse successorale du défunt
+                            Swift.print("  valeur: 0")
+                            return 0
+                        }
+                        // pas de décote
+                        evaluatedValue = value(atEndOf: year)
+                }
+
+            default:
+                // pas de décote
+                evaluatedValue = value(atEndOf: year)
+        }
+        // calculer la part de propriété
+        let value = evaluatedValue == 0 ? 0 : ownership.ownedValue(by               : ownerName,
+                                                                   ofValue          : evaluatedValue,
+                                                                   atEndOf          : year,
+                                                                   evaluationMethod : evaluationMethod)
+        Swift.print("  valeur: \(value)")
+        return value
+    }
+    
     /// Réaliser un versement
     /// - Parameter amount: montant du versement
     mutating func add(_ amount: Double) {
