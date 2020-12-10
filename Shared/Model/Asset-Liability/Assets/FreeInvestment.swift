@@ -9,7 +9,7 @@
 import Foundation
 import os
 
-fileprivate let customLog = Logger(subsystem: "me.michaud.lionel.Patrimoine", category: "Model.FreeInvestement")
+private let customLog = Logger(subsystem: "me.michaud.lionel.Patrimoine", category: "Model.FreeInvestement")
 
 typealias FreeInvestmentArray = ItemArray<FreeInvestement>
 
@@ -155,7 +155,7 @@ struct FreeInvestement: Identifiable, Codable, NameableValuable, Ownable {
             case .inheritance:
                 // le bien est-il une assurance vie ?
                 switch type {
-                    case .lifeInsurance( _):
+                    case .lifeInsurance:
                         // les assurance vie ne sont pas inclues car hors succession
                         Swift.print("  valeur: 0")
                         return 0
@@ -348,4 +348,3 @@ extension FreeInvestement: CustomStringConvertible {
         """
     }
 }
-

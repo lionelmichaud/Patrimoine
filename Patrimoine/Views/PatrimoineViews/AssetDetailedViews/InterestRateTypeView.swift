@@ -71,7 +71,6 @@ struct InterestRateTypeEditView : View {
     }
 }
 
-
 struct InterestRateTypeEditView_Previews: PreviewProvider {
     static var previews: some View {
         InterestRateTypeEditView(rateType: .constant(InterestRateType.contractualRate(fixedRate: 1.5)))

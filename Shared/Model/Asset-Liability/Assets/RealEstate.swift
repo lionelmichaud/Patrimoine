@@ -48,8 +48,8 @@ struct RealEstateAsset: Identifiable, Codable, Equatable, NameableValuable, Owna
         guard let sellingDate = sellingYear.year, let buyingDate = buyingYear.year else { return 0 }
         let detentionDuration = sellingDate - buyingDate
         let capitalGain       = self.sellingNetPrice - buyingPrice
-        let socialTaxes       = Fiscal.model.socialTaxesOnEstateCapitalGain.socialTaxes (capitalGain: max(capitalGain,0.0), detentionDuration: detentionDuration)
-        let irpp              = Fiscal.model.irppOnEstateCapitalGain.irpp (capitalGain: max(capitalGain,0.0), detentionDuration: detentionDuration)
+        let socialTaxes       = Fiscal.model.socialTaxesOnEstateCapitalGain.socialTaxes(capitalGain: max(capitalGain, 0.0), detentionDuration: detentionDuration)
+        let irpp              = Fiscal.model.irppOnEstateCapitalGain.irpp(capitalGain: max(capitalGain, 0.0), detentionDuration: detentionDuration)
         return self.sellingNetPrice - socialTaxes - irpp
     }
     // habitation
@@ -79,9 +79,7 @@ struct RealEstateAsset: Identifiable, Codable, Equatable, NameableValuable, Owna
     
     // MARK: - Initializers
     
-    
     // MARK: - Methods
-    
     
     /// Valeur à la date spécifiée
     /// - Parameter year: fin de l'année
@@ -264,20 +262,20 @@ struct RealEstateAsset: Identifiable, Codable, Equatable, NameableValuable, Owna
      - Parameter irpp: impôt sur le revenu payé sur sur la plus-value
      **/
     func liquidatedValue (_ year: Int) ->
-    (revenue: Double,
-     capitalGain: Double,
-     netRevenue: Double,
-     socialTaxes: Double,
-     irpp: Double) {
-        guard (willBeSold && year == sellingYear.year!) else {
-            return (0,0,0,0,0)
+    (revenue     : Double,
+     capitalGain : Double,
+     netRevenue  : Double,
+     socialTaxes : Double,
+     irpp        : Double) {
+        guard willBeSold && year == sellingYear.year! else {
+            return (0, 0, 0, 0, 0)
         }
         let detentionDuration = sellingYear.year! - buyingYear.year!
         let capitalGain       = self.sellingNetPrice - buyingPrice
-        let socialTaxes       = Fiscal.model.socialTaxesOnEstateCapitalGain.socialTaxes (capitalGain: max(capitalGain,0.0),
-                                                                                         detentionDuration: detentionDuration)
-        let irpp              = Fiscal.model.irppOnEstateCapitalGain.irpp (capitalGain: max(capitalGain,0.0),
-                                                                           detentionDuration: detentionDuration)
+        let socialTaxes       = Fiscal.model.socialTaxesOnEstateCapitalGain.socialTaxes(capitalGain      : max(capitalGain, 0.0),
+                                                                                        detentionDuration: detentionDuration)
+        let irpp              = Fiscal.model.irppOnEstateCapitalGain.irpp(capitalGain: max(capitalGain, 0.0),
+                                                                          detentionDuration: detentionDuration)
         return (revenue     : self.sellingNetPrice,
                 capitalGain : capitalGain,
                 netRevenue  : self.sellingNetPrice - socialTaxes - irpp,
@@ -351,4 +349,3 @@ extension RealEstateAsset: CustomStringConvertible {
         return s1 + s2 + s3 + s4
     }
 }
-

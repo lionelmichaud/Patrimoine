@@ -12,8 +12,8 @@ import ActivityIndicatorView // https://github.com/exyte/ActivityIndicatorView.g
 // MARK: - Syle de bouton Rectangle à coins arrondis
 struct RoundedRectButtonStyle: ButtonStyle {
     var color     : Color     = .accentColor
-    var width     : CGFloat?  = nil
-    var height    : CGFloat?  = nil
+    var width     : CGFloat?
+    var height    : CGFloat?
     var alignment : Alignment = .center
     
     public func makeBody(configuration: RoundedRectButtonStyle.Configuration) -> some View {
@@ -27,8 +27,8 @@ struct RoundedRectButtonStyle: ButtonStyle {
     struct MyButton: View {
         let configuration : RoundedRectButtonStyle.Configuration
         var color         : Color     = .accentColor
-        var width         : CGFloat?  = nil
-        var height        : CGFloat?  = nil
+        var width         : CGFloat?
+        var height        : CGFloat?
         var alignment     : Alignment = .center
         
         var body: some View {
@@ -46,10 +46,10 @@ struct RoundedRectButtonStyle: ButtonStyle {
 }
 
 extension Button {
-    func roundedRectButtonStyle(color : Color     = .accentColor,
-                       width          : CGFloat?  = nil,
-                       height         : CGFloat?  = nil,
-                       alignment      : Alignment = .center) -> some View {
+    func roundedRectButtonStyle(color     : Color     = .accentColor,
+                                width     : CGFloat?,
+                                height    : CGFloat?  = nil,
+                                alignment : Alignment = .center) -> some View {
         self.buttonStyle(RoundedRectButtonStyle(color: color, width: width, height: height, alignment: alignment))
     }
 }
@@ -57,8 +57,8 @@ extension Button {
 // MARK: - Syle de bouton Capsule - façon iOS 14
 struct CapsuleButtonStyle: ButtonStyle {
     var color     : Color     = Color("buttonBackgroundColor")
-    var width     : CGFloat?  = nil
-    var height    : CGFloat?  = nil
+    var width     : CGFloat?
+    var height    : CGFloat?
     var alignment : Alignment = .center
     var withShadow: Bool      = false
     
@@ -73,8 +73,8 @@ struct CapsuleButtonStyle: ButtonStyle {
     struct MyButton: View {
         let configuration : CapsuleButtonStyle.Configuration
         var color         : Color     = Color("buttonBackgroundColor")
-        var width         : CGFloat?  = nil
-        var height        : CGFloat?  = nil
+        var width         : CGFloat?
+        var height        : CGFloat?
         var alignment     : Alignment = .center
         var withShadow    : Bool      = false
 
@@ -175,7 +175,7 @@ struct ProgressBar: View {
          formater          : NumberFormatter? = nil) {
         self.value             = value.clamp(low: minValue, high: maxValue)
         self.minValue          = minValue
-        self.maxValue          = max (minValue+0.01, maxValue)
+        self.maxValue          = max(minValue+0.01, maxValue)
         self.backgroundEnabled = backgroundEnabled
         self.labelsEnabled     = labelsEnabled
         self.backgroundColor   = backgroundColor
@@ -184,7 +184,7 @@ struct ProgressBar: View {
     }
     
     var body: some View {
-        VStack(alignment: .center,spacing: 10) {
+        VStack(alignment: .center, spacing: 10) {
             GeometryReader { geometryReader in
                 ZStack(alignment: .leading) {
                     if self.backgroundEnabled {
@@ -214,7 +214,7 @@ struct ProgressBar: View {
             }
             
             if labelsEnabled {
-                HStack() {
+                HStack {
                     if let formater = self.formater {
                         Text(formater.string(from: minValue as NSNumber) ?? "")
                             .fontWeight(.bold)
@@ -286,7 +286,7 @@ struct ProgressCircle: View {
          lineWidth         : CGFloat = 10) {
         self.value             = value.clamp(low: minValue, high: maxValue)
         self.minValue          = minValue
-        self.maxValue          = max (minValue+0.01, maxValue)
+        self.maxValue          = max(minValue+0.01, maxValue)
         self.style             = style
         self.backgroundEnabled = backgroundEnabled
         self.labelsEnabled     = labelsEnabled
@@ -338,7 +338,6 @@ struct ActivityIndicator: UIViewRepresentable {
     }
 }
 
-
 // MARK: - Multi line TextField
 struct MultilineTextField: View {
     
@@ -349,10 +348,15 @@ struct MultilineTextField: View {
     @Binding private var text: String
     
     private var internalText: Binding<String> {
-        Binding<String>(get: { self.text } ) {
-            self.text = $0
-            self.shouldShowPlaceholder = $0.isEmpty
-        }
+        Binding<String>(
+            get: {
+                self.text
+            },
+            set: {
+                self.text = $0
+                self.shouldShowPlaceholder = $0.isEmpty
+            }
+        )
     }
     
     var body: some View {
@@ -495,7 +499,7 @@ struct MenuContentView: View {
                     }).capsuleButtonStyle()
             }.padding(.horizontal)
             // menu
-            List (0 ..< itemSelection.count) { idx in
+            List(0 ..< itemSelection.count) {idx in
                 HStack {
                     Text(self.itemSelection[idx].label).font(.caption)
                     Spacer()
@@ -614,29 +618,29 @@ extension Button where Label == Image {
     }
 }
 
-
 // MARK: - Library Modifiers
 
+// swiftlint:disable type_name
 struct ButtonModifiers_Library: LibraryContentProvider {
     @LibraryContentBuilder
     func modifiers(base: Button<ContentView>) -> [LibraryItem] {
-        LibraryItem (base.roundedRectButtonStyle(color: .blue, width: 200),
-                     title: "Rounded Rect Button",
-                     category: .control,
-                     matchingSignature: "roundrectbutton")
-        LibraryItem (base.capsuleButtonStyle(color: Color("buttonBackgroundColor")),
-                     title: "Capsule Rect Button",
-                     category: .control,
-                     matchingSignature: "capsulebutton")
+        LibraryItem(base.roundedRectButtonStyle(color : .blue, width : 200),
+                    title                             : "Rounded Rect Button",
+                    category                          : .control,
+                    matchingSignature                 : "roundrectbutton")
+        LibraryItem(base.capsuleButtonStyle(color : Color("buttonBackgroundColor")),
+                    title                         : "Capsule Rect Button",
+                    category                      : .control,
+                    matchingSignature             : "capsulebutton")
     }
 }
 
 struct ToggleModifiers_Library: LibraryContentProvider {
     @LibraryContentBuilder
     func modifiers(base: Toggle<ContentView>) -> [LibraryItem] {
-        LibraryItem (base.toggleStyle(CheckboxToggleStyle(size:.large)),
-                     title: "Toggle Check Box",
-                     category: .control,
-                     matchingSignature: "checkbox")
+        LibraryItem(base.toggleStyle(CheckboxToggleStyle(size :.large)),
+                    title                                     : "Toggle Check Box",
+                    category                                  : .control,
+                    matchingSignature                         : "checkbox")
     }
 }

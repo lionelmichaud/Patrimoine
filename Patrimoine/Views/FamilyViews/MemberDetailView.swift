@@ -75,4 +75,3 @@ struct FamilyDetailView_Previews: PreviewProvider {
         
     }
 }
-

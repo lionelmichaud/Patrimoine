@@ -13,7 +13,7 @@ struct AssetView: View {
     @EnvironmentObject var uiState    : UIState
 
     var body: some View {
-        Section() {
+        Section {
             LabeledValueRowView(colapse     : $uiState.patrimoineViewState.assetViewState.colapseAsset,
                                 label       : "Actif",
                                 value       : patrimoine.assets.value(atEndOf: Date.now.year),
@@ -383,7 +383,6 @@ struct SciScpiView: View {
     }
 }
 
-
 struct AssetView_Previews: PreviewProvider {
     static var simulation = Simulation()
     static var patrimoine = Patrimoin()
@@ -403,7 +402,6 @@ struct AssetView_Previews: PreviewProvider {
                     .colorScheme(.dark)
                     .previewDisplayName("AssetView")
 
-                
                 NavigationView {
                     List {
                         AssetView()

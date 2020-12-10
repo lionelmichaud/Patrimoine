@@ -69,8 +69,8 @@ struct HumanLife {
 //            nbOfYearsOfdependency.next()
 //        }
 //
-        func randomHistories() -> Dictionary<RandomVariable, [Double]?> {
-            var dico = Dictionary<RandomVariable, [Double]?>()
+        func randomHistories() -> [RandomVariable: [Double]?] {
+            var dico = [RandomVariable: [Double]?]()
             for randomVariable in RandomVariable.allCases {
                 switch randomVariable {
                     case .menLifeEpectation:

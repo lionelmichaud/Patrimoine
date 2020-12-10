@@ -41,16 +41,12 @@ final class Family: ObservableObject, CustomStringConvertible {
     
     var nbOfChildren     : Int { // computed
         var nb = 0
-        for person in members {
-            if person is Child {nb += 1}
-        }
+        for person in members where person is Child {nb += 1}
         return nb
     }
     var nbOfAdults       : Int { // computed
         var nb = 0
-        for person in members {
-            if person is Adult {nb += 1}
-        }
+        for person in members where person is Adult {nb += 1}
         return nb
     }
     
@@ -284,7 +280,10 @@ final class Family: ObservableObject, CustomStringConvertible {
         
         // decode object back and unwrap them force casting to a common ancestor type
         do {
-            return try Person.coder.decoder.decode([Wrap].self, from: data).map { $0.wrapped as! Person }
+            return try Person.coder.decoder
+                .decode([Wrap].self, from: data)
+                .map { $0.wrapped as! Person }
+            
         } catch DecodingError.keyNotFound(let key, let context) {
             fatalError("Failed to decode \(fileName) in documents directory due to missing key '\(key.stringValue)' not found – \(context.debugDescription)")
         } catch DecodingError.typeMismatch(_, let context) {
@@ -306,10 +305,10 @@ final class Family: ObservableObject, CustomStringConvertible {
         for person in members {
             person.print()
         }
-        Swift.print("  family net income:    ",workNetIncome,"euro")
-        Swift.print("  family taxable income:",workTaxableIncome,"euro")
-        Swift.print("  family income tax quotient:",familyQuotient)
-        Swift.print("  family income taxes:",irpp,"euro")
+        Swift.print("  family net income:    ", workNetIncome, "euro")
+        Swift.print("  family taxable income:", workTaxableIncome, "euro")
+        Swift.print("  family income tax quotient:", familyQuotient)
+        Swift.print("  family income taxes:", irpp, "euro")
         // investissement périodiques
         //        Swift.print("  Periodic investements: \(periodicInvests.count)")
         //        for periodicInvestment in periodicInvests { periodicInvestment.print() }

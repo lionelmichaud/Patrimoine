@@ -20,8 +20,8 @@ struct SCPIDetailedView: View {
     @State private var alertItem  : AlertItem?
     @State private var index      : Int?
     // à adapter
-    var updateItem : (_ item: SCPI, _ index: Int) -> ()
-    var addItem    : (_ item: SCPI) -> ()
+    var updateItem : (_ item: SCPI, _ index: Int) -> Void
+    var addItem    : (_ item: SCPI) -> Void
 
     var body: some View {
         Form {
@@ -84,12 +84,12 @@ struct SCPIDetailedView: View {
         .navigationBarItems(
             leading: Button(
                 action : duplicate,
-                label  : { Text("Dupliquer")} )
+                label  : { Text("Dupliquer") })
                 .capsuleButtonStyle()
                 .disabled((index == nil) || changeOccured()),
             trailing: Button(
                 action: applyChanges,
-                label: { Text("Sauver") } )
+                label: { Text("Sauver") })
                 .capsuleButtonStyle()
                 .disabled(!changeOccured())
         )
@@ -97,8 +97,8 @@ struct SCPIDetailedView: View {
     }
     
     init(item       : SCPI?,
-         updateItem : @escaping (SCPI, Int) -> (),
-         addItem    : @escaping (SCPI) -> (),
+         updateItem : @escaping (SCPI, Int) -> Void,
+         addItem    : @escaping (SCPI) -> Void,
          family     : Family,
          firstIndex : (SCPI) -> Int?) {
         // store closure to differentiate between SCPI and SCI.SCPI
@@ -183,7 +183,7 @@ struct SCPIDetailedView_Previews: PreviewProvider {
     static var previews: some View {
         return
             Group {
-                NavigationView() {
+                NavigationView {
                     SCPIDetailedView(item       : patrimoine.assets.scpis[0],
                                      //patrimoine     : patrimoine,
                                      updateItem : { (localItem, index) in patrimoine.assets.scpis.update(with: localItem, at: index) },

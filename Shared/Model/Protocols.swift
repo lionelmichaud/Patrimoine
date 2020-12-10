@@ -306,7 +306,7 @@ extension DictionaryOfNamedValueTable {
     
     /// total de tous les actifs
     var total: Double {
-        perCategory.reduce(.zero, { result, element in result + element.value.total } )
+        perCategory.reduce(.zero, { result, element in result + element.value.total })
     }
     
     /// tableau des noms de catégories et valeurs total des actifs:  un élément par catégorie

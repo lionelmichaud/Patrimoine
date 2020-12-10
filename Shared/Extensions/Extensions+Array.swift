@@ -25,8 +25,8 @@ extension Array where Element: AdditiveArithmetic {
 }
 
 extension Array where Element: SignedNumeric {
-    static prefix func - (array: Array<Element>) -> Array<Element> {
-        var newArray = Array<Element>()
+    static prefix func - (array: [Element]) -> [Element] {
+        var newArray = [Element]()
         for idx in array.indices {
             newArray.append(-array[idx])
         }

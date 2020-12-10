@@ -156,11 +156,11 @@ struct Histogram: Codable {
     } // computed
     // nombre d'échantillons par case
     var counts: [Int] {
-        precondition(isInitialized , "Histogram.counts: histogramme non initialisé")
+        precondition(isInitialized, "Histogram.counts: histogramme non initialisé")
         return buckets.map { $0.sampleNb }
     } // computed
     var xCounts: [(x: Double, n: Int)] {
-        precondition(isInitialized , "Histogram.xCounts: histogramme non initialisé")
+        precondition(isInitialized, "Histogram.xCounts: histogramme non initialisé")
         let yCounts = self.counts
         var values = [(x: Double, n: Int)]()
         for i in yCounts.indices {
@@ -170,7 +170,7 @@ struct Histogram: Codable {
     } // computed
     // nombre d'échantillons cumulés de la première case à la case courante
     var cumulatedCounts: [Int] {
-        precondition(isInitialized , "Histogram.cumulatedCounts: histogramme non initialisé")
+        precondition(isInitialized, "Histogram.cumulatedCounts: histogramme non initialisé")
         var result = [Int]()
         let bucketsCounts = self.counts
         for idx in bucketsCounts.indices {
@@ -183,7 +183,7 @@ struct Histogram: Codable {
         return result
     } // computed
     var xCumulatedCounts : [(x: Double, n: Int)] {
-        precondition(isInitialized , "Histogram.xCumulatedCounts: histogramme non initialisé")
+        precondition(isInitialized, "Histogram.xCumulatedCounts: histogramme non initialisé")
         let yCumulatedValues = self.cumulatedCounts
         var values = [(x: Double, n: Int)]()
         for i in yCumulatedValues.indices {
@@ -193,7 +193,7 @@ struct Histogram: Codable {
     } // computed
     // densités de probabilité
     var PDF: [Double] { // en %
-        precondition(isInitialized , "Histogram.PDF: histogramme non initialisé")
+        precondition(isInitialized, "Histogram.PDF: histogramme non initialisé")
         var normalizer: Double
         switch distributionType {
             case .discrete:
@@ -205,7 +205,7 @@ struct Histogram: Codable {
         return buckets.map { $0.sampleNb.double() / normalizer }
     } // computed
     var xPDF: [(x: Double, p: Double)] {
-        precondition(isInitialized , "Histogram.xPDF: histogramme non initialisé")
+        precondition(isInitialized, "Histogram.xPDF: histogramme non initialisé")
         let pdf    = PDF
         var values = [(x : Double, p : Double)]()
         for i in pdf.indices {
@@ -216,7 +216,7 @@ struct Histogram: Codable {
     } // computed
     // densités de probabilité cumulées
     var CDF: [Double] {
-        precondition(isInitialized , "Histogram.CDF: histogramme non initialisé")
+        precondition(isInitialized, "Histogram.CDF: histogramme non initialisé")
         var result          = [Double]()
         let cumulatedCounts = self.cumulatedCounts
         let normalizer      = dataset.count.double()
@@ -226,7 +226,7 @@ struct Histogram: Codable {
         return result
     } // computed
     var xCDF: [(x: Double, p: Double)] {
-        precondition(isInitialized , "Histogram.xCDF: histogramme non initialisé")
+        precondition(isInitialized, "Histogram.xCDF: histogramme non initialisé")
         let cdf = self.CDF
         var values = [(x: Double, p: Double)]()
         for i in cdf.indices {
@@ -286,12 +286,10 @@ struct Histogram: Codable {
     
     /// nombre d'échantillons dans la case idx
     subscript(idx: Int) -> Int? {
-        get {
-            guard (0...buckets.count).contains(idx) else {
-                return nil
-            }
-            return buckets[idx].sampleNb
+        guard (0...buckets.count).contains(idx) else {
+            return nil
         }
+        return buckets[idx].sampleNb
     }
     
     // MARK: - Methods
@@ -309,8 +307,8 @@ struct Histogram: Codable {
                                                 Xmin             : Double,
                                                 Xmax             : Double,
                                                 bucketNb         : Int) {
-        precondition(bucketNb >= 1 , "Histogram.init: bucketNb < 1: pas de case dans l'histogramme pour ranger les échantillons")
-        precondition(Xmax >= Xmin , "Histogram.init: Xmax < Xmin")
+        precondition(bucketNb >= 1, "Histogram.init: bucketNb < 1: pas de case dans l'histogramme pour ranger les échantillons")
+        precondition(Xmax >= Xmin, "Histogram.init: Xmax < Xmin")
         
         // si Xmin = Xmax alors 1 seule case
         var _bucketNb : Int

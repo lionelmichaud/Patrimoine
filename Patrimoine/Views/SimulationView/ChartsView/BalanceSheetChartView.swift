@@ -11,7 +11,7 @@ import SwiftUI
 import Charts // https://github.com/danielgindi/Charts.git
 import Disk // https://github.com/saoudrizwan/Disk.git
 
-fileprivate let customLog = Logger(subsystem: "me.michaud.lionel.Patrimoine", category: "UI.BalanceSheetChartView")
+private let customLog = Logger(subsystem: "me.michaud.lionel.Patrimoine", category: "UI.BalanceSheetChartView")
 
 // MARK: - Balance Sheet Charts Views
 
@@ -85,12 +85,12 @@ struct BalanceSheetDetailedChartView: View {
                 },
                 label: {
                     HStack {
-                        if !self.uiState.bsChartState.itemSelection.allCategoriesSelected()  {
+                        if !self.uiState.bsChartState.itemSelection.allCategoriesSelected() {
                             Image(systemName: "loupe")
                         }
                         Text("Filtrer")
                     }
-                } ).capsuleButtonStyle(),
+                }).capsuleButtonStyle(),
             trailing: Button(
                 action: saveImage,
                 label : {
@@ -98,7 +98,7 @@ struct BalanceSheetDetailedChartView: View {
                         Image(systemName: "square.and.arrow.up")
                         Text("Image")
                     }
-                } ).capsuleButtonStyle()
+                }).capsuleButtonStyle()
         )
     }
     
@@ -150,8 +150,7 @@ struct BalanceSheetLineChartView: UIViewRepresentable {
             #if DEBUG
             Swift.print("saving image to file: ", AppSettings.imagePath(titleStatic) + fileName)
             #endif
-        }
-        catch let error as NSError {
+        } catch let error as NSError {
             fatalError("""
                 Domain         : \(error.domain)
                 Code           : \(error.code)
@@ -253,8 +252,7 @@ struct BalanceSheetStackedBarChartView: UIViewRepresentable {
             #if DEBUG
             Swift.print("saving image to file: ", AppSettings.imagePath(titleStatic) + fileName)
             #endif
-        }
-        catch let error as NSError {
+        } catch let error as NSError {
             fatalError("""
                 Domain         : \(error.domain)
                 Code           : \(error.code)

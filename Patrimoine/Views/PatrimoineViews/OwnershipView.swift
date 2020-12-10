@@ -21,20 +21,18 @@ struct OwnerGroupBox: View {
                 Stepper(value: $owner.fraction,
                         in: 0.0...100.0,
                         step: 5.0,
-                        onEditingChanged:
-                            { started in
-                                if !started {
-                                    // mettre à jour la liste contenant le owner pour forcer l'update de la View
-                                    owners[index].fraction = owner.fraction
-                                }
-                            },
-                        label:
-                            {
-                                Text("Fraction détenue: ") +
-                                    Text((owner.fraction).percentString() + " %")
-                                    .bold()
-                                    .foregroundColor(owners.percentageOk ? .blue : .red)
-                            })
+                        onEditingChanged: { started in
+                            if !started {
+                                // mettre à jour la liste contenant le owner pour forcer l'update de la View
+                                owners[index].fraction = owner.fraction
+                            }
+                        },
+                        label: {
+                            Text("Fraction détenue: ") +
+                                Text((owner.fraction).percentString() + " %")
+                                .bold()
+                                .foregroundColor(owners.percentageOk ? .blue : .red)
+                        })
                     .frame(maxWidth: 300)
             }
             .padding(.leading)
@@ -182,7 +180,7 @@ struct OwnershipView: View {
                                        comment : ownership.demembrementPercentage(atEndOf : Date.now.year).bareValuePercent.percentString(digit : 2)+"%")
                                 .foregroundColor(.blue)
                         } else {
-                            if !ownership.bareOwners.isEmpty && ownership.bareOwners.isvalid  {
+                            if !ownership.bareOwners.isEmpty && ownership.bareOwners.isvalid {
                                 Text(nuPropStr+"s").foregroundColor(.blue)
                             } else {
                                 Text(nuPropStr+"s").foregroundColor(.red)
@@ -235,7 +233,7 @@ struct OwnershipView_Previews: PreviewProvider {
     
     static var previews: some View {
         Group {
-            NavigationView() {
+            NavigationView {
                 Form {
                     OwnershipView(ownership: .constant(Ownership(ageOf: ageOf)), totalValue: 1000.0)
                         .environmentObject(family)
@@ -243,7 +241,7 @@ struct OwnershipView_Previews: PreviewProvider {
             }
             .previewDevice("iPhone Xs")
             
-            NavigationView() {
+            NavigationView {
                 Container(ownership: Ownership(ageOf: ageOf))
             }
             .preferredColorScheme(.dark)

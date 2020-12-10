@@ -46,9 +46,7 @@ extension Owners {
             return true
         }
         // tous les owners sont valides
-        var validity = self.reduce(true) { (result, owner) -> Bool in
-            result && owner.isValid
-        }
+        var validity = self.allSatisfy { $0.isValid }
         // somes des parts = 100%
         validity = validity && percentageOk
         return validity
@@ -83,7 +81,7 @@ struct Ownership: Codable {
     var bareOwners     : Owners = []
     var usufructOwners : Owners = []
     // fonction qui donne l'age d'une personne à la fin d'une année donnée
-    var ageOf          : ((_ name: String, _ year: Int) -> Int)? = nil
+    var ageOf          : ((_ name: String, _ year: Int) -> Int)?
     var isvalid        : Bool {
         if isDismembered {
             return (!bareOwners.isEmpty && bareOwners.isvalid) &&

@@ -11,7 +11,7 @@ import SwiftUI
 import Charts // https://github.com/danielgindi/Charts.git
 import Disk // https://github.com/saoudrizwan/Disk.git
 
-fileprivate let customLog = Logger(subsystem: "me.michaud.lionel.Patrimoine", category: "UI.IsfEvolutionChartView")
+private let customLog = Logger(subsystem: "me.michaud.lionel.Patrimoine", category: "UI.IsfEvolutionChartView")
 
 // MARK: - Evolution de la Fiscalité dans le temps Charts Views
 
@@ -80,8 +80,7 @@ struct IsfLineChartView: UIViewRepresentable {
             #if DEBUG
             Swift.print("saving image to file: ", AppSettings.imagePath(titleStatic) + fileName)
             #endif
-        }
-        catch let error as NSError {
+        } catch let error as NSError {
             fatalError("""
                 Domain         : \(error.domain)
                 Code           : \(error.code)
@@ -124,4 +123,3 @@ struct IsfLineChartView: UIViewRepresentable {
     func updateUIView(_ uiView: LineChartView, context: Context) {
     }
 }
-

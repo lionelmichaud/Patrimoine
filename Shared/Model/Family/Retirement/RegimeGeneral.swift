@@ -9,7 +9,7 @@
 import Foundation
 import os
 
-fileprivate let customLog = Logger(subsystem: "me.michaud.lionel.Patrimoine", category: "Model.RegimeGeneral")
+private let customLog = Logger(subsystem: "me.michaud.lionel.Patrimoine", category: "Model.RegimeGeneral")
 
 // MARK: - Régime Général
 
@@ -148,7 +148,7 @@ struct RegimeGeneral: Codable {
     func nbTrimestreSurDecote(birthDate           : Date,
                               dureeAssurance      : Int,
                               dureeDeReference    : Int,
-                              dateOfPensionLiquid : Date) -> Int?  {
+                              dateOfPensionLiquid : Date) -> Int? {
         let result = nbTrimestreDecote(birthDate           : birthDate,
                                        dureeAssurance      : dureeAssurance,
                                        dureeDeReference    : dureeDeReference,
@@ -168,7 +168,7 @@ struct RegimeGeneral: Codable {
                             case .success(let nbTrimestreSurcote):
                                 return nbTrimestreSurcote
                                 
-                            case .failure(_):
+                            case .failure:
                                 return nil
                         }
                         
@@ -538,4 +538,3 @@ struct RegimeGeneral: Codable {
                 pensionNette     : pensionNette)
     }
 }
-

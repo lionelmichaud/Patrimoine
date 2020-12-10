@@ -29,7 +29,7 @@ struct Pension: Codable {
         var reversion    : PensionReversion
     }
     
-    // MARK: -  Static properties
+    // MARK: - Static properties
 
     static var model: Model =
         Bundle.main.decode(Model.self,
@@ -37,4 +37,3 @@ struct Pension: Codable {
                            dateDecodingStrategy : .iso8601,
                            keyDecodingStrategy  : .useDefaultKeys)
 }
-

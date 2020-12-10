@@ -39,22 +39,22 @@ struct DebtDetailedView: View {
         .textFieldStyle(RoundedBorderTextFieldStyle())
         .navigationTitle("Dette")
         .navigationBarTitleDisplayMode(.inline)
-            .navigationBarItems(
-                leading: Button(
-                    action : duplicate,
-                    label  : { Text("Dupliquer")} )
-                    .capsuleButtonStyle()
-                    .disabled((index == nil) || changeOccured()),
-                trailing: Button(
-                    action: applyChanges,
-                    label: {
-                        Text("Sauver")
-                } )
-                    .disabled(!changeOccured())
+        .navigationBarItems(
+            leading: Button(
+                action : duplicate,
+                label  : { Text("Dupliquer") })
+                .capsuleButtonStyle()
+                .disabled((index == nil) || changeOccured()),
+            trailing: Button(
+                action: applyChanges,
+                label: {
+                    Text("Sauver")
+                })
+                .disabled(!changeOccured())
         )
         .alert(item: $alertItem, content: myAlert)
     }
-
+    
     init(item       : Debt?,
          family     : Family,
          patrimoine : Patrimoin) {
@@ -141,7 +141,7 @@ struct DebtDetailedView_Previews: PreviewProvider {
 
     static var previews: some View {
         return
-            NavigationView() {
+            NavigationView {
                 DebtDetailedView(item       : patrimoine.liabilities.debts[0],
                                  family     : family,
                                  patrimoine : patrimoine)

@@ -10,8 +10,7 @@
 import Foundation
 import os
 
-fileprivate let customLog = Logger(subsystem: "me.michaud.lionel.Patrimoine", category: "FinancialMath")
-
+private let customLog = Logger(subsystem: "me.michaud.lionel.Patrimoine", category: "FinancialMath")
 
 /// Valeur future d'un investissement à capital initial et versements périodiques
 /// - Parameter payement: versement périodique
@@ -33,7 +32,7 @@ public func futurValue (payement     : Double,
     let a = initialValue * pow((1+interestRate), Double(nbPeriod))
     let b = (interestRate == 0.0 ?
                 payement * Double(nbPeriod) :
-                payement * (pow((1+interestRate),Double(nbPeriod)) - 1) / interestRate)
+                payement * (pow((1+interestRate), Double(nbPeriod)) - 1) / interestRate)
     return a + b
 }
 

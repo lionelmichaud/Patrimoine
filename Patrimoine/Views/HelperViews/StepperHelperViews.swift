@@ -105,4 +105,3 @@ struct ImageTextRowView: View {
         }
     }
 }
-

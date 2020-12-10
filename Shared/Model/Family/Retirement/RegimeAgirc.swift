@@ -9,7 +9,7 @@
 import Foundation
 import os
 
-fileprivate let customLog = Logger(subsystem: "me.michaud.lionel.Patrimoine", category: "Model.RegimeAgirc")
+private let customLog = Logger(subsystem: "me.michaud.lionel.Patrimoine", category: "Model.RegimeAgirc")
 
 // MARK: - Régime Complémentaire AGIRC-ARCCO
 
@@ -274,8 +274,8 @@ struct RegimeAgirc: Codable {
             // customLog.log(level: .info, "nb Trim Post Age Legal Min = \(nbTrimPostAgeLegalMin, privacy: .public)")
             
             // coefficient de minoration
-            guard let coef = coefDeMinorationApresAgeLegal (nbTrimManquantPourTauxPlein : nbTrimManquantPourTauxPlein,
-                                                            nbTrimPostAgeLegalMin       : nbTrimPostAgeLegalMin) else {
+            guard let coef = coefDeMinorationApresAgeLegal(nbTrimManquantPourTauxPlein : nbTrimManquantPourTauxPlein,
+                                                           nbTrimPostAgeLegalMin       : nbTrimPostAgeLegalMin) else {
                 customLog.log(level: .default, "pension coef = nil")
                 return nil
             }

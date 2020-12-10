@@ -23,4 +23,3 @@ func rawValueGeneric<T: CaseIterable >(of enu: T) -> Int where T: Equatable, T.A
         })!
     }
 }
-

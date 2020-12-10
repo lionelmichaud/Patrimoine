@@ -8,7 +8,7 @@
 
 import SwiftUI
 
-// MARK: -  Person View Model
+// MARK: - Person View Model
 
 class PersonViewModel: ObservableObject {
     @Published var familyName   = ""
@@ -18,13 +18,13 @@ class PersonViewModel: ObservableObject {
     @Published var birthDate    = Date()
     @Published var deathAge     = 81
 
-    // MARK: -  Initializers of ViewModel from Model
+    // MARK: - Initializers of ViewModel from Model
     
     init(from member: Person) {
         deathAge = member.ageOfDeath
     }
     
-    // MARK: -  Methods
+    // MARK: - Methods
     
     func updateFromViewModel(member: Person) {
         member.ageOfDeath = deathAge
@@ -40,7 +40,7 @@ class PersonViewModel: ObservableObject {
     }
 }
 
-// MARK: -  Adult View Model
+// MARK: - Adult View Model
 
 class AdultViewModel: ObservableObject {
     @Published var fiscalOption              = InheritanceDonation.FiscalOption.fullUsufruct
@@ -63,7 +63,7 @@ class AdultViewModel: ObservableObject {
     @Published var lastKnownPensionSituation = RegimeGeneralSituation()
     @Published var lastKnownAgircSituation   = RegimeAgircSituation()
     
-    // MARK: -  Initializers of ViewModel from Model
+    // MARK: - Initializers of ViewModel from Model
     
     init(from adult: Adult) {
         fiscalOption              = adult.fiscalOption
@@ -107,7 +107,7 @@ class AdultViewModel: ObservableObject {
         adult.fiscalOption      = fiscalOption
         adult.dateOfRetirement  = dateRetirement
         adult.causeOfRetirement = causeOfRetirement
-        if (causeOfRetirement == Unemployment.Cause.demission) {
+        if causeOfRetirement == Unemployment.Cause.demission {
             // pas d'indemnité de licenciement en cas de démission
             adult.layoffCompensationBonified = nil
         } else {
@@ -162,11 +162,11 @@ struct MemberAddView: View {
     @StateObject var adultViewModel = AdultViewModel()
     
     var body: some View {
-        VStack() {
+        VStack {
             /// Barre de titre
-            HStack() {
+            HStack {
                 Button(action: { self.presentationMode.wrappedValue.dismiss() },
-                       label: { Text("Annuler") } )
+                       label: { Text("Annuler") })
                     .capsuleButtonStyle()
                 
                 Spacer()
@@ -174,7 +174,7 @@ struct MemberAddView: View {
                 Spacer()
                 
                 Button(action: addMember,
-                       label: { Text("OK") } )
+                       label: { Text("OK") })
                     .capsuleButtonStyle()
                     .disabled(!formIsValid())
             }
@@ -258,7 +258,6 @@ struct MemberAddView: View {
     }
 }
 
-
 // MARK: - Saisie des civilités du nouveau membre
 
 struct CiviliteEditView : View {
@@ -302,4 +301,3 @@ struct MemberAddView_Previews: PreviewProvider {
             .environmentObject(uiState)
     }
 }
-

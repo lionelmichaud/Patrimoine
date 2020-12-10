@@ -45,10 +45,8 @@ enum TaxeCategory: Int, PickableEnum, Codable, Hashable {
     /// - Parameter name: nom de la catégorie (displayString)
     /// - Returns: Enum
     static func category(of name: String) -> TaxeCategory? {
-        for category in TaxeCategory.allCases {
-            if category.displayString == name {
-                return category
-            }
+        for category in TaxeCategory.allCases where category.displayString == name {
+            return category
         }
         return nil
     }

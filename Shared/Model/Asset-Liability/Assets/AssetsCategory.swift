@@ -45,12 +45,9 @@ enum AssetsCategory: Int, PickableEnum, Codable {
     /// - Parameter name: nom de la catégorie (displayString)
     /// - Returns: Enum
     static func category(of name: String) -> AssetsCategory? {
-        for category in AssetsCategory.allCases {
-            if category.displayString == name {
-                return category
-            }
+        for category in AssetsCategory.allCases where category.displayString == name {
+            return category
         }
         return nil
     }
 }
-

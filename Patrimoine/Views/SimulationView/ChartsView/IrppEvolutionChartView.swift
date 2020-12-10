@@ -11,7 +11,7 @@ import SwiftUI
 import Charts // https://github.com/danielgindi/Charts.git
 import Disk // https://github.com/saoudrizwan/Disk.git
 
-fileprivate let customLog = Logger(subsystem: "me.michaud.lionel.Patrimoine", category: "UI.IrppEvolutionChartView")
+private let customLog = Logger(subsystem: "me.michaud.lionel.Patrimoine", category: "UI.IrppEvolutionChartView")
 
 // MARK: - Evolution de la Fiscalité dans le temps Charts Views
 
@@ -85,8 +85,7 @@ struct IrppParamLineChartView: UIViewRepresentable {
             #if DEBUG
             Swift.print("saving image to file: ", AppSettings.imagePath(titleStatic) + fileName)
             #endif
-        }
-        catch let error as NSError {
+        } catch let error as NSError {
             fatalError("""
                 Domain         : \(error.domain)
                 Code           : \(error.code)
@@ -186,8 +185,7 @@ struct IrppLineChartView: UIViewRepresentable {
             #if DEBUG
             Swift.print("saving image to file: ", AppSettings.imagePath(titleStatic) + fileName)
             #endif
-        }
-        catch let error as NSError {
+        } catch let error as NSError {
             fatalError("""
                 Domain         : \(error.domain)
                 Code           : \(error.code)
@@ -228,4 +226,3 @@ struct IrppLineChartView: UIViewRepresentable {
     func updateUIView(_ uiView: LineChartView, context: Context) {
     }
 }
-

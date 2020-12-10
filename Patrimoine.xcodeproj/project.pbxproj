@@ -202,6 +202,7 @@
 		79EEEC6C256FF33B00778588 /* AppSettings.json in Resources */ = {isa = PBXBuildFile; fileRef = 79EEEC6B256FF33B00778588 /* AppSettings.json */; };
 		79EEEC752570141800778588 /* UserSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79EEEC742570141800778588 /* UserSettingsView.swift */; };
 		79EF511C255C932000B46303 /* Extensions+Binding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79EF511B255C932000B46303 /* Extensions+Binding.swift */; };
+		79EFE2902582444D006E9E3F /* .swiftlint.yml in Resources */ = {isa = PBXBuildFile; fileRef = 79EFE28F2582444D006E9E3F /* .swiftlint.yml */; };
 		79F655BE2517CDE2008F9159 /* SocialAccounts+CfCharts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79F655BD2517CDE2008F9159 /* SocialAccounts+CfCharts.swift */; };
 		79F655C32517D005008F9159 /* ChartView+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79F655C22517D005008F9159 /* ChartView+Extensions.swift */; };
 		79F9BB48250197A100A74D8D /* MainScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79F9BB47250197A100A74D8D /* MainScene.swift */; };
@@ -397,6 +398,7 @@
 		79EEEC6B256FF33B00778588 /* AppSettings.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = AppSettings.json; sourceTree = "<group>"; };
 		79EEEC742570141800778588 /* UserSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserSettingsView.swift; sourceTree = "<group>"; };
 		79EF511B255C932000B46303 /* Extensions+Binding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Extensions+Binding.swift"; sourceTree = "<group>"; };
+		79EFE28F2582444D006E9E3F /* .swiftlint.yml */ = {isa = PBXFileReference; lastKnownFileType = text.yaml; path = .swiftlint.yml; sourceTree = "<group>"; };
 		79F655BD2517CDE2008F9159 /* SocialAccounts+CfCharts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SocialAccounts+CfCharts.swift"; sourceTree = "<group>"; };
 		79F655C22517D005008F9159 /* ChartView+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChartView+Extensions.swift"; sourceTree = "<group>"; };
 		79F9BB47250197A100A74D8D /* MainScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainScene.swift; sourceTree = "<group>"; };
@@ -523,6 +525,7 @@
 		7994889D249E4F4600DAFF1E = {
 			isa = PBXGroup;
 			children = (
+				79EFE28F2582444D006E9E3F /* .swiftlint.yml */,
 				79061B4724FD88780045AB25 /* Shared */,
 				79061B4A24FD94F10045AB25 /* iOS */,
 				79061B4B24FD95180045AB25 /* macOS */,
@@ -1005,6 +1008,7 @@
 				799488A2249E4F4600DAFF1E /* Sources */,
 				799488A3249E4F4600DAFF1E /* Frameworks */,
 				799488A4249E4F4600DAFF1E /* Resources */,
+				79EFE28D25824214006E9E3F /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -1098,6 +1102,7 @@
 				79A4237025165CEE008383A1 /* Véhicules_LifeExpense.json in Resources */,
 				799488D7249E4FA800DAFF1E /* SCPI.json in Resources */,
 				799488E2249E4FA800DAFF1E /* Autres_LifeExpense.json in Resources */,
+				79EFE2902582444D006E9E3F /* .swiftlint.yml in Resources */,
 				79A4238825165D85008383A1 /* Voyage Transport_LifeExpense.json in Resources */,
 				79A4238D25165F6E008383A1 /* Exemples_LifeExpense.json in Resources */,
 				799488D9249E4FA800DAFF1E /* Loan.json in Resources */,
@@ -1109,6 +1114,26 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		79EFE28D25824214006E9E3F /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\nif which swiftlint >/dev/null; then\n    swiftlint\nelse\n    echo \"warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint\"\nfi\n";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		799488A2249E4F4600DAFF1E /* Sources */ = {

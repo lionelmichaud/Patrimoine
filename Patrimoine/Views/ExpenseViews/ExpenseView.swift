@@ -143,7 +143,7 @@ struct ExpenseView_Previews: PreviewProvider {
     static var uiState    = UIState()
 
     static var previews: some View {
-        NavigationView() {
+        NavigationView {
             ExpenseView()
                 .environmentObject(family)
                 .environmentObject(simulation)

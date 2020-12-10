@@ -9,7 +9,7 @@
 import Foundation
 import os
 
-fileprivate let customLog = Logger(subsystem: "me.michaud.lionel.Patrimoine", category: "Extensions.Bundle")
+private let customLog = Logger(subsystem: "me.michaud.lionel.Patrimoine", category: "Extensions.Bundle")
 
 extension Bundle {
     func encode <T: Encodable> (_ object: T,
@@ -111,23 +111,29 @@ extension Bundle {
         decoder.keyDecodingStrategy = keyDecodingStrategy
         
         // decode JSON data
+        let failureString = "Failed to decode object of type '\(String(describing: T.self))' from file '\(file)' "
         do {
             return try decoder.decode(T.self, from: data)
         } catch DecodingError.keyNotFound(let key, let context) {
-            customLog.log(level: .fault, "Failed to decode object of type '\(String(describing: T.self))' from file '\(file)' from bundle due to missing key '\(key.stringValue)' not found – \(context.debugDescription).")
-            fatalError("Failed to decode object of type '\(String(describing: T.self))' from file '\(file)' from bundle due to missing key '\(key.stringValue)' not found – \(context.debugDescription)")
+            customLog.log(level: .fault,
+                          "\(failureString)from bundle due to missing key '\(key.stringValue)' not found – \(context.debugDescription).")
+            fatalError("\(failureString)from bundle due to missing key '\(key.stringValue)' not found – \(context.debugDescription)")
         } catch DecodingError.typeMismatch(_, let context) {
-            customLog.log(level: .fault, "Failed to decode object of type '\(String(describing: T.self))' from file '\(file)' from bundle due to type mismatch – \(context.debugDescription)")
-            fatalError("Failed to decode object of type '\(String(describing: T.self))' from file '\(file)' from bundle due to type mismatch – \(context.debugDescription)")
+            customLog.log(level: .fault,
+                          "\(failureString)from bundle due to type mismatch – \(context.debugDescription)")
+            fatalError("\(failureString)from bundle due to type mismatch – \(context.debugDescription)")
         } catch DecodingError.valueNotFound(let type, let context) {
-            customLog.log(level: .fault, "Failed to decode object of type '\(String(describing: T.self))' from file '\(file)' from bundle due to missing \(type) value – \(context.debugDescription).")
-            fatalError("Failed to decode object of type '\(String(describing: T.self))' from file '\(file)' from bundle due to missing \(type) value – \(context.debugDescription)")
+            customLog.log(level: .fault,
+                          "\(failureString)from bundle due to missing \(type) value – \(context.debugDescription).")
+            fatalError("\(failureString)from bundle due to missing \(type) value – \(context.debugDescription)")
         } catch DecodingError.dataCorrupted(let context) {
-            customLog.log(level: .fault, "Failed to decode object of type '\(String(describing: T.self))' from file '\(file)' from bundle because it appears to be invalid JSON \n \(context.codingPath) \n \(context.debugDescription).")
-            fatalError("Failed to decode object of type '\(String(describing: T.self))' from file '\(file)' from bundle because it appears to be invalid JSON \n \(context.codingPath) \n \(context.debugDescription)")
+            customLog.log(level: .fault,
+                          "\(failureString)from bundle because it appears to be invalid JSON \n \(context.codingPath) \n \(context.debugDescription).")
+            fatalError("\(failureString)from bundle because it appears to be invalid JSON \n \(context.codingPath) \n \(context.debugDescription)")
         } catch {
-            customLog.log(level: .fault, "Failed to decode object of type '\(String(describing: T.self))' from file '\(file)' from bundle: \(error.localizedDescription).")
-            fatalError("Failed to decode object of type '\(String(describing: T.self))' from file '\(file)' from bundle: \(error.localizedDescription)")
+            customLog.log(level: .fault,
+                          "\(failureString)from bundle: \(error.localizedDescription).")
+            fatalError("\(failureString)from bundle: \(error.localizedDescription)")
         }
     }
 }

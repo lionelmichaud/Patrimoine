@@ -23,7 +23,7 @@ struct FamilySummaryView: View {
     @EnvironmentObject var family     : Family
     @EnvironmentObject var patrimoine : Patrimoin
     @EnvironmentObject var simulation : Simulation
-    @State private var cashFlow       : CashFlowLine? = nil
+    @State private var cashFlow       : CashFlowLine?
     
     fileprivate func computeCurrentYearCashFlow() {
         simulation.reset(withPatrimoine: patrimoine)
@@ -47,7 +47,7 @@ struct FamilySummaryView: View {
     }
 }
 
-fileprivate func header(_ trailingString: String) -> some View {
+private func header(_ trailingString: String) -> some View {
     HStack {
         Text(trailingString)
         Spacer()
@@ -150,7 +150,6 @@ struct SciSummarySection: View {
         }
     }
 }
-
 
 struct FamilySummaryView_Previews: PreviewProvider {
     static var family     = Family()

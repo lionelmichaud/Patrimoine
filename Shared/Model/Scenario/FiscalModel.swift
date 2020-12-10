@@ -206,7 +206,7 @@ struct PensionTaxes: Codable {
         let base   = net(brut) + csgNonDeductibleDeIrpp(brut)
         // TODO: - il faudrait prendre en compte que le rabais maxi est par foyer et non pas par personne
         let rebate = (base * model.rebate / 100.0).clamp(low: model.minRebate, high: model.maxRebate)
-        return max (0, base - rebate)
+        return max(0, base - rebate)
     }
     
     // TODO: - Prendre en compte la CSG déductible du revenu imposable sur le revenu 5.9%
@@ -782,7 +782,7 @@ struct DemembrementModel: Codable {
     // nested types
     
     // tranche de barême de l'IRPP
-    struct slice: Codable {
+    struct Slice: Codable {
         let floor    : Int // ans
         let usuFruit : Double // %
         var nueProp  : Double // %
@@ -790,7 +790,7 @@ struct DemembrementModel: Codable {
     
     struct Model: Codable, Versionable {
         var version : Version
-        var grid    : [slice]
+        var grid    : [Slice]
     }
     
     // properties
@@ -857,7 +857,7 @@ struct InheritanceDonation: Codable {
     }
     
     // tranche de barême
-    struct slice: Codable {
+    struct Slice: Codable {
         let floor : Double // €
         let rate  : Double // %
         var disc  : Double // euro
@@ -865,9 +865,9 @@ struct InheritanceDonation: Codable {
     
     struct Model: Codable, Versionable {
         var version              : Version
-        var gridDonationConjoint : [slice]
+        var gridDonationConjoint : [Slice]
         var abatConjoint         : Double //  80_724€
-        var gridLigneDirecte     : [slice]
+        var gridLigneDirecte     : [Slice]
         var abatLigneDirecte     : Double // 100_000€
         let fraisFunéraires      : Double //   1_500€
         let decoteResidence      : Double // 20% // %
@@ -942,7 +942,7 @@ struct LifeInsuranceInheritance: Codable {
     // nested types
     
     // tranche de barême
-    struct slice: Codable {
+    struct Slice: Codable {
         let floor : Double // €
         let rate  : Double // %
         var disc  : Double // euro
@@ -950,7 +950,7 @@ struct LifeInsuranceInheritance: Codable {
     
     struct Model: Codable, Versionable {
         var version    : Version
-        var grid       : [slice]
+        var grid       : [Slice]
     }
     
     // properties

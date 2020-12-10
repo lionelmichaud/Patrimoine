@@ -13,7 +13,7 @@ struct LiabilityView: View {
     @EnvironmentObject var uiState    : UIState
     
     var body: some View {
-        Section() {
+        Section {
             LabeledValueRowView(colapse     : $uiState.patrimoineViewState.liabViewState.colapseLiab,
                                 label       : "Passif",
                                 value       : patrimoine.liabilities.value(atEndOf: Date.now.year),
@@ -145,7 +145,7 @@ struct LiabilityView_Previews: PreviewProvider {
     static var uiState    = UIState()
 
     static var previews: some View {
-        NavigationView() {
+        NavigationView {
             List {
                 LiabilityView()
                     .environmentObject(patrimoine)

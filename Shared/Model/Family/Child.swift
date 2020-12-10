@@ -112,9 +112,9 @@ final class Child: Person {
     
     override func print() {
         super.print()
-        Swift.print("       age at university: ", ageOfUniversity,"years old")
+        Swift.print("       age at university: ", ageOfUniversity, "years old")
         Swift.print("       date of university:", mediumDateFormatter.string(from: dateOfUniversity))
-        Swift.print("       age of independance: ", ageOfIndependence,"years old")
+        Swift.print("       age of independance: ", ageOfIndependence, "years old")
         Swift.print("       date of independance:", mediumDateFormatter.string(from: dateOfIndependence))
     }
 }

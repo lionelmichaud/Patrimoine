@@ -75,7 +75,6 @@ public extension Int {
         return Float(self)
     }
     
-    
     /**
      This method will repeat *closure* n times. Possible way of usage:
      
@@ -83,7 +82,7 @@ public extension Int {
      
      :param: closure is a given code that will be invoked
      */
-    func times(closure: () -> ()) {
+    func times(closure: () -> Void) {
         for _ in 0 ..< self {
             closure()
         }
@@ -95,4 +94,3 @@ public extension Int {
         }
     }
 }
-

@@ -89,7 +89,7 @@ struct UniformChartView : UIViewRepresentable {
 //        leftAxis.valueFormatter = AxisFormatterChoice.percent.IaxisFormatter()
 
         // créer les DataSet: LineChartDataSets
-        let dataSets = getUniformLineChartDataSets(minX : minX,  maxX: maxX)
+        let dataSets = getUniformLineChartDataSets(minX : minX, maxX: maxX)
         
         // ajouter les DataSet au Chartdata
         let data = LineChartData(dataSets: dataSets)
@@ -115,7 +115,7 @@ struct UniformChartView : UIViewRepresentable {
         //uiView.data?.clearValues()
         
         // créer les DataSet: LineChartDataSets
-        let dataSets = getUniformLineChartDataSets(minX : minX,  maxX: maxX)
+        let dataSets = getUniformLineChartDataSets(minX : minX, maxX: maxX)
         
         // ajouter les DataSet au Chartdata
         let data = LineChartData(dataSets: dataSets)
@@ -264,7 +264,7 @@ struct DiscreteChartView : UIViewRepresentable {
         //uiView.data?.clearValues()
         
         // créer les DataSet: LineChartDataSets
-        let dataSets = getDiscreteChartDataSets(minX: minX,  maxX: maxX)
+        let dataSets = getDiscreteChartDataSets(minX: minX, maxX: maxX)
         
         // ajouter les DataSet au Chartdata
         let data = LineChartData(dataSets: dataSets)
@@ -394,7 +394,7 @@ struct BetaDistributionView: View {
                     .padding(.horizontal)
                 }
             }
-            BetaGammaAssistantView(minX  : $minX,  maxX : $maxX,
+            BetaGammaAssistantView(minX  : $minX, maxX : $maxX,
                                alpha : $alpha, beta : $beta)
             
         }
@@ -414,7 +414,7 @@ struct BetaGammaAssistantView : UIViewRepresentable {
                                       axisFormatterChoice : AxisFormatterChoice.percent)
         
         // créer les DataSet: LineChartDataSets
-        let dataSets = getBetaGammaLineChartDataSets(minX : minX,  maxX: maxX,
+        let dataSets = getBetaGammaLineChartDataSets(minX : minX, maxX: maxX,
                                                      alpha: alpha, beta: beta)
 //        let leftAxis = chartView.leftAxis
 //        leftAxis.valueFormatter = AxisFormatterChoice.percent.IaxisFormatter()
@@ -443,7 +443,7 @@ struct BetaGammaAssistantView : UIViewRepresentable {
         //uiView.data?.clearValues()
         
         // créer les DataSet: LineChartDataSets
-        let dataSets = getBetaGammaLineChartDataSets(minX : minX,  maxX: maxX,
+        let dataSets = getBetaGammaLineChartDataSets(minX : minX, maxX: maxX,
                                                      alpha: alpha, beta: beta)
         
         // ajouter les DataSet au Chartdata

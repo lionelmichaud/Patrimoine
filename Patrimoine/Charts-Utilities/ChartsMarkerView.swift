@@ -32,8 +32,7 @@ class RadarMarkerView: MarkerView {
 // MARK: - Bulle d'info pour diagramme (générique)
 
 /// Bulle d'info pour diagramme (générique)
-open class BalloonMarker: MarkerImage
-{
+open class BalloonMarker: MarkerImage {
     open var color: UIColor
     open var arrowSize = CGSize(width: 15, height: 11)
     open var font: UIFont
@@ -46,8 +45,7 @@ open class BalloonMarker: MarkerImage
     fileprivate var _paragraphStyle: NSMutableParagraphStyle?
     fileprivate var _drawAttributes = [NSAttributedString.Key : Any]()
     
-    public init(color: UIColor, font: UIFont, textColor: UIColor, insets: UIEdgeInsets)
-    {
+    public init(color: UIColor, font: UIFont, textColor: UIColor, insets: UIEdgeInsets) {
         self.color = color
         self.font = font
         self.textColor = textColor
@@ -58,17 +56,14 @@ open class BalloonMarker: MarkerImage
         super.init()
     }
     
-    open override func offsetForDrawing(atPoint point: CGPoint) -> CGPoint
-    {
+    open override func offsetForDrawing(atPoint point: CGPoint) -> CGPoint {
         var offset = self.offset
         var size = self.size
         
-        if size.width == 0.0 && image != nil
-        {
+        if size.width == 0.0 && image != nil {
             size.width = image!.size.width
         }
-        if size.height == 0.0 && image != nil
-        {
+        if size.height == 0.0 && image != nil {
             size.height = image!.size.height
         }
         
@@ -80,31 +75,24 @@ open class BalloonMarker: MarkerImage
         origin.x -= width / 2
         origin.y -= height
         
-        if origin.x + offset.x < 0.0
-        {
+        if origin.x + offset.x < 0.0 {
             offset.x = -origin.x + padding
-        }
-        else if let chart = chartView,
-            origin.x + width + offset.x > chart.bounds.size.width
-        {
+        } else if let chart = chartView,
+            origin.x + width + offset.x > chart.bounds.size.width {
             offset.x = chart.bounds.size.width - origin.x - width - padding
         }
         
-        if origin.y + offset.y < 0
-        {
-            offset.y = height + padding;
-        }
-        else if let chart = chartView,
-            origin.y + height + offset.y > chart.bounds.size.height
-        {
+        if origin.y + offset.y < 0 {
+            offset.y = height + padding
+        } else if let chart = chartView,
+            origin.y + height + offset.y > chart.bounds.size.height {
             offset.y = chart.bounds.size.height - origin.y - height - padding
         }
         
         return offset
     }
     
-    open override func draw(context: CGContext, point: CGPoint)
-    {
+    open override func draw(context: CGContext, point: CGPoint) {
         guard let label = label else { return }
         
         let offset = self.offsetForDrawing(atPoint: point)
@@ -122,8 +110,7 @@ open class BalloonMarker: MarkerImage
         
         context.setFillColor(color.cgColor)
         
-        if offset.y > 0
-        {
+        if offset.y > 0 {
             context.beginPath()
             context.move(to: CGPoint(
                 x: rect.origin.x,
@@ -151,9 +138,7 @@ open class BalloonMarker: MarkerImage
                 x: rect.origin.x,
                 y: rect.origin.y + arrowSize.height))
             context.fillPath()
-        }
-        else
-        {
+        } else {
             context.beginPath()
             context.move(to: CGPoint(
                 x: rect.origin.x,
@@ -200,13 +185,11 @@ open class BalloonMarker: MarkerImage
         context.restoreGState()
     }
     
-    open override func refreshContent(entry: ChartDataEntry, highlight: Highlight)
-    {
+    open override func refreshContent(entry: ChartDataEntry, highlight: Highlight) {
         setLabel(String(entry.y))
     }
     
-    open func setLabel(_ newLabel: String)
-    {
+    open func setLabel(_ newLabel: String) {
         label = newLabel
         
         _drawAttributes.removeAll()
@@ -247,7 +230,7 @@ class XYMarkerViewSpecial: BalloonMarker {
         let string = "x: "
             + xAxisValueFormatter.stringForValue(entry.x, axis: XAxis())
             + ", y: "
-            + yFormatter.string(from: NSNumber(floatLiteral: entry.y))!
+            + yFormatter.string(from: NSNumber(value: entry.y))!
         setLabel(string)
     }
 }
@@ -299,7 +282,7 @@ class DateValueMarkerView: BalloonMarker {
         var string = ""
         
         if let e = entry as? BarChartDataEntry {
-            guard let _ = e.yValues, highlight.stackIndex < e.yValues!.count else {
+            guard e.yValues != nil, highlight.stackIndex < e.yValues!.count else {
                 setLabel("?")
                 return
             }
@@ -347,7 +330,7 @@ class ExpenseMarkerView: BalloonMarker {
         var string = ""
         
         if let e = entry as? BarChartDataEntry {
-            guard let _ = e.yValues, highlight.stackIndex < e.yValues!.count else {
+            guard e.yValues != nil, highlight.stackIndex < e.yValues!.count else {
                 setLabel("?")
                 return
             }
@@ -367,4 +350,3 @@ class ExpenseMarkerView: BalloonMarker {
         setLabel(string)
     }
 }
-

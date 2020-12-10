@@ -14,7 +14,7 @@ import UIKit
 #endif
 import Charts // https://github.com/danielgindi/Charts.git
 
-fileprivate let customLog = Logger(subsystem: "me.michaud.lionel.Patrimoine", category: "Model.SocialAccounts+CfCharts")
+private let customLog = Logger(subsystem: "me.michaud.lionel.Patrimoine", category: "Model.SocialAccounts+CfCharts")
 
 // MARK: - Extension de SocialAccounts pour graphiques CASH FLOW
 
@@ -199,8 +199,8 @@ extension SocialAccounts {
                                           label   : (labels.count == 1 ? labels.first : nil))
                 // légendes des revenus et des dépenses
                 dataSet.stackLabels = labels
-                dataSet.colors = ChartThemes.positiveNegativeColors (numberPositive: numberPositive,
-                                                                     numberNegative: numberNegative)
+                dataSet.colors = ChartThemes.positiveNegativeColors(numberPositive: numberPositive,
+                                                                    numberNegative: numberNegative)
                 
         }
         
@@ -217,17 +217,8 @@ extension SocialAccounts {
                                                    expenses                : LifeExpensesDic,
                                                    selectedExpenseCategory : LifeExpenseCategory? = nil) -> BarChartDataSet? {
         
-        // si la table est vide alors quitter
-        guard !cashFlowArray.isEmpty else {
-            return nil
-        }
-        
-        let firstLine   = cashFlowArray.first!
-        var dataEntries = [ChartDataEntry]()
-        let dataSet : BarChartDataSet
-        
-        if firstLine.revenues.summary.namedValues.first(where: { $0.name == categoryName } ) != nil {
-            /// rechercher la catégorie dans les revenus
+        /// rechercher la catégorie dans les revenus
+        func getRevenusDataSet() -> BarChartDataSet {
             // customLog.log(level: .info, "Catégorie trouvée dans Revenues : \(found.name)")
             guard let category = RevenueCategory.category(of: categoryName) else {
                 return BarChartDataSet()
@@ -244,16 +235,71 @@ extension SocialAccounts {
                 return BarChartDataEntry(x       : $0.year.double(),
                                          yValues : y!)
             }
-            dataSet = BarChartDataSet(entries : dataEntries,
+            let dataSet = BarChartDataSet(entries : dataEntries,
                                       label   : (labelsInCategory.count == 1 ? labelsInCategory.first : nil))
             dataSet.stackLabels = labelsInCategory
             dataSet.colors      = ChartThemes.positiveColors(number : dataSet.stackLabels.count)
             
-        } else if firstLine.sciCashFlowLine.summary.namedValues.first(where: { $0.name == categoryName } ) != nil {
+            return dataSet
+        }
+        
+        func getExpensesDataSet() -> BarChartDataSet {
+            var labelsInCategory: [String]
+            if let expenseCategory = selectedExpenseCategory {
+                /// rechercher les valeurs de la seule catégorie de dépenses sélectionnée
+                let selectedExpensesNameArray = expenses.expensesNameArray(of: expenseCategory)
+                labelsInCategory = firstLine.lifeExpenses.namedValueTable.namesArray.filter { name in
+                    selectedExpensesNameArray.contains(name)
+                }
+                
+                // valeurs des dépenses
+                dataEntries = cashFlowArray.map { cashFlowLine in// pour chaque année
+                    let selectedNamedValues = cashFlowLine.lifeExpenses.namedValueTable.namedValues
+                        .filter({ (name, _) in
+                            selectedExpensesNameArray.contains(name)
+                        })
+                    let y = selectedNamedValues.map(\.value)
+                    return BarChartDataEntry(x       : cashFlowLine.year.double(),
+                                             yValues : -y)
+                }
+                
+            } else {
+                /// rechercher les valeurs de toutes les dépenses
+                // customLog.log(level: .info, "Catégorie trouvée dans lifeExpenses : \(categoryName)")
+                labelsInCategory = firstLine.lifeExpenses.namedValueTable.namesArray
+                
+                // valeurs des dépenses
+                dataEntries = cashFlowArray.map { // pour chaque année
+                    let y = $0.lifeExpenses.namedValueTable.valuesArray
+                    return BarChartDataEntry(x       : $0.year.double(),
+                                             yValues : -y)
+                }
+            }
+            let dataSet = BarChartDataSet(entries : dataEntries,
+                                      label   : (labelsInCategory.count == 1 ? labelsInCategory.first : nil))
+            dataSet.stackLabels = labelsInCategory
+            dataSet.colors      = ChartThemes.negativeColors(number : dataSet.stackLabels.count)
+
+            return dataSet
+        }
+        
+        // si la table est vide alors quitter
+        guard !cashFlowArray.isEmpty else {
+            return nil
+        }
+        
+        let firstLine   = cashFlowArray.first!
+        var dataEntries = [ChartDataEntry]()
+        let dataSet : BarChartDataSet
+        
+        if firstLine.revenues.summary.namedValues.contains(where: { $0.name == categoryName }) {
+            // rechercher la catégorie dans les revenus
+            dataSet = getRevenusDataSet()
+            
+        } else if firstLine.sciCashFlowLine.summary.namedValues.contains(where: { $0.name == categoryName }) {
             /// rechercher la catégorie dans les revenus de la SCI
             // customLog.log(level: .info, "Catégorie trouvée dans sciCashFlowLine : \(found.name)")
             let labelsInCategory = firstLine.sciCashFlowLine.namesFlatArray
-//            print("  legende : ", labelsInCategory)
             
             // valeurs des dettes
             dataEntries = cashFlowArray.map { // pour chaque année
@@ -266,17 +312,15 @@ extension SocialAccounts {
             dataSet.stackLabels = labelsInCategory
             dataSet.colors      = ChartThemes.positiveColors(number : dataSet.stackLabels.count)
             
-        } else if firstLine.taxes.summary.namedValues.first(where: { $0.name == categoryName } ) != nil {
+        } else if firstLine.taxes.summary.namedValues.contains(where: { $0.name == categoryName }) {
             /// rechercher les valeurs des taxes
             // customLog.log(level: .info, "Catégorie trouvée dans taxes : \(found.name)")
             guard let category = TaxeCategory.category(of: categoryName) else {
                 return BarChartDataSet()
             }
-//            print("  nom : \(category)")
             guard let labelsInCategory = firstLine.taxes.perCategory[category]?.namesArray else {
                 return BarChartDataSet()
             }
-//            print("  legende : ", labelsInCategory)
             
             // valeurs des revenus de la catégorie
             dataEntries = cashFlowArray.map { // pour chaque année
@@ -290,49 +334,13 @@ extension SocialAccounts {
             dataSet.colors      = ChartThemes.negativeColors(number : dataSet.stackLabels.count)
             
         } else if categoryName == firstLine.lifeExpenses.summary.name {
-            var labelsInCategory: [String]
-            if let expenseCategory = selectedExpenseCategory {
-                /// rechercher les valeurs de la seule catégorie de dépenses sélectionnée
-                let selectedExpensesNameArray = expenses.expensesNameArray(of: expenseCategory)
-                labelsInCategory = firstLine.lifeExpenses.namedValueTable.namesArray.filter { name in
-                    selectedExpensesNameArray.contains(name)
-                }
-//                print("  legende : ", labelsInCategory)
-                
-                // valeurs des dépenses
-                dataEntries = cashFlowArray.map { cashFlowLine in// pour chaque année
-                    let selectedNamedValues = cashFlowLine.lifeExpenses.namedValueTable.namedValues
-                        .filter( { (name, _) in
-                            selectedExpensesNameArray.contains(name)
-                        })
-                    let y = selectedNamedValues.map(\.value)
-                    return BarChartDataEntry(x       : cashFlowLine.year.double(),
-                                             yValues : -y)
-                }
-                
-            } else {
-                /// rechercher les valeurs de toutes les dépenses
-                // customLog.log(level: .info, "Catégorie trouvée dans lifeExpenses : \(categoryName)")
-                labelsInCategory = firstLine.lifeExpenses.namedValueTable.namesArray
-//                print("  legende : ", labelsInCategory)
-                
-                // valeurs des dépenses
-                dataEntries = cashFlowArray.map { // pour chaque année
-                    let y = $0.lifeExpenses.namedValueTable.valuesArray
-                    return BarChartDataEntry(x       : $0.year.double(),
-                                             yValues : -y)
-                }
-            }
-            dataSet = BarChartDataSet(entries : dataEntries,
-                                      label   : (labelsInCategory.count == 1 ? labelsInCategory.first : nil))
-            dataSet.stackLabels = labelsInCategory
-            dataSet.colors      = ChartThemes.negativeColors(number : dataSet.stackLabels.count)
+            // rechercher les dépenses
+            dataSet = getExpensesDataSet()
             
         } else if categoryName == firstLine.debtPayements.summary.name {
             /// rechercher les valeurs des debtPayements
             // customLog.log(level: .info, "Catégorie trouvée dans debtPayements : \(categoryName)")
             let labelsInCategory = firstLine.debtPayements.namedValueTable.namesArray
-//            print("  legende : ", labelsInCategory)
             
             // valeurs des dettes
             dataEntries = cashFlowArray.map { // pour chaque année
@@ -350,7 +358,6 @@ extension SocialAccounts {
             /// rechercher les valeurs des investPayements
             // customLog.log(level: .info, "Catégorie trouvée dans investPayements : \(categoryName)")
             let labelsInCategory = firstLine.investPayements.namedValueTable.namesArray
-//            print("  legende : ", labelsInCategory)
             
             // valeurs des investissements
             dataEntries = cashFlowArray.map { // pour chaque année
@@ -372,4 +379,3 @@ extension SocialAccounts {
         return dataSet
     }
 }
-

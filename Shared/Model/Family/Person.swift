@@ -118,7 +118,7 @@ class Person : ObservableObject, Identifiable, CustomStringConvertible, Codable 
             displayName = personNameFormatter.string(from: name)
         }
     }
-    var birthDate             : Date  {
+    var birthDate             : Date {
         didSet {
             displayBirthDate = mediumDateFormatter.string(from: birthDate)
         }

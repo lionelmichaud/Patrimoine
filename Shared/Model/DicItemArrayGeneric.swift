@@ -44,7 +44,7 @@ where ItemCategory: PickableEnum, ItemCategory: Codable {
     /// - Returns: dépenses totales
     func value(atEndOf: Int) -> Double {
         var sum = 0.0
-        perCategory.forEach { (category, expenseArray) in
+        perCategory.forEach { (_, expenseArray) in
             sum += expenseArray.value(atEndOf: atEndOf)
         }
         return sum
@@ -55,7 +55,7 @@ where ItemCategory: PickableEnum, ItemCategory: Codable {
     /// - Returns: liste complète à plat de toutes les dépenses
     func namedValueTable(atEndOf: Int) -> NamedValueArray {
         var table = NamedValueArray()
-        perCategory.forEach { (category, expenseArray) in
+        perCategory.forEach { (_, expenseArray) in
             table += expenseArray.namedValueTable(atEndOf: atEndOf)
         }
         return table
@@ -93,4 +93,3 @@ where ItemCategory: PickableEnum, ItemCategory: Codable {
         }
     }
 }
-

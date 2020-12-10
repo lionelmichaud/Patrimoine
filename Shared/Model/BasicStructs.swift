@@ -10,7 +10,7 @@ import os
 import Foundation
 import SwiftUI
 
-fileprivate let customLog = Logger(subsystem: "me.michaud.lionel.Patrimoine", category: "BasicStructs")
+private let customLog = Logger(subsystem: "me.michaud.lionel.Patrimoine", category: "BasicStructs")
 
 // MARK: - Table nommée de couples (nom, valeur)
 
@@ -102,10 +102,7 @@ struct NamedValueTableWithSummary {
     func summaryFiltredValues(with itemSelectionList: ItemSelectionList) -> [Double] {
         summary.filtredValues(with: itemSelectionList)
     }
-    
-
 }
-
 
 // MARK: - Liste des items affichés sur un Graph et sélectionnables individuellement
 
@@ -127,19 +124,19 @@ extension ItemSelectionList {
     /// Vérifie si une ou plusieurs catégories ont étées secltionnées dans la liste du menu
     /// - Returns: retourne TRUE si une seule catégorie sélectionnée
     func onlyOneCategorySelected () -> Bool {
-        let count = self.reduce(.zero, { result, element in result + (element.selected ? 1 : 0) } )
+        let count = self.reduce(.zero, { result, element in result + (element.selected ? 1 : 0) })
         return count == 1
     }
     
     /// Retourne vrai si toutes les catégories de ls liste sont sélectionnées
     func allCategoriesSelected() -> Bool {
-        let count = self.reduce(.zero, { result, element in result + (element.selected ? 1 : 0) } )
+        let count = self.reduce(.zero, { result, element in result + (element.selected ? 1 : 0) })
         return count == self.count
     }
     
     /// Retourne vrai si aucune des catégories de ls liste n'est sélectionnées
     func NoneCategorySelected() -> Bool {
-        let count = self.reduce(.zero, { result, element in result + (element.selected ? 1 : 0) } )
+        let count = self.reduce(.zero, { result, element in result + (element.selected ? 1 : 0) })
         return count == 0
     }
     
@@ -153,8 +150,6 @@ extension ItemSelectionList {
             return nil
         }
     }
-    
-    
 }
 
 // MARK: - Versioning
@@ -243,4 +238,10 @@ enum SortingOrder {
                 self = .ascending
         }
     }
+}
+
+struct BrutNetTaxable {
+    var brut    : Double
+    var net     : Double
+    var taxable : Double
 }

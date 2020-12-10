@@ -1,0 +1,15 @@
+disabled_rules:
+- colon
+- trailing_whitespace
+- comma
+- line_length
+- orphaned_doc_comment
+- switch_case_alignment
+- identifier_name
+- function_body_length
+- file_length
+- type_body_length
+- todo
+- function_parameter_count
+- force_cast
+- large_tuple

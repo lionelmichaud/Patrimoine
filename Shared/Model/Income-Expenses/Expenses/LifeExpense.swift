@@ -42,7 +42,7 @@ extension LifeExpensesDic {
         if category == nil {
             // on prend toutes les catégories
             var idx = 0
-            perCategory.sortedReversed(by: \.key.displayString).forEach { (category, expenseArray) in
+            perCategory.sortedReversed(by: \.key.displayString).forEach { (_, expenseArray) in
                 let nbItem = expenseArray.items.count
                 for expIdx in 0..<nbItem {
                     if let firstYear = expenseArray[nbItem - 1 - expIdx].firstYear,

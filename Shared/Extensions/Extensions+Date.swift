@@ -48,7 +48,7 @@ extension DateComponents {
                               to: thisDate)
     }
     
-    static prefix func -(rhs: Self) -> DateComponents {
+    static prefix func - (rhs: Self) -> DateComponents {
         .init(year: -rhs.year,
               month: -rhs.month,
               day: -rhs.day,
@@ -56,7 +56,7 @@ extension DateComponents {
               minute: -rhs.minute,
               second: -rhs.second)
     }
-    static func +(lhs: Self, rhs: Self) -> DateComponents {
+    static func + (lhs: Self, rhs: Self) -> DateComponents {
         DateComponents(year: lhs.year + rhs.year,
                        month: lhs.month + rhs.month,
                        day: lhs.day + rhs.day,
@@ -64,7 +64,7 @@ extension DateComponents {
                        minute: lhs.minute + rhs.minute,
                        second: lhs.second + rhs.second)
     }
-    static func -(lhs: Self, rhs: Self) -> DateComponents {
+    static func - (lhs: Self, rhs: Self) -> DateComponents {
         DateComponents(year: lhs.year - rhs.year,
                        month: lhs.month - rhs.month,
                        day: lhs.day - rhs.day,
@@ -76,7 +76,7 @@ extension DateComponents {
 
 // https://medium.com/@rserentill/dealing-with-relative-dates-in-swift-the-cool-way-5903a7af2461
 extension Optional where Wrapped: Numeric {
-    static prefix func -(rhs: Self) -> Wrapped? {
+    static prefix func - (rhs: Self) -> Wrapped? {
         switch rhs {
             case .some(let value):
                 return value * -1
@@ -84,7 +84,7 @@ extension Optional where Wrapped: Numeric {
                 return nil
         }
     }
-    static func +(lhs: Self, rhs: Self) -> Wrapped? {
+    static func + (lhs: Self, rhs: Self) -> Wrapped? {
         switch (lhs, rhs) {
             case (.some(let lhsValue), .some(let rhsValue)):
                 return lhsValue + rhsValue
@@ -93,7 +93,7 @@ extension Optional where Wrapped: Numeric {
             default: return nil
         }
     }
-    static func -(lhs: Self, rhs: Self) -> Wrapped? {
+    static func - (lhs: Self, rhs: Self) -> Wrapped? {
         switch (lhs, rhs) {
             case (.some(let lhsValue), .some(let rhsValue)):
                 return lhsValue - rhsValue
@@ -163,7 +163,6 @@ extension Date {
         return Date.calendar.component(.nanosecond, from: self)
     }
 }
-
 
 // MARK: - Date Utility
 // https://gist.github.com/Rawnly/2d0d8cf85048f0bc533afb19bdef5c1c

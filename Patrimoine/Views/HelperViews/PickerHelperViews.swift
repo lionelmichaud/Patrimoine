@@ -86,6 +86,7 @@ struct PickerHelperViews_Previews: PreviewProvider {
 
 // MARK: - Library Views
 
+// swiftlint:disable type_name
 struct PickersView_Library: LibraryContentProvider {
     enum TestEnum: Int, PickableEnum {
         case un, deux, trois

@@ -16,7 +16,7 @@ struct KpiResult: Hashable, Codable {
     var objectiveIsReached : Bool
 }
 
-typealias DictionaryOfKpiResults = Dictionary<SimulationKPIEnum, KpiResult>
+typealias DictionaryOfKpiResults = [SimulationKPIEnum: KpiResult]
 extension DictionaryOfKpiResults {
     func runResult() -> RunResult {
         for kpi in SimulationKPIEnum.allCases {
@@ -60,7 +60,7 @@ struct AdultRandomProperties: Hashable, Codable {
     var ageOfDeath           : Int
     var nbOfYearOfDependency : Int
 }
-typealias DictionaryOfAdultRandomProperties = Dictionary<String, AdultRandomProperties>
+typealias DictionaryOfAdultRandomProperties = [String: AdultRandomProperties]
 
 // MARK: - Synthèse d'un Run de Simulation
 
@@ -104,7 +104,7 @@ struct SimulationResultLine: Hashable {
     }
 }
 
-typealias SimulationResultTable = Array<SimulationResultLine>
+typealias SimulationResultTable = [SimulationResultLine]
 extension SimulationResultTable {
     func filtered(with filter: RunFilterEnum = .all) -> SimulationResultTable {
         switch filter {
@@ -185,7 +185,7 @@ extension SimulationResultTable {
             return header
         }
         
-        let csvString = self.reduce(header() + lineBreak, { result, element in result + element.valuesCSV + lineBreak} )
+        let csvString = self.reduce(header() + lineBreak, { result, element in result + element.valuesCSV + lineBreak })
 //        print(csvString)
 
         #if DEBUG
@@ -194,8 +194,7 @@ extension SimulationResultTable {
             try csvString.write(to: SocialAccounts.cashFlowFileUrl!,
                                 atomically: true ,
                                 encoding: .utf8)
-        }
-        catch {
+        } catch {
             print("error creating file: \(error)")
         }
         #endif
@@ -209,8 +208,7 @@ extension SimulationResultTable {
             #if DEBUG
             Swift.print("saving 'Monté-Carlo Kpi.csv' to file: ", AppSettings.csvPath(simulationTitle) + fileName)
             #endif
-        }
-        catch let error as NSError {
+        } catch let error as NSError {
             fatalError("""
                 Domain         : \(error.domain)
                 Code           : \(error.code)

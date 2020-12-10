@@ -78,4 +78,3 @@ struct FamilyView_Previews: PreviewProvider {
         //.environment(\.locale, .init(identifier: "fr"))
     }
 }
-

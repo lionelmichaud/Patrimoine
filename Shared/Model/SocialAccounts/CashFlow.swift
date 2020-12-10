@@ -2,7 +2,7 @@ import Foundation
 import os
 import Disk
 
-fileprivate let customLog = Logger(subsystem: "me.michaud.lionel.Patrimoine", category: "Model.CashFlow")
+private let customLog = Logger(subsystem: "me.michaud.lionel.Patrimoine", category: "Model.CashFlow")
 
 enum CashFlowError: Error {
     case notEnoughCash(missingCash: Double)
@@ -123,11 +123,11 @@ extension CashFlowArray {
         
         // Année et Ages
         let personsNames = firstLine.ages.persons
-            .map( { "Age " + $0.name } )
+            .map( { "Age " + $0.name })
             .joined(separator: "; ")
         heading = "YEAR; \(personsNames);"
         rows = self.map {
-            "\($0.year); \($0.ages.persons.map( { String($0.age) } ).joined(separator: "; ")); "
+            "\($0.year); \($0.ages.persons.map({ String($0.age) }).joined(separator: "; ")); "
         }
         
         // construire la partie Revenus du tableau
@@ -170,8 +170,7 @@ extension CashFlowArray {
             try csvString.write(to: SocialAccounts.cashFlowFileUrl!,
                                 atomically: true ,
                                 encoding: .utf8)
-        }
-        catch {
+        } catch {
             print("error creating file: \(error)")
         }
         #endif
@@ -185,8 +184,7 @@ extension CashFlowArray {
             #if DEBUG
             Swift.print("saving 'CashFlow.csv' to file: ", AppSettings.csvPath(simulationTitle) + fileName)
             #endif
-        }
-        catch let error as NSError {
+        } catch let error as NSError {
             fatalError("""
                 Domain         : \(error.domain)
                 Code           : \(error.code)
@@ -459,7 +457,7 @@ struct CashFlowLine {
                  value: liquidatedValue.revenue.rounded()))
             // populate taxable interests
             switch periodicInvestement.type {
-                case .lifeInsurance( _):
+                case .lifeInsurance:
                     var taxableInterests: Double
                     // apply rebate if some is remaining
                     taxableInterests = max(0.0, liquidatedValue.taxableIrppInterests - lifeInsuranceRebate)

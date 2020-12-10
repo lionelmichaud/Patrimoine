@@ -40,9 +40,9 @@ extension BarChartView {
     
     /// Création d'un BarChartView avec une présentation customisée
     /// - Parameter title: Titre du graphique
-    convenience init (title               : String,
-                      smallLegend         : Bool = true,
-                      axisFormatterChoice : AxisFormatterChoice) {
+    convenience init(title               : String,
+                     smallLegend         : Bool = true,
+                     axisFormatterChoice : AxisFormatterChoice) {
         self.init()
         
         //: ### General
@@ -121,16 +121,16 @@ extension LineChartView {
     
     /// Création d'un LineChartView avec une présentation customisée
     /// - Parameter title: Titre du graphique
-    convenience init (title               : String,
-                      smallLegend         : Bool = true,
-                      axisFormatterChoice : AxisFormatterChoice) {
+    convenience init(title               : String,
+                     smallLegend         : Bool = true,
+                     axisFormatterChoice : AxisFormatterChoice) {
         self.init()
         
         //: ### General
         self.pinchZoomEnabled          = true
         self.doubleTapToZoomEnabled    = true
         self.dragEnabled               = true
-        self.setScaleEnabled (true)
+        self.setScaleEnabled(true)
         self.drawGridBackgroundEnabled = false
         self.backgroundColor           = ChartThemes.DarkChartColors.backgroundColor
         self.borderColor               = ChartThemes.DarkChartColors.borderColor
@@ -209,17 +209,17 @@ extension CombinedChartView {
     
     /// Création d'un LineChartView avec une présentation customisée
     /// - Parameter title: Titre du graphique
-    convenience init (title                    : String,
-                      smallLegend              : Bool = true,
-                      leftAxisFormatterChoice  : AxisFormatterChoice = .none,
-                      rightAxisFormatterChoice : AxisFormatterChoice = .none) {
+    convenience init(title                    : String,
+                     smallLegend              : Bool = true,
+                     leftAxisFormatterChoice  : AxisFormatterChoice = .none,
+                     rightAxisFormatterChoice : AxisFormatterChoice = .none) {
         self.init()
         
         //: ### General
         self.pinchZoomEnabled          = true
         self.doubleTapToZoomEnabled    = true
         self.dragEnabled               = true
-        self.setScaleEnabled (true)
+        self.setScaleEnabled(true)
         self.drawGridBackgroundEnabled = false
         self.backgroundColor           = ChartThemes.DarkChartColors.backgroundColor
         self.borderColor               = ChartThemes.DarkChartColors.borderColor

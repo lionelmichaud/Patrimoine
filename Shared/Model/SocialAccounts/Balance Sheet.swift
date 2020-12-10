@@ -84,9 +84,8 @@ extension BalanceSheetArray {
         #if DEBUG
         // sauvegarder le fichier dans le répertoire Bundle/csv
         do {
-            try csvString.write(to: SocialAccounts.balanceSheetFileUrl!, atomically: true , encoding: .utf8)
-        }
-        catch {
+            try csvString.write(to: SocialAccounts.balanceSheetFileUrl!, atomically: true, encoding: .utf8)
+        } catch {
             print("error creating file: \(error)")
         }
         #endif
@@ -101,8 +100,7 @@ extension BalanceSheetArray {
             Swift.print("saving 'BalanceSheet.csv' to file: ", AppSettings.csvPath(simulationTitle) + fileName)
             #endif
             
-        }
-        catch let error as NSError {
+        } catch let error as NSError {
             fatalError("""
                 Domain         : \(error.domain)
                 Code           : \(error.code)

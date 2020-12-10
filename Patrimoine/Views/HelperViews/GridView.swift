@@ -42,7 +42,6 @@ struct CellView : View {
     }
 }
 
-
 struct NamedAmountListView_Previews: PreviewProvider {
     static var previews: some View {
         GridView(rows: 10, columns: 3) { row, col  in

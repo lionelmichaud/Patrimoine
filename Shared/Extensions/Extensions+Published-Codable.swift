@@ -31,12 +31,10 @@ extension Published: Encodable where Value:Decodable {
                 } catch let error {
                     assertionFailure("Failed encoding: \(self) - \(error)")
                 }
-            }
-            else {
+            } else {
                 assertionFailure("Decodable Value not decodable. Odd \(self)")
             }
-        }
-        else {
+        } else {
             assertionFailure("Mirror Mirror on the wall - why no value y'all : \(self)")
         }
     }

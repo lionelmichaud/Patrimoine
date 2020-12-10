@@ -22,12 +22,12 @@ struct ValuedRevenues {
     
     /// total de tous les revenus nets de l'année versé en compte courant avant taxes et impots
     var totalCredited: Double {
-        perCategory.reduce(.zero, { result, element in result + element.value.credits.total } )
+        perCategory.reduce(.zero, { result, element in result + element.value.credits.total })
     }
     /// total de tous les revenus de l'année imposables à l'IRPP
     var totalTaxableIrpp: Double {
         // ne pas oublier les revenus en report d'imposition
-        perCategory.reduce(.zero, { result, element in result + element.value.taxablesIrpp.total } )
+        perCategory.reduce(.zero, { result, element in result + element.value.taxablesIrpp.total })
             + taxableIrppRevenueDelayedFromLastYear.value(atEndOf: 0)
     }
     
@@ -151,4 +151,3 @@ struct RevenuesInCategory {
     }
     
 }
-

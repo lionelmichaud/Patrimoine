@@ -30,7 +30,7 @@ struct RetirementEditView: View {
                     }
                 }
                 .onChange(of: adultViewModel.trimAgircPension) { newTrimAgircPension in
-                    if (adultViewModel.ageAgircPension == adultViewModel.agePension && newTrimAgircPension > adultViewModel.trimPension) {
+                    if adultViewModel.ageAgircPension == adultViewModel.agePension && newTrimAgircPension > adultViewModel.trimPension {
                         adultViewModel.ageAgircPension  = adultViewModel.agePension
                         adultViewModel.trimAgircPension = adultViewModel.trimPension
                         self.alertItem = AlertItem(title         : Text("La pension complémentaire doit être liquidée avant la pension base"),
@@ -50,7 +50,7 @@ struct RetirementEditView: View {
                     }
                 }
                 .onChange(of: adultViewModel.trimPension) { newTrimPension in
-                    if (adultViewModel.ageAgircPension == adultViewModel.agePension && adultViewModel.trimAgircPension > newTrimPension) {
+                    if adultViewModel.ageAgircPension == adultViewModel.agePension && adultViewModel.trimAgircPension > newTrimPension {
                         adultViewModel.agePension  = adultViewModel.ageAgircPension
                         adultViewModel.trimPension = adultViewModel.trimAgircPension
                         self.alertItem = AlertItem(title         : Text("La pension complémentaire doit être liquidée avant la pension base"),
@@ -144,7 +144,6 @@ struct RegimeGeneralSituationEditView : View {
         }
     }
 }
-
 
 struct RetirementEditView_Previews: PreviewProvider {
     static var previews: some View {

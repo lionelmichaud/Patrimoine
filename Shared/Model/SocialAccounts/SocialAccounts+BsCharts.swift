@@ -14,7 +14,7 @@ import UIKit
 #endif
 import Charts // https://github.com/danielgindi/Charts.git
 
-fileprivate let customLog = Logger(subsystem: "me.michaud.lionel.Patrimoine", category: "Model.SocialAccounts+BsCharts")
+private let customLog = Logger(subsystem: "me.michaud.lionel.Patrimoine", category: "Model.SocialAccounts+BsCharts")
 
 // MARK: - Extension de SocialAccounts pour graphiques BALANCE SHEET
 
@@ -288,7 +288,6 @@ extension SocialAccounts {
         chartView.chartDescription?.text    = "Actifs"
         chartView.chartDescription?.enabled = true
         
-        
         //: ### ChartDataEntry
         //        var yVals1 = [ChartDataEntry]()
         //        var yVals2 = [ChartDataEntry]()
@@ -297,7 +296,6 @@ extension SocialAccounts {
         //        yVals1 = balanceArray.map { ChartDataEntry(x: $0.year.double(), y: $0.assets.total) }
         //        yVals2 = balanceArray.map { ChartDataEntry(x: $0.year.double(), y: $0.liabilities.total) }
         //        yVals3 = balanceArray.map { ChartDataEntry(x: $0.year.double(), y: $0.net) }
-        
         
         let xArray = Array(1..<10)
         let ys1 = xArray.map { x in return sin(Double(x) / 2.0 / 3.141 * 1.5) }

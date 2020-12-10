@@ -142,7 +142,6 @@ struct Revenues {
     }
 }
 
-
 // MARK: Agrégat de tables des revenus (perçu, taxable) pour une catégorie nommée donnée
 
 struct RevenueInCategory {
@@ -172,4 +171,3 @@ struct RevenueInCategory {
     }
 
 }
-

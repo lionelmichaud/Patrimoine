@@ -80,7 +80,7 @@ struct RealEstateDetailedView: View {
             Section(header: Text("ACQUISITION")) {
                 Group {
                     NavigationLink(destination: Form { BoundaryEditView(label    : "Première année de possession",
-                                                                        boundary : $assetVM.buyingYearVM) } ) {
+                                                                        boundary : $assetVM.buyingYearVM) }) {
                         HStack {
                             Text("Première année de possession")
                             Spacer()
@@ -145,7 +145,7 @@ struct RealEstateDetailedView: View {
                 if localItem.willBeSold {
                     Group {
                         NavigationLink(destination: Form { BoundaryEditView(label    : "Dernière année de possession",
-                                                                            boundary : $assetVM.sellingYearVM) } ) {
+                                                                            boundary : $assetVM.sellingYearVM) }) {
                             HStack {
                                 Text("Dernière année de possession")
                                 Spacer()
@@ -167,12 +167,12 @@ struct RealEstateDetailedView: View {
         .navigationBarItems(
             leading: Button(
                 action : duplicate,
-                label  : { Text("Dupliquer")} )
+                label  : { Text("Dupliquer") })
                 .capsuleButtonStyle()
                 .disabled((index == nil) || changeOccured()),
             trailing: Button(
                 action: applyChanges,
-                label: { Text("Sauver") } )
+                label: { Text("Sauver") })
                 .capsuleButtonStyle()
                 .disabled(!changeOccured())
         )
@@ -237,37 +237,37 @@ struct RealEstateDetailedView: View {
     
     func isValid() -> Bool {
         /// vérifier que toutes les dates sont définies
-        guard let _ = assetVM.buyingYearVM.year else {
+        guard assetVM.buyingYearVM.year != nil else {
             self.alertItem = AlertItem(title         : Text("La date d'achat doit être définie"),
                                        dismissButton : .default(Text("OK")))
             return false
         }
         if localItem.willBeInhabited {
-            guard let _ = assetVM.inhabitedFromVM.year else {
+            guard assetVM.inhabitedFromVM.year != nil else {
                 self.alertItem = AlertItem(title         : Text("La date de début d'habitation doit être définie"),
                                            dismissButton : .default(Text("OK")))
                 return false
             }
-            guard let _ = assetVM.inhabitedToVM.year else {
+            guard assetVM.inhabitedToVM.year != nil else {
                 self.alertItem = AlertItem(title         : Text("La date de fin d'habitation doit être définie"),
                                            dismissButton : .default(Text("OK")))
                 return false
             }
         }
         if localItem.willBeRented {
-            guard let _ = assetVM.rentalFromVM.year else {
+            guard assetVM.rentalFromVM.year != nil else {
                 self.alertItem = AlertItem(title         : Text("La date de début de location doit être définie"),
                                            dismissButton : .default(Text("OK")))
                 return false
             }
-            guard let _ = assetVM.rentalToVM.year else {
+            guard assetVM.rentalToVM.year != nil else {
                 self.alertItem = AlertItem(title         : Text("La date de fin de location doit être définie"),
                                            dismissButton : .default(Text("OK")))
                 return false
             }
         }
         if localItem.willBeSold {
-            guard let _ = assetVM.sellingYearVM.year else {
+            guard assetVM.sellingYearVM.year != nil else {
                 self.alertItem = AlertItem(title         : Text("La date de vente doit être définie"),
                                            dismissButton : .default(Text("OK")))
                 return false
@@ -336,9 +336,9 @@ struct FromToEditView: View {
     @Binding var to   : DateBoundaryViewModel
 
     var body: some View {
-        Group{
+        Group {
             NavigationLink(destination: Form { BoundaryEditView(label    : "Début",
-                                                                boundary : $from)} ) {
+                                                                boundary : $from) }) {
                 HStack {
                     Text("Début (année inclue)")
                     Spacer()
@@ -346,7 +346,7 @@ struct FromToEditView: View {
                 }.foregroundColor(.blue)
             }
             NavigationLink(destination: Form { BoundaryEditView(label    : "Fin",
-                                                                boundary : $to)} ) {
+                                                                boundary : $to) }) {
                 HStack {
                     Text("Fin (année exclue)")
                     Spacer()
@@ -364,7 +364,7 @@ struct RealEstateDetailedView_Previews: PreviewProvider {
 
     static var previews: some View {
         return
-            NavigationView() {
+            NavigationView {
                 RealEstateDetailedView(item       : patrimoine.assets.realEstates[0],
                                        family     : family,
                                        patrimoine : patrimoine)
@@ -374,4 +374,3 @@ struct RealEstateDetailedView_Previews: PreviewProvider {
             .previewDisplayName("RealEstateDetailedView")
     }
 }
-

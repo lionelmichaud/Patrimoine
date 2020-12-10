@@ -9,7 +9,7 @@
 import Foundation
 import os
 
-fileprivate let customLog = Logger(subsystem: "me.michaud.lionel.Patrimoine", category: "Model.TimeSpan")
+private let customLog = Logger(subsystem: "me.michaud.lionel.Patrimoine", category: "Model.TimeSpan")
 
 // MARK: - Elongation temporelle du poste de dépense
 
@@ -39,15 +39,15 @@ enum TimeSpan: PickableIdentifiableEnum, Hashable {
         switch self {
             case .permanent:
                 return 1
-            case .periodic(_, _, _):
+            case .periodic:
                 return 2
-            case .starting (_):
+            case .starting:
                 return 3
-            case .ending (_):
+            case .ending:
                 return 4
-            case .spanning(_, _):
+            case .spanning:
                 return 5
-            case .exceptional (_):
+            case .exceptional:
                 return 6
         }
     }
@@ -60,15 +60,15 @@ enum TimeSpan: PickableIdentifiableEnum, Hashable {
         switch self {
             case .permanent:
                 return "Permanent"
-            case .periodic(_, _, _):
+            case .periodic:
                 return "Periodique"
-            case .starting (_):
+            case .starting:
                 return "Depuis..."
-            case .ending (_):
+            case .ending:
                 return "Jusqu'à..."
-            case .spanning(_, _):
+            case .spanning:
                 return "De...à..."
-            case .exceptional (_):
+            case .exceptional:
                 return "Ponctuelle"
         }
     }
@@ -275,24 +275,21 @@ extension TimeSpan: Codable {
 
 // MARK: - Extension: Description
 
-extension TimeSpan: CustomStringConvertible{
-    public var description: String{
-        get{
-            switch self {
-                case .permanent:
-                    return "permanent"
-                case .periodic (let from, let period, let to):
-                    return "periodic - from \(from) every \(period) years - ending in \(to)"
-                case .starting (let from):
-                    return "starting from \(from)"
-                case .ending (let to):
-                    return "ending in \(to.year ?? -1) on event: \(String(describing: to.event))"
-                case .spanning (let from, let to):
-                    return "starting from \(from) - ending in \(to)"
-                case .exceptional(let inYear):
-                    return "in \(inYear)"
-            }
+extension TimeSpan: CustomStringConvertible {
+    public var description: String {
+        switch self {
+            case .permanent:
+                return "permanent"
+            case .periodic (let from, let period, let to):
+                return "periodic - from \(from) every \(period) years - ending in \(to)"
+            case .starting (let from):
+                return "starting from \(from)"
+            case .ending (let to):
+                return "ending in \(to.year ?? -1) on event: \(String(describing: to.event))"
+            case .spanning (let from, let to):
+                return "starting from \(from) - ending in \(to)"
+            case .exceptional(let inYear):
+                return "in \(inYear)"
         }
     }
 }
-

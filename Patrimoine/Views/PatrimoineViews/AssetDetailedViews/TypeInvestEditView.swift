@@ -53,7 +53,6 @@ struct TypeInvestEditView : View {
     }
 }
 
-
 struct TypeInvestEditView_Previews: PreviewProvider {
     static var previews: some View {
         TypeInvestEditView(investType: .constant(InvestementType.lifeInsurance(periodicSocialTaxes: true)))

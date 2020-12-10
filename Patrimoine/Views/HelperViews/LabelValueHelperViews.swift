@@ -31,7 +31,7 @@ struct LabeledValueRowView: View {
                         //.scaleEffect(colapse ? 1 : 1.5)
                         //.padding()
                         .animation(.easeInOut)
-                } )
+                })
                 Text(label)
                     .font(Font.system(size: ListTheme[indentLevel].labelFontSize,
                                       design: Font.Design.default))
@@ -207,7 +207,6 @@ struct IntegerView: View {
     }
 }
 
-
 // MARK: - Saisie d'un pourcentage %
 struct PercentEditView: View {
     private let label     : String
@@ -281,7 +280,7 @@ struct LabeledTextEditor : View {
     @Binding var text : String
     
     var body: some View {
-        HStack{
+        HStack {
             Text(label)
                 .frame(width: CGFloat(labelWidth), alignment: .leading)
             TextEditor(text: $text)
@@ -306,7 +305,7 @@ struct LabeledTextField : View {
     @Binding var text : String
     
     var body: some View {
-        HStack{
+        HStack {
             Text(label)
                 .frame(width: CGFloat(labelWidth), alignment: .leading)
             TextField(defaultText ?? "", text: $text)
@@ -362,7 +361,7 @@ struct DateRangeEditView: View {
                            label               : { Text(fromLabel) })
                 
                 DatePicker(selection           : $toDate,
-                           in                  : max(fromDate,`in`!.lowerBound)...Date.distantFuture,
+                           in                  : max(fromDate, `in`!.lowerBound)...Date.distantFuture,
                            displayedComponents : .date,
                            label               : { Text(toLabel) })
             } else {
@@ -412,6 +411,7 @@ struct TestView: View {
     }
 }
 
+// swiftlint:disable type_name
 struct TextView_Previews: View {
     var body: some View {
         Group {
@@ -471,8 +471,7 @@ struct LabelValueHelpersView_Previews: PreviewProvider {
 // MARK: - Library Views
 
 struct LabelValueHelpersView_Library: LibraryContentProvider {
-    @LibraryContentBuilder
-    var views: [LibraryItem] {
+    @LibraryContentBuilder var views: [LibraryItem] {
         let integer = 4
         let percent = 4.0
         let amount = 1000.0

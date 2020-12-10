@@ -75,12 +75,9 @@ enum LifeExpenseCategory: Int, PickableEnum, Codable {
     /// - Parameter name: nom de la catégorie (displayString)
     /// - Returns: Enum
     static func category(of name: String) -> LifeExpenseCategory? {
-        for category in LifeExpenseCategory.allCases {
-            if category.displayString == name {
-                return category
-            }
+        for category in LifeExpenseCategory.allCases where category.displayString == name {
+            return category
         }
         return nil
     }
 }
-

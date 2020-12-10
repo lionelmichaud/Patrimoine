@@ -9,8 +9,10 @@
 import Foundation
 import Charts // https://github.com/danielgindi/Charts.git
 
+// swiftlint:disable type_name
 class Kilo€Formatter: NSObject, IAxisValueFormatter, IValueFormatter {
     let numFormatter: NumberFormatter
+    // swiftlint:enable type_name
 
     override init() {
 //        numFormatter = NumberFormatter()
@@ -38,7 +40,7 @@ class Kilo€Formatter: NSObject, IAxisValueFormatter, IValueFormatter {
     ///
     public func stringForValue(_ value : Double,
                                axis    : AxisBase?) -> String {
-        return numFormatter.string(from: NSNumber(floatLiteral: value))!
+        return numFormatter.string(from: NSNumber(value: value))!
     }
 
     /// - Parameters:
@@ -50,7 +52,7 @@ class Kilo€Formatter: NSObject, IAxisValueFormatter, IValueFormatter {
                                entry           : ChartDataEntry,
                                dataSetIndex    : Int,
                                viewPortHandler : ViewPortHandler?) -> String {
-            return numFormatter.string(from: NSNumber(floatLiteral: value))!
+        return numFormatter.string(from: NSNumber(value: value))!
     }
 }
 
@@ -80,7 +82,7 @@ class PercentFormatter: NSObject, IAxisValueFormatter, IValueFormatter {
     /// - parameter axis:            the axis that the value belongs to
     ///
     public func stringForValue(_ value: Double, axis: AxisBase?) -> String {
-        return numFormatter.string(from: NSNumber(floatLiteral: value))!
+        return numFormatter.string(from: NSNumber(value: value))!
     }
     
     /// - Parameters:
@@ -92,7 +94,7 @@ class PercentFormatter: NSObject, IAxisValueFormatter, IValueFormatter {
                                entry: ChartDataEntry,
                                dataSetIndex: Int,
                                viewPortHandler: ViewPortHandler?) -> String {
-        return numFormatter.string(from: NSNumber(floatLiteral: value))!
+        return numFormatter.string(from: NSNumber(value: value))!
     }
 }
 
@@ -307,5 +309,3 @@ public class IrppValueFormatter: NSObject, IAxisValueFormatter {
         return names[Int(value)]
     }
 }
-
-

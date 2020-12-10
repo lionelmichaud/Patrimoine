@@ -39,7 +39,7 @@ struct ContentWithAlertView: View {
 
     var body: some View {
 
-        VStack{
+        VStack {
 
             /// button 1
             Button(action: {

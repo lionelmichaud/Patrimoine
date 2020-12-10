@@ -8,7 +8,7 @@
 
 import Foundation
 
-func createCSVX(from recArray:[Dictionary<String, AnyObject>]) {
+func createCSVX(from recArray:[[String: AnyObject]]) {
     // No need for string interpolation ("\("Time"),\("Force")\n"), just say what you want:
     let heading = "Time, Force\n"
     
@@ -26,7 +26,7 @@ func createCSVX(from recArray:[Dictionary<String, AnyObject>]) {
                                                create: false)
         
         let fileURL = path.appendingPathComponent("TrailTime.csv")
-        try csvString.write(to: fileURL, atomically: true , encoding: .utf8)
+        try csvString.write(to: fileURL, atomically: true, encoding: .utf8)
     } catch {
         print("error creating file")
     }

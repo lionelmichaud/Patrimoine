@@ -27,7 +27,7 @@ struct ComputationView: View {
             Form {
                 // paramétrage de la simulation : cas général
                 Section(header: Text("Paramètres de Simulation").font(.headline)) {
-                    HStack{
+                    HStack {
                         Text("Titre")
                             .frame(width: 70, alignment: .leading)
                         TextField("", text: $simulation.title)
@@ -205,7 +205,7 @@ struct ComputationView_Previews: PreviewProvider {
     static var simulation = Simulation()
     
     static var previews: some View {
-        NavigationView() {
+        NavigationView {
             ComputationView()
                 .environmentObject(uiState)
                 .environmentObject(family)
@@ -217,4 +217,3 @@ struct ComputationView_Previews: PreviewProvider {
         //.previewLayout(PreviewLayout.sizeThatFits)
     }
 }
-

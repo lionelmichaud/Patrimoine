@@ -51,9 +51,7 @@ struct ShortGridView: View {
                                     .sorted(by: sortCriteria, with: sortOrder), id: \.self) { line in
                             ShortGridLineView(line: line)
                                 .contextMenu {
-                                    Button(action: {
-                                        replay(thisRun: line)
-                                    }) {
+                                    Button(action: { replay(thisRun: line) }) { // swiftlint:disable:this multiple_closures_with_trailing_closure
                                         Label("Rejouer", systemImage: "arrowtriangle.forward.circle")
                                     }
                                 }
@@ -98,7 +96,7 @@ struct ShortGridView: View {
                 }
                 // menu de choix de l'ordre de tri
                 ToolbarItem(placement: .navigationBarLeading) {
-                    Button(action: { sortOrder.toggle() } ) {
+                    Button(action: { sortOrder.toggle() }) { // swiftlint:disable:this multiple_closures_with_trailing_closure
                         Image(systemName: sortOrder.imageSystemName)
                             .imageScale(.large)
                     }
@@ -137,7 +135,7 @@ struct GridHeaderView : View {
                 .frame(width: 28)
             Divider()
             // propriétés aléatoires des adultes
-            ForEach(line.dicoOfAdultsRandomProperties.keys.sorted(), id: \.self) { name in
+            ForEach(line.dicoOfAdultsRandomProperties.keys.sorted(), id: \.self) { _ in
                 Text("Durée de Vie")
                     .frame(width: viewHeight)
                     .rotationEffect(.degrees(-90))
@@ -258,7 +256,6 @@ struct ShortGridLineView : View {
         }
     }
 }
-
 
 struct ShortGridView_Previews: PreviewProvider {
     static var uiState    = UIState()

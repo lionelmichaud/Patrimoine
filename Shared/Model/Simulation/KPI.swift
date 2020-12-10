@@ -61,8 +61,6 @@ extension KpiArray {
         // tous les résultats sont connus
         return result
     }
-    
-
 }
 
 // MARK: - KPI : indicateur de performance

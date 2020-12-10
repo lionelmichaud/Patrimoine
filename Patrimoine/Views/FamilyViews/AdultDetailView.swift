@@ -27,13 +27,13 @@ struct AdultDetailView: View {
 
 // MARK: - MemberDetailView / AdultDetailView / ScenarioSectionView
 
-fileprivate struct ScenarioSectionView: View {
+private struct ScenarioSectionView: View {
     @EnvironmentObject var member : Person
     
     var body: some View {
         let adult = member as! Adult
         return Section {
-            DisclosureGroup (
+            DisclosureGroup(
                 content: {
                     LabeledText(label: "Age de décès estimé",
                                 text : "\(member.ageOfDeath) ans en \(String(member.yearOfDeath))")
@@ -85,14 +85,14 @@ fileprivate struct ScenarioSectionView: View {
 
 // MARK: - MemberDetailView / AdultDetailView / RevenuSectionView
 
-fileprivate struct RevenuSectionView: View {
+private struct RevenuSectionView: View {
     
     // MARK: - View Model
     
     struct ViewModel {
-        var unemployementAllocation          : (brut: Double, net: Double)? = nil
-        var income                           : WorkIncomeType? = nil
-        var pension                          = (brut: 0.0, net: 0.0, taxable: 0.0)
+        var unemployementAllocation          : (brut: Double, net: Double)?
+        var income                           : WorkIncomeType?
+        var pension                          = BrutNetTaxable(brut: 0.0, net: 0.0, taxable: 0.0)
         var hasUnemployementAllocationPeriod = false
         var revenueBrut                      = 0.0
         var revenueNet                       = 0.0
@@ -142,7 +142,7 @@ fileprivate struct RevenuSectionView: View {
     
     var body: some View {
         Section {
-            DisclosureGroup (
+            DisclosureGroup(
                 content: {
                     if viewModel.income?.pickerString == "Salaire" {
                         AmountView(label  : "Salaire brut", amount : viewModel.revenueBrut)
@@ -193,16 +193,16 @@ fileprivate struct RevenuSectionView: View {
     }
 }
 
-// MARK: - MemberDetailView / AdultDetailView / ScenarioSectionView
+// MARK: - MemberDetailView / AdultDetailView / InheritanceSectionView
 
-fileprivate struct InheritanceSectionView: View {
+private struct InheritanceSectionView: View {
     @EnvironmentObject var patrimoine : Patrimoin
     @EnvironmentObject var member     : Person
     
     var body: some View {
         if member is Adult {
             Section {
-                DisclosureGroup (
+                DisclosureGroup(
                     content: {
                         if let adult = member as? Adult {
                             LabeledText(label: "Option fiscale retenue en cas d'héritage",

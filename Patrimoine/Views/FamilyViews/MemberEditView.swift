@@ -27,17 +27,17 @@ struct MemberEditView: View {
     @StateObject var adultViewModel = AdultViewModel()
     
     var body: some View {
-        VStack() {
+        VStack {
             /// Barre de titre
-            HStack() {
+            HStack {
                 Button(action: { presentationMode.wrappedValue.dismiss() },
-                       label : { Text("Annuler") } )
+                       label : { Text("Annuler") })
                     .capsuleButtonStyle()
                 Spacer()
                 Text("Modifier...").font(.title).fontWeight(.bold)
                 Spacer()
                 Button(action: applyChanges,
-                       label : { Text("OK") } )
+                       label : { Text("OK") })
                     .capsuleButtonStyle()
                     .disabled(false)
             }.padding(.horizontal).padding(.top)
@@ -141,7 +141,7 @@ struct AdultEditView : View {
 }
 
 // MARK: - Saisie Adult / Section Scenario
-fileprivate struct ScenarioSection: View {
+private struct ScenarioSection: View {
     @ObservedObject var personViewModel : PersonViewModel
     @ObservedObject var adultViewModel  : AdultViewModel
 
@@ -194,7 +194,7 @@ struct DepedanceSection: View {
 }
 
 // MARK: - Saisie Adult / Section Activité / Saisie des revenus
-fileprivate struct RevenueEditView : View {
+private struct RevenueEditView : View {
     @ObservedObject var adultViewModel: AdultViewModel
     
     var body: some View {
@@ -221,7 +221,7 @@ fileprivate struct RevenueEditView : View {
 }
 
 // MARK: - Saisie Adult / Section Activité / Saisie fin de période d'activité professionnelle
-fileprivate struct EndOfWorkingPeriodEditView: View {
+private struct EndOfWorkingPeriodEditView: View {
     @ObservedObject var adultViewModel: AdultViewModel
     
     var body: some View {
@@ -237,7 +237,7 @@ fileprivate struct EndOfWorkingPeriodEditView: View {
         //                    }
         //                    .alert(item: $alertItem) { alertItem in myAlert(alertItem: alertItem) }
         CasePicker(pickedCase: $adultViewModel.causeOfRetirement, label: "Cause").pickerStyle(SegmentedPickerStyle())
-        if (adultViewModel.causeOfRetirement != Unemployment.Cause.demission) {
+        if adultViewModel.causeOfRetirement != Unemployment.Cause.demission {
             Toggle(isOn: $adultViewModel.hasAllocationSupraLegale, label: { Text("Indemnité de licenciement non conventionnelle (supra convention)") })
             if adultViewModel.hasAllocationSupraLegale {
                 AmountEditView(label: "Montant total brut", amount: $adultViewModel.allocationSupraLegale).padding(.leading)
@@ -254,7 +254,7 @@ struct ChildEditView : View {
     @Binding var ageIndependance : Int
     
     var body: some View {
-        Group() {
+        Group {
             Section(header: Text("SCENARIO").font(.subheadline)) {
                 Stepper(value: $deathAge, in: Date().year - birthDate.year ... 100) {
                     HStack {

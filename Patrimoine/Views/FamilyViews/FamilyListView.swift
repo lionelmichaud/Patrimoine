@@ -41,7 +41,7 @@ struct MemberRowView : View {
     
     var body: some View {
         VStack(alignment: .leading) {
-            Text (member.displayName)
+            Text(member.displayName)
                 .font(.headline)
             MemberAgeDateView(member: member)
                 .font(.caption)
@@ -88,7 +88,7 @@ struct FamilyListView_Previews: PreviewProvider {
     static var family  = Family()
     
     static var previews: some View {
-        NavigationView() {
+        NavigationView {
             FamilyListView()
                 .environmentObject(family)
         }

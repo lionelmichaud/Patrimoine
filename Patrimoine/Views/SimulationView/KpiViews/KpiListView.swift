@@ -107,4 +107,3 @@ struct KpiListView_Previews: PreviewProvider {
         }
     }
 }
-

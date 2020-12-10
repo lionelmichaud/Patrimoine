@@ -34,7 +34,7 @@ struct SocioEconomy {
         }
     }
     
-    typealias DictionaryOfRandomVariable = Dictionary<RandomVariable, Double>
+    typealias DictionaryOfRandomVariable = [RandomVariable: Double]
 
     struct Model: Codable {
         var pensionDevaluationRate     : ModelRandomizer<BetaRandomGenerator>
@@ -81,8 +81,8 @@ struct SocioEconomy {
             expensesUnderEvaluationrate.setRandomValue(to: values[.expensesUnderEvaluationrate]!)
         }
         
-        func randomHistories() -> Dictionary<RandomVariable, [Double]?> {
-            var dico = Dictionary<RandomVariable, [Double]?>()
+        func randomHistories() -> [RandomVariable: [Double]?] {
+            var dico = [RandomVariable: [Double]?]()
             for randomVariable in RandomVariable.allCases {
                 switch randomVariable {
                     case .pensionDevaluationRate:

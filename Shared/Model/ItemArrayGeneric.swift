@@ -10,7 +10,7 @@ import Foundation
 
 // MARK: - Table d'Item Generic Valuable and Namable
 
-struct ItemArray<E>: Codable where E: Codable, E: Identifiable, E: NameableValuable  {
+struct ItemArray<E>: Codable where E: Codable, E: Identifiable, E: NameableValuable {
 
     // MARK: - Properties
     

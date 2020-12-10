@@ -11,13 +11,10 @@ import Foundation
 /// URL du dossier Document de l'App
 /// - Returns: URL du dossier Document de l'App
 func getDocumentsDirectory() -> URL? {
-    do
-    {
+    do {
         let possibleURL = try FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
         return possibleURL
-    }
-    catch let error
-    {
+    } catch let error {
         print("ERROR: \(error.localizedDescription)")
         return nil
     }}
@@ -82,5 +79,3 @@ func checkIfExistOrCreateDirectory(at url: URL) {
         }
     }
 }
-
-

@@ -36,7 +36,7 @@ protocol Distribution {
     var minX     : Number? { get set } // valeur minimale de X
     var maxX     : Number? { get set } // valeur minimale de X
     var pdfMax   : Number? { get set } // valeur max mémorisée au premier appel de initialize()
-    var cdfCurve : Curve?  { get set } // courbe CDF mémorisée au premier appel de initialize()
+    var cdfCurve : Curve? { get set } // courbe CDF mémorisée au premier appel de initialize()
     
     // MARK: - Methods
     

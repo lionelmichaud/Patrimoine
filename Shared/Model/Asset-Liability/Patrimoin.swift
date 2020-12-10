@@ -252,7 +252,7 @@ final class Patrimoin: ObservableObject {
     /// - Returns: taxable Interests
     func removeFromInvestement(thisAmount amount   : Double,
                                atEndOf year        : Int,
-                               lifeInsuranceRebate : inout Double) throws -> Double  {
+                               lifeInsuranceRebate : inout Double) throws -> Double {
         var investements            = [FreeInvestement]()
         var amountRemainingToRemove = amount
         var totalTaxableInterests   = 0.0
@@ -285,7 +285,7 @@ final class Patrimoin: ObservableObject {
             assets.freeInvests.items.sorted(by: {$0.interestRate < $1.interestRate}).forEach {
                 var invest = $0
                 switch invest.type {
-                    case .lifeInsurance(_):
+                    case .lifeInsurance:
                         // tant que l'on a pas retiré le montant souhaité
                         if amountRemainingToRemove > 0.0 {
                             // retirer le montant de l'Assurances vie si elle n'est pas vide

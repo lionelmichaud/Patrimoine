@@ -57,10 +57,8 @@ enum RevenueCategory: Int, PickableEnum, Codable, Hashable {
     /// - Parameter name: nom de la catégorie (displayString)
     /// - Returns: Enum
     static func category(of name: String) -> RevenueCategory? {
-        for category in RevenueCategory.allCases {
-            if category.displayString == name {
-                return category
-            }
+        for category in RevenueCategory.allCases where category.displayString == name {
+            return category
         }
         return nil
     }

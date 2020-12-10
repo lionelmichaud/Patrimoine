@@ -24,9 +24,9 @@ struct FiscalHousehold {
         for member in family.members {
             var toBeConsidered : Bool
             
-            if (member is Adult) {
+            if member is Adult {
                 toBeConsidered = true
-            } else if (member is Child) {
+            } else if member is Child {
                 let child = member as! Child
                 toBeConsidered = !child.isIndependant(during: year)
             } else {

@@ -31,9 +31,9 @@ extension Comparable {
     ///
     ///  - Note: [Reference](https://www.hackingwithswift.com/articles/141/8-useful-swift-extensions)
     func clamp(low: Self, high: Self) -> Self {
-        if (self > high) {
+        if self > high {
             return high
-        } else if (self < low) {
+        } else if self < low {
             return low
         }
         

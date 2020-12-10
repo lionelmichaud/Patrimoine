@@ -99,10 +99,10 @@ extension WorkIncomeType: Codable {
                         } else {
                             throw PersonalIncomeTypeCodingError.decoding("Error while decoding '.salary_fromDate' ! \(dump("values"))")
                         }
-                }  else {
+                } else {
                     throw PersonalIncomeTypeCodingError.decoding("Error while decoding '.salary_netSalary' ! \(dump("values"))")
                 }
-            }  else {
+            } else {
                 throw PersonalIncomeTypeCodingError.decoding("Error while decoding '.salary_taxableSalary' ! \(dump("values"))")
             }
         }
@@ -136,4 +136,3 @@ extension WorkIncomeType: Codable {
         }
     }
 }
-

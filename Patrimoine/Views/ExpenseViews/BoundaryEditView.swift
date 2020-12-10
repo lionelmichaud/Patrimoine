@@ -149,7 +149,6 @@ struct DateBoundaryViewModel: Equatable {
         }
     }
 
-
     // MARK: - Initializers of ViewModel from Model
     
     internal init(from dateBoundary: DateBoundary) {
@@ -220,7 +219,7 @@ struct BoundaryEditView: View {
         }
     }
     
-    // MARK: -  Initializers
+    // MARK: - Initializers
     
     init(label    : String,
          boundary : Binding<DateBoundaryViewModel?>) {

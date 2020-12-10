@@ -14,7 +14,7 @@ import Foundation
 ///
 /// = 𝛤(a) 𝛤(b) / 𝛤(a + b)
 public func beta(a: Double, b: Double) -> Double {
-    if (a + b > 100) { return exp(lbeta(a: a, b: b)) }
+    if a + b > 100 { return exp(lbeta(a: a, b: b)) }
     return tgamma(a) * tgamma(b) / tgamma(a + b)
 }
 
@@ -24,4 +24,3 @@ public func beta(a: Double, b: Double) -> Double {
 public func lbeta(a: Double, b: Double) -> Double {
     return lgamma(a) + lgamma(b) - lgamma(a + b)
 }
-

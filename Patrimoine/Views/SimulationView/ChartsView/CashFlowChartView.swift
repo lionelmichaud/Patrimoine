@@ -11,7 +11,7 @@ import SwiftUI
 import Charts // https://github.com/danielgindi/Charts.git
 import Disk // https://github.com/saoudrizwan/Disk.git
 
-fileprivate let customLog = Logger(subsystem: "me.michaud.lionel.Patrimoine", category: "UI.CashFlowChartView")
+private let customLog = Logger(subsystem: "me.michaud.lionel.Patrimoine", category: "UI.CashFlowChartView")
 
 // MARK: - Cash Flow Charts Views
 
@@ -97,12 +97,12 @@ struct CashFlowDetailedChartView: View {
                 },
                 label : {
                     HStack {
-                        if !self.uiState.cfChartState.itemSelection.allCategoriesSelected()  {
+                        if !self.uiState.cfChartState.itemSelection.allCategoriesSelected() {
                             Image(systemName: "loupe")
                         }
                         Text("Filtrer")
                     }
-                } ).capsuleButtonStyle(),
+                }).capsuleButtonStyle(),
             trailing: Button(
                 action: saveImage,
                 label : {
@@ -110,7 +110,7 @@ struct CashFlowDetailedChartView: View {
                         Image(systemName: "square.and.arrow.up")
                         Text("Image")
                     }
-                } ).capsuleButtonStyle()
+                }).capsuleButtonStyle()
         )
     }
     
@@ -162,8 +162,7 @@ struct CashFlowLineChartView: UIViewRepresentable {
             #if DEBUG
             Swift.print("saving image to file: ", AppSettings.imagePath(titleStatic) + fileName)
             #endif
-        }
-        catch let error as NSError {
+        } catch let error as NSError {
             fatalError("""
                 Domain         : \(error.domain)
                 Code           : \(error.code)
@@ -271,8 +270,7 @@ struct CashFlowStackedBarChartView: UIViewRepresentable {
             #if DEBUG
             Swift.print("saving image to file: ", AppSettings.imagePath(titleStatic) + fileName)
             #endif
-        }
-        catch let error as NSError {
+        } catch let error as NSError {
             fatalError("""
                 Domain         : \(error.domain)
                 Code           : \(error.code)
@@ -355,7 +353,6 @@ struct CashFlowStackedBarChartView: UIViewRepresentable {
         uiView.notifyDataSetChanged()
     }
 }
-
 
 struct CashFlowChartView_Previews: PreviewProvider {
     static var simulation = Simulation()

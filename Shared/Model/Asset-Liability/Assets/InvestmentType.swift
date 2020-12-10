@@ -31,7 +31,7 @@ enum InvestementType: PickableIdentifiableEnum {
     
     var pickerString: String {
         switch self {
-            case .lifeInsurance(_):
+            case .lifeInsurance:
                 return "Assurance Vie"
             case .pea:
                 return "PEA"

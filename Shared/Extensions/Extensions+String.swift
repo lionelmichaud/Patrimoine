@@ -65,7 +65,7 @@ extension String {
     /// - Returns: new String
     ///
     ///  - Note: [Reference](https://www.hackingwithswift.com/articles/141/8-useful-swift-extensions)
-    func truncate(to length: Int, addEllipsis: Bool = false) -> String  {
+    func truncate(to length: Int, addEllipsis: Bool = false) -> String {
         if length > count { return self }
         
         let endPosition = self.index(self.startIndex, offsetBy: length)

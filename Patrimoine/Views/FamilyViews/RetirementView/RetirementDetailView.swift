@@ -13,7 +13,8 @@ struct RetirementDetailView: View {
     // MARK: - View Model
     
     class ViewModel: ObservableObject {
-        struct General {
+        
+        struct General { // swiftlint:disable:this nesting
             var sam              : Double = 0
             var tauxDePension    : Double = 0
             var majorationEnfant : Double = 0
@@ -25,7 +26,8 @@ struct RetirementDetailView: View {
             var pensionBrute     : Double = 0
             var pensionNette     : Double = 0
         }
-        struct Agirc {
+        
+        struct Agirc { // swiftlint:disable:this nesting
             var projectedNbOfPoints : Int    = 0
             var valeurDuPoint       : Double = 0
             var coefMinoration      : Double = 0

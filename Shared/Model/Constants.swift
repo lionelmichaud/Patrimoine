@@ -24,7 +24,6 @@ struct CalendarCst {
     //    }
 }
 
-
 struct StringCst {
     static let header = "  "
 }
@@ -47,4 +46,3 @@ struct FileNameCst {
 //    static let familyPeriodicInvestsFileName = "investissement périodique.json"
 //    static let familyExpensesFileName        = "dépenses.json"
 }
-

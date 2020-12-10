@@ -57,7 +57,7 @@ struct LoanDetailedView: View {
                            amount : localItem.yearlyPayement(localItem.firstYear)/12.0)
                     .foregroundColor(.secondary)
                 AmountView(label  : "Remboursement restant (au 31/12/\(Date.now.year))",
-                           amount : localItem.value (atEndOf: Date.now.year))
+                           amount : localItem.value(atEndOf: Date.now.year))
                     .foregroundColor(.secondary)
                 AmountView(label  : "Remboursement total",
                            amount : localItem.totalPayement)
@@ -74,14 +74,14 @@ struct LoanDetailedView: View {
         .navigationBarItems(
             leading: Button(
                 action : duplicate,
-                label  : { Text("Dupliquer")} )
+                label  : { Text("Dupliquer") })
                 .capsuleButtonStyle()
                 .disabled((index == nil) || changeOccured()),
             trailing: Button(
                 action: applyChanges,
                 label: {
                     Text("Sauver")
-                } )
+                })
                 .disabled(!changeOccured())
         )
         .alert(item: $alertItem, content: myAlert)
@@ -174,7 +174,7 @@ struct LoanDetailedView_Previews: PreviewProvider {
     
     static var previews: some View {
         return
-            NavigationView() {
+            NavigationView {
                 LoanDetailedView(item       : patrimoine.liabilities.loans[0],
                                  family     : family,
                                  patrimoine : patrimoine)

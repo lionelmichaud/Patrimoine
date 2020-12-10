@@ -36,12 +36,9 @@ enum LiabilitiesCategory: Int, PickableEnum, Codable {
     /// - Parameter name: nom de la catégorie (displayString)
     /// - Returns: Enum
     static func category(of name: String) -> LiabilitiesCategory? {
-        for category in LiabilitiesCategory.allCases {
-            if category.displayString == name {
+        for category in LiabilitiesCategory.allCases where category.displayString == name {
                 return category
-            }
         }
         return nil
     }
 }
-

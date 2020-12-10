@@ -9,7 +9,7 @@
 import Foundation
 import os
 
-fileprivate let customLog = Logger(subsystem: "me.michaud.lionel.Patrimoine", category: "Model.Distributions")
+private let customLog = Logger(subsystem: "me.michaud.lionel.Patrimoine", category: "Model.Distributions")
 
 /// Types  possibles de générateur aléatoire
 enum RandomGeneratorEnum: Int, PickableEnum {
@@ -27,7 +27,6 @@ enum RandomGeneratorEnum: Int, PickableEnum {
         }
     }
 }
-
 
 // MARK: - Générateur aléatoire selon une Loie de distribution BETA
 
@@ -136,10 +135,10 @@ struct DiscreteRandomGenerator: RandomGenerator, Codable {
     var pdf  : [Point]
     var cdf  : [Double]? // probabilité cumulée d'occurence (dernier = 100%)
     var minX : Number? { // valeur minimale de X
-        pdf.min(by: { return ($0.x < $1.x) } )?.x
+        pdf.min(by: { return ($0.x < $1.x) })?.x
     }
     var maxX         : Number? { // valeur minimale de X
-        pdf.max(by: { return ($0.x > $1.x) } )?.x
+        pdf.max(by: { return ($0.x > $1.x) })?.x
     }
     var cdfCurve : Curve? { // courbe CDF mémorisée au premier appel de initialize()
         precondition(cdf != nil, "DiscreteRandomGenerator.cdfCurve: propriété cdf non initialisée")
@@ -161,7 +160,7 @@ struct DiscreteRandomGenerator: RandomGenerator, Codable {
             customLog.log(level: .fault, "Tableau de valeurs vide dans \(Self.self, privacy: .public)")
             fatalError("Tableau de valeurs vide dans \(Self.self)")
         }
-        guard pdf.isSorted( { $0.x < $1.x }) else {
+        guard pdf.isSorted({ $0.x < $1.x }) else {
             customLog.log(level: .fault, "Valeurs possibles non croisantes dans \(Self.self, privacy: .public)")
             fatalError("Valeurs possibles non croisantes dans \(Self.self)")
         }

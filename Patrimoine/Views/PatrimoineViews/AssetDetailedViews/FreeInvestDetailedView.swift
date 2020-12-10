@@ -64,12 +64,12 @@ struct FreeInvestDetailedView: View {
         .navigationBarItems(
             leading: Button(
                 action : duplicate,
-                label  : { Text("Dupliquer")} )
+                label  : { Text("Dupliquer") })
                 .capsuleButtonStyle()
                 .disabled((index == nil) || changeOccured()),
             trailing: Button(
                 action: applyChanges,
-                label: { Text("Sauver") } )
+                label: { Text("Sauver") })
                 .capsuleButtonStyle()
                 .disabled(!changeOccured())
         )

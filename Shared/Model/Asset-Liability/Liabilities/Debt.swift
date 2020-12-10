@@ -65,4 +65,3 @@ extension Debt: CustomStringConvertible {
         """
     }
 }
-

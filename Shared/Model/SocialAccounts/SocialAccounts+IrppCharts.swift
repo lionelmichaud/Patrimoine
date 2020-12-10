@@ -14,7 +14,7 @@ import UIKit
 #endif
 import Charts // https://github.com/danielgindi/Charts.git
 
-fileprivate let customLog = Logger(subsystem: "me.michaud.lionel.Patrimoine", category: "Model.SocialAccounts+FiscCharts")
+private let customLog = Logger(subsystem: "me.michaud.lionel.Patrimoine", category: "Model.SocialAccounts+FiscCharts")
 
 // MARK: - Extension de SocialAccounts pour graphiques FISCALITE IRPP
 

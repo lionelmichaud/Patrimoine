@@ -69,16 +69,16 @@ struct TimeSpanViewModel: Equatable {
         }
         switch timeSpan {
             case .starting (let from),
-                 .periodic(let from , _ , _),
-                 .spanning(let from , _):
+                 .periodic(let from, _, _),
+                 .spanning(let from, _):
                 self.fromVM = DateBoundaryViewModel(from: from)
             default:
                 self.fromVM = nil
         }
         switch timeSpan {
             case .ending (let to),
-                 .periodic(_ , _ , let to),
-                 .spanning(_ , let to):
+                 .periodic(_, _, let to),
+                 .spanning(_, let to):
                 self.toVM = DateBoundaryViewModel(from: to)
             default:
                 self.toVM = nil
@@ -109,7 +109,7 @@ struct TimeSpanEditView: View {
                     .onChange(of: timeSpanVM.caseIndex, perform: updateLifeExpenseTimeSpanEnum)
             }
             // en fonction du type choisi
-            if timeSpanVM.caseIndex == TimeSpan.ending (to: DateBoundary.empty).id {
+            if timeSpanVM.caseIndex == TimeSpan.ending(to: DateBoundary.empty).id {
                 // TimeSpan = .ending
                 BoundaryEditView(label    : "Fin",
                                  boundary : $timeSpanVM.toVM)
@@ -193,4 +193,3 @@ struct TimeSpanEditView_Previews: PreviewProvider {
             .previewDisplayName("TimeSpanEditView")
     }
 }
-

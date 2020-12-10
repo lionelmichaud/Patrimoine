@@ -18,7 +18,7 @@ struct ContentView: View {
     // MARK: - Properties
 
     var body: some View {
-        TabView(selection: $uiState.selectedTab){
+        TabView(selection: $uiState.selectedTab) {
             /// préférences
             UserSettingsView()
                 .tabItem { Label("Préférences", systemImage: "gear") }

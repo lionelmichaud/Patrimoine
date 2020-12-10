@@ -77,7 +77,7 @@ struct ExpenseDetailedView: View {
     var body: some View {
         Form {
             /// nom
-            HStack{
+            HStack {
                 Text("Nom")
                     .frame(width: 70, alignment: .leading)
                 TextField("obligatoire", text: $expenseVM.name)
@@ -101,12 +101,12 @@ struct ExpenseDetailedView: View {
         .navigationBarItems(
             leading: Button(
                 action : duplicate,
-                label  : { Text("Dupliquer")} )
+                label  : { Text("Dupliquer") })
                 .capsuleButtonStyle()
                 .disabled((index == nil) || changeOccured()),
             trailing: Button(
                 action : applyChanges,
-                label  : { Text("Sauver")} )
+                label  : { Text("Sauver") })
                 .capsuleButtonStyle()
                 .disabled(!changeOccured())
         )

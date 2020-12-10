@@ -1,7 +1,7 @@
 import Foundation
 import os
 
-fileprivate let customLog = Logger(subsystem: "me.michaud.lionel.Patrimoine", category: "Model.SocialAccounts")
+private let customLog = Logger(subsystem: "me.michaud.lionel.Patrimoine", category: "Model.SocialAccounts")
 
 // MARK: - Comptes sociaux
 
@@ -85,8 +85,7 @@ struct SocialAccounts {
             var lastYearDelayedTaxableIrppRevenue: Double
             if let lastLine = cashFlowArray.last { // de l'année précédente, s'il y en a une
                 lastYearDelayedTaxableIrppRevenue = lastLine.taxableIrppRevenueDelayedToNextYear.value(atEndOf: year - 1)
-            }
-            else {
+            } else {
                 lastYearDelayedTaxableIrppRevenue = 0
             }
             
@@ -99,7 +98,7 @@ struct SocialAccounts {
                 cashFlowArray.append(newLine)
             } catch {
                 /// il n'y a plus de Cash => on arrête la simulation
-                customLog.log(level: .info , "Nombre d'adulte survivants inatendu: \(family.nbOfAdultAlive(atEndOf: year), privacy: .public) dans \(Self.self, privacy: .public)")
+                customLog.log(level: .info, "Nombre d'adulte survivants inatendu: \(family.nbOfAdultAlive(atEndOf: year), privacy: .public) dans \(Self.self, privacy: .public)")
                 Swift.print("Arrêt de la construction de la table de Comptes sociaux: Actifs financiers = 0")
                 
                 lastYear = year

@@ -113,16 +113,16 @@ struct SCPI: Identifiable, Codable, Equatable, NameableValuable, Ownable {
         netRevenue : Double,
         socialTaxes: Double,
         irpp       : Double) {
-        guard (willBeSold && year == sellingDate.year) else {
-            return (0,0,0,0,0)
+        guard willBeSold && year == sellingDate.year else {
+            return (0, 0, 0, 0, 0)
         }
         let detentionDuration = sellingDate.year - buyingDate.year
         let currentValue      = value(atEndOf: sellingDate.year)
         let capitalGain       = currentValue - buyingPrice
-        let socialTaxes       = Fiscal.model.socialTaxesOnEstateCapitalGain.socialTaxes (capitalGain: max(capitalGain,0.0),
-                                                                                         detentionDuration: detentionDuration)
-        let irpp              = Fiscal.model.irppOnEstateCapitalGain.irpp (capitalGain: max(capitalGain,0.0),
-                                                                           detentionDuration: detentionDuration)
+        let socialTaxes       = Fiscal.model.socialTaxesOnEstateCapitalGain.socialTaxes(capitalGain      : max(capitalGain, 0.0),
+                                                                                        detentionDuration: detentionDuration)
+        let irpp              = Fiscal.model.irppOnEstateCapitalGain.irpp(capitalGain      : max(capitalGain, 0.0),
+                                                                          detentionDuration: detentionDuration)
         return (revenue     : currentValue,
                 capitalGain : capitalGain,
                 netRevenue  : currentValue - socialTaxes - irpp,

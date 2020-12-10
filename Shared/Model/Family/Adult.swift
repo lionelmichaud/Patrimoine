@@ -35,7 +35,6 @@ final class Adult: Person {
     /// SUCCESSION: option fiscale
     @Published var fiscalOption : InheritanceDonation.FiscalOption = .fullUsufruct
 
-    
     /// ACTIVITE: revenus du travail
     @Published var workIncome : WorkIncomeType?
     var workBrutIncome    : Double { // avant charges sociales, dépenses de mutuelle ou d'assurance perte d'emploi
@@ -96,10 +95,10 @@ final class Adult: Person {
             return 0.0
         }
         switch workIncome {
-            case .salary(_, _, _, _, _):
+            case .salary:
                 // base: salaire brut
                 return workBrutIncome / 365.0
-            case .turnOver(_, _):
+            case .turnOver:
                 return 0.0
         }
     }
@@ -108,10 +107,10 @@ final class Adult: Person {
             return false
         }
         switch workIncome {
-            case .turnOver(_, _):
+            case .turnOver:
                 // pas d'allocation pour les non salariés
                 return false
-            case .salary(_, _, _, _, _):
+            case .salary:
                 // pour les salariés, allocation seulement pour certaines causes de départ
                 return Unemployment.canReceiveAllocation(for: causeOfRetirement)
         }
@@ -326,13 +325,13 @@ final class Adult: Person {
     } // computed
     
     /// RETRAITE: pension évalée l'année de la liquidation de la pension (non révaluée)
-    var pension: (brut: Double, net: Double, taxable: Double) { // computed
+    var pension: BrutNetTaxable { // computed
         let pensionGeneral = pensionRegimeGeneral
         let pensionAgirc   = pensionRegimeAgirc
         let brut           = pensionGeneral.brut + pensionAgirc.brut
         let net            = pensionGeneral.net  + pensionAgirc.net
         let taxable        = Fiscal.model.pensionTaxes.taxable(from: brut)
-        return (brut, net, taxable)
+        return BrutNetTaxable(brut: brut, net: net, taxable: taxable)
     } // computed
     
     /// DEPENDANCE
@@ -571,12 +570,9 @@ final class Adult: Person {
     /// - Parameter year: année
     /// - Returns: pension brute, nette de charges sociales, taxable à l'IRPP
     func pension(during year   : Int,
-                 withReversion : Bool = true)
-    -> (brut    : Double,
-        net     : Double,
-        taxable : Double) {
+                 withReversion : Bool = true) -> BrutNetTaxable {
         guard isAlive(atEndOf: year) else {
-            return (0, 0, 0)
+            return BrutNetTaxable(brut: 0, net: 0, taxable: 0)
         }
         var brut = 0.0
         var net  = 0.0
@@ -602,7 +598,7 @@ final class Adult: Person {
             }
         }
         let taxable = Fiscal.model.pensionTaxes.taxable(from: brut)
-        return (brut, net, taxable)
+        return BrutNetTaxable(brut: brut, net: net, taxable: taxable)
     }
     
     /// Calcul de la pension de réversion laissée au conjoint
@@ -643,10 +639,9 @@ final class Adult: Person {
     /// Allocation chômage perçue dans l'année
     /// - Parameter year: année
     /// - Returns: Allocation chômage perçue dans l'année brute, nette de charges sociales, taxable à l'IRPP
-    func unemployementAllocation(during year: Int)
-    -> (brut: Double, net: Double, taxable: Double) {
+    func unemployementAllocation(during year: Int) -> BrutNetTaxable {
         guard isReceivingUnemployementAllocation(during: year) else {
-            return (0,0,0)
+            return BrutNetTaxable(brut: 0, net: 0, taxable: 0)
         }
         let firstYearDay = firstDayOf(year : year)
         let lastYearDay  = lastDayOf(year  : year)
@@ -669,9 +664,9 @@ final class Adult: Person {
                 allocReduite.brut/365 * nbDays2.double()
             let net = alloc.net/365  * nbDays1.double() +
                 allocReduite.net/365 * nbDays2.double()
-            return (brut    : brut,
-                    net     : net,
-                    taxable : net)
+            return BrutNetTaxable(brut    : brut,
+                                  net     : net,
+                                  taxable : net)
             
         } else {
             // pas de réduction d'allocation
@@ -689,26 +684,27 @@ final class Adult: Person {
             }
             let brut = alloc.brut/365 * nbDays.double()
             let net  = alloc.net/365  * nbDays.double()
-            return (brut    : brut,
-                    net     : net,
-                    taxable : net)
+            return BrutNetTaxable(brut    : brut,
+                                  net     : net,
+                                  taxable : net)
         }
     }
     
     /// Indemnité de licenciement perçue dans l'année
     /// - Parameter year: année
     /// - Returns: Indemnité de licenciement perçue dans l'année brute, nette de charges sociales, taxable à l'IRPP
-    func layoffCompensation(during year: Int)
-    -> (brut: Double, net: Double, taxable: Double) {
+    func layoffCompensation(during year: Int) -> BrutNetTaxable {
         guard year == dateOfRetirement.year else {
-            return (0,0,0)
+            return BrutNetTaxable(brut: 0, net: 0, taxable: 0)
         }
         // on est bien dans l'année de cessation d'activité
         if let layoffCompensation = layoffCompensation {
-            return (layoffCompensation.brut, layoffCompensation.net, layoffCompensation.taxable)
+            return BrutNetTaxable(brut    : layoffCompensation.brut,
+                                  net     : layoffCompensation.net,
+                                  taxable : layoffCompensation.taxable)
         } else {
             // pas droit à une indemnité
-            return (0,0,0)
+            return BrutNetTaxable(brut: 0, net: 0, taxable: 0)
         }
     }
     
@@ -721,7 +717,6 @@ final class Adult: Person {
         nbOfYearOfDependency = Int(HumanLife.model.nbOfYearsOfdependency.next())
     }
 
-    
     override func print() {
         super.print()
         Swift.print("       date of retirement:", dateOfRetirementComp)
@@ -731,9 +726,8 @@ final class Adult: Person {
         Swift.print("       date of pension liquidation:", dateOfPensionLiquidComp)
         Swift.print("       age of pension liquidation:", ageOfPensionLiquidComp)
         Swift.print("       number of children:", nbOfChildBirth)
-        Swift.print("      ", workIncome ?? "none","euro")
-        Swift.print("       net income for living:", workLivingIncome,"euro")
-        Swift.print("       taxable income:", workTaxableIncome,"euro")
+        Swift.print("      ", workIncome ?? "none", "euro")
+        Swift.print("       net income for living:", workLivingIncome, "euro")
+        Swift.print("       taxable income:", workTaxableIncome, "euro")
     }
 }
-

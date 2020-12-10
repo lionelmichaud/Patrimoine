@@ -11,7 +11,7 @@ import SwiftUI
 import Charts // https://github.com/danielgindi/Charts.git
 import Disk // https://github.com/saoudrizwan/Disk.git
 
-fileprivate let customLog = Logger(subsystem: "me.michaud.lionel.Patrimoine", category: "UI.FiscalSliceView")
+private let customLog = Logger(subsystem: "me.michaud.lionel.Patrimoine", category: "UI.FiscalSliceView")
 
 // MARK: - Décompositon de l'impôt par tranche Charts Views
 
@@ -113,8 +113,7 @@ struct IrppSlicesStackedBarChartView: UIViewRepresentable {
             #if DEBUG
             Swift.print("saving image to file: ", AppSettings.imagePath(titleStatic) + fileName)
             #endif
-        }
-        catch let error as NSError {
+        } catch let error as NSError {
             fatalError("""
                 Domain         : \(error.domain)
                 Code           : \(error.code)

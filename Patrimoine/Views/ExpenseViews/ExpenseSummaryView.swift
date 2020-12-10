@@ -69,7 +69,7 @@ struct ExpenseSummaryChartView: UIViewRepresentable {
     let evalDate : Double
     let category : LifeExpenseCategory
 
-    static let ColorsTable: [NSUIColor] = [UIColor(white: 1, alpha: 0),#colorLiteral(red: 0.9686274529, green: 0.78039217, blue: 0.3450980484, alpha: 1)]
+    static let ColorsTable: [NSUIColor] = [UIColor(white: 1, alpha: 0), #colorLiteral(red: 0.9686274529, green: 0.78039217, blue: 0.3450980484, alpha: 1)]
     
     /// Créer le dataset du graphique
     /// - Returns: dataset
@@ -87,25 +87,25 @@ struct ExpenseSummaryChartView: UIViewRepresentable {
         let namedValuedTimeFrameTable = family.expenses.namedValuedTimeFrameTable(category: category)
         
         // mettre à jour les noms des dépenses dans le formatteur de l'axe X
-        formatter.names = namedValuedTimeFrameTable.map { (name, value, prop, idx, firstYearDuration) in
+        formatter.names = namedValuedTimeFrameTable.map { (name, _, _, _, _) in
             name
         }
         
         // mettre à jour les valeurs des dépenses dans le formatteur de bulle d'info
-        baloonMarker.amounts = namedValuedTimeFrameTable.map { (name, value, prop, idx, firstYearDuration) in
+        baloonMarker.amounts = namedValuedTimeFrameTable.map { (_, value, _, _, _) in
             value
         }
-        baloonMarker.prop = namedValuedTimeFrameTable.map { (name, value, prop, idx, firstYearDuration) in
+        baloonMarker.prop = namedValuedTimeFrameTable.map { (_, _, prop, _, _) in
             prop
         }
-       baloonMarker.firstYearDuration = namedValuedTimeFrameTable.map { (name, value, prop, idx, firstYearDuration) in
+       baloonMarker.firstYearDuration = namedValuedTimeFrameTable.map { (_, _, _, _, firstYearDuration) in
             firstYearDuration
         }
 
         // générer les 2 séries pour chaque dépense
-        dataEntries += namedValuedTimeFrameTable.map { (name, value, prop, idx, firstYearDuration) in
+        dataEntries += namedValuedTimeFrameTable.map { (_, _, _, idx, firstYearDuration) in
             BarChartDataEntry(x       : idx.double(),
-                              yValues : firstYearDuration.map{$0.double()})
+                              yValues : firstYearDuration.map { $0.double() })
         }
         
         //}
@@ -204,7 +204,6 @@ struct ExpenseSummaryChartView: UIViewRepresentable {
         marker.minimumSize = CGSize(width: 80, height: 40)
         chartView.marker = marker
 
-        
         chartView.fitBars = true
         
         //: ### BarChartData
