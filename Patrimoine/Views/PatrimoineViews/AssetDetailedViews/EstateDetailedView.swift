@@ -235,7 +235,7 @@ struct RealEstateDetailedView: View {
         uiState.resetSimulation()
     }
     
-    func isValid() -> Bool {
+    func isValid() -> Bool { // swiftlint:disable:this cyclomatic_complexity
         /// vérifier que toutes les dates sont définies
         guard assetVM.buyingYearVM.year != nil else {
             self.alertItem = AlertItem(title         : Text("La date d'achat doit être définie"),

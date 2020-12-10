@@ -75,7 +75,7 @@ enum TimeSpan: PickableIdentifiableEnum, Hashable {
     
     // MARK: - Methods
 
-    func contains (_ year: Int) -> Bool {
+    func contains (_ year: Int) -> Bool { // swiftlint:disable:this cyclomatic_complexity
         switch self {
             case .permanent:
                 return true

@@ -116,7 +116,7 @@ extension SimulationResultTable {
                 return self.filter { $0.dicoOfKpiResults.runResult() == .someObjectiveUndefined }
         }
     }
-    
+    // swiftlint:disable:next cyclomatic_complexity
     func sorted(by criteria    : KpiSortCriteriaEnum,
                 with sortOrder : SortingOrder = .ascending) -> SimulationResultTable {
         switch criteria {
