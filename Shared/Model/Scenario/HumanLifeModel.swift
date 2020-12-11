@@ -14,23 +14,13 @@ struct HumanLife {
     
     // MARK: - Nested Types
     
-    enum RandomVariable: Int, PickableEnum {
-        case menLifeEpectation = 0
-        case womenLifeExpectation
-        case nbOfYearsOfdependency
+    enum RandomVariable: String, PickableEnum {
+        case menLifeEpectation     = "Espérance de Vie d'un Homme"
+        case womenLifeExpectation  = "Espérance de Vie d'uns Femme"
+        case nbOfYearsOfdependency = "Nombre d'années de Dépendance"
         
-        var id: Int {
-            return self.rawValue
-        }
         var pickerString: String {
-            switch self {
-                case .menLifeEpectation:
-                    return "Espérance de Vie d'un Homme"
-                case .womenLifeExpectation:
-                    return "Espérance de Vie d'uns Femme"
-                case .nbOfYearsOfdependency:
-                    return "Nombre d'années de Dépendance"
-            }
+            return self.rawValue
         }
     }
     

@@ -23,19 +23,13 @@ extension SocialAccounts {
     // MARK: - Nested types
     
     /// Combinaisons possibles de séries sur le graphique de CashFlow
-    enum CashCombination: Int, PickableEnum {
-        case revenues
-        case expenses
-        case both
+    enum CashCombination: String, PickableEnum {
+        case revenues = "Revenu"
+        case expenses = "Dépense"
+        case both     = "Tout"
+        
         var pickerString: String {
-            switch self {
-                case .revenues:
-                    return "Revenu"
-                case .expenses:
-                    return "Dépense"
-                case .both:
-                    return "Tout"
-            }
+            return self.rawValue
         }
     }
     
@@ -220,7 +214,7 @@ extension SocialAccounts {
         /// rechercher la catégorie dans les revenus
         func getRevenusDataSet() -> BarChartDataSet {
             // customLog.log(level: .info, "Catégorie trouvée dans Revenues : \(found.name)")
-            guard let category = RevenueCategory.category(of: categoryName) else {
+            guard let category = RevenueCategory(rawValue: categoryName) else {
                 return BarChartDataSet()
             }
             // print("  nom : \(category)")

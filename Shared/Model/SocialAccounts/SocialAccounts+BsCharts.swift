@@ -23,19 +23,13 @@ extension SocialAccounts {
     // MARK: - Nested types
     
     /// Combinaisons possibles de séries sur le graphique de Bilan
-    enum AssetLiabilitiesCombination: Int, PickableEnum {
-        case assets
-        case liabilities
-        case both
+    enum AssetLiabilitiesCombination: String, PickableEnum {
+        case assets      = "Actif"
+        case liabilities = "Passif"
+        case both        = "Tout"
+        
         var pickerString: String {
-            switch self {
-                case .assets:
-                    return "Actif"
-                case .liabilities:
-                    return "Passif"
-                case .both:
-                    return "Tout"
-            }
+            return self.rawValue
         }
     }
     
@@ -178,7 +172,7 @@ extension SocialAccounts {
         if firstLine.assets.summary.namedValues.first(where: { $0.name == categoryName }) != nil {
             /// rechercher les valeurs des actifs
             // customLog.log(level: .info, "Catégorie trouvée dans assets : \(found.name)")
-            guard let category = AssetsCategory.category(of: categoryName) else {
+            guard let category = AssetsCategory(rawValue: categoryName) else {
                 return BarChartDataSet()
             }
 //            print("  nom : \(category)")
@@ -201,7 +195,7 @@ extension SocialAccounts {
         } else if firstLine.liabilities.summary.namedValues.first(where: { $0.name == categoryName }) != nil {
             /// rechercher les valeurs des passifs
             // customLog.log(level: .info, "Catégorie trouvée dans liabilities : \(found.name)")
-            guard let category = LiabilitiesCategory.category(of: categoryName) else {
+            guard let category = LiabilitiesCategory(rawValue: categoryName) else {
                 return BarChartDataSet()
             }
 //            print("  nom : \(category)")

@@ -14,23 +14,13 @@ struct Economy {
     
     // MARK: - Nested Types
 
-    enum RandomVariable: Int, PickableEnum, CaseIterable {
-        case inflation = 0
-        case longTermRate
-        case stockRate
+    enum RandomVariable: String, PickableEnum, CaseIterable {
+        case inflation    = "Inflation"
+        case longTermRate = "Rendements Sûrs"
+        case stockRate    = "Rendements Actions"
         
-        var id: Int {
-            return self.rawValue
-        }
         var pickerString: String {
-            switch self {
-                case .inflation:
-                    return "Inflation"
-                case .longTermRate:
-                    return "Rendements Sûrs"
-                case .stockRate:
-                    return "Rendements Actions"
-            }
+            return self.rawValue
         }
     }
     

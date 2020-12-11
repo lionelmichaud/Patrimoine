@@ -12,19 +12,13 @@ import os
 private let customLog = Logger(subsystem: "me.michaud.lionel.Patrimoine", category: "Model.Distributions")
 
 /// Types  possibles de générateur aléatoire
-enum RandomGeneratorEnum: Int, PickableEnum {
-    case uniform
-    case discrete
-    case beta
+enum RandomGeneratorEnum: String, PickableEnum {
+    case uniform  = "Loie Uniforme"
+    case discrete = "Loie Discrete"
+    case beta     = "Loie Beta"
+    
     var pickerString: String {
-        switch self {
-            case .uniform:
-                return "Loie Uniforme"
-            case .discrete:
-                return "Loie Discrete"
-            case .beta:
-                return "Loie Beta"
-        }
+        return self.rawValue
     }
 }
 

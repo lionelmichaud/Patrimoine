@@ -14,23 +14,13 @@ struct SocioEconomy {
     
     // MARK: - Nested Types
     
-    enum RandomVariable: Int, PickableEnum {
-        case pensionDevaluationRate = 0
-        case nbTrimTauxPlein
-        case expensesUnderEvaluationrate
+    enum RandomVariable: String, PickableEnum {
+        case pensionDevaluationRate      = "Dévaluation de Pension"
+        case nbTrimTauxPlein             = "Trimestres Supplémentaires"
+        case expensesUnderEvaluationrate = "Sous-etimation dépenses"
 
-        var id: Int {
-            return self.rawValue
-        }
         var pickerString: String {
-            switch self {
-                case .pensionDevaluationRate:
-                    return "Dévaluation de Pension"
-                case .nbTrimTauxPlein:
-                    return "Trimestres Supplémentaires"
-                case .expensesUnderEvaluationrate:
-                    return "Sous-etimation dépenses"
-            }
+            return self.rawValue
         }
     }
     

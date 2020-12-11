@@ -35,14 +35,6 @@ enum LifeExpenseCategory: Int, PickableEnum, Codable {
     // MARK: - Computed Properties
     
     var pickerString: String {
-        displayString
-    }
-    
-    var id: Int {
-        return self.rawValue
-    }
-    
-    var displayString: String {
         switch self {
             case .abonnements:
                 return "Abonnements"

@@ -10,23 +10,14 @@ import Foundation
 
 // MARK: - Enumération des modes de simulation
 
-enum SimulationModeEnum: Int, PickableEnum, Codable, Hashable {
-    case deterministic
-    case random
+enum SimulationModeEnum: String, PickableEnum, Codable, Hashable {
+    case deterministic = "Déterministe"
+    case random        = "Aléatoire"
     
     // properties
     
-    var id: Int {
-        return self.rawValue
-    }
-    
     var pickerString: String {
-        switch self {
-            case .deterministic:
-                return "Déterministe"
-            case .random:
-                return "Aléatoire"
-        }
+        return self.rawValue
     }
 }
 
