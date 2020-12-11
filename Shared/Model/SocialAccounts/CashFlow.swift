@@ -294,6 +294,10 @@ struct CashFlowLine {
                     with : patrimoine,
                     for  : year)
         
+        manageDeath(of   : family,
+                    with : patrimoine,
+                    for  : year)
+        
         /// EXPENSES: compute and populate family expenses
         lifeExpenses.namedValueTable.namedValues = family.expenses.namedValueTable(atEndOf: year)
         
@@ -312,11 +316,30 @@ struct CashFlowLine {
     
     // MARK: - methods
     
+    /// gérer les droits de succession au décès de l'un ou des 2 conjoints
+    fileprivate mutating func manageDeath(of family       : Family,
+                                          with patrimoine : Patrimoin,
+                                          for year        : Int) {
+        // rechercher l'adulte qui vient de décéder
+        if let decedent = family.members.first(where: { !$0.isAlive(atEndOf: year) && $0.isAlive(atEndOf: year-1) }) {
+            Swift.print("Personne décédée: \(decedent.displayName) en \(year)")
+            // ajouter les droits de succession aux taxes
+            taxes.inheritances = patrimoine.inheritance(of: decedent, atEndOf: year)
+            Swift.print("    Héritage: \(taxes.inheritances)")
+            taxes.perCategory[.succession]?.namedValues.append((name  : TaxeCategory.succession.rawValue,
+                                                                value : taxes.inheritances.sum(for : \.tax).rounded()))
+        } else {
+            taxes.perCategory[.succession]?.namedValues.append((name  : TaxeCategory.succession.rawValue,
+                                                                value : 0))
+        }
+    }
+    
     fileprivate mutating func populateIrpp(of family: Family) {
         taxes.irpp = Fiscal.model.incomeTaxes.irpp(taxableIncome : revenues.totalTaxableIrpp,
                                                    nbAdults      : family.nbOfAdultAlive(atEndOf: year),
                                                    nbChildren    : family.nbOfFiscalChildren(during: year))
-        taxes.perCategory[.irpp]?.namedValues.append((name: "IRPP", value: taxes.irpp.amount.rounded()))
+        taxes.perCategory[.irpp]?.namedValues.append((name  : TaxeCategory.irpp.rawValue,
+                                                      value : taxes.irpp.amount.rounded()))
     }
     
     fileprivate mutating func populateISF(of family       : Family,
@@ -325,7 +348,8 @@ struct CashFlowLine {
         let taxableAsset = patrimoine.realEstateValue(atEndOf          : year,
                                                       evaluationMethod : .ifi)
         taxes.isf = Fiscal.model.isf.isf(taxableAsset: taxableAsset)
-        taxes.perCategory[.isf]?.namedValues.append((name: "ISF", value: taxes.isf.amount.rounded()))
+        taxes.perCategory[.isf]?.namedValues.append((name  : TaxeCategory.isf.rawValue,
+                                                     value : taxes.isf.amount.rounded()))
     }
     /// Populate Ages and Work incomes
     /// - Parameter family: de la famille

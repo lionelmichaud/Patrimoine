@@ -694,6 +694,11 @@ final class Adult: Person {
     /// - Parameter year: année
     /// - Returns: Indemnité de licenciement perçue dans l'année brute, nette de charges sociales, taxable à l'IRPP
     func layoffCompensation(during year: Int) -> BrutNetTaxable {
+        // la personne est décédée
+        guard !isAlive(atEndOf: year) else {
+            // la personne est vivante => pas de pension de réversion
+            return BrutNetTaxable(brut: 0, net: 0, taxable: 0)
+        }
         guard year == dateOfRetirement.year else {
             return BrutNetTaxable(brut: 0, net: 0, taxable: 0)
         }

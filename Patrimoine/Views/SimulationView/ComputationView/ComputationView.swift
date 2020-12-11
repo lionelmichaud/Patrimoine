@@ -37,7 +37,7 @@ struct ComputationView: View {
                     HStack {
                         Text("Nombre d'années à calculer: ") + Text(String(Int(uiState.computationState.nbYears)))
                         Slider(value : $uiState.computationState.nbYears,
-                               in    : 5 ... 50,
+                               in    : 5 ... 55,
                                step  : 5,
                                onEditingChanged: {_ in
                                })

@@ -25,12 +25,12 @@ struct MemberDetailView: View {
             /// partie commune
             MemberAgeDateView(member: member)
             
-            if member is Adult {
+            if let adult = member as? Adult {
                 /// partie spécifique adulte
                 HStack {
                     Text("Nombre d'enfants")
                     Spacer()
-                    Text("\((member as! Adult).nbOfChildBirth)")
+                    Text("\(adult.nbOfChildBirth)")
                 }
                 AdultDetailView()
                 

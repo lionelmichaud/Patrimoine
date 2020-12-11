@@ -148,7 +148,7 @@ struct RealEstateAsset: Identifiable, Codable, Equatable, NameableValuable, Owna
                     atEndOf year     : Int,
                     evaluationMethod : EvaluationMethod) -> Double {
         var evaluatedValue : Double
-        Swift.print("  Actif: \(name)")
+//        Swift.print("  Actif: \(name)")
 
         switch evaluationMethod {
             case .ifi, .isf:
@@ -160,7 +160,7 @@ struct RealEstateAsset: Identifiable, Codable, Equatable, NameableValuable, Owna
                 if ownership.isAnUsufructOwner(ownerName: ownerName) {
                     // si oui alors l'usufruit rejoint la nu-propriété sans droit de succession
                     // l'usufruit n'est donc pas intégré à la masse successorale du défunt
-                    Swift.print("  valeur: 0")
+//                    Swift.print("  valeur: 0")
                     return 0
                 }
                 // appliquer la décote succession
@@ -175,7 +175,7 @@ struct RealEstateAsset: Identifiable, Codable, Equatable, NameableValuable, Owna
                                                                    ofValue          : evaluatedValue,
                                                                    atEndOf          : year,
                                                                    evaluationMethod : evaluationMethod)
-        Swift.print("  valeur: \(value)")
+//        Swift.print("  valeur: \(value)")
         return value
     }
     

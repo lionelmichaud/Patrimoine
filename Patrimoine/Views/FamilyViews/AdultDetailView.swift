@@ -31,54 +31,55 @@ private struct ScenarioSectionView: View {
     @EnvironmentObject var member : Person
     
     var body: some View {
-        let adult = member as! Adult
-        return Section {
-            DisclosureGroup(
-                content: {
-                    LabeledText(label: "Age de décès estimé",
-                                text : "\(member.ageOfDeath) ans en \(String(member.yearOfDeath))")
-                    LabeledText(label: "Cessation d'activité",
-                                text : "\(adult.age(atDate: adult.dateOfRetirement).year!) ans \(adult.age(atDate: adult.dateOfRetirement).month!) mois au \(mediumDateFormatter.string(from: adult.dateOfRetirement))")
-                    LabeledText(label: "Cause",
-                                text : adult.causeOfRetirement.displayString)
-                        .padding(.leading)
-                    if adult.hasUnemployementAllocationPeriod {
-                        if let date = adult.dateOfStartOfUnemployementAllocation {
-                            LabeledText(label: "Début de la période d'allocation chômage",
-                                        text : "\(adult.age(atDate: date).year!) ans \(adult.age(atDate: date).month!) mois au \(mediumDateFormatter.string(from: date))")
-                                .padding(.leading)
+        Section {
+            if let adult = member as? Adult {
+                DisclosureGroup(
+                    content: {
+                        LabeledText(label: "Age de décès estimé",
+                                    text : "\(member.ageOfDeath) ans en \(String(member.yearOfDeath))")
+                        LabeledText(label: "Cessation d'activité",
+                                    text : "\(adult.age(atDate: adult.dateOfRetirement).year!) ans \(adult.age(atDate: adult.dateOfRetirement).month!) mois au \(mediumDateFormatter.string(from: adult.dateOfRetirement))")
+                        LabeledText(label: "Cause",
+                                    text : adult.causeOfRetirement.displayString)
+                            .padding(.leading)
+                        if adult.hasUnemployementAllocationPeriod {
+                            if let date = adult.dateOfStartOfUnemployementAllocation {
+                                LabeledText(label: "Début de la période d'allocation chômage",
+                                            text : "\(adult.age(atDate: date).year!) ans \(adult.age(atDate: date).month!) mois au \(mediumDateFormatter.string(from: date))")
+                                    .padding(.leading)
+                            }
+                            if let date = adult.dateOfStartOfAllocationReduction {
+                                LabeledText(label: "Début de la période de réduction d'allocation chômage",
+                                            text : "\(adult.age(atDate: date).year!) ans \(adult.age(atDate: date).month!) mois au \(mediumDateFormatter.string(from: date))")
+                                    .padding(.leading)
+                            }
+                            if let date = adult.dateOfEndOfUnemployementAllocation {
+                                LabeledText(label: "Fin de la période d'allocation chômage",
+                                            text : "\(adult.age(atDate: date).year!) ans \(adult.age(atDate: date).month!) mois au \(mediumDateFormatter.string(from: date))")
+                                    .padding(.leading)
+                            }
                         }
-                        if let date = adult.dateOfStartOfAllocationReduction {
-                            LabeledText(label: "Début de la période de réduction d'allocation chômage",
-                                        text : "\(adult.age(atDate: date).year!) ans \(adult.age(atDate: date).month!) mois au \(mediumDateFormatter.string(from: date))")
-                                .padding(.leading)
+                        LabeledText(label: "Liquidation de pension - régime complém.",
+                                    text : "\(adult.ageOfAgircPensionLiquidComp.year!) ans \(adult.ageOfAgircPensionLiquidComp.month!) mois fin \(monthMediumFormatter.string(from: adult.dateOfAgircPensionLiquid)) \(String(adult.dateOfAgircPensionLiquid.year))")
+                        LabeledText(label: "Liquidation de pension - régime général",
+                                    text : "\(adult.ageOfPensionLiquidComp.year!) ans \(adult.ageOfPensionLiquidComp.month!) mois fin \(monthMediumFormatter.string(from: adult.dateOfPensionLiquid)) \(String(adult.dateOfPensionLiquid.year))")
+                        HStack {
+                            Text("Dépendance")
+                            Spacer()
+                            if adult.nbOfYearOfDependency == 0 {
+                                Text("aucune")
+                            } else {
+                                Text("\(adult.nbOfYearOfDependency) ans à partir de \(String(adult.yearOfDependency))")
+                            }
                         }
-                        if let date = adult.dateOfEndOfUnemployementAllocation {
-                            LabeledText(label: "Fin de la période d'allocation chômage",
-                                        text : "\(adult.age(atDate: date).year!) ans \(adult.age(atDate: date).month!) mois au \(mediumDateFormatter.string(from: date))")
-                                .padding(.leading)
+                        NavigationLink(destination: PersonLifeLineView(from: self.member)) {
+                            Text("Ligne de vie").foregroundColor(.blue)
                         }
-                    }
-                    LabeledText(label: "Liquidation de pension - régime complém.",
-                                text : "\(adult.ageOfAgircPensionLiquidComp.year!) ans \(adult.ageOfAgircPensionLiquidComp.month!) mois fin \(monthMediumFormatter.string(from: adult.dateOfAgircPensionLiquid)) \(String(adult.dateOfAgircPensionLiquid.year))")
-                    LabeledText(label: "Liquidation de pension - régime général",
-                                text : "\(adult.ageOfPensionLiquidComp.year!) ans \(adult.ageOfPensionLiquidComp.month!) mois fin \(monthMediumFormatter.string(from: adult.dateOfPensionLiquid)) \(String(adult.dateOfPensionLiquid.year))")
-                    HStack {
-                        Text("Dépendance")
-                        Spacer()
-                        if adult.nbOfYearOfDependency == 0 {
-                            Text("aucune")
-                        } else {
-                            Text("\(adult.nbOfYearOfDependency) ans à partir de \(String(adult.yearOfDependency))")
-                        }
-                    }
-                    NavigationLink(destination: PersonLifeLineView(from: self.member)) {
-                        Text("Ligne de vie").foregroundColor(.blue)
-                    }
-                },
-                label: {
-                    Text("SCENARIO DE VIE").font(.headline)
-                })
+                    },
+                    label: {
+                        Text("SCENARIO DE VIE").font(.headline)
+                    })
+            }
         }
     }
 }
@@ -145,22 +146,22 @@ private struct RevenuSectionView: View {
             DisclosureGroup(
                 content: {
                     if viewModel.income?.pickerString == "Salaire" {
-                        AmountView(label  : "Salaire brut", amount : viewModel.revenueBrut)
-                        AmountView(label  : "Salaire net de feuille de paye", amount : viewModel.revenueNet)
-                        AmountView(label  : "Coût de la mutuelle (protec. sup.)", amount : viewModel.insurance)
-                        AmountView(label  : "Salaire net moins mutuelle facultative (à vivre)", amount : viewModel.revenueLiving)
-                        AmountView(label  : "Salaire imposable (après abattement)", amount : viewModel.revenueTaxable)
+                        AmountView(label : "Salaire brut", amount : viewModel.revenueBrut)
+                        AmountView(label : "Salaire net de feuille de paye", amount : viewModel.revenueNet)
+                        AmountView(label : "Coût de la mutuelle (protec. sup.)", amount : viewModel.insurance)
+                        AmountView(label : "Salaire net moins mutuelle facultative (à vivre)", amount : viewModel.revenueLiving)
+                        AmountView(label : "Salaire imposable (après abattement)", amount : viewModel.revenueTaxable)
                         HStack {
                             Text("Date d'embauche")
                             Spacer()
                             Text(viewModel.fromDate)
                         }
                     } else {
-                        AmountView(label  : "BNC", amount : viewModel.revenueBrut)
-                        AmountView(label  : "BNC net de charges sociales", amount : viewModel.revenueNet)
-                        AmountView(label  : "Coût des assurances", amount : viewModel.insurance)
-                        AmountView(label  : "BNC net de charges sociales et d'assurances (à vivre)", amount : viewModel.revenueLiving)
-                        AmountView(label  : "BNC imposable (après abattement)", amount : viewModel.revenueTaxable)
+                        AmountView(label : "BNC", amount : viewModel.revenueBrut)
+                        AmountView(label : "BNC net de charges sociales", amount : viewModel.revenueNet)
+                        AmountView(label : "Coût des assurances", amount : viewModel.insurance)
+                        AmountView(label : "BNC net de charges sociales et d'assurances (à vivre)", amount : viewModel.revenueLiving)
+                        AmountView(label : "BNC imposable (après abattement)", amount : viewModel.revenueTaxable)
                         
                     }
                     // allocation chomage
@@ -200,25 +201,107 @@ private struct InheritanceSectionView: View {
     @EnvironmentObject var member     : Person
     
     var body: some View {
-        if member is Adult {
-            Section {
+        Section {
+            if let adult = member as? Adult {
                 DisclosureGroup(
                     content: {
-                        if let adult = member as? Adult {
-                            LabeledText(label: "Option fiscale retenue en cas d'héritage",
-                                        text : adult.fiscalOption.displayString)
-                        }
-                        AmountView(label : "A la date d'aujourd'hui",
-                                   amount: patrimoine.taxableInheritanceValue(of: member, atEndOf: Date.now.year),
-                                   comment: "masse successorale en cas de décès")
-                        AmountView(label : "A l'âge de décès estimé \(member.ageOfDeath) ans en \(String(member.yearOfDeath))",
-                                   amount: patrimoine.taxableInheritanceValue(of: member, atEndOf: member.yearOfDeath),
-                                   comment: "masse successorale en cas de décès")
+                        heritageDisclosure(adult: adult)
+                        deceaseDisclosure(decedent: adult)
                     },
                     label: {
                         Text("SUCCESSION").font(.headline)
                     })
             }
+        }
+    }
+    
+    /// Option fiscale retenue en cas d'héritage
+    /// - Parameter adult: défunt
+    /// - Returns: DisclosureGroup
+    func heritageDisclosure(adult: Adult) -> some View {
+        DisclosureGroup(
+            content: {
+                LabeledText(label: "Option fiscale retenue",
+                            text : adult.fiscalOption.displayString)
+            },
+            label: {
+                Text("En cas d'héritage du conjoint").font(.headline)
+            })
+    }
+    
+    /// Héritage laissé en cas de décès à la date courante à l'age de décès estimé
+    /// - Parameter adult: défunt
+    /// - Returns: DisclosureGroup
+    func deceaseDisclosure(decedent: Adult) -> some View {
+        DisclosureGroup(
+            content: {
+                inheritanceDisclosure(label    : "A la date d'aujourd'hui",
+                                      atEndOf  : Date.now.year,
+                                      decedent : decedent)
+                inheritanceDisclosure(label    : "A l'âge de décès estimé \(member.ageOfDeath) ans en \(String(member.yearOfDeath))",
+                                      atEndOf  : member.yearOfDeath,
+                                      decedent : decedent)
+            },
+            label: {
+                Text("En cas de décès").font(.headline)
+            })
+    }
+    
+    func inheritanceDisclosure(label        : String,
+                               atEndOf year : Int,
+                               decedent     : Adult) -> some View {
+        let inheritances = patrimoine.inheritance(of: decedent, atEndOf: year)
+        
+        return DisclosureGroup(
+            content: {
+                AmountView(label : "Masse successorale",
+                           amount: patrimoine.taxableInheritanceValue(of: decedent, atEndOf: year))
+                AmountView(label : "Droits de succession à payer par les héritiers",
+                           amount: -inheritances.sum(for: \.tax))
+                AmountView(label : "Succession nette laissée aux héritiers",
+                           amount: inheritances.sum(for: \.net))
+                NavigationLink(destination: InheritancesDetailView(decedent    : decedent,
+                                                                   inheritances: inheritances)) {
+                    Text("Héritage")
+                        .foregroundColor(.blue)
+                }
+            },
+            label: {
+                Text(label)
+                    .font(.headline)
+            })
+    }
+}
+
+private struct InheritancesDetailView: View {
+    var decedent     : Adult
+    var inheritances : [Inheritance]
+    
+    var body: some View {
+        List {
+            ForEach(inheritances, id: \.person.id) { share in
+                GroupBox(label: groupBoxLabel(person: share.person)) {
+                    PercentView(label   : "Part de la Succession",
+                                percent : share.percent)
+                    AmountView(label : "Valeur Héritée Brute",
+                               amount: share.brut)
+                    AmountView(label : "Droits de Succession à Payer",
+                               amount: -share.tax)
+                    AmountView(label : "Valeur Héritée Nette",
+                               amount: share.net)
+                }
+            }
+        }
+        .navigationTitle("Héritage")
+        .navigationBarTitleDisplayMode(.inline)
+
+    }
+    
+    func groupBoxLabel(person: Person) -> some View {
+        HStack {
+            Text(person.displayName)
+            Spacer()
+            Text(person is Adult ? "Conjoint" : "Enfant")
         }
     }
 }

@@ -186,13 +186,18 @@ struct SocialAccounts {
                                                  withMode : simulationMode)
                         
                         // il ne plus d'adulte vivant on arrête la simulation
-                        return currentKPIs // arrêter la construction de la table
+//                        return currentKPIs // arrêter la construction de la table
                     
                     default:
                         // ne devrait jamais se produire
                         customLog.log(level: .fault, "Nombre d'adulte survivants inattendu: \(family.nbOfAdultAlive(atEndOf: year), privacy: .public) dans \(Self.self, privacy: .public)")
                         fatalError("Nombre d'adulte survivants inattendu: \(family.nbOfAdultAlive(atEndOf: year)) dans  \(Self.self)")
                 }
+            }
+            if family.nbOfAdultAlive(atEndOf: year-1) == 0 {
+                // il n'y avait plus d'adulte vivant l'année précédente,
+                // on arrête la simulation après avoir clos la dernière succession
+                return currentKPIs
             }
         }
         

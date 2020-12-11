@@ -18,6 +18,7 @@ struct ValuedTaxes: DictionaryOfNamedValueTable {
     var perCategory    : [TaxeCategory: NamedValueTable] = [:]
     var irpp           : IncomeTaxes.IRPP
     var isf            : IsfModel.ISF
+    var inheritances   : [Inheritance]
 
     init() {
         self.irpp = (amount         : 0,
@@ -27,5 +28,6 @@ struct ValuedTaxes: DictionaryOfNamedValueTable {
         self.isf = (amount       : 0,
                     taxable      : 0,
                     marginalRate : 0)
+        self.inheritances = []
     }
 }

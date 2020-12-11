@@ -898,6 +898,13 @@ struct InheritanceDonation: Codable {
     
     // methods
     
+    /// Calcule la part d'héritage de chaque enfant en l'absence de conjoint survivant
+    /// - Parameter nbChildren: nb d'enfant à se partager l'héritage
+    static func childShare(nbChildren: Int) -> Double {
+        guard nbChildren > 0 else { return 0 }
+        return 1.0 / nbChildren.double()
+    }
+    
     /// Initializer les paramètres calculés pour les tranches d'imposition à partir des seuils et des taux
     mutating func initialize() {
         for idx in model.gridLigneDirecte.startIndex ..< model.gridLigneDirecte.endIndex {
@@ -920,16 +927,16 @@ struct InheritanceDonation: Codable {
         }
     }
     
-    func heritageToChild(partSuccession: Double)
+    func heritageOfChild(partSuccession: Double)
     -> (netAmount : Double,
         taxe      : Double) {
         // abattement avant application du barême
-        let taxable = partSuccession - model.abatLigneDirecte
+        let taxable = max(0, partSuccession - model.abatLigneDirecte)
         
         // application du barême
-        if let slice = model.gridLigneDirecte.last(where: { $0.floor < taxable }) {
+        if let slice = model.gridLigneDirecte.last(where: { $0.floor <= taxable }) {
             let taxe = taxable * slice.rate - slice.disc
-            let net  = taxable - taxe
+            let net  = partSuccession - taxe
             return (netAmount : net,
                     taxe      : taxe)
         } else {
@@ -941,12 +948,12 @@ struct InheritanceDonation: Codable {
     -> (netAmount : Double,
         taxe      : Double) {
         // abattement avant application du barême
-        let taxable = donation - model.abatConjoint
+        let taxable = max(0, donation - model.abatConjoint)
         
         // application du barême
-        if let slice = model.gridLigneDirecte.last(where: { $0.floor < taxable }) {
+        if let slice = model.gridLigneDirecte.last(where: { $0.floor <= taxable }) {
             let taxe = taxable * slice.rate - slice.disc
-            let net  = taxable - taxe
+            let net  = donation - taxe
             return (netAmount : net,
                     taxe      : taxe)
         } else {

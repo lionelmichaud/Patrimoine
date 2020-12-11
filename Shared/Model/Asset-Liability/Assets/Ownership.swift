@@ -222,9 +222,20 @@ struct Ownership: Codable {
     
     /// Retourne true si la personne est un des usufruitier du bien
     /// - Parameter ownerName: nom de la personne
-    /// - Returns: true si la personne est un des usufruitiers du bien
     func isAnUsufructOwner(ownerName: String) -> Bool {
         return isDismembered && usufructOwners.contains(where: { $0.name == ownerName })
+    }
+    
+    /// Retourne true si la personne est un des détenteurs du bien en pleine propriété
+    /// - Parameter ownerName: nom de la personne
+    func isAFullOwner(ownerName: String) -> Bool {
+        return !isDismembered && fullOwners.contains(where: { $0.name == ownerName })
+    }
+    
+    /// Retourne true si la personne perçoit des revenus du bien
+    /// - Parameter ownerName: nom de la personne
+    func receivesRevenues(ownerName: String) -> Bool {
+        return isAFullOwner(ownerName: ownerName) || isAnUsufructOwner(ownerName: ownerName)
     }
 }
 

@@ -82,25 +82,46 @@ final class Family: ObservableObject, CustomStringConvertible {
     /// Nombre d'enfant dans le foyer fiscal
     /// - Parameter year: année
     func nbOfFiscalChildren(during year: Int) -> Int {
-        var nb = 0
-        for person in members {
-            if let child = person as? Child {
-                if !child.isIndependant(during: year) {nb += 1}
-            }
+        members.reduce(0) { (result, person) in
+            result + ((person is Child && person.isAlive(atEndOf: year) && !(person as! Child).isIndependant(during: year)) ? 1 : 0)
         }
-        return nb
+//        var nb = 0
+//        for person in members {
+//            if let child = person as? Child {
+//                if !child.isIndependant(during: year) {nb += 1}
+//            }
+//        }
+//        return nb
     }
     
     /// Nombre d'adulte vivant à la fin de l'année
     /// - Parameter year: année
     func nbOfAdultAlive(atEndOf year: Int) -> Int {
-        var nb = 0
-        for person in members {
-            if let adult = person as? Adult {
-                if adult.isAlive(atEndOf: year) {nb += 1}
-            }
+        members.reduce(0) { (result, person) in
+            result + ((person is Adult && person.isAlive(atEndOf: year)) ? 1 : 0)
         }
-        return nb
+//        var nb = 0
+//        for person in members {
+//            if let adult = person as? Adult {
+//                if adult.isAlive(atEndOf: year) {nb += 1}
+//            }
+//        }
+//        return nb
+    }
+    
+    /// Nombre d'adulte vivant à la fin de l'année
+    /// - Parameter year: année
+    func nbOfChildrenAlive(atEndOf year: Int) -> Int {
+        members.reduce(0) { (result, person) in
+            result + ((person is Child && person.isAlive(atEndOf: year)) ? 1 : 0)
+        }
+//        var nb = 0
+//        for person in members {
+//            if let child = person as? Child {
+//                if child.isAlive(atEndOf: year) {nb += 1}
+//            }
+//        }
+//        return nb
     }
     
     /// Revenus du tavail cumulés de la famille durant l'année

@@ -121,11 +121,10 @@ struct Assets {
     /// - Returns: actif taxable à la succession
     func taxableInheritanceValue(of decedent  : Person,
                                  atEndOf year : Int) -> Double {
-        print("Masse sucessorale de: \(decedent.displayName)")
         return
             realEstates.ownedValue(by               : decedent.displayName,
-                               atEndOf          : year,
-                               evaluationMethod : .inheritance) +
+                                   atEndOf          : year,
+                                   evaluationMethod : .inheritance) +
             scpis.ownedValue(by               : decedent.displayName,
                              atEndOf          : year,
                              evaluationMethod : .inheritance) +

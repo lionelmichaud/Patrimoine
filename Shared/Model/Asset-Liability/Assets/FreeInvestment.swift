@@ -149,7 +149,7 @@ struct FreeInvestement: Identifiable, Codable, NameableValuable, Ownable {
                     atEndOf year     : Int,
                     evaluationMethod : EvaluationMethod) -> Double {
         var evaluatedValue : Double
-        Swift.print("  Actif: \(name)")
+//        Swift.print("  Actif: \(name)")
 
         switch evaluationMethod {
             case .inheritance:
@@ -157,7 +157,7 @@ struct FreeInvestement: Identifiable, Codable, NameableValuable, Ownable {
                 switch type {
                     case .lifeInsurance:
                         // les assurance vie ne sont pas inclues car hors succession
-                        Swift.print("  valeur: 0")
+//                        Swift.print("  valeur: 0")
                         return 0
 
                     default:
@@ -165,7 +165,7 @@ struct FreeInvestement: Identifiable, Codable, NameableValuable, Ownable {
                         if ownership.isAnUsufructOwner(ownerName: ownerName) {
                             // si oui alors l'usufruit rejoint la nu-propriété sans droit de succession
                             // l'usufruit n'est donc pas intégré à la masse successorale du défunt
-                            Swift.print("  valeur: 0")
+//                            Swift.print("  valeur: 0")
                             return 0
                         }
                         // pas de décote
@@ -181,7 +181,7 @@ struct FreeInvestement: Identifiable, Codable, NameableValuable, Ownable {
                                                                    ofValue          : evaluatedValue,
                                                                    atEndOf          : year,
                                                                    evaluationMethod : evaluationMethod)
-        Swift.print("  valeur: \(value)")
+//        Swift.print("  valeur: \(value)")
         return value
     }
     

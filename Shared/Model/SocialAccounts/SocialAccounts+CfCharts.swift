@@ -315,7 +315,7 @@ extension SocialAccounts {
         } else if firstLine.taxes.summary.namedValues.contains(where: { $0.name == categoryName }) {
             /// rechercher les valeurs des taxes
             // customLog.log(level: .info, "Catégorie trouvée dans taxes : \(found.name)")
-            guard let category = TaxeCategory.category(of: categoryName) else {
+            guard let category = TaxeCategory(rawValue: categoryName) else {
                 return BarChartDataSet()
             }
             guard let labelsInCategory = firstLine.taxes.perCategory[category]?.namesArray else {
