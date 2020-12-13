@@ -49,11 +49,23 @@ struct Assets {
         self.periodicInvests = PeriodicInvestementArray(family: family)
         self.freeInvests     = FreeInvestmentArray(family: family)
         self.realEstates     = RealEstateArray(family: family)
-        self.scpis           = ScpiArray(family: family) // SCPI hors dscpis
+        self.scpis           = ScpiArray(family: family) // SCPI hors de la SCI
         self.sci             = SCI(family: family)
     }
     
     // MARK: - Methods
+    
+    /// Recharger depuis les fichiers pour repartir d'une situation initiale
+    /// - Note: Doit être appelé avant de lancer un nouveau run de simulation
+    ///         susceptible de modifier le patrimoin en cours de simulation (tel que
+    ///         les propriétaire des biens à l'issue des successions.
+    mutating func reLoad() {
+        periodicInvests = PeriodicInvestementArray(family: Patrimoin.family)
+        freeInvests     = FreeInvestmentArray(family: Patrimoin.family)
+        realEstates     = RealEstateArray(family: Patrimoin.family)
+        scpis           = ScpiArray(family: Patrimoin.family) // SCPI hors de la SCI
+        sci             = SCI(family: Patrimoin.family)
+    }
     
     func value(atEndOf year: Int) -> Double {
         var sum = realEstates.value(atEndOf: year)
@@ -62,6 +74,72 @@ struct Assets {
         sum += freeInvests.value(atEndOf: year)
         sum += sci.scpis.value(atEndOf: year)
         return sum
+    }
+    
+    /// Calls the given closure on each element in the sequence in the same order as a for-in loop
+    func forEachOwnable(_ body: (Ownable) throws -> Void) rethrows {
+        try periodicInvests.items.forEach(body)
+        try freeInvests.items.forEach(body)
+        try realEstates.items.forEach(body)
+        try scpis.items.forEach(body)
+        try sci.forEachOwnable(body)
+    }
+
+    /// Transférer la propriété d'un bien d'un défunt vers ses héritiers en fonction de l'option
+    ///  fiscale du conjoint survivant éventuel
+    /// - Parameters:
+    ///   - decedentName: défunt
+    ///   - chidrenNames: noms des enfants héritiers survivant éventuels
+    ///   - spouseName: nom du conjoint survivant éventuel
+    ///   - spouseFiscalOption: option fiscale du conjoint survivant éventuel
+    mutating func transferOwnershipOfDecedent(decedentName       : String,
+                                              chidrenNames       : [String]?,
+                                              spouseName         : String?,
+                                              spouseFiscalOption : InheritanceDonation.FiscalOption?) {
+        for idx in 0..<periodicInvests.items.count {
+            switch periodicInvests.items[idx].type {
+                case .lifeInsurance:
+                    // régles de transmission particulières pour l'Assurance Vie
+                    // TODO: - ne transférer que ce qui n'est pas de l'assurance vie, sinon utiliser d'autres règles de transmission
+                    ()
+                    
+                default:
+                    periodicInvests.items[idx].ownership.transferOwnershipOfDecedent(decedentName       : decedentName,
+                                                                                     chidrenNames       : chidrenNames,
+                                                                                     spouseName         : spouseName,
+                                                                                     spouseFiscalOption : spouseFiscalOption)
+            }
+        }
+        for idx in 0..<freeInvests.items.count {
+            switch freeInvests.items[idx].type {
+                case .lifeInsurance:
+                    // régles de transmission particulières pour l'Assurance Vie
+                    // TODO: - ne transférer que ce qui n'est pas de l'assurance vie, sinon utiliser d'autres règles de transmission
+                    ()
+                    
+                default:
+                    freeInvests.items[idx].ownership.transferOwnershipOfDecedent(decedentName       : decedentName,
+                                                                                 chidrenNames       : chidrenNames,
+                                                                                 spouseName         : spouseName,
+                                                                                 spouseFiscalOption : spouseFiscalOption)
+            }
+        }
+        for idx in 0..<realEstates.items.count {
+            realEstates.items[idx].ownership.transferOwnershipOfDecedent(decedentName       : decedentName,
+                                                                         chidrenNames       : chidrenNames,
+                                                                         spouseName         : spouseName,
+                                                                         spouseFiscalOption : spouseFiscalOption)
+        }
+        for idx in 0..<scpis.items.count {
+            scpis.items[idx].ownership.transferOwnershipOfDecedent(decedentName       : decedentName,
+                                                                   chidrenNames       : chidrenNames,
+                                                                   spouseName         : spouseName,
+                                                                   spouseFiscalOption : spouseFiscalOption)
+        }
+        sci.transferOwnershipOfDecedent(decedentName       : decedentName,
+                                        chidrenNames       : chidrenNames,
+                                        spouseName         : spouseName,
+                                        spouseFiscalOption : spouseFiscalOption)
     }
     
     /// Calcule  la valeur nette taxable du patrimoine immobilier de la famille selon la méthode de calcul choisie

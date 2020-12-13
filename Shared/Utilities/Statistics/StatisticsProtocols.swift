@@ -177,7 +177,9 @@ extension RandomGenerator where Self: Distribution, Number: Randomizable {
                  Rejection sampling works as follows:
                  1. Sample a point on the x-axis from the proposal distribution.
                  2. Draw a vertical line at this x-position, up to the maximum y-value of the proposal distribution.
-                 3. Sample uniformly along this line from 0 to the maximum of the probability density function. If the sampled value is greater than the value of the desired distribution at this vertical line, reject the x-value and return to step 1; else the x-value is a sample from the desired distribution.
+                 3. Sample uniformly along this line from 0 to the maximum of the probability density function.
+                    If the sampled value is greater than the value of the desired distribution at this vertical line, reject the x-value and return to step 1;
+                    else the x-value is a sample from the desired distribution.
                  */
                 repeat {
                     /// Step 1. Sample a point on the x-axis from the proposal distribution.
@@ -193,7 +195,8 @@ extension RandomGenerator where Self: Distribution, Number: Randomizable {
                     /// Step3. Sample uniformly along this line from 0 to the maximum of the probability density function.
                     let y = Number.randomized(in: .zero ... ymax)
                     if y <= pdf(x) {
-                        /// Step3. If the sampled value is greater than the value of the desired distribution at this vertical line, reject the x-value and return to step 1; else the x-value is a sample from the desired distribution.
+                        /// Step3. If the sampled value is greater than the value of the desired distribution at this vertical line,
+                        ///       reject the x-value and return to step 1; else the x-value is a sample from the desired distribution.
                         return x
                     }
                 } while true

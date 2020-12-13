@@ -554,4 +554,4 @@ struct StatisticsChartsView_Previews: PreviewProvider {
     static var previews: some View {
         StatisticsChartsView()
     }
-}
+} // swiftlint:disable:this file_length

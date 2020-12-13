@@ -67,9 +67,10 @@ final class Family: ObservableObject, CustomStringConvertible {
     
     // MARK: - Methodes
     
-    /// Rend l'époux d'un adult de la famille (s'il existe)
+    /// Rend l'époux d'un adult de la famille (s'il existe), qu'il soit vivant où décédé
     /// - Parameter member: membre adult de la famille
     /// - Returns: époux  (s'il existe)
+    /// - Warning: Ne vérifie pas que l'époux est vivant
     func spouseOf(_ member: Adult) -> Adult? {
         for person in members {
             if let adult = person as? Adult {
@@ -79,19 +80,27 @@ final class Family: ObservableObject, CustomStringConvertible {
         return nil
     }
     
+    /// Rend la liste des enfants vivants
+    /// - Parameter year: année
+    /// - Warning: Vérifie que l'enfant est vivant
+    func chidldrenAlive(atEndOf year: Int) -> [Child]? {
+        members
+            .filter { person in
+                person is Child && person.isAlive(atEndOf: year)
+            }
+            .map { person in
+                person as! Child
+            }
+    }
+    
     /// Nombre d'enfant dans le foyer fiscal
     /// - Parameter year: année
+    /// - Warning: Vérifie que l'enfant est vivant
     func nbOfFiscalChildren(during year: Int) -> Int {
-        members.reduce(0) { (result, person) in
-            result + ((person is Child && person.isAlive(atEndOf: year) && !(person as! Child).isIndependant(during: year)) ? 1 : 0)
-        }
-//        var nb = 0
-//        for person in members {
-//            if let child = person as? Child {
-//                if !child.isIndependant(during: year) {nb += 1}
-//            }
-//        }
-//        return nb
+        members
+            .reduce(0) { (result, person) in
+                result + ((person is Child && person.isAlive(atEndOf: year) && !(person as! Child).isIndependant(during: year)) ? 1 : 0)
+            }
     }
     
     /// Nombre d'adulte vivant à la fin de l'année
@@ -100,28 +109,15 @@ final class Family: ObservableObject, CustomStringConvertible {
         members.reduce(0) { (result, person) in
             result + ((person is Adult && person.isAlive(atEndOf: year)) ? 1 : 0)
         }
-//        var nb = 0
-//        for person in members {
-//            if let adult = person as? Adult {
-//                if adult.isAlive(atEndOf: year) {nb += 1}
-//            }
-//        }
-//        return nb
     }
     
     /// Nombre d'adulte vivant à la fin de l'année
     /// - Parameter year: année
     func nbOfChildrenAlive(atEndOf year: Int) -> Int {
-        members.reduce(0) { (result, person) in
-            result + ((person is Child && person.isAlive(atEndOf: year)) ? 1 : 0)
-        }
-//        var nb = 0
-//        for person in members {
-//            if let child = person as? Child {
-//                if child.isAlive(atEndOf: year) {nb += 1}
-//            }
-//        }
-//        return nb
+        members
+            .reduce(0) { (result, person) in
+                result + ((person is Child && person.isAlive(atEndOf: year)) ? 1 : 0)
+            }
     }
     
     /// Revenus du tavail cumulés de la famille durant l'année

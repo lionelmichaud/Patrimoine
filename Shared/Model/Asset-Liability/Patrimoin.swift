@@ -8,6 +8,7 @@
 
 import Foundation
 
+// MARK: - Méthode d'évaluation d'un Patrmoine (régles fiscales à appliquer)
 enum EvaluationMethod: String, PickableEnum {
     case ifi         = "IFI"
     case isf         = "ISF"
@@ -19,6 +20,7 @@ enum EvaluationMethod: String, PickableEnum {
     }
 }
 
+// MARK: - Héritage dune personne
 struct Inheritance {
     var person  : Person
     var percent : Double
@@ -28,7 +30,6 @@ struct Inheritance {
 }
 
 // MARK: - Patrimoine constitué d'un Actif et d'un Passif
-
 final class Patrimoin: ObservableObject {
     
     // MARK: - Static properties
@@ -54,6 +55,63 @@ final class Patrimoin: ObservableObject {
     func value(atEndOf year: Int) -> Double {
         assets.value(atEndOf: year) +
             liabilities.value(atEndOf: year)
+    }
+    
+    /// Calls the given closure on each element in the sequence in the same order as a for-in loop
+    func forEachOwnable(_ body: (Ownable) throws -> Void) rethrows {
+        try assets.forEachOwnable(body)
+        try liabilities.forEachOwnable(body)
+    }
+
+    /// Transférer la propriété d'un bien d'un défunt vers ses héritiers en fonction de l'option
+    ///  fiscale du conjoint survivant éventuel
+    /// - Parameters:
+    ///   - decedentName: défunt
+    ///   - chidrenNames: noms des enfants héritiers survivant éventuels
+    ///   - spouseName: nom du conjoint survivant éventuel
+    ///   - spouseFiscalOption: option fiscale du conjoint survivant éventuel
+    func transferOwnershipOfDecedent(decedentName       : String,
+                                     chidrenNames       : [String]?,
+                                     spouseName         : String?,
+                                     spouseFiscalOption : InheritanceDonation.FiscalOption?) {
+        assets.transferOwnershipOfDecedent(decedentName       : decedentName,
+                                           chidrenNames       : chidrenNames,
+                                           spouseName         : spouseName,
+                                           spouseFiscalOption : spouseFiscalOption)
+        liabilities.transferOwnershipOfDecedent(decedentName       : decedentName,
+                                                chidrenNames       : chidrenNames,
+                                                spouseName         : spouseName,
+                                                spouseFiscalOption : spouseFiscalOption)
+   }
+    
+    /// Transférer les biens d'un défunt vers ses héritiers
+    /// - Parameter year: décès dans l'année en cours
+    func transferOwnershipOfDecedent(atEndOf year : Int) {
+        guard let family = Patrimoin.family else {
+            fatalError("La famille n'est pas définie dans Patrimoin.transferOwnershipOfDecedent")
+        }
+        // rechercher l'adulte qui vient de décéder
+        // TODO: - gérer la cas de deux décès dans la même année
+        if let decedent = family.members.first(where: { !$0.isAlive(atEndOf: year) && $0.isAlive(atEndOf: year-1) }) {
+            // un décès est survenu
+            // rechercher un conjont survivant
+            var spouseName         : String?
+            var spouseFiscalOption : InheritanceDonation.FiscalOption?
+            if let decedent = decedent as? Adult, let spouse = family.spouseOf(decedent) {
+                if spouse.isAlive(atEndOf: year) {
+                    spouseName         = spouse.displayName
+                    spouseFiscalOption = spouse.fiscalOption
+                }
+            }
+            // rechercher des enfants héritiers vivants
+            let chidrenNames = family.chidldrenAlive(atEndOf: year)?.map { $0.displayName }
+            
+            // leur transférer la propriété de tous les biens détenus par le défunt
+            transferOwnershipOfDecedent(decedentName       : decedent.displayName,
+                                        chidrenNames       : chidrenNames,
+                                        spouseName         : spouseName,
+                                        spouseFiscalOption : spouseFiscalOption)
+        }
     }
     
     /// Calcule l'actif net taxable à la succession d'une personne
@@ -183,6 +241,11 @@ final class Patrimoin: ObservableObject {
             investements.append(invest)
         }
         assets.freeInvests.items = investements
+    }
+    
+    func reLoad() {
+        assets.reLoad()
+        liabilities.reLoad()
     }
     
     /// Capitaliser les intérêts des investissements financiers libres

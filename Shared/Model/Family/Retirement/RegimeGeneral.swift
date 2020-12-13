@@ -387,8 +387,10 @@ struct RegimeGeneral: Codable {
     ///   - tauxDePension: Taux de la pension
     ///   - dureeAssurance: Durée d'assurance du salarié au régime général
     ///   - dureeDeReference: Durée de référence pour obtenir une pension à taux plein
-    /// - Important: Votre salaire annuel moyen est déterminé en calculant la moyenne des salaires bruts ayant donné lieu à cotisation au régime général durant les 25 années les plus avantageuses de votre carrière.
-    ///   Tous les éléments de rémunération (salaire de base, primes, heures supplémentaires) et les indemnités journalières de maternité sont pris en compte pour le calcul du salaire annuel moyen.
+    /// - Important: Votre salaire annuel moyen est déterminé en calculant la moyenne des salaires bruts ayant donné lieu à cotisation au régime général
+    ///   durant les 25 années les plus avantageuses de votre carrière.
+    ///   Tous les éléments de rémunération (salaire de base, primes, heures supplémentaires) et les indemnités journalières de maternité sont pris en compte
+    ///   pour le calcul du salaire annuel moyen.
     ///   Si vous avez travaillé moins de 25 ans, votre salaire annuel moyen est égal à la moyenne de vos salaires bruts durant ces années de travail.
     ///   - tauxDePension: Taux de la pension
     ///   - dureeAssurance: Durée d'assurance du salarié au régime général
@@ -413,7 +415,7 @@ struct RegimeGeneral: Codable {
     ///   - nbEnfant: nb d'enfant aus sens de la retraite (pour les majorations)
     ///   - year: année de calcul
     /// - Returns: Les données relatives à la pension de retraite ou nil
-    func pension(birthDate                : Date,
+    func pension(birthDate                : Date, // swiftlint:disable:this function_parameter_count
                  dateOfRetirement         : Date,
                  dateOfEndOfUnemployAlloc : Date?,
                  dateOfPensionLiquid      : Date,
@@ -472,7 +474,7 @@ struct RegimeGeneral: Codable {
     ///   - nbEnfant: nb d'enfant aus sens de la retraite (pour les majorations)
     ///   - year: année de calcul
     /// - Returns: Les données relatives à la pension de retraite ou nil
-    func pension(birthDate                : Date,
+    func pension(birthDate                : Date, // swiftlint:disable:this function_parameter_count
                  dateOfRetirement         : Date,
                  dateOfEndOfUnemployAlloc : Date?,
                  dateOfPensionLiquid      : Date,

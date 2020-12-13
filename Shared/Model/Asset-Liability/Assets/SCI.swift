@@ -156,7 +156,31 @@ struct SCI {
     }
     
     // MARK: - Methods
-
+    
+    /// Calls the given closure on each element in the sequence in the same order as a for-in loop
+    func forEachOwnable(_ body: (Ownable) throws -> Void) rethrows {
+        try scpis.items.forEach(body)
+    }
+    
+    /// Transférer la propriété d'un bien d'un défunt vers ses héritiers en fonction de l'option
+    ///  fiscale du conjoint survivant éventuel
+    /// - Parameters:
+    ///   - decedentName: défunt
+    ///   - chidrenNames: noms des enfants héritiers survivant éventuels
+    ///   - spouseName: nom du conjoint survivant éventuel
+    ///   - spouseFiscalOption: option fiscale du conjoint survivant éventuel
+    mutating func transferOwnershipOfDecedent(decedentName       : String,
+                                              chidrenNames       : [String]?,
+                                              spouseName         : String?,
+                                              spouseFiscalOption : InheritanceDonation.FiscalOption?) {
+        for idx in 0..<scpis.items.count {
+            scpis.items[idx].ownership.transferOwnershipOfDecedent(decedentName       : decedentName,
+                                                                   chidrenNames       : chidrenNames,
+                                                                   spouseName         : spouseName,
+                                                                   spouseFiscalOption : spouseFiscalOption)
+        }
+    }
+    
     func print() {
         Swift.print("  SCI:")
         // investissement SCPI

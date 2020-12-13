@@ -108,7 +108,9 @@ final class Simulation: ObservableObject {
         // réinitialiser les comptes sociaux du patrimoine de la famille
         socialAccounts.reset(withPatrimoine : patrimoine)
         
-        // remettre à zéero l'historique des KPI (Histogramme) au début d'un MontéCarlo seulement
+        // remettre à zéro l'historique des KPI (Histogramme)
+        //  - au début d'un MontéCarlo seulement
+        //  - mais pas à chaque Run
         if includingKPIs {
             KpiArray.reset(theseKPIs: &kpis, withMode: mode)
         }
@@ -203,7 +205,6 @@ final class Simulation: ObservableObject {
     func replay(thisRun                   : SimulationResultLine,
                 withFamily family         : Family,
                 withPatrimoine patrimoine : Patrimoin) {
-//        isComputing  = true
         currentRunNb = 1
         let nbOfYears = lastYear - firstYear + 1
         
@@ -235,7 +236,6 @@ final class Simulation: ObservableObject {
         lastYear    = firstYear + nbOfYears - 1
         isComputed  = true
         isSaved     = false
-//        isComputing = false
     }
     
     /// Sauvegarder les résultats de simulation dans des fchier CSV

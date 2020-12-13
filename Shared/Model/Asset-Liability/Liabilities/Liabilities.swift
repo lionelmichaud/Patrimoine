@@ -9,7 +9,7 @@
 import Foundation
 
 struct Liabilities {
-
+    
     // MARK: - Properties
     
     var debts : DebtArray
@@ -28,9 +28,49 @@ struct Liabilities {
     
     // MARK: - Methods
     
+    /// Recharger depuis les fichiers pour repartir d'une situation initiale
+    /// - Note: Doit être appelé avant de lancer un nouveau run de simulation
+    ///         susceptible de modifier le patrimoin en cours de simulation (tel que
+    ///         les propriétaire des biens à l'issue des successions.
+    mutating func reLoad() {
+        debts = DebtArray(family: Patrimoin.family)
+        loans = LoanArray(family: Patrimoin.family)
+    }
+    
     func value(atEndOf year: Int) -> Double {
         loans.items.sumOfValues(atEndOf: year) +
             debts.items.sumOfValues(atEndOf: year)
+    }
+    
+    /// Calls the given closure on each element in the sequence in the same order as a for-in loop
+    func forEachOwnable(_ body: (Ownable) throws -> Void) rethrows {
+        try loans.items.forEach(body)
+        try debts.items.forEach(body)
+    }
+    
+    /// Transférer la propriété d'un bien d'un défunt vers ses héritiers en fonction de l'option
+    ///  fiscale du conjoint survivant éventuel
+    /// - Parameters:
+    ///   - decedentName: défunt
+    ///   - chidrenNames: noms des enfants héritiers survivant éventuels
+    ///   - spouseName: nom du conjoint survivant éventuel
+    ///   - spouseFiscalOption: option fiscale du conjoint survivant éventuel
+    mutating func transferOwnershipOfDecedent(decedentName       : String,
+                                              chidrenNames       : [String]?,
+                                              spouseName         : String?,
+                                              spouseFiscalOption : InheritanceDonation.FiscalOption?) {
+        for idx in 0..<loans.items.count {
+            loans.items[idx].ownership.transferOwnershipOfDecedent(decedentName       : decedentName,
+                                                                   chidrenNames       : chidrenNames,
+                                                                   spouseName         : spouseName,
+                                                                   spouseFiscalOption : spouseFiscalOption)
+        }
+        for idx in 0..<debts.items.count {
+            debts.items[idx].ownership.transferOwnershipOfDecedent(decedentName       : decedentName,
+                                                                   chidrenNames       : chidrenNames,
+                                                                   spouseName         : spouseName,
+                                                                   spouseFiscalOption : spouseFiscalOption)
+        }
     }
     
     /// Calcule  la valeur nette taxable du patrimoine immobilier de la famille selon la méthode de calcul choisie
@@ -55,7 +95,7 @@ struct Liabilities {
                 return loans.value(atEndOf: year)
         }
     }
-
+    
     /// Calcule le passif taxable à la succession d'une personne
     /// - Note: [Reference](https://www.service-public.fr/particuliers/vosdroits/F14198)
     /// - Parameters:

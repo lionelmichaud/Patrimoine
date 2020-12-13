@@ -210,7 +210,7 @@ struct RegimeAgirc: Codable {
     ///   - ageOfPensionLiquidComp:
     ///   - year: année de calcul
     /// - Returns: pension Agirc
-    func pension(lastAgircKnownSituation  : RegimeAgircSituation,
+    func pension(lastAgircKnownSituation  : RegimeAgircSituation, // swiftlint:disable:this function_parameter_count
                  birthDate                : Date,
                  lastKnownSituation       : RegimeGeneralSituation,
                  dateOfRetirement         : Date,

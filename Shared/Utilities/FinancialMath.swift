@@ -13,10 +13,12 @@ import os
 private let customLog = Logger(subsystem: "me.michaud.lionel.Patrimoine", category: "FinancialMath")
 
 /// Valeur future d'un investissement à capital initial et versements périodiques
-/// - Parameter payement: versement périodique
-/// - Parameter interestRate: Représente le taux d’intérêt
-/// - Parameter nbPeriod: Représente le nombre de versements
-/// - Parameter initialValue: Représente la valeur actuelle ou la valeur que représente à la date d’aujourd’hui une série de versements futurs ; il s’agit du principal de l’emprunt
+/// - Parameters:
+///  - payement: versement périodique
+///  - interestRate: Représente le taux d’intérêt
+///  - nbPeriod: Représente le nombre de versements
+///  - initialValue: Représente la valeur actuelle ou la valeur que représente à la date d’aujourd’hui une série de versements futurs ;
+///                   il s’agit du principal de l’emprunt
 /// - Returns: Valeur future en fin de période (yc les intérêts de la période échue)
 ///
 ///  - Important: Penser à annualiser les taux et le nb de périodes
@@ -37,15 +39,15 @@ public func futurValue (payement     : Double,
 }
 
 /// Montant du remboursement périodique d'un emprunt: capital + intérêt
-/// - Parameter loanedValue: (-) Représente la valeur actuelle ou la valeur que représente à la date d’aujourd’hui une série de remboursements futurs ; il s’agit du principal de l’emprunt
-/// - Parameter interestRate: Représente le taux d’intérêt de l’emprunt. Annuel.
-/// - Parameter nbPeriod:     Représente le nombre de remboursements pour l’emprunt. En années.
-/// - Returns: (-) Montant du remboursement périodique. Annuel.
-///
-///  - Note: https://formulecredit.com/mensualite.php
-///  - Important: Penser à annualiser les taux et le nb de périodes
-///  - Important: loanedValue doit être négatif (-)
-///
+/// - Parameters:
+///  - loanedValue: (-) Représente la valeur actuelle ou la valeur que représente à la date d’aujourd’hui une série de remboursements futurs ;
+///                  il s’agit du principal de l’emprunt
+///  - interestRate: Représente le taux d’intérêt de l’emprunt. Annuel.
+///  - nbPeriod:     Représente le nombre de remboursements pour l’emprunt. En années.
+/// - Returns: Montant du remboursement périodique. Annuel.
+/// - Note: https://formulecredit.com/mensualite.php
+/// - Important: Penser à annualiser les taux et le nb de périodes
+/// - Important: loanedValue doit être négatif (-)
 public func loanPayement (loanedValue  : Double,
                           interestRate : Double,
                           nbPeriod     : Int) -> Double {
@@ -54,18 +56,17 @@ public func loanPayement (loanedValue  : Double,
 
 /// Valeur résiduelle de l'emprunt en année courante
 /// - Parameters:
-/// - Parameter loanedValue: Représente la valeur actuelle ou la valeur que représente à la date d’aujourd’hui une série de remboursements futurs ; il s’agit du principal de l’emprunt
-/// - Parameter interestRate: Représente le taux d’intérêt de l’emprunt. Annuel.
-/// - Parameter firstYear:
-/// - Parameter lastYear:
-/// - Parameter currentYear:
+///  - loanedValue: Représente la valeur actuelle ou la valeur que représente à la date d’aujourd’hui une série de remboursements futurs ;
+///                            il s’agit du principal de l’emprunt
+///  - interestRate:  Représente le taux d’intérêt de l’emprunt. Annuel.
+///  - firstYear:
+///  - lastYear:
+///  - currentYear:
 /// - Returns: Valeur résiduelle de l'emprunt
 ///   - firstYear: première année de remboursement
 ///   - lastYear: dernière année de remboursement
 ///   - currentYear: année courante
-///
-///  - Important: Penser à annualiser les taux et le nb de périodes
-///
+/// - Important: Penser à annualiser les taux et le nb de périodes
 func residualValue(loanedValue  : Double,
                    interestRate : Double,
                    firstYear    : Int,
