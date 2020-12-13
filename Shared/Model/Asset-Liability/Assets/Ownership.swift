@@ -54,7 +54,7 @@ extension Owners {
 
     // MARK: - Methods
     
-    /// Transérer la PP d'un Owner vers plusieurs autres
+    /// Transérer la propriété d'un Owner vers plusieurs autres
     /// - Parameters:
     ///   - thisOwner: celui qui sort
     ///   - theseNewOwners: ceux qui le remplacent
@@ -71,6 +71,8 @@ extension Owners {
             theseNewOwners.forEach { newOwner in
                 self.append(Owner(name: newOwner, fraction: ownerShare / theseNewOwners.count.double()))
             }
+            // Factoriser les parts des owners si nécessaire
+            groupShares()
         }
     }
     
@@ -258,14 +260,14 @@ struct Ownership: Codable {
     }
     
     /// Transférer la PP d'un copropriétaire d'un bien non démembré en la répartissant
-    /// entre un usufruitier et des Nue-propriétaires
+    /// entre un usufruitier (qui récupère d'UF) et des Nue-propriétaires (qui récupèrent la NP)
     /// - Parameters:
     ///   - thisFullOwner: le PP celui qui sort
     ///   - toThisNewUsufructuary: celui qui prend l'UF
     ///   - toTheseNewBareowners: ceux qui prennent la NP
-    mutating func transferOwnership(of thisFullOwner      : String,
-                                    toThisNewUsufructuary : String,
-                                    toTheseNewBareOwners  : [String]) {
+    mutating func transferFullOwnership(of thisFullOwner      : String,
+                                        toThisNewUsufructuary : String,
+                                        toTheseNewBareOwners  : [String]) {
         if let ownerIdx = fullOwners.firstIndex(where: { thisFullOwner == $0.name }) {
             // le bien doit être démembré
             isDismembered = true
@@ -294,6 +296,35 @@ struct Ownership: Codable {
         }
     }
     
+    /// Transférer la PP d'un copropriétaire d'un bien non démembré en la répartissant
+    /// entre un usufruitier (qui récupère la quotité disponile en PP et des Nue-propriétaires (qui récupèrent la NP)
+    /// - Parameters:
+    ///   - thisFullOwner: le PP celui qui sort
+    ///   - toSpouse: le conjoint survivant
+    ///   - spouseShare: la quotité disponible pour le conjoint survivant
+    ///   - toChildren: les enfants héritiers survivants
+    mutating func transferFullOwnership(of thisFullOwner  : String,
+                                        toSpouse          : String,
+                                        quotiteDisponible : Double,
+                                        toChildren        : [String]) {
+        if let ownerIdx = fullOwners.firstIndex(where: { thisFullOwner == $0.name }) {
+            // part de PP à redistribuer
+            let ownerShare = fullOwners[ownerIdx].fraction
+            // retirer le défunt de la liste des PP
+            fullOwners.remove(at: ownerIdx)
+            // alouer la quotité disponible au conjoint survivant
+            fullOwners.append(Owner(name     : toSpouse,
+                                    fraction : ownerShare * quotiteDisponible))
+            // allouer le reste par parts égales aux enfants héritiers survivants
+            toChildren.forEach { childName in
+                fullOwners.append(Owner(name     : childName,
+                                        fraction : ownerShare * (1.0 - quotiteDisponible) / toChildren.count.double()))
+            }
+            // factoriser les parts des usufuitier et des nue-propriétaires si nécessaire
+            groupShares()
+        }
+    }
+    
     /// Factoriser les parts des usufuitier et les nue-propriétaires si nécessaire
     mutating func groupShares() {
         if isDismembered {
@@ -316,6 +347,7 @@ struct Ownership: Codable {
                                               spouseName         : String?,
                                               spouseFiscalOption : InheritanceDonation.FiscalOption?) {
         if isDismembered {
+            // le bien est démembré
             if let spouseName = spouseName {
                 // il n'y a pas de conjoint survivant:
                 // le défunt peut être usufruitier et/ou nue-propriétaire
@@ -329,13 +361,18 @@ struct Ownership: Codable {
             } else {
                 // il n'y a pas de conjoint survivant:
                 // le défunt peut être usufruitier et/ou nue-propriétaire
-                // USUFRUIT
-                // l'usufruit rejoint la nue-propriété cad que les nues-propriétaires
-                
+                // NUE-PROPRIETE
                 // retirer le défunt de la liste des nue-propriétaires
                 // et répartir sa part sur ses enfants par parts égales
                 guard let chidrenNames = chidrenNames else { return }
                 bareOwners.replace(thisOwner: decedentName, with: chidrenNames)
+                // USUFRUIT
+                // l'usufruit rejoint la nue-propriété cad que les nues-propriétaires
+                // deviennent PP et le démembrement disparaît
+                isDismembered  = false
+                fullOwners     = bareOwners
+                usufructOwners = [ ]
+                bareOwners     = [ ]
 
             }
             
@@ -354,12 +391,16 @@ struct Ownership: Codable {
                         }
                         switch spouseFiscalOption {
                             case .fullUsufruct:
-                                transferOwnership(of                    : decedentName,
-                                                  toThisNewUsufructuary : spouseName,
-                                                  toTheseNewBareOwners  : chidrenNames)
+                                transferFullOwnership(of                    : decedentName,
+                                                      toThisNewUsufructuary : spouseName,
+                                                      toTheseNewBareOwners  : chidrenNames)
                                 
                             case .quotiteDisponible:
-                                ()
+                                transferFullOwnership(of          : decedentName,
+                                                      toSpouse    : spouseName,
+                                                      quotiteDisponible : spouseFiscalOption.shares(nbChildren: chidrenNames.count,
+                                                                                              spouseAge : 0).forSpouse,
+                                                      toChildren  : chidrenNames)
                                 
                             case .usufructPlusBare:
                                 ()
