@@ -148,7 +148,7 @@ final class Patrimoin: ObservableObject {
             member is Adult && member.isAlive(atEndOf: year) && member != decedent
         }) {
             // parts d'héritage résultant de l'option fiscale retenue par le conjoint
-            inheritanceShares = (conjointSurvivant as! Adult).fiscalOption.shares(nbChildren : family.nbOfChildrenAlive(atEndOf: year),
+            inheritanceShares = (conjointSurvivant as! Adult).fiscalOption.sharedValues(nbChildren : family.nbOfChildrenAlive(atEndOf: year),
                                                                                   spouseAge  : conjointSurvivant.age(atEndOf: year))
             
             // calculer la part d'héritage du conjoint

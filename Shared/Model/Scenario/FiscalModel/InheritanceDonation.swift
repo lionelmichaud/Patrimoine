@@ -8,9 +8,17 @@
 
 import Foundation
 
+struct InheritanceSharing {
+    var forChild : (usufruct: Double, bare: Double)
+    var forSpouse: (usufruct: Double, bare: Double)
+}
+
 // MARK: - Droits de succession en ligne directe et de donation au conjoint
-///  - Note: [Reference](https://www.service-public.fr/particuliers/vosdroits/F14198)
+///  - Note:
+///   - [service-public.fr](https://www.service-public.fr/particuliers/vosdroits/F14198)
+///   - [capital.fr](https://www.capital.fr/votre-argent/succession-les-mesures-a-prendre-pour-proteger-son-conjoint-1027822)
 struct InheritanceDonation: Codable {
+    
     // nested types
     
     // options fiscale du conjoint à la succession
@@ -23,8 +31,13 @@ struct InheritanceDonation: Codable {
             self.rawValue
         }
         
-        func shares(nbChildren : Int,
-                    spouseAge  : Int)
+        /// Calcule les valeurs respectives en % des parts d'un héritage
+        /// - Parameters:
+        ///   - nbChildren: nd d'enfantss héritiers survivants
+        ///   - spouseAge: age du conjoint survivant
+        /// - Returns: valeurs respectives en % des parts d'un héritage [0, 1]
+        func sharedValues(nbChildren : Int,
+                          spouseAge  : Int)
         -> (forChild  : Double,
             forSpouse : Double) {
             switch self {
@@ -34,14 +47,36 @@ struct InheritanceDonation: Codable {
                             forSpouse: demembrement.usufructValue)
                     
                 case .quotiteDisponible:
-                    return (forChild : 1.0 / (nbChildren + 1).double(),
-                            forSpouse: 1.0 / (nbChildren + 1).double())
+                    let spouseShare = 1.0 / (nbChildren + 1).double()
+                    let childShare  = (1.0 - spouseShare) / nbChildren.double()
+                    return (forChild : childShare,
+                            forSpouse: spouseShare)
                     
                 case .usufructPlusBare:
                     let demembrement = Fiscal.model.demembrement.demembrement(of: 1.0, usufructuaryAge : spouseAge)
+                    // Conjoint = 1/4 PP + 3/4 UF
                     let spouseShare  = 0.25 + 0.75 * demembrement.usufructValue
                     return (forChild : (1.0 - spouseShare) / nbChildren.double(),
                             forSpouse: spouseShare)
+            }
+        }
+        
+        func shares(nbChildren: Int) -> InheritanceSharing {
+            switch self {
+                case .fullUsufruct:
+                    return InheritanceSharing(forChild : (usufruct: 0, bare: 1 / nbChildren.double()),
+                                              forSpouse: (usufruct: 1, bare: 0))
+                    
+                case .quotiteDisponible:
+                    let spouseShare = 1.0 / (nbChildren + 1).double()
+                    let childShare  = (1.0 - spouseShare) / nbChildren.double()
+                    return InheritanceSharing(forChild : (usufruct: childShare, bare: childShare),
+                                              forSpouse: (usufruct: spouseShare, bare: spouseShare))
+                    
+                case .usufructPlusBare:
+                    // Conjoint = 1/4 PP + 3/4 UF
+                    return InheritanceSharing(forChild : (usufruct: 0, bare: 0.75 / nbChildren.double()),
+                                              forSpouse: (usufruct: 1, bare: 0.25))
             }
         }
     }
