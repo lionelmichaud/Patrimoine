@@ -8,6 +8,8 @@
 
 import Foundation
 
+// MARK: - Les droits de propriété d'un Owner
+
 struct Owner : Codable, Hashable {
     
     // MARK: - Properties
@@ -27,6 +29,8 @@ struct Owner : Codable, Hashable {
     }
     
 }
+
+// MARK: - Un tableau de Owner
 
 typealias Owners = [Owner]
 
@@ -96,6 +100,8 @@ extension Owners {
     }
     
 }
+
+// MARK: - La répartition des droits de propriété d'un bien entre personnes
 
 struct Ownership: Codable {
     
@@ -261,119 +267,96 @@ struct Ownership: Codable {
         }
     }
     
-    /// Transférer la PP d'un copropriétaire d'un bien non démembré en la répartissant
-    /// entre un usufruitier (qui récupère d'UF) et des Nue-propriétaires (qui récupèrent la NP)
+    /// Transférer l'usufruit du défunt aux nue-propriétaires
+    /// - Note:
+    ///   - le défunt était seulement usufruitier
+    ///   - le défunt avait donné sa nue-propriété avant son décès, alors l'usufruit rejoint la nue-propriété
+    ///   - cad que les nues-propriétaires deviennent PP
     /// - Parameters:
-    ///   - thisFullOwner: le PP celui qui sort
-    ///   - toThisNewUsufructuary: celui qui prend l'UF
-    ///   - toTheseNewBareowners: ceux qui prennent la NP
-    mutating func transferFullOwnership(of thisFullOwner      : String,
-                                        toThisNewUsufructuary : String,
-                                        toTheseNewBareOwners  : [String]) {
-        if let ownerIdx = fullOwners.firstIndex(where: { thisFullOwner == $0.name }) {
-            // le bien doit être démembré
-            isDismembered = true
-            usufructOwners = [ ]
-            bareOwners     = [ ]
-            // démembrer les éventuels autres copropriétaire en PP sans réduire leurs parts
-            // X% PP => X% NP + X% UF
-            fullOwners.forEach { fullOwner in
-                if fullOwner.name != thisFullOwner {
-                    usufructOwners.append(fullOwner)
-                    bareOwners.append(fullOwner)
+    ///   - decedentName: le nom du défunt
+    ///   - chidrenNames: les enfants héritiers survivants
+    mutating func transferUsufruct(of decedentName         : String,
+                                   toChildren chidrenNames : [String]?) {
+        if let chidrenNames = chidrenNames {
+            // on transmet l'UF aux nue-propriétaires (enfants seulement)
+            // FIXME: - cela ne fonctionne que si la donnation de nue-propriété n'est faite qu'à des enfants
+            if let ownerIdx = usufructOwners.firstIndex(where: { decedentName == $0.name }) {
+                // la part d'usufruit à transmettre
+                let ownerShare = usufructOwners[ownerIdx].fraction
+                // on compte le nb d'enfants parmis les nue-propriétaires
+                let nbChildren = bareOwners
+                    .filter({ owner in
+                        chidrenNames.contains(where: { $0 == owner.name })
+                    })
+                    .count
+                // la part transmise à chauqe enfant
+                let fraction = ownerShare / nbChildren.double()
+                
+                // on la transmet par part égales aux enfants nue-propriétaires
+                chidrenNames.forEach { childName in
+                    if bareOwners.contains(where: { $0.name == childName }) {
+                        usufructOwners.append(Owner(name: childName, fraction: fraction))
+                    }
                 }
+                // on supprime le défunt de la liste
+                usufructOwners.remove(at: ownerIdx)
+                // factoriser les parts des usufuitiers et des nue-propriétaires si nécessaire
+                groupShares()
             }
-            // part de PP à redistribuer
-            let ownerShare = fullOwners[ownerIdx].fraction
-            // UF => toThisNewUsufructuary
-            usufructOwners.append(Owner(name: toThisNewUsufructuary, fraction: ownerShare))
-            // NP => répartie par part égales entre les toTheseNewBareOwners
-            toTheseNewBareOwners.forEach { newBareOwner in
-                bareOwners.append(Owner(name: newBareOwner, fraction: ownerShare / toTheseNewBareOwners.count.double()))
-            }
-            fullOwners = [ ]
-            
-            // factoriser les parts des usufuitier et des nue-propriétaires si nécessaire
-            groupShares()
         }
     }
     
-    /// Transférer la PP d'un copropriétaire d'un bien non démembré en la répartissant
-    /// entre un usufruitier (qui récupère la quotité disponile en PP) et des Nue-propriétaires (qui récupèrent la NP)
+    /// Transférer la NP et UF  d'un copropriétaire d'un bien démembré à ses héritiers selon l'option retenue par le conjoint survivant
+    /// - Note:
+    ///  - le défunt était usufruitier et nue-propriétaire
+    ///  - UF + NP sont transmis selon l'option du conjoint survivant comme une PP
+    ///
     /// - Parameters:
-    ///   - thisFullOwner: le PP celui qui sort
-    ///   - toSpouse: le conjoint survivant
-    ///   - spouseShare: la quotité disponible pour le conjoint survivant
-    ///   - toChildren: les enfants héritiers survivants
-    mutating func transferFullOwnership(of thisFullOwner  : String,
-                                        toSpouse          : String,
-                                        quotiteDisponible : Double,
-                                        toChildren        : [String]) {
-        if let ownerIdx = fullOwners.firstIndex(where: { thisFullOwner == $0.name }) {
-            // part de PP à redistribuer
-            let ownerShare = fullOwners[ownerIdx].fraction
-            // retirer le défunt de la liste des PP
-            fullOwners.remove(at: ownerIdx)
-            // alouer la quotité disponible au conjoint survivant
-            fullOwners.append(Owner(name     : toSpouse,
-                                    fraction : ownerShare * quotiteDisponible))
-            // allouer le reste par parts égales aux enfants héritiers survivants
-            toChildren.forEach { childName in
-                fullOwners.append(Owner(name     : childName,
-                                        fraction : ownerShare * (1.0 - quotiteDisponible) / toChildren.count.double()))
+    ///   - decedentName: le nom du défunt
+    ///   - spouseName: le conjoint survivant
+    ///   - chidrenNames: les enfants héritiers survivants
+    ///   - spouseFiscalOption: option fiscale du conjoint survivant éventuel
+    mutating func transferUsufructAndBareOwnership(of decedentName         : String,
+                                                   toSpouse spouseName     : String,
+                                                   toChildren chidrenNames : [String]?,
+                                                   spouseFiscalOption      : InheritanceDonation.FiscalOption?) {
+        if let chidrenNames = chidrenNames {
+            // il y a des enfants héritiers
+            // transmission NP + UF selon l'option fiscale du conjoint survivant
+            guard let spouseFiscalOption = spouseFiscalOption else {
+                fatalError("pas d'option fiscale passée en paramètre de transferOwnershipOfDecedent")
             }
-            // factoriser les parts des usufuitier et des nue-propriétaires si nécessaire
-            groupShares()
-        }
-    }
-    
-    /// Transférer la PP d'un copropriétaire d'un bien non démembré en la répartissant
-    /// entre un usufruitier (qui récupère 1/4 en PP +3/4 en UF) et des Nue-propriétaires (qui récupèrent le reste)
-    /// - Parameters:
-    ///   - thisFullOwner: le PP celui qui sort
-    ///   - toSpouse: le conjoint survivant
-    ///   - toChildren: les enfants héritiers survivants
-    ///   - shares: répartition des UF et NP entre conjoint et enfants
-    mutating func transferFullOwnership(of thisFullOwner        : String,
-                                        toSpouse                : String,
-                                        toChildren              : [String],
-                                        withThisSharing sharing : InheritanceSharing) {
-        if let ownerIdx = fullOwners.firstIndex(where: { thisFullOwner == $0.name }) {
-            // le bien doit être démembré
-            isDismembered = true
-            usufructOwners = [ ]
-            bareOwners     = [ ]
-            // démembrer les éventuels autres copropriétaire en PP sans réduire leurs parts
-            // X% PP => X% NP + X% UF
-            fullOwners.forEach { fullOwner in
-                if fullOwner.name != thisFullOwner {
-                    usufructOwners.append(fullOwner)
-                    bareOwners.append(fullOwner)
-                }
-            }
-            // part de PP à redistribuer
-            let ownerShare = fullOwners[ownerIdx].fraction
-            // redistribution de l'UF
-            usufructOwners.append(Owner(name     : toSpouse,
-                                        fraction : ownerShare * sharing.forSpouse.usufruct))
-            toChildren.forEach { childName in
-                usufructOwners.append(Owner(name     : childName,
-                                            fraction : ownerShare * sharing.forChild.usufruct))
-            }
-
-            // redistribution de la NP
-            bareOwners.append(Owner(name     : toSpouse,
-                                    fraction : ownerShare * sharing.forSpouse.bare))
-            toChildren.forEach { childName in
-                bareOwners.append(Owner(name     : childName,
-                                        fraction : ownerShare * sharing.forChild.bare))
-            }
+            // l'UF du défunt rejoint la nue propriété des enfants qui la détiennent
+            transferUsufruct(of         : decedentName,
+                             toChildren : chidrenNames)
+            // la NP est transmise aux enfants nue-propriétaires
+            transferBareOwnership(of                 : decedentName,
+                                  toSpouse           : spouseName,
+                                  toChildren         : chidrenNames,
+                                  spouseFiscalOption : spouseFiscalOption)
             
-            fullOwners = [ ] // le bien est démembré
-
-            // factoriser les parts des usufuitier et des nue-propriétaires si nécessaire
-            groupShares()
+        } else {
+            // il n'y pas d'enfant héritier mais un conjoint survivant
+            // tout revient au conjoint survivant en PP
+            // on transmet l'UF au conjoint survivant
+            if let ownerIdx = usufructOwners.firstIndex(where: { decedentName == $0.name }) {
+                // la part d'usufruit à transmettre
+                let ownerShare = usufructOwners[ownerIdx].fraction
+                usufructOwners.append(Owner(name: spouseName, fraction: ownerShare))
+                // on supprime le défunt de la liste
+                usufructOwners.remove(at: ownerIdx)
+            }
+            // on transmet la NP au conjoint survivant
+            if let ownerIdx = bareOwners.firstIndex(where: { decedentName == $0.name }) {
+                let ownerShare = bareOwners[ownerIdx].fraction
+                // la part de nue-propriété à transmettre
+                bareOwners.append(Owner(name: spouseName, fraction: ownerShare))
+                // on supprime le défunt de la liste
+                bareOwners.remove(at: ownerIdx)
+            }
         }
+        // factoriser les parts des usufuitiers et des nue-propriétaires si nécessaire
+        groupShares()
     }
     
     /// Factoriser les parts des usufuitier et les nue-propriétaires si nécessaire
@@ -383,44 +366,6 @@ struct Ownership: Codable {
             bareOwners.groupShares()
         } else {
             fullOwners.groupShares()
-        }
-    }
-    
-    mutating func transferFullOwnership(of decedentName         : String,
-                                        toSpouse spouseName     : String,
-                                        toChildren chidrenNames : [String]?,
-                                        spouseFiscalOption      : InheritanceDonation.FiscalOption?) {
-        // il y a un conoint survivant
-        if let chidrenNames = chidrenNames {
-            // il y a des enfants héritiers
-            // selon l'option fiscale du conjoint survivant
-            guard let spouseFiscalOption = spouseFiscalOption else {
-                fatalError("pas d'option fiscale passée en paramètre de transferOwnershipOfDecedent")
-            }
-            switch spouseFiscalOption {
-                case .fullUsufruct:
-                    transferFullOwnership(of                    : decedentName,
-                                          toThisNewUsufructuary : spouseName,
-                                          toTheseNewBareOwners  : chidrenNames)
-                    
-                case .quotiteDisponible:
-                    let shares = spouseFiscalOption.shares(nbChildren: chidrenNames.count)
-                    transferFullOwnership(of                : decedentName,
-                                          toSpouse          : spouseName,
-                                          quotiteDisponible : shares.forSpouse.bare,
-                                          toChildren        : chidrenNames)
-                    
-                case .usufructPlusBare:
-                    let sharing = spouseFiscalOption.shares(nbChildren: chidrenNames.count)
-                    transferFullOwnership(of              : decedentName,
-                                          toSpouse        : spouseName,
-                                          toChildren      : chidrenNames,
-                                          withThisSharing : sharing)
-            }
-        } else {
-            // il n'y pas d'enfant héritier mais un conoint survivant
-            // tout revient au conjoint survivant en PP
-            fullOwners = [Owner(name: spouseName, fraction: 1.0)]
         }
     }
     
@@ -438,15 +383,41 @@ struct Ownership: Codable {
         if isDismembered {
             // le bien est démembré
             if let spouseName = spouseName {
-                // il y a un conoint survivant
+                // il y a un conjoint survivant
                 // le défunt peut être usufruitier et/ou nue-propriétaire
+                
                 // USUFRUIT
-                // l'usufruit rejoint la nue-propriété cad que les nues-propriétaires
-                
-                // NUE-PROPRIETE
-                // retirer le défunt de la liste des nue-propriétaires
-                // et répartir sa part sur ses enfants par parts égales
-                
+                if usufructOwners.contains(where: { decedentName == $0.name }) {
+                    // le défunt était usufruitier
+                    if bareOwners.contains(where: { decedentName == $0.name }) {
+                        // le défunt était aussi nue-propriétaire
+                        // le défunt possèdait encore la UF + NP et les deux sont transmis
+                        // selon l'option du conjoint survivant comme une PP
+                        transferUsufructAndBareOwnership(of                 : decedentName,
+                                                         toSpouse           : spouseName,
+                                                         toChildren         : chidrenNames,
+                                                         spouseFiscalOption : spouseFiscalOption)
+                        
+                    } else {
+                        // le défunt était seulement usufruitier
+                        // le défunt avait donné sa nue-propriété avant son décès, alors l'usufruit rejoint la nue-propriété
+                        // cad que les nues-propriétaires deviennent PP
+                        transferUsufruct(of         : decedentName,
+                                         toChildren : chidrenNames)
+
+                    }
+                } else if bareOwners.contains(where: { decedentName == $0.name }) {
+                    // le défunt était seulement nue-propriétaire
+                    // NUE-PROPRIETE
+                    // retirer le défunt de la liste des nue-propriétaires
+                    // et répartir sa part sur ses héritiers selon l'option retenue par le conjoint survivant
+                    transferBareOwnership(of                 : decedentName,
+                                          toSpouse           : spouseName,
+                                          toChildren         : chidrenNames,
+                                          spouseFiscalOption : spouseFiscalOption)
+
+                } // sinon on ne fait rien
+
             } else if let chidrenNames = chidrenNames {
                 // il n'y a pas de conjoint survivant
                 // mais il y a des enfants survivants
