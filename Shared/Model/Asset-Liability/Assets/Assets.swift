@@ -51,9 +51,26 @@ struct Assets {
         self.realEstates     = RealEstateArray(family: family)
         self.scpis           = ScpiArray(family: family) // SCPI hors de la SCI
         self.sci             = SCI(family: family)
+
+        // initialiser le vetcuer d'état de chaque FreeInvestement à la date courante
+        resetFreeInvestementCurrentValue()
     }
     
     // MARK: - Methods
+    
+    /// Réinitialiser les valeurs courantes des investissements libres
+    /// - Warning:
+    ///   - Doit être appelée après le chargement d'un objet FreeInvestement depuis le fichier JSON
+    ///   - Doit être appelée après toute simulation ayant affectée le Patrimoine (succession)
+    mutating func resetFreeInvestementCurrentValue() {
+        var investements = [FreeInvestement]()
+        freeInvests.items.forEach {
+            var invest = $0
+            invest.resetCurrentState()
+            investements.append(invest)
+        }
+        freeInvests.items = investements
+    }
     
     /// Recharger depuis les fichiers pour repartir d'une situation initiale
     /// - Note: Doit être appelé avant de lancer un nouveau run de simulation
@@ -65,6 +82,9 @@ struct Assets {
         realEstates     = RealEstateArray(family: Patrimoin.family)
         scpis           = ScpiArray(family: Patrimoin.family) // SCPI hors de la SCI
         sci             = SCI(family: Patrimoin.family)
+        
+        // initialiser le vetcuer d'état de chaque FreeInvestement à la date courante
+        resetFreeInvestementCurrentValue()
     }
     
     func value(atEndOf year: Int) -> Double {

@@ -668,8 +668,8 @@
 			children = (
 				799488F1249E4FC100DAFF1E /* PatrimoineView.swift */,
 				799488F9249E4FC100DAFF1E /* PatrimoineSummaryView.swift */,
-				799488F0249E4FC100DAFF1E /* AssetView.swift */,
 				79BF6FB12574112800F19A81 /* OwnershipView.swift */,
+				799488F0249E4FC100DAFF1E /* AssetView.swift */,
 				799488F2249E4FC100DAFF1E /* AssetDetailedViews */,
 				799488F8249E4FC100DAFF1E /* LiabilityView.swift */,
 				799488FA249E4FC100DAFF1E /* LiabilityDetailedViews */,

@@ -31,10 +31,15 @@ struct LiabilityView: View {
 struct LoanView: View {
     @EnvironmentObject var family     : Family
     @EnvironmentObject var patrimoine : Patrimoin
+    @EnvironmentObject var simulation : Simulation
     @EnvironmentObject var uiState    : UIState
 
     func removeItems(at offsets: IndexSet) {
         patrimoine.liabilities.loans.delete(at: offsets)
+        
+        // remettre à zéro la simulation et sa vue
+        simulation.reset(withPatrimoine: patrimoine)
+        uiState.resetSimulation()
     }
     
     func move(from source: IndexSet, to destination: Int) {
@@ -87,10 +92,15 @@ struct LoanView: View {
 struct DebtView: View {
     @EnvironmentObject var family     : Family
     @EnvironmentObject var patrimoine : Patrimoin
+    @EnvironmentObject var simulation : Simulation
     @EnvironmentObject var uiState    : UIState
 
     func removeItems(at offsets: IndexSet) {
         patrimoine.liabilities.debts.delete(at: offsets)
+
+        // remettre à zéro la simulation et sa vue
+        simulation.reset(withPatrimoine: patrimoine)
+        uiState.resetSimulation()
     }
     
     func move(from source: IndexSet, to destination: Int) {

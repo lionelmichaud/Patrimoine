@@ -233,16 +233,15 @@ final class Patrimoin: ObservableObject {
     }
     
     /// Réinitialiser les valeurs courantes des investissements libres
+    /// - Warning:
+    ///   - Doit être appelée après le chargement d'un objet FreeInvestement depuis le fichier JSON
+    ///   - Doit être appelée après toute simulation ayant affectée le Patrimoine (succession)
     func resetFreeInvestementCurrentValue() {
-        var investements = [FreeInvestement]()
-        assets.freeInvests.items.forEach {
-            var invest = $0
-            invest.resetCurrentState()
-            investements.append(invest)
-        }
-        assets.freeInvests.items = investements
+        assets.resetFreeInvestementCurrentValue()
     }
     
+    /// Recharger les actifs et passifs à partir des fichiers pour repartir d'une situation initiale sans aucune modification
+    /// - Warning: Doit être appelée après toute simulation ayant affectée le Patrimoine (succession)
     func reLoad() {
         assets.reLoad()
         liabilities.reLoad()

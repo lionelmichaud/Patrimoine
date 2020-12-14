@@ -99,15 +99,19 @@ final class Simulation: ObservableObject {
     ///   - les KPI peuvent être réinitialisés
     ///
     /// - Parameters:
-    ///   - family: la famille
     ///   - patrimoine: le patrimoine
     ///   - includingKPIs: réinitialiser les KPI (seulement sur le premier run)
     ///
     func reset(withPatrimoine patrimoine : Patrimoin,
                includingKPIs             : Bool = true) {
         // réinitialiser les comptes sociaux du patrimoine de la famille
-        socialAccounts.reset(withPatrimoine : patrimoine)
+        socialAccounts.reset()
         
+        // réinitialiser le patrimoine pour repartir d'une situation initiale
+        // sans aucune altération par des simulation passées éventuelles
+        //patrimoine.resetFreeInvestementCurrentValue()
+        patrimoine.reLoad()
+
         // remettre à zéro l'historique des KPI (Histogramme)
         //  - au début d'un MontéCarlo seulement
         //  - mais pas à chaque Run
