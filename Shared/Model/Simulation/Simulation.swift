@@ -44,6 +44,17 @@ enum SimulationKPIEnum: Int, PickableEnum, Codable, Hashable {
                 return "Actif au Dernier Décès"
         }
     }
+    
+    var note: String {
+        switch self {
+            case .minimumAsset:
+                return "Valeure minimale atteinte dans le temps pour la somme des actifs financiers nets (hors immobilier physique)"
+            case .assetAt1stDeath:
+                return "Valeure totale des actifs financiers nets (immobilier inclus) au premier décès"
+            case .assetAt2ndtDeath:
+                return "Valeure totale des actifs financiers nets (immobilier inclus) au second décès"
+        }
+    }
 }
 
 // MARK: - Simulation: une simulation contient: les scénarios, les résultats de simulation
@@ -74,16 +85,19 @@ final class Simulation: ObservableObject {
     init() {
         /// initialiser les KPI
         let kpiMinimumCash = KPI(name            : SimulationKPIEnum.minimumAsset.displayString,
+                                 note            : SimulationKPIEnum.minimumAsset.note,
                                  objective       : 200_000.0,
                                  withProbability : 0.98)
         kpis.append(kpiMinimumCash)
         
         let kpiAssetsAtFirstDeath = KPI(name            : SimulationKPIEnum.assetAt1stDeath.displayString,
+                                        note            : SimulationKPIEnum.assetAt1stDeath.note,
                                         objective       : 200_000.0,
                                         withProbability : 0.98)
         kpis.append(kpiAssetsAtFirstDeath)
         
         let kpiAssetsAtLastDeath = KPI(name            : SimulationKPIEnum.assetAt2ndtDeath.displayString,
+                                       note            : SimulationKPIEnum.assetAt2ndtDeath.note,
                                        objective       : 200_000.0,
                                        withProbability : 0.98)
         kpis.append(kpiAssetsAtLastDeath)

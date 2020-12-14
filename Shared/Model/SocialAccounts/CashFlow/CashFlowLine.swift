@@ -135,10 +135,8 @@ struct CashFlowLine {
         // rechercher l'adulte qui vient de décéder
         if let decedent = family.members.first(where: { !$0.isAlive(atEndOf: year) && $0.isAlive(atEndOf: year-1) }) {
             // un décès est survenu
-            Swift.print("Personne décédée: \(decedent.displayName) en \(year)")
             // ajouter les droits de succession aux taxes
             taxes.inheritances = patrimoine.inheritance(of: decedent, atEndOf: year)
-            Swift.print("    Héritage: \(taxes.inheritances)")
             taxes.perCategory[.succession]?.namedValues.append((name  : TaxeCategory.succession.rawValue,
                                                                 value : taxes.inheritances.sum(for : \.tax).rounded()))
             

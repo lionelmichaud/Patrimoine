@@ -13,6 +13,7 @@ struct KpiListSummaryView: View {
     
     var body: some View {
         Text("Mode de Calcul " + simulation.mode.displayString)
+            .bold()
         Form {
             ForEach(simulation.kpis) { kpi in
                 Section(header: Text(kpi.name)) {
@@ -36,6 +37,14 @@ struct KpiSummaryView: View {
     var body: some View {
         if kpi.hasValue(for: simulation.mode) {
             if withDetails {
+                Text(kpi.note)
+                    .lineLimit(2)
+                    .multilineTextAlignment(.center)
+                    .frame(maxHeight: 45, alignment: .leading)
+                    .padding(.horizontal, 8)
+                    .background(Color.secondary)
+                    .cornerRadius(5)
+                    .padding(.top, 3)
                 AmountView(label   : "Valeur Objectif Minimale",
                            amount  : kpi.objective,
                            comment : simulation.mode == .random ? "à atteindre avec une probabilité ≥ \((kpi.probaObjective * 100.0).percentString())%" : "")

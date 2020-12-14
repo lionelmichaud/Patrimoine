@@ -100,6 +100,7 @@ struct KPI: Identifiable, Codable {
     
     var id = UUID()
     var name            : String
+    var note            : String
     // objectif à atteindre
     var objective       : Double
     // probability d'atteindre l'objectif
@@ -112,9 +113,11 @@ struct KPI: Identifiable, Codable {
     // MARK: - Initializers
     
     internal init(name            : String,
+                  note            : String = "",
                   objective       : Double,
                   withProbability : Double) {
         self.name           = name
+        self.note           = note
         self.objective      = objective
         self.probaObjective = withProbability
         // initializer l'histogramme sans les cases

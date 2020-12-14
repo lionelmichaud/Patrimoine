@@ -32,7 +32,7 @@ struct KpiDetailedView: View {
     
     var body: some View {
         VStack {
-            Section(header: Text("Mode de Calcul " + simulation.mode.displayString)) {
+            Section(header: Text("Mode de Calcul " + simulation.mode.displayString).bold()) {
                 // afficher le résumé
                 KpiSummaryView(kpi         : kpi,
                                withPadding : true,

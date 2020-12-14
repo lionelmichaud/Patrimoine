@@ -66,13 +66,6 @@ struct Assets {
         for idx in 0..<freeInvests.items.count {
             freeInvests[idx].resetCurrentState()
         }
-//        var investements = [FreeInvestement]()
-//        freeInvests.items.forEach {
-//            var invest = $0
-//            invest.resetCurrentState()
-//            investements.append(invest)
-//        }
-//        freeInvests.items = investements
     }
     
     /// Recharger depuis les fichiers pour repartir d'une situation initiale
