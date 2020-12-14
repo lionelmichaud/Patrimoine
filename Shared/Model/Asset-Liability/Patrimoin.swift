@@ -138,7 +138,7 @@ final class Patrimoin: ObservableObject {
         var inheritanceShares : (forChild: Double, forSpouse: Double) = (0, 0)
         
         guard let family = Patrimoin.family else { return inheritances }
-        print("Succession de \(decedent.displayName)")
+//        print("Succession de \(decedent.displayName)")
 
         // Calcul de la masse successorale taxable du défunt
         let totalTaxableInheritance = taxableInheritanceValue(of: decedent, atEndOf: year)
@@ -159,7 +159,7 @@ final class Patrimoin: ObservableObject {
             let tax = 0.0
             
             print("  Part d'héritage de \(conjointSurvivant.displayName) = \(brut)")
-            print("  Taxe = \(tax)")
+            print("    Taxe = \(tax)")
             inheritances.append(Inheritance(person  : conjointSurvivant,
                                             percent : share,
                                             brut    : brut,
@@ -188,8 +188,8 @@ final class Patrimoin: ObservableObject {
                     // caluler les droits de succession du conjoint
                     let inheritance = Fiscal.model.inheritanceDonation.heritageOfChild(partSuccession: brut)
                     
-                    print("Part d'héritage de \(child.displayName) = \(brut)")
-                    print("  Taxe = \(inheritance.taxe)")
+                    print("  Part d'héritage de \(child.displayName) = \(brut)")
+                    print("    Taxe = \(inheritance.taxe)")
                     inheritances.append(Inheritance(person  : child,
                                                     percent : share,
                                                     brut    : brut,
@@ -198,7 +198,7 @@ final class Patrimoin: ObservableObject {
                 }
             }
         }
-        print("    Taxe totale = ", inheritances.sum(for: \.tax))
+        print("  Taxe totale = ", inheritances.sum(for: \.tax))
         return inheritances
     }
     

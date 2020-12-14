@@ -63,13 +63,16 @@ struct Assets {
     ///   - Doit être appelée après le chargement d'un objet FreeInvestement depuis le fichier JSON
     ///   - Doit être appelée après toute simulation ayant affectée le Patrimoine (succession)
     mutating func resetFreeInvestementCurrentValue() {
-        var investements = [FreeInvestement]()
-        freeInvests.items.forEach {
-            var invest = $0
-            invest.resetCurrentState()
-            investements.append(invest)
+        for idx in 0..<freeInvests.items.count {
+            freeInvests[idx].resetCurrentState()
         }
-        freeInvests.items = investements
+//        var investements = [FreeInvestement]()
+//        freeInvests.items.forEach {
+//            var invest = $0
+//            invest.resetCurrentState()
+//            investements.append(invest)
+//        }
+//        freeInvests.items = investements
     }
     
     /// Recharger depuis les fichiers pour repartir d'une situation initiale
