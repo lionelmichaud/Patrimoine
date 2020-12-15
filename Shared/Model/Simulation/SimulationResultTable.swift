@@ -185,6 +185,8 @@ extension SimulationResultTable {
             return header
         }
         
+        guard !self.isEmpty else { return }
+        
         let csvString = self.reduce(header() + lineBreak, { result, element in result + element.valuesCSV + lineBreak })
 //        print(csvString)
 

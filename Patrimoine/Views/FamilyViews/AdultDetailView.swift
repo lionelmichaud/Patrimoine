@@ -205,7 +205,7 @@ private struct InheritanceSectionView: View {
             if let adult = member as? Adult {
                 DisclosureGroup(
                     content: {
-                        heritageDisclosure(adult: adult)
+                        inheritanceOptionDisclosureView(adult: adult)
                         deceaseDisclosure(decedent: adult)
                     },
                     label: {
@@ -218,7 +218,7 @@ private struct InheritanceSectionView: View {
     /// Option fiscale retenue en cas d'héritage
     /// - Parameter adult: défunt
     /// - Returns: DisclosureGroup
-    func heritageDisclosure(adult: Adult) -> some View {
+    func inheritanceOptionDisclosureView(adult: Adult) -> some View {
         DisclosureGroup(
             content: {
                 LabeledText(label: "Option fiscale retenue",
@@ -250,18 +250,17 @@ private struct InheritanceSectionView: View {
     func inheritanceDisclosure(label        : String,
                                atEndOf year : Int,
                                decedent     : Adult) -> some View {
-        let inheritances = patrimoine.inheritance(of: decedent, atEndOf: year)
+        let succession = patrimoine.succession(of: decedent, atEndOf: year)
         
         return DisclosureGroup(
             content: {
                 AmountView(label : "Masse successorale",
                            amount: patrimoine.taxableInheritanceValue(of: decedent, atEndOf: year))
                 AmountView(label : "Droits de succession à payer par les héritiers",
-                           amount: -inheritances.sum(for: \.tax))
+                           amount: -succession.tax)
                 AmountView(label : "Succession nette laissée aux héritiers",
-                           amount: inheritances.sum(for: \.net))
-                NavigationLink(destination: InheritancesDetailView(decedent    : decedent,
-                                                                   inheritances: inheritances)) {
+                           amount: succession.net)
+                NavigationLink(destination: SuccessorsListView(inheritances: succession.inheritances)) {
                     Text("Héritage")
                         .foregroundColor(.blue)
                 }
@@ -273,35 +272,17 @@ private struct InheritanceSectionView: View {
     }
 }
 
-private struct InheritancesDetailView: View {
-    var decedent     : Adult
+struct SuccessorsListView: View {
     var inheritances : [Inheritance]
     
     var body: some View {
         List {
-            ForEach(inheritances, id: \.person.id) { share in
-                GroupBox(label: groupBoxLabel(person: share.person)) {
-                    PercentView(label   : "Part de la Succession",
-                                percent : share.percent)
-                    AmountView(label : "Valeur Héritée Brute",
-                               amount: share.brut)
-                    AmountView(label : "Droits de Succession à Payer",
-                               amount: -share.tax)
-                    AmountView(label : "Valeur Héritée Nette",
-                               amount: share.net)
-                }
+            ForEach(inheritances, id: \.person.id) { inheritence in
+                SuccessorView(inheritence: inheritence)
             }
         }
         .navigationTitle("Héritage")
         .navigationBarTitleDisplayMode(.inline)
-
-    }
-    
-    func groupBoxLabel(person: Person) -> some View {
-        HStack {
-            Text(person.displayName)
-            Spacer()
-            Text(person is Adult ? "Conjoint" : "Enfant")
-        }
+        
     }
 }

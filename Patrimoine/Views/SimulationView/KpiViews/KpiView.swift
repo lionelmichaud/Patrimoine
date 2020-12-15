@@ -23,7 +23,7 @@ struct KpiView: View {
             }
             
         } else {
-            Section {
+            Section(header: Text("Performance")) {
                 // synthèse des KPIs
                 DisclosureGroup(isExpanded: $isKpiExpanded,
                                 content: {
@@ -36,7 +36,7 @@ struct KpiView: View {
                                                     .imageScale(.medium)
                                                     .foregroundColor(allObjectivesAreReached ? .green : .red)
                                             }
-                                            Text("Synthèse des KPIs")
+                                            Text("Synthèse")
                                         }
                                     }
                                     .isDetailLink(true)
@@ -48,7 +48,7 @@ struct KpiView: View {
                                     GridsView()
                                 },
                                 label: {
-                                    Text("KPI")//.font(.headline)
+                                    Text("Indicateurs")//.font(.headline)
                                 })
             }
         }

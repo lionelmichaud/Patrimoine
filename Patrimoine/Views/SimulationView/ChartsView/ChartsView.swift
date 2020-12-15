@@ -18,7 +18,7 @@ struct ChartsView: View {
 
     var body: some View {
         if simulation.isComputed {
-            Section {
+            Section(header: Text("Graphiques") ) {
                 DisclosureGroup(isExpanded: $isBsExpanded,
                                 content: {
                                     NavigationLink(destination : BalanceSheetGlobalChartView(),
@@ -38,9 +38,7 @@ struct ChartsView: View {
                                 label: {
                                     Text("Bilan")//.font(.headline)
                                 })
-            }
-            
-            Section {
+
                 DisclosureGroup(isExpanded: $isCfExpanded,
                                 content: {
                                     NavigationLink(destination : CashFlowGlobalChartView(),
@@ -60,9 +58,7 @@ struct ChartsView: View {
                                 label: {
                                     Text("Cash Flow")//.font(.headline)
                                 })
-            }
-            
-            Section {
+
                 DisclosureGroup(isExpanded: $isIrppExpanded,
                                 content: {
                                     NavigationLink(destination : IrppEvolutionChartView(),
@@ -82,9 +78,7 @@ struct ChartsView: View {
                                 label: {
                                     Text("Impôt sur le Revenu")//.font(.headline)
                                 })
-            }
-            
-            Section {
+
                 DisclosureGroup(isExpanded: $isIsfExpanded,
                                 content: {
                                     NavigationLink(destination : IsfEvolutionChartView(),

@@ -13,7 +13,10 @@ struct SimulationView: View {
     @EnvironmentObject var uiState    : UIState
     
     enum PushedItem {
-        case computationView, bilanSynthese, bilanDetail, cfSynthese, cfDetail, kpiSummaryView, shortGridView, irppSynthesis, irppSlices, isfSynthesis, isfSlices
+        case computationView, bilanSynthese, bilanDetail, cfSynthese, cfDetail
+        case kpiSummaryView, shortGridView
+        case irppSynthesis, irppSlices, isfSynthesis, isfSlices
+        case successions
     }
     
     var body: some View {
@@ -37,6 +40,10 @@ struct SimulationView: View {
                     
                     // affichage des résultats graphiques
                     ChartsView()
+                    
+                    // affichage des autres résultats
+                    SimulationOthersView()
+
                 }
                 .defaultSideBarListStyle()
                 //.listStyle(InsetGroupedListStyle())

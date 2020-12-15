@@ -20,7 +20,24 @@ enum EvaluationMethod: String, PickableEnum {
     }
 }
 
-// MARK: - Héritage dune personne
+// MARK: - Succession d'une personne
+
+struct Succession: Identifiable {
+    let id           = UUID()
+    let yearOfDeath  : Int
+    let decedent     : Person
+    let taxableValue : Double
+    let inheritances : [Inheritance]
+    
+    var net: Double {
+        inheritances.sum(for: \.net)
+    }
+    var tax: Double {
+        inheritances.sum(for: \.tax)
+    }
+}
+
+// MARK: - Héritage d'une personne
 struct Inheritance {
     var person  : Person
     var percent : Double
@@ -126,30 +143,37 @@ final class Patrimoin: ObservableObject {
             liabilities.taxableInheritanceValue(of: decedent, atEndOf: year)
     }
     
-    /// Calcule la masse successorale taxable du défunt
+    /// Calcule la succession d'un défunt et retourne une table des héritages et droits de succession pour chaque héritier
     /// - Parameters:
     ///   - decedent: défunt
     ///   - year: année d'évaluation
-    /// - Returns: Table des héritages et droits de succession pour chaque héritier
-    func inheritance(of decedent  : Person,
-                     atEndOf year : Int) -> [Inheritance] {
+    /// - Returns: Succession du défunt incluant la table des héritages et droits de succession pour chaque héritier
+    func succession(of decedent  : Person,
+                    atEndOf year : Int) -> Succession {
         
         var inheritances      : [Inheritance] = []
         var inheritanceShares : (forChild: Double, forSpouse: Double) = (0, 0)
         
-        guard let family = Patrimoin.family else { return inheritances }
-//        print("Succession de \(decedent.displayName)")
+        guard let family = Patrimoin.family else {
+            return Succession(yearOfDeath  : year,
+                              decedent     : decedent,
+                              taxableValue : 0,
+                              inheritances : inheritances)
+        }
+        print("Succession de \(decedent.displayName)")
 
         // Calcul de la masse successorale taxable du défunt
         let totalTaxableInheritance = taxableInheritanceValue(of: decedent, atEndOf: year)
-        
+        print("  Masse successorale = \(totalTaxableInheritance.rounded())")
+
         // Rechercher l'option fiscale du conjoint survivant et calculer sa part d'héritage
         if let conjointSurvivant = family.members.first(where: { member in
             member is Adult && member.isAlive(atEndOf: year) && member != decedent
         }) {
             // parts d'héritage résultant de l'option fiscale retenue par le conjoint
-            inheritanceShares = (conjointSurvivant as! Adult).fiscalOption.sharedValues(nbChildren : family.nbOfChildrenAlive(atEndOf: year),
-                                                                                  spouseAge  : conjointSurvivant.age(atEndOf: year))
+            inheritanceShares = (conjointSurvivant as! Adult).fiscalOption
+                .sharedValues(nbChildren : family.nbOfChildrenAlive(atEndOf: year),
+                              spouseAge  : conjointSurvivant.age(atEndOf: year))
             
             // calculer la part d'héritage du conjoint
             let share = inheritanceShares.forSpouse
@@ -158,8 +182,8 @@ final class Patrimoin: ObservableObject {
             // caluler les droits de succession du conjoint
             let tax = 0.0
             
-            print("  Part d'héritage de \(conjointSurvivant.displayName) = \(brut)")
-            print("    Taxe = \(tax)")
+            print("  Part d'héritage de \(conjointSurvivant.displayName) = \(brut.rounded())")
+            print("    Taxe = \(tax.rounded())")
             inheritances.append(Inheritance(person  : conjointSurvivant,
                                             percent : share,
                                             brut    : brut,
@@ -172,7 +196,10 @@ final class Patrimoin: ObservableObject {
                 inheritanceShares.forChild  = InheritanceDonation.childShare(nbChildren : family.nbOfChildrenAlive(atEndOf : year))
             } else {
                 // pas d'enfant surivant
-                return inheritances
+                return Succession(yearOfDeath  : year,
+                                  decedent     : decedent,
+                                  taxableValue : totalTaxableInheritance,
+                                  inheritances : inheritances)
             }
         }
         
@@ -188,8 +215,8 @@ final class Patrimoin: ObservableObject {
                     // caluler les droits de succession du conjoint
                     let inheritance = Fiscal.model.inheritanceDonation.heritageOfChild(partSuccession: brut)
                     
-                    print("  Part d'héritage de \(child.displayName) = \(brut)")
-                    print("    Taxe = \(inheritance.taxe)")
+                    print("  Part d'héritage de \(child.displayName) = \(brut.rounded())")
+                    print("    Taxe = \(inheritance.taxe.rounded())")
                     inheritances.append(Inheritance(person  : child,
                                                     percent : share,
                                                     brut    : brut,
@@ -198,8 +225,11 @@ final class Patrimoin: ObservableObject {
                 }
             }
         }
-        print("  Taxe totale = ", inheritances.sum(for: \.tax))
-        return inheritances
+        print("  Taxe totale = ", inheritances.sum(for: \.tax).rounded())
+        return Succession(yearOfDeath  : year,
+                          decedent     : decedent,
+                          taxableValue : totalTaxableInheritance,
+                          inheritances : inheritances)
     }
     
     /// Calcule  la valeur nette taxable du patrimoine immobilier de la famille selon la méthode de calcul choisie

@@ -23,6 +23,11 @@ struct SocialAccounts {
     var balanceArray  = BalanceSheetArray()
     var firstYear     = Date.now.year
     var lastYear      = Date.now.year
+    // les successions
+    var successions   : [Succession] = []
+
+    // MARK: - Computed Properties
+    
     var isEmpty: Bool {
         cashFlowArray.isEmpty || balanceArray.isEmpty
     }
@@ -35,6 +40,7 @@ struct SocialAccounts {
         balanceArray  = BalanceSheetArray()
         firstYear     = Date.now.year
         lastYear      = Date.now.year
+        successions   = []
 }
     
     /// Mémorise le niveau le bas atteint par les actifs financiers au cours du run
@@ -190,6 +196,8 @@ struct SocialAccounts {
                                                        withPatrimoine                        : patrimoine,
                                                        taxableIrppRevenueDelayedFromLastyear : lastYearDelayedTaxableIrppRevenue)
                 cashFlowArray.append(newCashFlowLine)
+                // ajouter les éventuelles successions survenues pendant l'année à la liste globale
+                successions += newCashFlowLine.successions
             } catch {
                 /// il n'y a plus de Cash => on arrête la simulation
                 lastYear = year

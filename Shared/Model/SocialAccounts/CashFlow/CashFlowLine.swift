@@ -53,6 +53,9 @@ struct CashFlowLine {
     }
     // les comptes annuels de la SCI
     let sciCashFlowLine : SciCashFlowLine
+    // les successions
+    var successions     : [Succession] = []
+
     // solde net
     var netCashFlow: Double {
         sumOfrevenues - sumOfExpenses
@@ -136,9 +139,10 @@ struct CashFlowLine {
         if let decedent = family.members.first(where: { !$0.isAlive(atEndOf: year) && $0.isAlive(atEndOf: year-1) }) {
             // un décès est survenu
             // ajouter les droits de succession aux taxes
-            taxes.inheritances = patrimoine.inheritance(of: decedent, atEndOf: year)
+//            Swift.print(patrimoine.succession(of: decedent, atEndOf: year))
+            successions.append(patrimoine.succession(of: decedent, atEndOf: year))
             taxes.perCategory[.succession]?.namedValues.append((name  : TaxeCategory.succession.rawValue,
-                                                                value : taxes.inheritances.sum(for : \.tax).rounded()))
+                                                                value : successions.last!.tax.rounded()))
             
         } else {
             // pas de décès

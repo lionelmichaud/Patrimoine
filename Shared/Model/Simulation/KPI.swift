@@ -70,21 +70,25 @@ extension KpiArray {
 /// Usage:
 /// ```
 ///       var kpi = KPI(name            : "My KPI",
+///                      note            : "KPI description",
 ///                      objective       : 100_000.0,
 ///                      withProbability : 0.95)
 ///
-///       // ajoute un échantillon à l'histogramme
+///       // ajoute un(des) échantillon(s) à l'histogramme
 ///       kpi.record(kpiSample1, withMode: .random)
 ///       kpi.record(kpiSample2, withMode: .random)
 ///       kpi.record(kpiSample3, withMode: .random)
-///       objectiveIsReached = kpi.objectiveIsReachedWithLastValue(withMode: .random)
+///
+///       // l'objectif est-il atteint ?
+///       let objectiveReached = kpi.objectiveIsReachedWithLastValue(withMode: .random)
+///       let objectiveReached = kpi.objectiveIsReached(withMode: .random)
 ///
 ///       // récupère la valeur déterministe du KPI
-///       // ou valeur du KPI statistique atteinte avec la proba objectif (withProbability)
+///       // ou valeur statistique du KPI atteinte avec la proba objectif (withProbability)
 ///       let kpiValue = kpi.value()
 ///
-///       // valeur du KPI atteinte avec la proba 95%
-///       let kpiValue = kpi.value(for: 0.95)
+///       // valeur statistique du KPI atteinte avec la proba 90%
+///       let kpiValue = kpi.value(for: 0.90)
 ///
 ///       // remet à zéro l'historique du KPI
 ///       kpi.reset()
@@ -259,7 +263,7 @@ struct KPI: Identifiable, Codable {
     }
     
     /// Retourrne true si l'objectif de valeur est atteint lors du run unique (.deterministic)
-    /// ou statistiquement sur l'ensmeble des runs (.random)
+    /// ou statistiquement sur l'ensemble des runs (.random)
     func objectiveIsReached(withMode mode: SimulationModeEnum) -> Bool? {
         guard let value = self.value(withMode: mode) else {
             return nil

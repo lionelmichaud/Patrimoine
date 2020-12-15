@@ -192,6 +192,8 @@
 		79CC729F24BC6DB8000302C5 /* UnemploymentModelConfig.json in Resources */ = {isa = PBXBuildFile; fileRef = 79CC729E24BC6DB8000302C5 /* UnemploymentModelConfig.json */; };
 		79CD02DF24D065D20055CEF5 /* RetirementModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79CD02DE24D065D20055CEF5 /* RetirementModel.swift */; };
 		79CD02E124D066200055CEF5 /* PensionReversion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79CD02E024D066200055CEF5 /* PensionReversion.swift */; };
+		79CE57812588EF3C00C2E00C /* SuccessionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79CE57802588EF3C00C2E00C /* SuccessionsView.swift */; };
+		79CE57842588EF7E00C2E00C /* SimulationOthersView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79CE57832588EF7E00C2E00C /* SimulationOthersView.swift */; };
 		79D011FF252B970A00817C8D /* KpiListSummaryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79D011FE252B970A00817C8D /* KpiListSummaryView.swift */; };
 		79D147262506DA7000249539 /* KPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79D147252506DA7000249539 /* KPI.swift */; };
 		79D2BF86251A8CEC009028A0 /* ValuedAssets.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79D2BF85251A8CEC009028A0 /* ValuedAssets.swift */; };
@@ -400,6 +402,8 @@
 		79CC729E24BC6DB8000302C5 /* UnemploymentModelConfig.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = UnemploymentModelConfig.json; sourceTree = "<group>"; };
 		79CD02DE24D065D20055CEF5 /* RetirementModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RetirementModel.swift; sourceTree = "<group>"; };
 		79CD02E024D066200055CEF5 /* PensionReversion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PensionReversion.swift; sourceTree = "<group>"; };
+		79CE57802588EF3C00C2E00C /* SuccessionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SuccessionsView.swift; sourceTree = "<group>"; };
+		79CE57832588EF7E00C2E00C /* SimulationOthersView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimulationOthersView.swift; sourceTree = "<group>"; };
 		79D011FE252B970A00817C8D /* KpiListSummaryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KpiListSummaryView.swift; sourceTree = "<group>"; };
 		79D147252506DA7000249539 /* KPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KPI.swift; sourceTree = "<group>"; };
 		79D2BF85251A8CEC009028A0 /* ValuedAssets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ValuedAssets.swift; sourceTree = "<group>"; };
@@ -748,7 +752,7 @@
 				79948912249E4FC200DAFF1E /* ComputationView */,
 				79A40B532527DCF900B640FD /* KpiViews */,
 				7994890E249E4FC100DAFF1E /* ChartsView */,
-				791027BD254A335D00016A62 /* GridsView */,
+				79CE577F2588EED200C2E00C /* OthersView */,
 			);
 			path = SimulationView;
 			sourceTree = "<group>";
@@ -962,6 +966,7 @@
 		79A40B532527DCF900B640FD /* KpiViews */ = {
 			isa = PBXGroup;
 			children = (
+				791027BD254A335D00016A62 /* GridsView */,
 				79DACB39256BBFDE00DED381 /* KpiView.swift */,
 				79D011FE252B970A00817C8D /* KpiListSummaryView.swift */,
 				79A40B542527DD3500B640FD /* KpiListView.swift */,
@@ -1002,6 +1007,15 @@
 				79A8083724A3C76200957B79 /* RetirementModelConfig.json */,
 			);
 			path = ModelConfig;
+			sourceTree = "<group>";
+		};
+		79CE577F2588EED200C2E00C /* OthersView */ = {
+			isa = PBXGroup;
+			children = (
+				79CE57832588EF7E00C2E00C /* SimulationOthersView.swift */,
+				79CE57802588EF3C00C2E00C /* SuccessionsView.swift */,
+			);
+			path = OthersView;
 			sourceTree = "<group>";
 		};
 		79D84E2C24A29FB700CBC78E /* Retirement */ = {
@@ -1269,6 +1283,7 @@
 				7956C6252538FA0F00C92A28 /* ScenarioSummaryView.swift in Sources */,
 				7994899C249E4FC200DAFF1E /* LifeExpenseCategory.swift in Sources */,
 				7994897B249E4FC200DAFF1E /* PickerHelperViews.swift in Sources */,
+				79CE57842588EF7E00C2E00C /* SimulationOthersView.swift in Sources */,
 				79948959249E4FC200DAFF1E /* CSV-Utilities.swift in Sources */,
 				799488C2249E4F9700DAFF1E /* Dependencies.swift in Sources */,
 				79948997249E4FC200DAFF1E /* SCPI.swift in Sources */,
@@ -1283,6 +1298,7 @@
 				799488C3249E4F9700DAFF1E /* Themes.swift in Sources */,
 				79D84E2B24A28EBF00CBC78E /* Child.swift in Sources */,
 				7905A50424CEFB880049F4ED /* ValuedRevenues.swift in Sources */,
+				79CE57812588EF3C00C2E00C /* SuccessionsView.swift in Sources */,
 				79948977249E4FC200DAFF1E /* SimulationView.swift in Sources */,
 				79948969249E4FC200DAFF1E /* MemberAddView.swift in Sources */,
 				79DB52CA2586675700BC6E84 /* MenuCollapsable.swift in Sources */,

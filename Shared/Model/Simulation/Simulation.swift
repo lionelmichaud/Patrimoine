@@ -68,18 +68,29 @@ final class Simulation: ObservableObject {
 
     // MARK: - Properties
     
+    // paramètres de la simulation
     @Published var mode           : SimulationModeEnum = .deterministic
-    @Published var currentRunNb   : Int = 0
-    @Published var socialAccounts = SocialAccounts()
-    @Published var kpis           = KpiArray()
-    @Published var resultTable    = SimulationResultTable()
     @Published var title          = "Simulation"
-    @Published var isComputed     = false
-//    @Published var isComputing    = false
-    @Published var isSaved        = false
     @Published var firstYear      : Int?
     @Published var lastYear       : Int?
     
+    // vecteur d'état de la simulation
+    @Published var currentRunNb   : Int = 0
+    @Published var isComputed     = false
+    @Published var isSaved        = false
+    //    @Published var isComputing    = false
+
+    // résultats de la simulation
+    @Published var socialAccounts = SocialAccounts()
+    @Published var kpis           = KpiArray()
+    @Published var resultTable    = SimulationResultTable()
+    
+    // MARK: - Computed Properties
+    
+    var occuredSuccessions: [Succession] {
+        socialAccounts.successions
+    }
+
     // MARK: - Initializers
     
     init() {
@@ -263,8 +274,6 @@ final class Simulation: ObservableObject {
         socialAccounts.save(simulationTitle: title)
         
         /// - un fichier pour le tableau de résultat de Monté-Carlo
-        if !resultTable.isEmpty {
-            resultTable.save(simulationTitle: title)
-        }
+        resultTable.save(simulationTitle: title)
     }
 }
