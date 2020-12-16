@@ -278,7 +278,7 @@ struct SuccessorsListView: View {
     var body: some View {
         List {
             ForEach(inheritances, id: \.person.id) { inheritence in
-                SuccessorView(inheritence: inheritence)
+                SuccessorGroupBox(inheritence: inheritence)
             }
         }
         .navigationTitle("Héritage")

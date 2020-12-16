@@ -29,11 +29,34 @@ struct Succession: Identifiable {
     let taxableValue : Double
     let inheritances : [Inheritance]
     
+    var childrenSuccessorsInheritedNetValue: [String: Double] {
+        inheritances.reduce(into: [:]) { counts, inheritance in
+            counts[inheritance.person.displayName, default: 0] += inheritance.net
+        }
+    }
+    
     var net: Double {
         inheritances.sum(for: \.net)
     }
+    
     var tax: Double {
         inheritances.sum(for: \.tax)
+    }
+}
+extension Array where Element == Succession {
+    var childrenSuccessorsInheritedNetValue: [String: Double] {
+        var globalDico: [String: Double] = [:]
+        self.forEach { succession in
+            let dico = succession.childrenSuccessorsInheritedNetValue
+            for name in dico.keys {
+                if globalDico[name] != nil {
+                    globalDico[name]! += dico[name]!
+                } else {
+                    globalDico[name] = dico[name]
+                }
+            }
+        }
+        return globalDico
     }
 }
 

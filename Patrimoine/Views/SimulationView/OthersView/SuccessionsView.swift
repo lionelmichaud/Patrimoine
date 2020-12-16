@@ -19,21 +19,28 @@ struct SuccessionsView: View {
             Text("Pas de décès pendant la dernière simulation")
         } else {
             List {
-                GroupBox(label: Text("Cumulatif")
-                            .font(.headline)) {
+                // Cumul global des successions
+                GroupBox(label: Text("Cumulatif").font(.headline)) {
                     Group {
-                        AmountView(label : "Masse successorale",
-                                   amount: successions.sum(for: \.taxableValue))
-                        AmountView(label : "Droits de succession à payer",
-                                   amount: -successions.sum(for: \.tax),
-                                   comment: ((successions.sum(for: \.tax) / successions.sum(for: \.taxableValue))*100.0).percentString()+"%")
+                        Group {
+                            AmountView(label : "Masse successorale",
+                                       amount: successions.sum(for: \.taxableValue))
+                            AmountView(label : "Droits de succession à payer",
+                                       amount: -successions.sum(for: \.tax),
+                                       comment: ((successions.sum(for: \.tax) / successions.sum(for: \.taxableValue))*100.0).percentString()+"%")
+                            Divider()
+                            AmountView(label : "Succession nette laissée aux héritiers",
+                                       amount: successions.sum(for: \.net))
+                        }
+                        .foregroundColor(.secondary)
+                        .padding(.top, 3)
                         Divider()
-                        AmountView(label : "Valeur héritée nette",
-                                   amount: successions.sum(for: \.net))
+                        CumulatedSuccessorsDisclosureGroup(successions: successions)
                     }
-                    .foregroundColor(.secondary)
-                    .padding(.top, 3)
+                    .padding(.leading)
                 }
+
+                // liste des successsions dans le temps
                 ForEach(successions) { succession in
                     SuccessionGroupBox(succession: succession)
                 }
@@ -48,6 +55,27 @@ struct SuccessionsView: View {
     }
 }
 
+struct CumulatedSuccessorsDisclosureGroup: View {
+    var successions: [Succession]
+    
+    var body: some View {
+        DisclosureGroup(
+            content: {
+                ForEach(successions.childrenSuccessorsInheritedNetValue.keys.sorted(), id:\.self) { name in
+                    GroupBox(label: Text(name).font(.headline)) {
+                        AmountView(label  : "Valeur héritée nette",
+                                   amount : successions.childrenSuccessorsInheritedNetValue[name]!)
+                            .foregroundColor(.secondary)
+                            .padding(.top, 3)
+                    }
+                }
+            },
+            label: {
+                Text("Héritiers").font(.headline)
+            })
+    }
+}
+
 struct SuccessionGroupBox: View {
     var succession: Succession
     
@@ -56,7 +84,7 @@ struct SuccessionGroupBox: View {
                     Text("à l'âge de \(succession.decedent.age(atEndOf: succession.yearOfDeath)) ans ").fontWeight(.regular) +
                     Text("en \(String(succession.yearOfDeath))").fontWeight(.regular)) {
             Group {
-                VStack {
+                Group {
                     AmountView(label : "Masse successorale",
                                amount: succession.taxableValue)
                     AmountView(label : "Droits de succession à payer par les héritiers",
@@ -69,43 +97,45 @@ struct SuccessionGroupBox: View {
                 .foregroundColor(.secondary)
                 .padding(.top, 3)
                 Divider()
-                SuccessorsGroupBox(inheritances: succession.inheritances)
+                SuccessorsDisclosureGroup(inheritances: succession.inheritances)
             }
             .padding(.leading)
         }
     }
 }
 
-struct SuccessorsGroupBox: View {
+struct SuccessorsDisclosureGroup: View {
     var inheritances : [Inheritance]
     
     var body: some View {
         DisclosureGroup(
             content: {
                 ForEach(inheritances, id: \.person.id) { inheritence in
-                    SuccessorView(inheritence: inheritence)
+                    SuccessorGroupBox(inheritence: inheritence)
                 }
             },
             label: {
-                Text("Héritiers")
-                    .font(.headline)
+                Text("Héritiers").font(.headline)
             })
     }
 }
 
-struct SuccessorView : View {
+struct SuccessorGroupBox : View {
     var inheritence: Inheritance
     
     var body: some View {
-        GroupBox(label: groupBoxLabel(person: inheritence.person)
-                    .font(.headline)) {
+        GroupBox(label: groupBoxLabel(person: inheritence.person).font(.headline)) {
             Group {
-                PercentView(label   : "Part de la succession",
-                            percent : inheritence.percent)
+//                PercentView(label   : "Part de la succession",
+//                            percent : inheritence.percent)
                 AmountView(label : "Valeur héritée brute",
-                           amount: inheritence.brut)
+                           amount: inheritence.brut,
+                           comment: (inheritence.percent*100).percentString() + "% de la succession")
+                    .padding(.top, 3)
                 AmountView(label : "Droits de succession à payer",
-                           amount: -inheritence.tax)
+                           amount: -inheritence.tax,
+                           comment: ((inheritence.tax / inheritence.brut)*100.0).percentString()+"%")
+                    .padding(.top, 3)
                 Divider()
                 AmountView(label : "Valeur héritée nette",
                            amount: inheritence.net)
