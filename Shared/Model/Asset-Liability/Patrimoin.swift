@@ -349,16 +349,18 @@ final class Patrimoin: ObservableObject {
     func investNetCashFlow(_ amount: Double) {
         var amount = amount
         // investir en priorité dans une assurance vie
-        investNetCashFlow(amount: &amount,
-                          in: .lifeInsurance(periodicSocialTaxes: true))
-        investNetCashFlow(amount: &amount,
-                          in: .lifeInsurance(periodicSocialTaxes: false))
+        investNetCashFlow(amount : &amount,
+                          in     : .lifeInsurance(periodicSocialTaxes     : true))
+        investNetCashFlow(amount : &amount,
+                          in     : .lifeInsurance(periodicSocialTaxes     : false))
         
         // si pas d'assurance vie alors investir dans un PEA
-        investNetCashFlow(amount: &amount, in: .pea)
+        investNetCashFlow(amount : &amount,
+                          in     : .pea)
         
         // si pas d'assurance vie ni de PEA alors investir dans un autre placement
-        investNetCashFlow(amount: &amount, in: .other)
+        investNetCashFlow(amount : &amount,
+                          in     : .other)
     }
     
     /// Retirer le montant d'un investissement libre: d'abord PEA ensuite Assurance vie puis autre
