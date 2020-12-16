@@ -74,7 +74,7 @@ struct FreeInvestement: Identifiable, Codable, NameableValuable, Ownable {
     }
     var interestRateNet      : Double { // % fixe après charges sociales si prélevées à la source annuellement
         switch type {
-            case .lifeInsurance(let periodicSocialTaxes):
+            case .lifeInsurance(let periodicSocialTaxes, _):
                 // si assurance vie: le taux net est le taux brut - charges sociales si celles-ci sont prélèvées à la source anuellement
                 return (periodicSocialTaxes ?
                             Fiscal.model.socialTaxesOnFinancialRevenu.net(interestRate) :
@@ -217,7 +217,7 @@ struct FreeInvestement: Identifiable, Codable, NameableValuable, Ownable {
         var taxableInterests: Double    // part imposable à l'IRPP des intérêts nets de charges sociales
         var socialTaxes: Double // charges sociales sur les intérêts
         switch type {
-            case .lifeInsurance(let periodicSocialTaxes):
+            case .lifeInsurance(let periodicSocialTaxes, _):
                 // montant brut à retirer pour obtenir le montant net souhaité
                 brutAmount = (periodicSocialTaxes ? netAmount : Fiscal.model.socialTaxesOnFinancialRevenu.brut(netAmount))
                 // on ne peut pas retirer plus que la capital présent

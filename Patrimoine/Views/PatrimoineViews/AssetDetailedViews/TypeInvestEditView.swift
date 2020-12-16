@@ -44,7 +44,7 @@ struct TypeInvestEditView : View {
         self._investType = investType
         self._typeIndex  = State(initialValue: investType.wrappedValue.id)
         switch investType.wrappedValue {
-            case .lifeInsurance(let periodicSocialTaxes):
+            case .lifeInsurance(let periodicSocialTaxes, _):
                 self._isPeriodic = State(initialValue: periodicSocialTaxes)
                 
             default:

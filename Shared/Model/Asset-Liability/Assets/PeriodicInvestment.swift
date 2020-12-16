@@ -68,7 +68,7 @@ struct PeriodicInvestement: Identifiable, Codable, NameableValuable, Ownable {
     }
     var interestRateNet : Double { // % fixe après charges sociales si prélevées à la source annuellement
         switch type {
-            case .lifeInsurance(let periodicSocialTaxes):
+            case .lifeInsurance(let periodicSocialTaxes, _):
                 // si assurance vie: le taux net est le taux brut - charges sociales si celles-ci sont prélèvées à la source anuellement
                 return (periodicSocialTaxes ?
                             Fiscal.model.socialTaxesOnFinancialRevenu.net(interestRate) :
@@ -206,7 +206,7 @@ struct PeriodicInvestement: Identifiable, Codable, NameableValuable, Ownable {
         var netInterests     : Double
         var taxableInterests : Double
         switch type {
-            case .lifeInsurance(let periodicSocialTaxes):
+            case .lifeInsurance(let periodicSocialTaxes, _):
                 // Si les intérêts sont prélevés au fil de l'eau on les prélève pas à la liquidation
                 netInterests     = (periodicSocialTaxes ? cumulatedInterest : Fiscal.model.socialTaxesOnFinancialRevenu.net(cumulatedInterest))
                 taxableInterests = netInterests

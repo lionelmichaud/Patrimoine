@@ -10,12 +10,13 @@ import Foundation
 
 // MARK: - Type d'investissement
 enum InvestementType: PickableIdentifiableEnum {
-    case lifeInsurance (periodicSocialTaxes: Bool)
+    case lifeInsurance (periodicSocialTaxes: Bool = true,
+                        clause: LifeInsuranceClause = LifeInsuranceClause())
     case pea
     case other
     
     static var allCases: [InvestementType] {
-        return [.lifeInsurance (periodicSocialTaxes: true), .pea, .other]
+        return [.lifeInsurance(), .pea, .other]
     }
     
     @available(*, unavailable)
@@ -44,7 +45,7 @@ enum InvestementType: PickableIdentifiableEnum {
 extension InvestementType: Codable {
     // coding keys
     private enum CodingKeys: String, CodingKey {
-        case lifeInsurance_taxes, PEA, other
+        case lifeInsurance_taxes, lifeInsurance_clause, PEA, other
     }
     // error type
     enum InvestementTypeCodingError: Error {
@@ -54,9 +55,11 @@ extension InvestementType: Codable {
     init(from decoder: Decoder) throws {
         let values = try decoder.container(keyedBy: CodingKeys.self)
         // decode .lifeInsurance
-        if let value = try? values.decode(Bool.self, forKey: .lifeInsurance_taxes) {
-            self = .lifeInsurance(periodicSocialTaxes: value)
+        if let valueTaxes = try? values.decode(Bool.self, forKey: .lifeInsurance_taxes) {
+            if let valueClause = try? values.decode(LifeInsuranceClause.self, forKey: .lifeInsurance_clause) {
+                self = .lifeInsurance(periodicSocialTaxes: valueTaxes, clause: valueClause)
             return
+            }
         }
         
         // decode .PEA
@@ -78,12 +81,19 @@ extension InvestementType: Codable {
         var container = encoder.container(keyedBy: CodingKeys.self)
         
         switch self {
-            case .lifeInsurance (let periodicSocialTaxes):
+            case .lifeInsurance (let periodicSocialTaxes, let clause):
                 try container.encode(periodicSocialTaxes, forKey: .lifeInsurance_taxes)
+                try container.encode(clause, forKey: .lifeInsurance_clause)
             case .pea:
                 try container.encode(true, forKey: .PEA)
             case .other:
                 try container.encode(true, forKey: .other)
         }
     }
+}
+
+struct LifeInsuranceClause: Codable, Equatable, Hashable {
+    var isDismembered     : Bool     = false
+    var usufructRecipient : String   = "" // PP si la clause n'est pas démembrée
+    var bareRecipients    : [String] = [ ]
 }
