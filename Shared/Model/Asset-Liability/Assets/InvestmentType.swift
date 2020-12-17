@@ -9,6 +9,7 @@
 import Foundation
 
 // MARK: - Type d'investissement
+
 enum InvestementType: PickableIdentifiableEnum {
     case lifeInsurance (periodicSocialTaxes: Bool = true,
                         clause: LifeInsuranceClause = LifeInsuranceClause())
@@ -92,8 +93,15 @@ extension InvestementType: Codable {
     }
 }
 
+// MARK: - Clause bénéficiaire d'assurance vie
+
+/// - Warning:
+///   - le cas de plusieurs usufruitiers n'est pas traité
+///   - le cas de parts non égales entre nue-propriétaires n'est pas traité
+///   - le cas de parts non égales entre bénéficiaires en PP n'est pas traité
 struct LifeInsuranceClause: Codable, Equatable, Hashable {
     var isDismembered     : Bool     = false
-    var usufructRecipient : String   = "" // PP si la clause n'est pas démembrée
+    var fullRecipients    : [String] = [ ] // PP si la clause n'est pas démembrée
+    var usufructRecipient : String   = ""
     var bareRecipients    : [String] = [ ]
 }

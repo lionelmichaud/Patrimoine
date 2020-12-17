@@ -12,7 +12,7 @@ struct PatrimoineSummaryView: View {
     @EnvironmentObject var patrimoine: Patrimoin
     @EnvironmentObject var uiState   : UIState
     let minDate = Date.now.year
-    let maxDate = Date.now.year + 40
+    let maxDate = Date.now.year + 55
     
     var body: some View {
         VStack {

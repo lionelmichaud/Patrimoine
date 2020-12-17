@@ -108,7 +108,7 @@ struct CashFlowLine {
         populateISF(of   : family,
                     with : patrimoine,
                     for  : year)
-        
+        /// SUCCESSIONS: calcule des droits de successions y.c. assurances vies
         manageDeath(of   : family,
                     with : patrimoine,
                     for  : year)

@@ -30,6 +30,11 @@
                 "lifeInsurance_taxes"  : false,
                 "lifeInsurance_clause" : {
                     "isDismembered"     : false,
+                    "fullRecipients"    :
+                    [
+                        "Mme Lou-Ann MICHAUD",
+                        "M. Arthur MICHAUD"
+                    ],
                     "usufructRecipient" : "",
                     "bareRecipients"    : [ ]
                 }

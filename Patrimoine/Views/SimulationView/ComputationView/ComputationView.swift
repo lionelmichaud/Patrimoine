@@ -173,6 +173,8 @@ struct ComputationView: View {
         //DispatchQueue.main.async {
         uiState.bsChartState.itemSelection = simulation.socialAccounts.getBalanceSheetLegend(.both)
         uiState.cfChartState.itemSelection = simulation.socialAccounts.getCashFlowLegend(.both)
+        // positionner le curseur de la vue PatrimoinSummaryView sur la bonne date
+        uiState.patrimoineViewState.evalDate = simulation.lastYear!.double()
         //}
 //        busyCompWheelAnimate.toggle()
         self.alertItem = AlertItem(title         : Text("Les calculs sont terminés. Vous pouvez visualiser les résultats."),

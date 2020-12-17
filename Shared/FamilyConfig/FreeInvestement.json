@@ -26,9 +26,14 @@
             "type" : {
                 "lifeInsurance_taxes"  : true,
                 "lifeInsurance_clause" : {
-                    "isDismembered"     : false,
-                    "usufructRecipient" : "",
-                    "bareRecipients"    : [ ]
+                    "isDismembered"     : true,
+                    "fullRecipients"    : [ ],
+                    "usufructRecipient" : "Mme. Vanessa MICHAUD",
+                    "bareRecipients"    :
+                    [
+                        "Mme Lou-Ann MICHAUD",
+                        "M. Arthur MICHAUD"
+                    ]
                 }
             },
             "interestRateType" : {

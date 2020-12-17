@@ -15,9 +15,9 @@ extension Ownership {
     ///   - thisFullOwner: le PP celui qui sort
     ///   - toThisNewUsufructuary: celui qui prend l'UF
     ///   - toTheseNewBareowners: ceux qui prennent la NP
-    mutating func transferFullOwnership(of thisFullOwner      : String,
-                                        toThisNewUsufructuary : String,
-                                        toTheseNewBareOwners  : [String]) {
+    private mutating func transferFullOwnership(of thisFullOwner      : String,
+                                                toThisNewUsufructuary : String,
+                                                toTheseNewBareOwners  : [String]) {
         if let ownerIdx = fullOwners.firstIndex(where: { thisFullOwner == $0.name }) {
             // le bien doit être démembré
             isDismembered = true

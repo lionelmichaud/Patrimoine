@@ -184,6 +184,8 @@
 		79BF6FB22574112800F19A81 /* OwnershipView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79BF6FB12574112800F19A81 /* OwnershipView.swift */; };
 		79C26F082566CE5F0016B3F5 /* Extensions+Ranges.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79C26F072566CE5F0016B3F5 /* Extensions+Ranges.swift */; };
 		79C6FC0D24BF9D0400D99594 /* UnemployementDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79C6FC0C24BF9D0400D99594 /* UnemployementDetailView.swift */; };
+		79C7B1FC258B98CD004B38E7 /* Extensions+Collection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79C7B1FB258B98CD004B38E7 /* Extensions+Collection.swift */; };
+		79C7B1FF258B9D96004B38E7 /* Ownership+TransferLifeInsurance.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79C7B1FE258B9D96004B38E7 /* Ownership+TransferLifeInsurance.swift */; };
 		79CAD664249E51CB00319BCD /* TypePreservingCodingAdapter in Frameworks */ = {isa = PBXBuildFile; productRef = 79CAD663249E51CB00319BCD /* TypePreservingCodingAdapter */; };
 		79CAD667249E525F00319BCD /* Charts in Frameworks */ = {isa = PBXBuildFile; productRef = 79CAD666249E525F00319BCD /* Charts */; };
 		79CAD66A249E547200319BCD /* Disk in Frameworks */ = {isa = PBXBuildFile; productRef = 79CAD669249E547200319BCD /* Disk */; };
@@ -398,6 +400,8 @@
 		79BF6FB12574112800F19A81 /* OwnershipView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OwnershipView.swift; sourceTree = "<group>"; };
 		79C26F072566CE5F0016B3F5 /* Extensions+Ranges.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Extensions+Ranges.swift"; sourceTree = "<group>"; };
 		79C6FC0C24BF9D0400D99594 /* UnemployementDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnemployementDetailView.swift; sourceTree = "<group>"; };
+		79C7B1FB258B98CD004B38E7 /* Extensions+Collection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Extensions+Collection.swift"; sourceTree = "<group>"; };
+		79C7B1FE258B9D96004B38E7 /* Ownership+TransferLifeInsurance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Ownership+TransferLifeInsurance.swift"; sourceTree = "<group>"; };
 		79CC729C24BC6B0D000302C5 /* UnemploymentModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnemploymentModel.swift; sourceTree = "<group>"; };
 		79CC729E24BC6DB8000302C5 /* UnemploymentModelConfig.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = UnemploymentModelConfig.json; sourceTree = "<group>"; };
 		79CD02DE24D065D20055CEF5 /* RetirementModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RetirementModel.swift; sourceTree = "<group>"; };
@@ -576,6 +580,7 @@
 				79BF6FAE25740CE200F19A81 /* Ownership.swift */,
 				7988807C258790550098E30C /* Ownership+TransferFullOwnership.swift */,
 				7922CFD82587A37D00CF8317 /* Ownership+TransferBareOwnership.swift */,
+				79C7B1FE258B9D96004B38E7 /* Ownership+TransferLifeInsurance.swift */,
 			);
 			path = Ownership;
 			sourceTree = "<group>";
@@ -959,6 +964,7 @@
 				79948953249E4FC200DAFF1E /* Extensions+Array.swift */,
 				79948954249E4FC200DAFF1E /* Extensions+Published-Codable.swift */,
 				79C26F072566CE5F0016B3F5 /* Extensions+Ranges.swift */,
+				79C7B1FB258B98CD004B38E7 /* Extensions+Collection.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -1230,6 +1236,7 @@
 				799489A9249E4FC200DAFF1E /* Extensions+Array.swift in Sources */,
 				793BA8EC253A001B003DCFA4 /* ModelHumanView.swift in Sources */,
 				79AD6EFA251FB0C400490472 /* StatisticsProtocols.swift in Sources */,
+				79C7B1FF258B9D96004B38E7 /* Ownership+TransferLifeInsurance.swift in Sources */,
 				79948989249E4FC200DAFF1E /* Person.swift in Sources */,
 				79DB52D225866B7F00BC6E84 /* Adult+Unemployement.swift in Sources */,
 				7994898D249E4FC200DAFF1E /* Scenario.swift in Sources */,
@@ -1275,6 +1282,7 @@
 				7937A6D0257D8AC000ED645A /* isfEvolutionChartView.swift in Sources */,
 				79948972249E4FC200DAFF1E /* BoundaryEditView.swift in Sources */,
 				7964C5F425865FA900B1D505 /* InheritanceDonation.swift in Sources */,
+				79C7B1FC258B98CD004B38E7 /* Extensions+Collection.swift in Sources */,
 				7946A48824D712A100B86BAD /* ValuedTaxes.swift in Sources */,
 				7937A6D4257D932300ED645A /* SocialAccounts+IsfCharts.swift in Sources */,
 				799489A4249E4FC200DAFF1E /* Extensions+Comparable.swift in Sources */,

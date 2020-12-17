@@ -15,7 +15,7 @@ struct Owner : Codable, Hashable {
     // MARK: - Properties
     
     var name       : String = ""
-    var fraction   : Double = 0.0 // %
+    var fraction   : Double = 0.0 // % [0, 100]
     var isValid    : Bool {
         name != ""
     }
@@ -119,8 +119,8 @@ struct Ownership: Codable {
             if isDismembered {
                 usufructOwners = fullOwners
                 bareOwners     = fullOwners
-            } else {
-                fullOwners = usufructOwners
+//            } else {
+//                fullOwners = usufructOwners
             }
         }
     }
@@ -275,11 +275,11 @@ struct Ownership: Codable {
     /// - Parameters:
     ///   - decedentName: le nom du défunt
     ///   - chidrenNames: les enfants héritiers survivants
-    mutating func transferUsufruct(of decedentName         : String,
-                                   toChildren chidrenNames : [String]?) {
+    private mutating func transferUsufruct(of decedentName         : String,
+                                           toChildren chidrenNames : [String]?) {
         if let chidrenNames = chidrenNames {
             // on transmet l'UF aux nue-propriétaires (enfants seulement)
-            // FIXME: - cela ne fonctionne que si la donnation de nue-propriété n'est faite qu'à des enfants
+            // TODO: - Gérer le cas où la donnation de nue-propriété n'est pas faite qu'à des enfants
             if let ownerIdx = usufructOwners.firstIndex(where: { decedentName == $0.name }) {
                 // la part d'usufruit à transmettre
                 let ownerShare = usufructOwners[ownerIdx].fraction
@@ -316,10 +316,10 @@ struct Ownership: Codable {
     ///   - spouseName: le conjoint survivant
     ///   - chidrenNames: les enfants héritiers survivants
     ///   - spouseFiscalOption: option fiscale du conjoint survivant éventuel
-    mutating func transferUsufructAndBareOwnership(of decedentName         : String,
-                                                   toSpouse spouseName     : String,
-                                                   toChildren chidrenNames : [String]?,
-                                                   spouseFiscalOption      : InheritanceDonation.FiscalOption?) {
+    private mutating func transferUsufructAndBareOwnership(of decedentName         : String,
+                                                           toSpouse spouseName     : String,
+                                                           toChildren chidrenNames : [String]?,
+                                                           spouseFiscalOption      : InheritanceDonation.FiscalOption?) {
         if let chidrenNames = chidrenNames {
             // il y a des enfants héritiers
             // transmission NP + UF selon l'option fiscale du conjoint survivant
@@ -366,6 +366,67 @@ struct Ownership: Codable {
             bareOwners.groupShares()
         } else {
             fullOwners.groupShares()
+        }
+    }
+    
+    /// Transférer la NP et UF  d'une assurance vie aux donataires selon la clause bénéficiaire
+    ///
+    /// - Parameters:
+    ///   - decedentName: le nom du défunt
+    ///   - spouseName: le conjoint survivant
+    ///   - chidrenNames: les enfants héritiers survivants
+    ///   - spouseFiscalOption: option fiscale du conjoint survivant éventuel
+    ///   - clause: la clause bénéficiare de l'assurance vie
+    ///
+    /// - Note:
+    ///  + le capital peut être démembré
+    ///  + la clause bénéficiare peut aussi être démembrée
+    ///
+    /// - Warning:
+    ///   - Le cas du capital démembrée et le défunt est nue-propriétaire n'est pas traité
+    ///   - Le cas du capital co-détenu en PP par plusieurs personnes n'est pas traité
+    ///   - le cas de plusieurs usufruitiers bénéficiaires n'est pas traité
+    ///   - Le cas de parts non égales entre nue-propriétaires n'est pas traité
+    ///
+    mutating func transferLifeInsuranceOfDecedent(of decedentName         : String,
+                                                  toSpouse spouseName     : String?,
+                                                  toChildren chidrenNames : [String]?,
+                                                  accordingTo clause      : LifeInsuranceClause) {
+        if isDismembered {
+            // le capital de l'assurane vie est démembré
+            if usufructOwners.contains(where: { decedentName == $0.name }) {
+                // le défunt est usufruitier
+                // l'usufruit rejoint la nue-propriété
+                transfertLifeInsuranceUsufruct(clause: clause)
+                
+            } else if bareOwners.contains(where: { decedentName == $0.name }) {
+                // le défunt est un nue-propriétaire
+                // TODO: - traiter le cas où le capital de l'assurance vie est démembré et le défunt est nue-propriétaire
+                fatalError("transferLifeInsuranceOfDecedent: cas non traité (capital démembré et le défunt est nue-propriétaire)")
+            }
+
+        } else {
+            // le capital de l'assurane vie n'est pas démembré
+            // le défunt est-il un des PP propriétaires du capital de l'assurance vie ?
+            if fullOwners.contains(where: { decedentName == $0.name }) {
+                if fullOwners.count == 1 {
+                    if clause.isDismembered {
+                        isDismembered = true
+                        // Transférer l'usufruit et la bue-prorpiété de l'assurance vie séparement
+                        transferLifeInsuranceUsufructAndBareOwnership(clause: clause)
+                        
+                    } else {
+                        // la clause bénéficiaire de l'assurane vie n'est pas démembrée
+                        // transférer le bien en PP aux donataires désignés dans la clause bénéficiaire par parts égales
+                        isDismembered = false
+                        transferLifeInsuranceFullOwnership(clause: clause)
+                    }
+                    
+                } else {
+                    // TODO: - traiter le cas où le capital est co-détenu en PP par plusieurs personnes
+                    fatalError("transferLifeInsuranceOfDecedent: cas non traité (capital co-détenu en PP par plusieurs personnes)")
+                }
+            } // sinon on ne fait rien
         }
     }
     
@@ -437,7 +498,7 @@ struct Ownership: Codable {
             if isAFullOwner(ownerName: decedentName) {
                 // on transfert sa part de propriété aux héritiers
                 if let spouseName = spouseName {
-                    // il y a un conoint survivant
+                    // il y a un conjoint survivant
                     transferFullOwnership(of                 : decedentName,
                                           toSpouse           : spouseName,
                                           toChildren         : chidrenNames,

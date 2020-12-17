@@ -114,10 +114,13 @@ struct Assets {
                                               spouseFiscalOption : InheritanceDonation.FiscalOption?) {
         for idx in 0..<periodicInvests.items.count {
             switch periodicInvests.items[idx].type {
-                case .lifeInsurance:
+                case .lifeInsurance(_, let clause):
                     // régles de transmission particulières pour l'Assurance Vie
                     // TODO: - ne transférer que ce qui n'est pas de l'assurance vie, sinon utiliser d'autres règles de transmission
-                    ()
+                    periodicInvests.items[idx].ownership.transferLifeInsuranceOfDecedent(of          : decedentName,
+                                                                                         toSpouse    : spouseName,
+                                                                                         toChildren  : chidrenNames,
+                                                                                         accordingTo : clause)
                     
                 default:
                     periodicInvests.items[idx].ownership.transferOwnershipOfDecedent(decedentName       : decedentName,
@@ -128,10 +131,13 @@ struct Assets {
         }
         for idx in 0..<freeInvests.items.count {
             switch freeInvests.items[idx].type {
-                case .lifeInsurance:
+                case .lifeInsurance(_, let clause):
                     // régles de transmission particulières pour l'Assurance Vie
                     // TODO: - ne transférer que ce qui n'est pas de l'assurance vie, sinon utiliser d'autres règles de transmission
-                    ()
+                    freeInvests.items[idx].ownership.transferLifeInsuranceOfDecedent(of          : decedentName,
+                                                                                     toSpouse    : spouseName,
+                                                                                     toChildren  : chidrenNames,
+                                                                                     accordingTo : clause)
                     
                 default:
                     freeInvests.items[idx].ownership.transferOwnershipOfDecedent(decedentName       : decedentName,

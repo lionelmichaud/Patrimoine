@@ -10,6 +10,7 @@ import SwiftUI
 
 struct PatrimoineView: View {
     @EnvironmentObject var patrimoine: Patrimoin
+    @EnvironmentObject var uiState   : UIState
 
     var body: some View {
         NavigationView {
@@ -30,11 +31,15 @@ struct PatrimoineView: View {
                 .environment(\.horizontalSizeClass, .regular)
 
             }
-//            .onAppear(perform: { self.patrimoine.resetFreeInvestementCurrentValue() })
-            .onAppear(perform: { self.patrimoine.reLoad() })
+//            .onAppear(perform: { self.patrimoine.reLoad() })
             .navigationTitle("Patrimoine")
             .navigationBarItems(
-                leading: EditButton())
+                leading: EditButton(),
+                trailing: Button("Réinitialiser",
+                                 action: {
+                                    self.patrimoine.reLoad()
+                                    uiState.patrimoineViewState.evalDate = Date.now.year.double()
+                                 }))
 
             // vue par défaut
             PatrimoineSummaryView()
