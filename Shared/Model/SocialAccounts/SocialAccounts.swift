@@ -23,8 +23,10 @@ struct SocialAccounts {
     var balanceArray  = BalanceSheetArray()
     var firstYear     = Date.now.year
     var lastYear      = Date.now.year
-    // les successions
+    // les successions légales
     var successions   : [Succession] = []
+    // les transmissions d'assurances vie
+    var lifeInsSuccessions : [Succession] = []
 
     // MARK: - Computed Properties
     
@@ -197,7 +199,9 @@ struct SocialAccounts {
                                                        taxableIrppRevenueDelayedFromLastyear : lastYearDelayedTaxableIrppRevenue)
                 cashFlowArray.append(newCashFlowLine)
                 // ajouter les éventuelles successions survenues pendant l'année à la liste globale
-                successions += newCashFlowLine.successions
+                successions        += newCashFlowLine.successions
+                // ajouter les éventuelles transmissions d'assurance vie survenues pendant l'année à la liste globale
+                lifeInsSuccessions += newCashFlowLine.lifeInsSuccessions
             } catch {
                 /// il n'y a plus de Cash => on arrête la simulation
                 lastYear = year
@@ -211,8 +215,8 @@ struct SocialAccounts {
             
             // construire la ligne annuelle de Bilan de fin d'année
             //-----------------------------------------------------
-            let newBalanceSheetLine = BalanceSheetLine(withYear : year,
-                                                       withPatrimoine       : patrimoine)
+            let newBalanceSheetLine = BalanceSheetLine(withYear       : year,
+                                                       withPatrimoine : patrimoine)
             balanceArray.append(newBalanceSheetLine)
             
             // décès d'un adulte

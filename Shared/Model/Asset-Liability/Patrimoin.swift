@@ -24,26 +24,34 @@ enum EvaluationMethod: String, PickableEnum {
 
 struct Succession: Identifiable {
     let id           = UUID()
+    // année de la succession
     let yearOfDeath  : Int
+    // personne dont on fait la succession
     let decedent     : Person
+    // masses successorale
     let taxableValue : Double
+    // liste des héritages par héritier
     let inheritances : [Inheritance]
     
+    // dictionnaire des héritages net reçu par les enfants dans une succession
     var childrenSuccessorsInheritedNetValue: [String: Double] {
         inheritances.reduce(into: [:]) { counts, inheritance in
             counts[inheritance.person.displayName, default: 0] += inheritance.net
         }
     }
     
+    // somme des héritages reçus par les hétritiers dans une succession
     var net: Double {
         inheritances.sum(for: \.net)
     }
     
+    // somme des taxes payées par les hétritiers dans une succession
     var tax: Double {
         inheritances.sum(for: \.tax)
     }
 }
 extension Array where Element == Succession {
+    // dictionnaire des héritages net reçu par les enfants sur un ensemble de successions
     var childrenSuccessorsInheritedNetValue: [String: Double] {
         var globalDico: [String: Double] = [:]
         self.forEach { succession in
@@ -62,8 +70,10 @@ extension Array where Element == Succession {
 
 // MARK: - Héritage d'une personne
 struct Inheritance {
+    // héritier
     var person  : Person
-    var percent : Double
+    // fraction de la masse successorale reçue en héritage
+    var percent : Double // [0, 1]
     var brut    : Double
     var net     : Double
     var tax     : Double
@@ -166,11 +176,21 @@ final class Patrimoin: ObservableObject {
             liabilities.taxableInheritanceValue(of: decedent, atEndOf: year)
     }
     
-    /// Calcule la succession d'un défunt et retourne une table des héritages et droits de succession pour chaque héritier
+    /// Calcule la transmission d'assurance vie d'un défunt et retourne une table des héritages et droits de succession pour chaque héritier
     /// - Parameters:
     ///   - decedent: défunt
     ///   - year: année d'évaluation
     /// - Returns: Succession du défunt incluant la table des héritages et droits de succession pour chaque héritier
+    func lifeInsuraceSuccession(of decedent  : Person,
+                                atEndOf year : Int) -> Succession {
+        return Succession(yearOfDeath: year, decedent: decedent, taxableValue: 0, inheritances: [])
+    }
+    
+    /// Calcule la succession légale d'un défunt et retourne une table des héritages et droits de succession pour chaque héritier
+    /// - Parameters:
+    ///   - decedent: défunt
+    ///   - year: année d'évaluation
+    /// - Returns: Succession légale du défunt incluant la table des héritages et droits de succession pour chaque héritier
     func succession(of decedent  : Person,
                     atEndOf year : Int) -> Succession {
         
@@ -216,9 +236,9 @@ final class Patrimoin: ObservableObject {
             // pas de conjoint survivant, les enfants se partagent l'héritage
             if family.nbOfChildrenAlive(atEndOf: year) > 0 {
                 inheritanceShares.forSpouse = 0
-                inheritanceShares.forChild  = InheritanceDonation.childShare(nbChildren : family.nbOfChildrenAlive(atEndOf : year))
+                inheritanceShares.forChild  = InheritanceDonation.childShare(nbChildren: family.nbOfChildrenAlive(atEndOf : year))
             } else {
-                // pas d'enfant surivant
+                // pas d'enfant survivant
                 return Succession(yearOfDeath  : year,
                                   decedent     : decedent,
                                   taxableValue : totalTaxableInheritance,

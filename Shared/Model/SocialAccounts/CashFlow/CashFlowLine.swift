@@ -53,8 +53,10 @@ struct CashFlowLine {
     }
     // les comptes annuels de la SCI
     let sciCashFlowLine : SciCashFlowLine
-    // les successions
+    // les successions légales
     var successions     : [Succession] = []
+    // les transmissions d'assurances vie
+    var lifeInsSuccessions : [Succession] = []
 
     // solde net
     var netCashFlow: Double {
@@ -108,16 +110,16 @@ struct CashFlowLine {
         populateISF(of   : family,
                     with : patrimoine,
                     for  : year)
-        /// SUCCESSIONS: calcule des droits de successions y.c. assurances vies
-        manageDeath(of   : family,
-                    with : patrimoine,
-                    for  : year)
-        
         /// EXPENSES: compute and populate family expenses
         lifeExpenses.namedValueTable.namedValues = family.expenses.namedValueTable(atEndOf: year)
         
         /// LOAN: populate remboursement d'emprunts
         populateLoanCashFlow(of: patrimoine)
+        
+        /// SUCCESSIONS: calcule des droits de successions y.c. assurances vies + réalise la tranmission de patrimoine
+        manageDeath(of   : family,
+                    with : patrimoine,
+                    for  : year)
         
         /// FREE INVEST: populate revenue, des investissements financiers libres et investir/retirer le solde net du cash flow de l'année
         try manageYearlyNetCashFlow(of                  : patrimoine,
@@ -135,20 +137,35 @@ struct CashFlowLine {
     fileprivate mutating func manageDeath(of family       : Family,
                                           with patrimoine : Patrimoin,
                                           for year        : Int) {
-        // rechercher l'adulte qui vient de décéder
-        if let decedent = family.members.first(where: { !$0.isAlive(atEndOf: year) && $0.isAlive(atEndOf: year-1) }) {
-            // un décès est survenu
-            // ajouter les droits de succession aux taxes
-//            Swift.print(patrimoine.succession(of: decedent, atEndOf: year))
-            successions.append(patrimoine.succession(of: decedent, atEndOf: year))
-            taxes.perCategory[.succession]?.namedValues.append((name  : TaxeCategory.succession.rawValue,
-                                                                value : successions.last!.tax.rounded()))
-            
-        } else {
-            // pas de décès
-            taxes.perCategory[.succession]?.namedValues.append((name  : TaxeCategory.succession.rawValue,
-                                                                value : 0))
+        // FIXME: - en fait il faudrait traiter les sucessions en séquences: calcul taxe => transmission => calcul tax => transmission
+        let decedents : [Person] = family.members.compactMap { member in
+            if !member.isAlive(atEndOf: year) && member.isAlive(atEndOf: year-1) {
+                // un décès est survenu
+                return member
+            } else {
+                return nil
+            }
         }
+        
+        // ajouter les droits de succession (légales et assurances vie) aux taxes
+        var totalSuccessionTax   = 0.0
+        var totalLiSuccessionTax = 0.0
+        // pour chaque défunt
+        decedents.forEach { decedent in
+            // droits de successions légales
+            let succession = patrimoine.succession(of: decedent, atEndOf: year)
+            successions.append(succession)
+            totalSuccessionTax += succession.tax
+            
+            // droits de transmission assurances vies
+            let liSuccession = patrimoine.lifeInsuraceSuccession(of: decedent, atEndOf: year)
+            lifeInsSuccessions.append(liSuccession)
+            totalLiSuccessionTax += liSuccession.tax
+        }
+        taxes.perCategory[.succession]?.namedValues.append((name  : TaxeCategory.succession.rawValue,
+                                                            value : totalSuccessionTax.rounded()))
+        taxes.perCategory[.liSuccession]?.namedValues.append((name  : TaxeCategory.liSuccession.rawValue,
+                                                              value : totalLiSuccessionTax.rounded()))
     }
     
     fileprivate mutating func populateIrpp(of family: Family) {

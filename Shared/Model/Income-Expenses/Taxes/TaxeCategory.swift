@@ -12,11 +12,12 @@ import Foundation
 
 /// Catégories de dépenses
 enum TaxeCategory: String, PickableEnum, Codable, Hashable {
-    case irpp        = "IRPP"
-    case isf         = "ISF"
-    case succession  = "Droits Succession"
-    case socialTaxes = "Prélev Sociaux"
-    case localTaxes  = "Taxes Locales"
+    case irpp         = "IRPP"
+    case isf          = "ISF"
+    case succession   = "Droits Succes. Légale"
+    case liSuccession = "Droits Succes. Ass. Vie"
+    case socialTaxes  = "Prélev Sociaux"
+    case localTaxes   = "Taxes Locales"
 
     // properties
     
