@@ -170,6 +170,18 @@ struct PeriodicInvestDetailedView: View {
             return false
         }
         
+        /// vérifier que la clause bénéficiaire est valide
+        switch localItem.type {
+            case .lifeInsurance(_, let clause):
+                guard clause.isValid else {
+                    self.alertItem = AlertItem(title         : Text("La clause bénéficiare n'est pas valide"),
+                                               dismissButton : .default(Text("OK")))
+                    return false
+                }
+                
+            default: ()
+        }
+        
         return true
     }
     

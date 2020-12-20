@@ -99,9 +99,17 @@ extension InvestementType: Codable {
 ///   - le cas de plusieurs usufruitiers n'est pas traité
 ///   - le cas de parts non égales entre nue-propriétaires n'est pas traité
 ///   - le cas de parts non égales entre bénéficiaires en PP n'est pas traité
-struct LifeInsuranceClause: Codable, Equatable, Hashable {
+struct LifeInsuranceClause: Codable, Hashable {
     var isDismembered     : Bool     = false
     var fullRecipients    : [String] = [ ] // PP si la clause n'est pas démembrée
     var usufructRecipient : String   = ""
     var bareRecipients    : [String] = [ ]
+    
+    var isValid: Bool {
+        if isDismembered {
+            return usufructRecipient.isNotEmpty && bareRecipients.isNotEmpty
+        } else {
+            return fullRecipients.isNotEmpty
+        }
+    }
 }

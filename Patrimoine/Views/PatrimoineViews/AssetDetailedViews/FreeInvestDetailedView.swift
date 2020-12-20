@@ -44,7 +44,7 @@ struct FreeInvestDetailedView: View {
                     .onChange(of: totalValue) { newValue in
                         localItem.initialState.investment = newValue - localItem.initialState.interest
                     }
-                AmountEditView(label: "dont Plus-values",
+                AmountEditView(label: "dont plus-values",
                                amount: $localItem.initialState.interest)
                     .onChange(of: localItem.initialState.interest) { newValue in
                         localItem.initialState.investment = totalValue - newValue
@@ -147,6 +147,18 @@ struct FreeInvestDetailedView: View {
             self.alertItem = AlertItem(title         : Text("Les propriétaires ne sont pas correctements définis"),
                                        dismissButton : .default(Text("OK")))
             return false
+        }
+        
+        /// vérifier que la clause bénéficiaire est valide
+        switch localItem.type {
+            case .lifeInsurance(_, let clause):
+                guard clause.isValid else {
+                    self.alertItem = AlertItem(title         : Text("La clause bénéficiare n'est pas valide"),
+                                               dismissButton : .default(Text("OK")))
+                    return false
+                }
+
+            default: ()
         }
         
         return true

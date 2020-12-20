@@ -43,12 +43,6 @@ struct PersonNameRow : View {
     var member: Person
     
     var body: some View {
-//        HStack {
-//            Image(systemName: "person.fill")
-//                .padding(.trailing)
-//                .foregroundColor(Color.blue)
-//            Text(member.displayName)
-//        }
         Label(member.displayName, systemImage: "person.fill")
         .tag(member.displayName)
     }
