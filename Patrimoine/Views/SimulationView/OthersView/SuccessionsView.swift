@@ -27,7 +27,7 @@ struct SuccessionsView: View {
                                        amount: successions.sum(for: \.taxableValue))
                             AmountView(label : "Droits de succession à payer",
                                        amount: -successions.sum(for: \.tax),
-                                       comment: ((successions.sum(for: \.tax) / successions.sum(for: \.taxableValue))*100.0).percentString()+"%")
+                                       comment: ((successions.sum(for: \.tax) / successions.sum(for: \.taxableValue))*100.0).percentStringRounded)
                             Divider()
                             AmountView(label : "Succession nette laissée aux héritiers",
                                        amount: successions.sum(for: \.net))
@@ -89,7 +89,7 @@ struct SuccessionGroupBox: View {
                                amount: succession.taxableValue)
                     AmountView(label : "Droits de succession à payer par les héritiers",
                                amount: -succession.tax,
-                               comment: ((succession.tax / succession.taxableValue)*100.0).percentString()+"%")
+                               comment: ((succession.tax / succession.taxableValue)*100.0).percentStringRounded)
                     Divider()
                     AmountView(label : "Succession nette laissée aux héritiers",
                                amount: succession.net)
@@ -130,11 +130,11 @@ struct SuccessorGroupBox : View {
 //                            percent : inheritence.percent)
                 AmountView(label : "Valeur héritée brute",
                            amount: inheritence.brut,
-                           comment: (inheritence.percent*100).percentString() + "% de la succession")
+                           comment: (inheritence.percent*100).percentStringRounded + " de la succession")
                     .padding(.top, 3)
                 AmountView(label : "Droits de succession à payer",
                            amount: -inheritence.tax,
-                           comment: ((inheritence.tax / inheritence.brut)*100.0).percentString()+"%")
+                           comment: ((inheritence.tax / inheritence.brut)*100.0).percentStringRounded)
                     .padding(.top, 3)
                 Divider()
                 AmountView(label : "Valeur héritée nette",

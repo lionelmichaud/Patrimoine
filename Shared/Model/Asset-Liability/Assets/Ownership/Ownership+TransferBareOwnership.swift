@@ -96,7 +96,7 @@ extension Ownership {
             // il y a des enfants héritiers
             // selon l'option fiscale du conjoint survivant
             guard let spouseFiscalOption = spouseFiscalOption else {
-                fatalError("pas d'option fiscale passée en paramètre de transferOwnershipOfDecedent")
+                fatalError("pas d'option fiscale passée en paramètre de transferOwnershipOf")
             }
             switch spouseFiscalOption {
                 case .fullUsufruct:

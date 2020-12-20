@@ -324,7 +324,7 @@ struct Ownership: Codable {
             // il y a des enfants héritiers
             // transmission NP + UF selon l'option fiscale du conjoint survivant
             guard let spouseFiscalOption = spouseFiscalOption else {
-                fatalError("pas d'option fiscale passée en paramètre de transferOwnershipOfDecedent")
+                fatalError("pas d'option fiscale passée en paramètre de transferOwnershipOf")
             }
             // l'UF du défunt rejoint la nue propriété des enfants qui la détiennent
             transferUsufruct(of         : decedentName,
@@ -437,10 +437,10 @@ struct Ownership: Codable {
     ///   - chidrenNames: noms des enfants héritiers survivant éventuels
     ///   - spouseName: nom du conjoint survivant éventuel
     ///   - spouseFiscalOption: option fiscale du conjoint survivant éventuel
-    mutating func transferOwnershipOfDecedent(decedentName       : String,
-                                              chidrenNames       : [String]?,
-                                              spouseName         : String?,
-                                              spouseFiscalOption : InheritanceDonation.FiscalOption?) {
+    mutating func transferOwnershipOf(decedentName       : String,
+                                      chidrenNames       : [String]?,
+                                      spouseName         : String?,
+                                      spouseFiscalOption : InheritanceDonation.FiscalOption?) {
         if isDismembered {
             // le bien est démembré
             if let spouseName = spouseName {

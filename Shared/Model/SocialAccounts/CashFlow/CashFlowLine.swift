@@ -161,6 +161,9 @@ struct CashFlowLine {
             let liSuccession = patrimoine.lifeInsuraceSuccession(of: decedent, atEndOf: year)
             lifeInsSuccessions.append(liSuccession)
             totalLiSuccessionTax += liSuccession.tax
+            
+            // Transférer les biens d'un défunt vers ses héritiers
+            patrimoine.transferOwnershipOf(decedent: decedent, atEndOf: year)
         }
         taxes.perCategory[.succession]?.namedValues.append((name  : TaxeCategory.succession.rawValue,
                                                             value : totalSuccessionTax.rounded()))

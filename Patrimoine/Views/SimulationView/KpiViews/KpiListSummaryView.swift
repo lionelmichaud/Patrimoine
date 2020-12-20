@@ -47,7 +47,7 @@ struct KpiSummaryView: View {
                     .padding(.top, 3)
                 AmountView(label   : "Valeur Objectif Minimale",
                            amount  : kpi.objective,
-                           comment : simulation.mode == .random ? "à atteindre avec une probabilité ≥ \((kpi.probaObjective * 100.0).percentString())%" : "")
+                           comment : simulation.mode == .random ? "à atteindre avec une probabilité ≥ \((kpi.probaObjective * 100.0).percentStringRounded)" : "")
                     .padding(EdgeInsets(top: withPadding ? 3 : 0, leading: 0, bottom: withPadding ? 3 : 0, trailing: 0))
                 if simulation.mode == .random {
                     HStack {
@@ -64,7 +64,7 @@ struct KpiSummaryView: View {
             HStack {
                 AmountView(label   : "Valeur Atteinte",
                            amount  : kpi.value(withMode: simulation.mode)!,
-                           comment : simulation.mode == .random ? "avec une probabilité de \((kpi.probaObjective * 100.0).percentString())%" : "")
+                           comment : simulation.mode == .random ? "avec une probabilité de \((kpi.probaObjective * 100.0).percentStringRounded)" : "")
                 Image(systemName: kpi.objectiveIsReached(withMode: simulation.mode)! ? "checkmark.circle.fill" : "multiply.circle.fill")
                     .imageScale(/*@START_MENU_TOKEN@*/.large/*@END_MENU_TOKEN@*/)
             }

@@ -186,6 +186,7 @@
 		79C6FC0D24BF9D0400D99594 /* UnemployementDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79C6FC0C24BF9D0400D99594 /* UnemployementDetailView.swift */; };
 		79C7B1FC258B98CD004B38E7 /* Extensions+Collection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79C7B1FB258B98CD004B38E7 /* Extensions+Collection.swift */; };
 		79C7B1FF258B9D96004B38E7 /* Ownership+TransferLifeInsurance.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79C7B1FE258B9D96004B38E7 /* Ownership+TransferLifeInsurance.swift */; };
+		79C7B202258D2783004B38E7 /* Succession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79C7B201258D2783004B38E7 /* Succession.swift */; };
 		79CAD664249E51CB00319BCD /* TypePreservingCodingAdapter in Frameworks */ = {isa = PBXBuildFile; productRef = 79CAD663249E51CB00319BCD /* TypePreservingCodingAdapter */; };
 		79CAD667249E525F00319BCD /* Charts in Frameworks */ = {isa = PBXBuildFile; productRef = 79CAD666249E525F00319BCD /* Charts */; };
 		79CAD66A249E547200319BCD /* Disk in Frameworks */ = {isa = PBXBuildFile; productRef = 79CAD669249E547200319BCD /* Disk */; };
@@ -402,6 +403,7 @@
 		79C6FC0C24BF9D0400D99594 /* UnemployementDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnemployementDetailView.swift; sourceTree = "<group>"; };
 		79C7B1FB258B98CD004B38E7 /* Extensions+Collection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Extensions+Collection.swift"; sourceTree = "<group>"; };
 		79C7B1FE258B9D96004B38E7 /* Ownership+TransferLifeInsurance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Ownership+TransferLifeInsurance.swift"; sourceTree = "<group>"; };
+		79C7B201258D2783004B38E7 /* Succession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Succession.swift; sourceTree = "<group>"; };
 		79CC729C24BC6B0D000302C5 /* UnemploymentModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnemploymentModel.swift; sourceTree = "<group>"; };
 		79CC729E24BC6DB8000302C5 /* UnemploymentModelConfig.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = UnemploymentModelConfig.json; sourceTree = "<group>"; };
 		79CD02DE24D065D20055CEF5 /* RetirementModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RetirementModel.swift; sourceTree = "<group>"; };
@@ -893,6 +895,7 @@
 				7994893A249E4FC200DAFF1E /* Assets */,
 				79948936249E4FC200DAFF1E /* Liabilities */,
 				79785D5B257FAFDA00E8E35D /* FiscalHousehold.swift */,
+				79C7B201258D2783004B38E7 /* Succession.swift */,
 			);
 			path = "Asset-Liability";
 			sourceTree = "<group>";
@@ -1304,6 +1307,7 @@
 				7994896C249E4FC200DAFF1E /* ScenarioView.swift in Sources */,
 				79DB52C4258663EB00BC6E84 /* CheckBoxStyles.swift in Sources */,
 				799488C3249E4F9700DAFF1E /* Themes.swift in Sources */,
+				79C7B202258D2783004B38E7 /* Succession.swift in Sources */,
 				79D84E2B24A28EBF00CBC78E /* Child.swift in Sources */,
 				7905A50424CEFB880049F4ED /* ValuedRevenues.swift in Sources */,
 				79CE57812588EF3C00C2E00C /* SuccessionsView.swift in Sources */,

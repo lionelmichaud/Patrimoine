@@ -119,6 +119,10 @@ extension Double {
         valueKilo€Formatter.string(from: self as NSNumber) ?? ""
     }
 
+    var percentStringRounded: String {
+        percentIntegerFormatter.string(from: self as NSNumber) ?? ""
+    }
+    
     func percentString(digit: Int = 0) -> String {
         guard digit >= 0 else {
             return "??"

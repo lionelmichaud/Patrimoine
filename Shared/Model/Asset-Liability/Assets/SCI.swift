@@ -169,12 +169,12 @@ struct SCI {
     ///   - chidrenNames: noms des enfants héritiers survivant éventuels
     ///   - spouseName: nom du conjoint survivant éventuel
     ///   - spouseFiscalOption: option fiscale du conjoint survivant éventuel
-    mutating func transferOwnershipOfDecedent(decedentName       : String,
-                                              chidrenNames       : [String]?,
-                                              spouseName         : String?,
-                                              spouseFiscalOption : InheritanceDonation.FiscalOption?) {
+    mutating func transferOwnershipOf(decedentName       : String,
+                                      chidrenNames       : [String]?,
+                                      spouseName         : String?,
+                                      spouseFiscalOption : InheritanceDonation.FiscalOption?) {
         for idx in 0..<scpis.items.count {
-            scpis.items[idx].ownership.transferOwnershipOfDecedent(decedentName       : decedentName,
+            scpis.items[idx].ownership.transferOwnershipOf(decedentName       : decedentName,
                                                                    chidrenNames       : chidrenNames,
                                                                    spouseName         : spouseName,
                                                                    spouseFiscalOption : spouseFiscalOption)

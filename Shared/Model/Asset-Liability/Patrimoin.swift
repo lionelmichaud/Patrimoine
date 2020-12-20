@@ -8,77 +8,6 @@
 
 import Foundation
 
-// MARK: - Méthode d'évaluation d'un Patrmoine (régles fiscales à appliquer)
-enum EvaluationMethod: String, PickableEnum {
-    case ifi         = "IFI"
-    case isf         = "ISF"
-    case inheritance = "Succession"
-    case patrimoine  = "Patrimoniale"
-    
-    var pickerString: String {
-        return self.rawValue
-    }
-}
-
-// MARK: - Succession d'une personne
-
-struct Succession: Identifiable {
-    let id           = UUID()
-    // année de la succession
-    let yearOfDeath  : Int
-    // personne dont on fait la succession
-    let decedent     : Person
-    // masses successorale
-    let taxableValue : Double
-    // liste des héritages par héritier
-    let inheritances : [Inheritance]
-    
-    // dictionnaire des héritages net reçu par les enfants dans une succession
-    var childrenSuccessorsInheritedNetValue: [String: Double] {
-        inheritances.reduce(into: [:]) { counts, inheritance in
-            counts[inheritance.person.displayName, default: 0] += inheritance.net
-        }
-    }
-    
-    // somme des héritages reçus par les hétritiers dans une succession
-    var net: Double {
-        inheritances.sum(for: \.net)
-    }
-    
-    // somme des taxes payées par les hétritiers dans une succession
-    var tax: Double {
-        inheritances.sum(for: \.tax)
-    }
-}
-extension Array where Element == Succession {
-    // dictionnaire des héritages net reçu par les enfants sur un ensemble de successions
-    var childrenSuccessorsInheritedNetValue: [String: Double] {
-        var globalDico: [String: Double] = [:]
-        self.forEach { succession in
-            let dico = succession.childrenSuccessorsInheritedNetValue
-            for name in dico.keys {
-                if globalDico[name] != nil {
-                    globalDico[name]! += dico[name]!
-                } else {
-                    globalDico[name] = dico[name]
-                }
-            }
-        }
-        return globalDico
-    }
-}
-
-// MARK: - Héritage d'une personne
-struct Inheritance {
-    // héritier
-    var person  : Person
-    // fraction de la masse successorale reçue en héritage
-    var percent : Double // [0, 1]
-    var brut    : Double
-    var net     : Double
-    var tax     : Double
-}
-
 // MARK: - Patrimoine constitué d'un Actif et d'un Passif
 final class Patrimoin: ObservableObject {
     
@@ -112,7 +41,7 @@ final class Patrimoin: ObservableObject {
         try assets.forEachOwnable(body)
         try liabilities.forEachOwnable(body)
     }
-
+    
     /// Transférer la propriété d'un bien d'un défunt vers ses héritiers en fonction de l'option
     ///  fiscale du conjoint survivant éventuel
     /// - Parameters:
@@ -120,48 +49,44 @@ final class Patrimoin: ObservableObject {
     ///   - chidrenNames: noms des enfants héritiers survivant éventuels
     ///   - spouseName: nom du conjoint survivant éventuel
     ///   - spouseFiscalOption: option fiscale du conjoint survivant éventuel
-    func transferOwnershipOfDecedent(decedentName       : String,
-                                     chidrenNames       : [String]?,
-                                     spouseName         : String?,
-                                     spouseFiscalOption : InheritanceDonation.FiscalOption?) {
-        assets.transferOwnershipOfDecedent(decedentName       : decedentName,
-                                           chidrenNames       : chidrenNames,
-                                           spouseName         : spouseName,
-                                           spouseFiscalOption : spouseFiscalOption)
-        liabilities.transferOwnershipOfDecedent(decedentName       : decedentName,
-                                                chidrenNames       : chidrenNames,
-                                                spouseName         : spouseName,
-                                                spouseFiscalOption : spouseFiscalOption)
-   }
-    
-    /// Transférer les biens d'un défunt vers ses héritiers
-    /// - Parameter year: décès dans l'année en cours
-    func transferOwnershipOfDecedent(atEndOf year : Int) {
-        guard let family = Patrimoin.family else {
-            fatalError("La famille n'est pas définie dans Patrimoin.transferOwnershipOfDecedent")
-        }
-        // rechercher l'adulte qui vient de décéder
-        // TODO: - gérer la cas de deux décès dans la même année
-        if let decedent = family.members.first(where: { !$0.isAlive(atEndOf: year) && $0.isAlive(atEndOf: year-1) }) {
-            // un décès est survenu
-            // rechercher un conjont survivant
-            var spouseName         : String?
-            var spouseFiscalOption : InheritanceDonation.FiscalOption?
-            if let decedent = decedent as? Adult, let spouse = family.spouseOf(decedent) {
-                if spouse.isAlive(atEndOf: year) {
-                    spouseName         = spouse.displayName
-                    spouseFiscalOption = spouse.fiscalOption
-                }
-            }
-            // rechercher des enfants héritiers vivants
-            let chidrenNames = family.chidldrenAlive(atEndOf: year)?.map { $0.displayName }
-            
-            // leur transférer la propriété de tous les biens détenus par le défunt
-            transferOwnershipOfDecedent(decedentName       : decedent.displayName,
+    func transferOwnershipOf(decedentName       : String,
+                             chidrenNames       : [String]?,
+                             spouseName         : String?,
+                             spouseFiscalOption : InheritanceDonation.FiscalOption?) {
+        assets.transferOwnershipOf(decedentName       : decedentName,
+                                   chidrenNames       : chidrenNames,
+                                   spouseName         : spouseName,
+                                   spouseFiscalOption : spouseFiscalOption)
+        liabilities.transferOwnershipOf(decedentName       : decedentName,
                                         chidrenNames       : chidrenNames,
                                         spouseName         : spouseName,
                                         spouseFiscalOption : spouseFiscalOption)
+    }
+    
+    /// Transférer les biens d'un défunt vers ses héritiers
+    /// - Parameter year: décès dans l'année en cours
+    func transferOwnershipOf(decedent     : Person,
+                             atEndOf year : Int) {
+        guard let family = Patrimoin.family else {
+            fatalError("La famille n'est pas définie dans Patrimoin.transferOwnershipOf")
         }
+        // rechercher un conjont survivant
+        var spouseName         : String?
+        var spouseFiscalOption : InheritanceDonation.FiscalOption?
+        if let decedent = decedent as? Adult, let spouse = family.spouseOf(decedent) {
+            if spouse.isAlive(atEndOf: year) {
+                spouseName         = spouse.displayName
+                spouseFiscalOption = spouse.fiscalOption
+            }
+        }
+        // rechercher des enfants héritiers vivants
+        let chidrenNames = family.chidldrenAlive(atEndOf: year)?.map { $0.displayName }
+        
+        // leur transférer la propriété de tous les biens détenus par le défunt
+        transferOwnershipOf(decedentName       : decedent.displayName,
+                            chidrenNames       : chidrenNames,
+                            spouseName         : spouseName,
+                            spouseFiscalOption : spouseFiscalOption)
     }
     
     /// Calcule l'actif net taxable à la succession d'une personne
@@ -204,11 +129,11 @@ final class Patrimoin: ObservableObject {
                               inheritances : inheritances)
         }
         print("Succession de \(decedent.displayName)")
-
+        
         // Calcul de la masse successorale taxable du défunt
         let totalTaxableInheritance = taxableInheritanceValue(of: decedent, atEndOf: year)
         print("  Masse successorale = \(totalTaxableInheritance.rounded())")
-
+        
         // Rechercher l'option fiscale du conjoint survivant et calculer sa part d'héritage
         if let conjointSurvivant = family.members.first(where: { member in
             member is Adult && member.isAlive(atEndOf: year) && member != decedent
@@ -324,42 +249,9 @@ final class Patrimoin: ObservableObject {
     /// - Parameters:
     ///   - year: à la fin de cette année
     func capitalizeFreeInvestments(atEndOf year: Int) {
-        var investements = [FreeInvestement]()
-        assets.freeInvests.items.forEach {
-            var invest = $0
-            invest.capitalize(atEndOf: year)
-            investements.append(invest)
+        for idx in 0..<assets.freeInvests.items.count {
+            assets.freeInvests.items[idx].capitalize(atEndOf: year)
         }
-        assets.freeInvests.items = investements
-    }
-    
-    /// Placer le net cash flow en fin d'année
-    /// - Parameters:
-    ///   - amount: montant à placer
-    ///   - category: dans cette catégories d'actif
-    fileprivate func investNetCashFlow(amount      : inout Double,
-                                       in category : InvestementType) {
-        guard amount != 0 else {
-            return
-        }
-        var investements = [FreeInvestement]()
-        assets.freeInvests.items.sorted(by: {$0.interestRate > $1.interestRate}).forEach {
-            var invest = $0
-            switch invest.type {
-                case category:
-                    // ajouter le montant à cette assurance vie si cela n'est pas encore fait
-                    if amount != 0 {
-                        invest.add(amount)
-                        amount = 0
-                    }
-                    // ajouter l'item à la liste après en avoir modifier le montant au besoin
-                    investements.append(invest)
-                default:
-                    // ajouter l'item à la liste sans modification
-                    investements.append(invest)
-            }
-        }
-        assets.freeInvests.items = investements
     }
     
     /// Ajouter la capacité d'épargne à l'investissement libre de type Assurance vie de meilleur rendement
@@ -367,20 +259,44 @@ final class Patrimoin: ObservableObject {
     ///   - patrimoine: du patrimoine
     ///   - amount: capacité d'épargne = montant à investir
     func investNetCashFlow(_ amount: Double) {
-        var amount = amount
+        assets.freeInvests.items.sort(by: {$0.interestRate > $1.interestRate})
+        
         // investir en priorité dans une assurance vie
-        investNetCashFlow(amount : &amount,
-                          in     : .lifeInsurance(periodicSocialTaxes     : true))
-        investNetCashFlow(amount : &amount,
-                          in     : .lifeInsurance(periodicSocialTaxes     : false))
+        for idx in 0..<assets.freeInvests.items.count {
+            switch assets.freeInvests.items[idx].type {
+                case .lifeInsurance(let periodicSocialTaxes, _):
+                    if periodicSocialTaxes && amount != 0 {
+                        // investir la totalité du cash
+                        assets.freeInvests.items[idx].add(amount)
+                        return
+                    }
+                default: ()
+            }
+        }
+        for idx in 0..<assets.freeInvests.items.count {
+            switch assets.freeInvests.items[idx].type {
+                case .lifeInsurance(let periodicSocialTaxes, _):
+                    if !periodicSocialTaxes && amount != 0 {
+                        // investir la totalité du cash
+                        assets.freeInvests.items[idx].add(amount)
+                        return
+                    }
+                default: ()
+            }
+        }
         
         // si pas d'assurance vie alors investir dans un PEA
-        investNetCashFlow(amount : &amount,
-                          in     : .pea)
-        
+        for idx in 0..<assets.freeInvests.items.count where assets.freeInvests.items[idx].type == .pea {
+            // investir la totalité du cash
+            assets.freeInvests.items[idx].add(amount)
+            return
+        }
         // si pas d'assurance vie ni de PEA alors investir dans un autre placement
-        investNetCashFlow(amount : &amount,
-                          in     : .other)
+        for idx in 0..<assets.freeInvests.items.count where assets.freeInvests.items[idx].type == .other {
+            // investir la totalité du cash
+            assets.freeInvests.items[idx].add(amount)
+            return
+        }
     }
     
     /// Retirer le montant d'un investissement libre: d'abord PEA ensuite Assurance vie puis autre
@@ -394,61 +310,46 @@ final class Patrimoin: ObservableObject {
     func removeFromInvestement(thisAmount amount   : Double,
                                atEndOf year        : Int,
                                lifeInsuranceRebate : inout Double) throws -> Double {
-        var investements            = [FreeInvestement]()
         var amountRemainingToRemove = amount
         var totalTaxableInterests   = 0.0
         
+        assets.freeInvests.items.sort(by: {$0.interestRate < $1.interestRate})
+        
         // retirer le montant d'un investissement libre: d'abord le PEA procurant le moins bon rendement
-        assets.freeInvests.items.sorted(by: {$0.interestRate < $1.interestRate}).forEach {
-            var invest = $0
-            switch invest.type {
-                case .pea:
+        for idx in 0..<assets.freeInvests.items.count where assets.freeInvests.items[idx].type == .pea {
+            // tant que l'on a pas retiré le montant souhaité
+            // retirer le montant du PEA s'il n'est pas vide
+            if amountRemainingToRemove > 0.0 && assets.freeInvests.items[idx].value(atEndOf: year) > 0.0 {
+                let removal = assets.freeInvests.items[idx].remove(netAmount: amountRemainingToRemove)
+                amountRemainingToRemove -= removal.revenue
+                // IRPP: les plus values PEA ne sont pas imposables à l'IRPP
+                // Prélèvements sociaux: prélevés à la source sur le montant brut du retrait donc pas à payer dans le futur
+                if amountRemainingToRemove <= 0.0 { return totalTaxableInterests }
+            }
+        }
+        
+        // si le solde des PEA n'était pas suffisant alors retirer de l'Assurances vie procurant le moins bon rendement
+        for idx in 0..<assets.freeInvests.items.count {
+            switch assets.freeInvests.items[idx].type {
+                case .lifeInsurance:
                     // tant que l'on a pas retiré le montant souhaité
-                    if amountRemainingToRemove > 0.0 {
-                        // retirer le montant du PEA s'il n'est pas vide
-                        if invest.value(atEndOf: year) > 0.0 {
-                            let removal = invest.remove(netAmount: amountRemainingToRemove)
-                            amountRemainingToRemove -= removal.revenue
-                            // IRPP: les plus values PEA ne sont pas imposables à l'IRPP
-                            // Prélèvements sociaux: prélevés à la source sur le montant brut du retrait donc pas à payer dans le futur
-                        }
+                    // retirer le montant de l'Assurances vie si elle n'est pas vide
+                    if amountRemainingToRemove > 0.0 && assets.freeInvests.items[idx].value(atEndOf: year) > 0.0 {
+                        let removal = assets.freeInvests.items[idx].remove(netAmount: amountRemainingToRemove)
+                        amountRemainingToRemove -= removal.revenue
+                        // IRPP: part des produit de la liquidation inscrit en compte courant imposable à l'IRPP après déduction de ce qu'il reste de franchise
+                        var taxableInterests: Double
+                        // apply rebate if some is remaining
+                        taxableInterests = max(0.0, removal.taxableInterests - lifeInsuranceRebate)
+                        lifeInsuranceRebate -= (removal.taxableInterests - taxableInterests)
+                        // géré comme un revenu en report d'imposition (dette)
+                        totalTaxableInterests += taxableInterests
+                        // Prélèvements sociaux => prélevés à la source sur le montant brut du retrait donc pas à payer dans le futur
+                        if amountRemainingToRemove <= 0.0 { return totalTaxableInterests }
                     }
                 default:
                     ()
             }
-            investements.append(invest)
-        }
-        assets.freeInvests.items = investements
-        
-        investements = [FreeInvestement]()
-        if amountRemainingToRemove > 0.0 {
-            // si le solde des PEA n'était pas suffisant alors retirer de l'Assurances vie procurant le moins bon rendement
-            assets.freeInvests.items.sorted(by: {$0.interestRate < $1.interestRate}).forEach {
-                var invest = $0
-                switch invest.type {
-                    case .lifeInsurance:
-                        // tant que l'on a pas retiré le montant souhaité
-                        if amountRemainingToRemove > 0.0 {
-                            // retirer le montant de l'Assurances vie si elle n'est pas vide
-                            if invest.value(atEndOf: year) > 0.0 {
-                                let removal = invest.remove(netAmount: amountRemainingToRemove)
-                                amountRemainingToRemove -= removal.revenue
-                                // IRPP: part des produit de la liquidation inscrit en compte courant imposable à l'IRPP après déduction de ce qu'il reste de franchise
-                                var taxableInterests: Double
-                                // apply rebate if some is remaining
-                                taxableInterests = max(0.0, removal.taxableInterests - lifeInsuranceRebate)
-                                lifeInsuranceRebate -= (removal.taxableInterests - taxableInterests)
-                                // géré comme un revenu en report d'imposition (dette)
-                                totalTaxableInterests += taxableInterests
-                                // Prélèvements sociaux => prélevés à la source sur le montant brut du retrait donc pas à payer dans le futur
-                            }
-                        }
-                    default:
-                        ()
-                }
-                investements.append(invest)
-            }
-            self.assets.freeInvests.items = investements
         }
         
         // TODO: - Si pas assez alors prendre sur la trésorerie

@@ -229,13 +229,14 @@ struct SocialAccounts {
                                    withMode             : simulationMode,
                                    withbalanceSheetLine : newBalanceSheetLine)
                 // transférer les biens du défunt vers ses héritiers
-                patrimoine.transferOwnershipOfDecedent(atEndOf: year)
+                //patrimoine.transferOwnershipOf(atEndOf: year)
                 
             }
             
             if family.nbOfAdultAlive(atEndOf: year-1) == 0 {
                 // il n'y avait plus d'adulte vivant l'année précédente,
                 // on arrête la simulation après avoir clos la dernière succession
+                lastYear = year
                 return currentKPIs
             }
         }

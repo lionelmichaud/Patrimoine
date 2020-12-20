@@ -55,21 +55,21 @@ struct Liabilities {
     ///   - chidrenNames: noms des enfants héritiers survivant éventuels
     ///   - spouseName: nom du conjoint survivant éventuel
     ///   - spouseFiscalOption: option fiscale du conjoint survivant éventuel
-    mutating func transferOwnershipOfDecedent(decedentName       : String,
-                                              chidrenNames       : [String]?,
-                                              spouseName         : String?,
-                                              spouseFiscalOption : InheritanceDonation.FiscalOption?) {
+    mutating func transferOwnershipOf(decedentName       : String,
+                                      chidrenNames       : [String]?,
+                                      spouseName         : String?,
+                                      spouseFiscalOption : InheritanceDonation.FiscalOption?) {
         for idx in 0..<loans.items.count {
-            loans.items[idx].ownership.transferOwnershipOfDecedent(decedentName       : decedentName,
-                                                                   chidrenNames       : chidrenNames,
-                                                                   spouseName         : spouseName,
-                                                                   spouseFiscalOption : spouseFiscalOption)
+            loans.items[idx].ownership.transferOwnershipOf(decedentName       : decedentName,
+                                                           chidrenNames       : chidrenNames,
+                                                           spouseName         : spouseName,
+                                                           spouseFiscalOption : spouseFiscalOption)
         }
         for idx in 0..<debts.items.count {
-            debts.items[idx].ownership.transferOwnershipOfDecedent(decedentName       : decedentName,
-                                                                   chidrenNames       : chidrenNames,
-                                                                   spouseName         : spouseName,
-                                                                   spouseFiscalOption : spouseFiscalOption)
+            debts.items[idx].ownership.transferOwnershipOf(decedentName       : decedentName,
+                                                           chidrenNames       : chidrenNames,
+                                                           spouseName         : spouseName,
+                                                           spouseFiscalOption : spouseFiscalOption)
         }
     }
     
