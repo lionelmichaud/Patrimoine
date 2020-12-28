@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import AVFoundation
 
 // MARK: - Enumération des modes de simulation
 
@@ -65,6 +66,8 @@ final class Simulation: ObservableObject {
     /// URL du fichier de stockage du résultat de calcul au format CSV
     static let monteCarloFileUrl = Bundle.main.url(forResource: "Monté-Carlo Kpi.csv", withExtension: nil)
     //#endif
+    
+    static var player: AVPlayer { AVPlayer.sharedDingPlayer }
 
     // MARK: - Properties
     
@@ -161,6 +164,12 @@ final class Simulation: ObservableObject {
                  nbOfRuns                  : Int,
                  withFamily family         : Family,
                  withPatrimoine patrimoine : Patrimoin) {
+        
+        defer {
+            // jouer le son
+            Simulation.player.seek(to: .zero)
+            Simulation.player.play()
+        }
 //        isComputing    = true
         let monteCarlo = nbOfRuns > 1
         var dicoOfEconomyRandomVariables      = Economy.DictionaryOfRandomVariable()
@@ -209,6 +218,7 @@ final class Simulation: ObservableObject {
                                                                                                 nbOfYearOfDependency: adult.nbOfYearOfDependency)
                     }
                 }
+                // Synthèse du Run de Simulation
                 let currentRunResults = SimulationResultLine(runNumber                         : run,
                                                              dicoOfAdultsRandomProperties      : dicoOfAdultsRandomProperties,
                                                              dicoOfEconomyRandomVariables      : dicoOfEconomyRandomVariables,

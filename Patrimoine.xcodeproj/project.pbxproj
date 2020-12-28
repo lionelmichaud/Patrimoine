@@ -37,6 +37,9 @@
 		7964C5ED25865EA900B1D505 /* IncomeTaxes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7964C5EC25865EA900B1D505 /* IncomeTaxes.swift */; };
 		7964C5F125865F6D00B1D505 /* ISF.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7964C5F025865F6D00B1D505 /* ISF.swift */; };
 		7964C5F425865FA900B1D505 /* InheritanceDonation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7964C5F325865FA900B1D505 /* InheritanceDonation.swift */; };
+		796FC432259A65FE00EE4CB1 /* AVPlayer+Ding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 796FC431259A65FE00EE4CB1 /* AVPlayer+Ding.swift */; };
+		796FC435259A67C200EE4CB1 /* Color+Codable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 796FC434259A67C200EE4CB1 /* Color+Codable.swift */; };
+		796FC439259A680700EE4CB1 /* ding.wav in Resources */ = {isa = PBXBuildFile; fileRef = 796FC438259A680700EE4CB1 /* ding.wav */; };
 		797027A4251E19D300F5174F /* LiabilitiesCategory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 797027A3251E19D300F5174F /* LiabilitiesCategory.swift */; };
 		797027A8251E1B6B00F5174F /* ValuedLiabilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 797027A7251E1B6B00F5174F /* ValuedLiabilities.swift */; };
 		7973ADD72517A8AD00ADBB65 /* DicItemArrayGeneric.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7973ADD62517A8AD00ADBB65 /* DicItemArrayGeneric.swift */; };
@@ -256,6 +259,9 @@
 		7964C5EC25865EA900B1D505 /* IncomeTaxes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IncomeTaxes.swift; sourceTree = "<group>"; };
 		7964C5F025865F6D00B1D505 /* ISF.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ISF.swift; sourceTree = "<group>"; };
 		7964C5F325865FA900B1D505 /* InheritanceDonation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InheritanceDonation.swift; sourceTree = "<group>"; };
+		796FC431259A65FE00EE4CB1 /* AVPlayer+Ding.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "AVPlayer+Ding.swift"; sourceTree = "<group>"; };
+		796FC434259A67C200EE4CB1 /* Color+Codable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Color+Codable.swift"; sourceTree = "<group>"; };
+		796FC438259A680700EE4CB1 /* ding.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = ding.wav; sourceTree = "<group>"; };
 		797027A3251E19D300F5174F /* LiabilitiesCategory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiabilitiesCategory.swift; sourceTree = "<group>"; };
 		797027A7251E1B6B00F5174F /* ValuedLiabilities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ValuedLiabilities.swift; sourceTree = "<group>"; };
 		7973ADD62517A8AD00ADBB65 /* DicItemArrayGeneric.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DicItemArrayGeneric.swift; sourceTree = "<group>"; };
@@ -486,6 +492,7 @@
 		79061B4724FD88780045AB25 /* Shared */ = {
 			isa = PBXGroup;
 			children = (
+				796FC437259A67E400EE4CB1 /* Resources */,
 				79EEEC6E256FF34900778588 /* AppConfig */,
 				7904B036252D16840063D884 /* FamilyConfig */,
 				79C7495A250D2A26009C626E /* ModelConfig */,
@@ -565,6 +572,14 @@
 				79948927249E4FC200DAFF1E /* CashFlowLine.swift */,
 			);
 			path = CashFlow;
+			sourceTree = "<group>";
+		};
+		796FC437259A67E400EE4CB1 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				796FC438259A680700EE4CB1 /* ding.wav */,
+			);
+			path = Resources;
 			sourceTree = "<group>";
 		};
 		797592B424A4B9B1004CE646 /* RetirementView */ = {
@@ -650,6 +665,7 @@
 		799488E9249E4FC100DAFF1E /* Utilities */ = {
 			isa = PBXGroup;
 			children = (
+				796FC431259A65FE00EE4CB1 /* AVPlayer+Ding.swift */,
 				79AD6EF8251FB06400490472 /* Statistics */,
 				799488EA249E4FC100DAFF1E /* FinancialMath.swift */,
 				799488EB249E4FC100DAFF1E /* FileUtilities.swift */,
@@ -953,6 +969,7 @@
 		79948949249E4FC200DAFF1E /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
+				796FC434259A67C200EE4CB1 /* Color+Codable.swift */,
 				79EF511B255C932000B46303 /* Extensions+Binding.swift */,
 				791D70AF250E4DFB000A20D0 /* Extensions+Bundle.swift */,
 				7994894A249E4FC200DAFF1E /* Extensions+Bundle-Codable.swift */,
@@ -1174,6 +1191,7 @@
 				799489AC249E4FF500DAFF1E /* Colors.xcassets in Resources */,
 				79A4237925165D3E008383A1 /* Logement_LifeExpense.json in Resources */,
 				7975E4ED252E21D00036C1F5 /* SocioEconomyModelConfig.json in Resources */,
+				796FC439259A680700EE4CB1 /* ding.wav in Resources */,
 				79A4236D25165CD7008383A1 /* Abonnements_LifeExpense.json in Resources */,
 				799488E3249E4FA800DAFF1E /* BalanceSheet.csv in Resources */,
 				799488B3249E4F4600DAFF1E /* Preview Assets.xcassets in Resources */,
@@ -1302,6 +1320,7 @@
 				79948988249E4FC200DAFF1E /* Family.swift in Sources */,
 				7997F99A251FA73B00A79194 /* ModelRandomizer.swift in Sources */,
 				79948980249E4FC200DAFF1E /* FormaterDate.swift in Sources */,
+				796FC432259A65FE00EE4CB1 /* AVPlayer+Ding.swift in Sources */,
 				7964C5ED25865EA900B1D505 /* IncomeTaxes.swift in Sources */,
 				79F9BB48250197A100A74D8D /* MainScene.swift in Sources */,
 				7994896C249E4FC200DAFF1E /* ScenarioView.swift in Sources */,
@@ -1352,6 +1371,7 @@
 				7994898E249E4FC200DAFF1E /* Protocols.swift in Sources */,
 				793BA8EF253A0039003DCFA4 /* ModelSociologyView.swift in Sources */,
 				799489A1249E4FC200DAFF1E /* Extensions+String.swift in Sources */,
+				796FC435259A67C200EE4CB1 /* Color+Codable.swift in Sources */,
 				79948971249E4FC200DAFF1E /* PersonPickerView.swift in Sources */,
 				797027A4251E19D300F5174F /* LiabilitiesCategory.swift in Sources */,
 				7922CFD92587A37D00CF8317 /* Ownership+TransferBareOwnership.swift in Sources */,
