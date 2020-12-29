@@ -21,7 +21,7 @@
         "randomValue"  : 0.0
     },
     
-    "longTermRate":
+    "securedRate":
     {
         "name"    : "Taux de rendement des placements sûrs",
         "version" :

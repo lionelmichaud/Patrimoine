@@ -166,7 +166,7 @@ final class Simulation: ObservableObject {
                  withPatrimoine patrimoine : Patrimoin) {
         
         defer {
-            // jouer le son
+            // jouer le son à la fin de la simulation
             Simulation.player.seek(to: .zero)
             Simulation.player.play()
         }

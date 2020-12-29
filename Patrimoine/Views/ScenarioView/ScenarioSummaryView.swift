@@ -35,7 +35,7 @@ struct ScenarioSummaryView: View {
                     PercentView(label   : "Inflation",
                                 percent : Economy.model.inflation.value(withMode: simulation.mode)/100.0)
                     PercentView(label   : "Rendement sans Risque",
-                                percent : Economy.model.longTermRate.value(withMode: simulation.mode)/100.0)
+                                percent : Economy.model.securedRate.value(withMode: simulation.mode)/100.0)
                     PercentView(label   : "Rendement des Actions",
                                 percent : Economy.model.stockRate.value(withMode: simulation.mode)/100.0)
                 }

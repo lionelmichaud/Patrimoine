@@ -27,8 +27,8 @@ struct PeriodicInvestement: Identifiable, Codable, NameableValuable, Ownable {
     }
     
     /// taux à long terme - rendement d'un fond en euro
-    private static var longTermRate: Double { // %
-        Economy.model.longTermRate.value(withMode: simulationMode)
+    private static var securedRate: Double { // %
+        Economy.model.securedRate.value(withMode: simulationMode)
     }
     
     /// rendement des actions
@@ -62,7 +62,7 @@ struct PeriodicInvestement: Identifiable, Codable, NameableValuable, Ownable {
             case .marketRate(let stockRatio):
                 let stock = stockRatio / 100.0
                 // taux d'intérêt composite fonction de la composition du portefeuille
-                let rate = stock * PeriodicInvestement.stockRate + (1.0 - stock) * PeriodicInvestement.longTermRate
+                let rate = stock * PeriodicInvestement.stockRate + (1.0 - stock) * PeriodicInvestement.securedRate
                 return rate - PeriodicInvestement.inflation
         }
     }

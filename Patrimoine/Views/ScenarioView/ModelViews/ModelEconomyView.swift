@@ -21,8 +21,8 @@ struct ModelEconomyView: View {
                 case .inflation:
                     BetaRandomizerView(randomizer: Economy.model.inflation)
 
-                case .longTermRate:
-                    BetaRandomizerView(randomizer: Economy.model.longTermRate)
+                case .securedRate:
+                    BetaRandomizerView(randomizer: Economy.model.securedRate)
 
                 case .stockRate:
                     BetaRandomizerView(randomizer: Economy.model.stockRate)

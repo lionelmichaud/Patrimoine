@@ -40,8 +40,8 @@ struct FreeInvestement: Identifiable, Codable, NameableValuable, Ownable {
     }
     
     /// taux à long terme - rendement d'un fond en euro
-    private static var longTermRate: Double { // %
-        Economy.model.longTermRate.value(withMode: simulationMode)
+    private static var securedRate: Double { // %
+        Economy.model.securedRate.value(withMode: simulationMode)
     }
     
     /// rendement des actions
@@ -62,13 +62,13 @@ struct FreeInvestement: Identifiable, Codable, NameableValuable, Ownable {
     var interestRateType     : InterestRateType // type de taux de rendement
     var interestRate         : Double {// % avant charges sociales si prélevées à la source annuellement
         switch interestRateType {
-            case .contractualRate( let fixedRate):
+            case .contractualRate(let fixedRate):
                 return fixedRate - FreeInvestement.inflation
                 
             case .marketRate(let stockRatio):
                 let stock = stockRatio / 100.0
                 // taux d'intérêt composite fonction de la composition du portefeuille
-                let rate = stock * FreeInvestement.stockRate + (1.0 - stock) * FreeInvestement.longTermRate
+                let rate = stock * FreeInvestement.stockRate + (1.0 - stock) * FreeInvestement.securedRate
                 return rate - FreeInvestement.inflation
         }
     }
@@ -90,8 +90,10 @@ struct FreeInvestement: Identifiable, Codable, NameableValuable, Ownable {
         }
     }
     private var currentState : State // constitution du capital à l'instant présent
-    var cumulatedInterests   : Double { currentState.interest } // intérêts cumulés au cours du temps jusqu'à à l'instant présent
-    var yearlyInterest       : Double { // intérêts anuels du capital accumulé à l'instant présent
+    private var cumulatedInterests : Double {// intérêts cumulés au cours du temps jusqu'à à l'instant présent
+        currentState.interest
+    }
+    private var yearlyInterest     : Double { // intérêts annuels du capital accumulé à l'instant présent
         currentState.value * interestRateNet / 100.0
     }
     
@@ -191,7 +193,6 @@ struct FreeInvestement: Identifiable, Codable, NameableValuable, Ownable {
         currentState.investment += amount
     }
     
-    //
     /// Pour obtenir un retrait netAmount NET de charges sociales
     /// - Parameter netAmount: retrait net de charges sociales souhaité
     /// - Returns:
@@ -211,11 +212,11 @@ struct FreeInvestement: Identifiable, Codable, NameableValuable, Ownable {
             return (revenue: 0, interests: 0, netInterests: 0, taxableInterests: 0, socialTaxes: 0)
         }
         var revenue = netAmount
-        var brutAmount: Double
-        var brutAmountSplit: (investement: Double, interest: Double)
-        var netInterests: Double        // intérêts nets de charges sociales
-        var taxableInterests: Double    // part imposable à l'IRPP des intérêts nets de charges sociales
-        var socialTaxes: Double // charges sociales sur les intérêts
+        var brutAmount       : Double
+        var brutAmountSplit  : (investement  : Double, interest  : Double)
+        var netInterests     : Double // intérêts nets de charges sociales
+        var taxableInterests : Double // part imposable à l'IRPP des intérêts nets de charges sociales
+        var socialTaxes      : Double // charges sociales sur les intérêts
         switch type {
             case .lifeInsurance(let periodicSocialTaxes, _):
                 // montant brut à retirer pour obtenir le montant net souhaité

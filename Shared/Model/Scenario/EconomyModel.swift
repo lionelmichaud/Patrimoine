@@ -15,9 +15,9 @@ struct Economy {
     // MARK: - Nested Types
 
     enum RandomVariable: String, PickableEnum, CaseIterable {
-        case inflation    = "Inflation"
-        case longTermRate = "Rendements Sûrs"
-        case stockRate    = "Rendements Actions"
+        case inflation   = "Inflation"
+        case securedRate = "Rendements Sûrs"
+        case stockRate   = "Rendements Actions"
         
         var pickerString: String {
             return self.rawValue
@@ -27,9 +27,9 @@ struct Economy {
     typealias DictionaryOfRandomVariable = [RandomVariable: Double]
     
     struct Model: Codable {
-        var inflation    : ModelRandomizer<BetaRandomGenerator>
-        var longTermRate : ModelRandomizer<BetaRandomGenerator>
-        var stockRate    : ModelRandomizer<BetaRandomGenerator>
+        var inflation   : ModelRandomizer<BetaRandomGenerator>
+        var securedRate : ModelRandomizer<BetaRandomGenerator> // moyenne annuelle
+        var stockRate   : ModelRandomizer<BetaRandomGenerator> // moyenne annuelle
         
         init() {
             self = Bundle.main.decode(Model.self,
@@ -37,7 +37,7 @@ struct Economy {
                                       dateDecodingStrategy : .iso8601,
                                       keyDecodingStrategy  : .useDefaultKeys)
             inflation.rndGenerator.initialize()
-            longTermRate.rndGenerator.initialize()
+            securedRate.rndGenerator.initialize()
             stockRate.rndGenerator.initialize()
         }
 
@@ -51,23 +51,23 @@ struct Economy {
         
         mutating func resetRandomHistory() {
             inflation.resetRandomHistory()
-            longTermRate.resetRandomHistory()
+            securedRate.resetRandomHistory()
             stockRate.resetRandomHistory()
         }
         
         mutating func next() -> DictionaryOfRandomVariable {
-            var dicoOfRandomVariable = DictionaryOfRandomVariable()
-            dicoOfRandomVariable[.inflation]    = inflation.next()
-            dicoOfRandomVariable[.longTermRate] = longTermRate.next()
-            dicoOfRandomVariable[.stockRate]    = stockRate.next()
+            var dicoOfRandomVariable           = DictionaryOfRandomVariable()
+            dicoOfRandomVariable[.inflation]   = inflation.next()
+            dicoOfRandomVariable[.securedRate] = securedRate.next()
+            dicoOfRandomVariable[.stockRate]   = stockRate.next()
             return dicoOfRandomVariable
         }
         
-        /// Définir une valeur pour la variable aléaoitre avant un rejeu
+        /// Définir une valeur pour la variable aléatoire avant un rejeu
         /// - Parameter value: nouvelle valeure à rejouer
         mutating func setRandomValue(to values: DictionaryOfRandomVariable) {
             inflation.setRandomValue(to: values[.inflation]!)
-            longTermRate.setRandomValue(to: values[.longTermRate]!)
+            securedRate.setRandomValue(to: values[.securedRate]!)
             stockRate.setRandomValue(to: values[.stockRate]!)
         }
         
@@ -77,8 +77,8 @@ struct Economy {
                 switch randomVariable {
                     case .inflation:
                         dico[randomVariable] = inflation.randomHistory
-                    case .longTermRate:
-                        dico[randomVariable] = longTermRate.randomHistory
+                    case .securedRate:
+                        dico[randomVariable] = securedRate.randomHistory
                     case .stockRate:
                         dico[randomVariable] = stockRate.randomHistory
                 }

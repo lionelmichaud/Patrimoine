@@ -177,19 +177,19 @@ struct BalanceSheetLine {
     
     // MARK: - Methods
     
-    mutating func appendToAssets(_ category       : AssetsCategory,
-                                 _ asset          : NameableValuable,
-                                 _ year           : Int,
-                                 _ withNamePrefix : String = "") {
+    fileprivate mutating func appendToAssets(_ category       : AssetsCategory,
+                                             _ asset          : NameableValuable,
+                                             _ year           : Int,
+                                             _ withNamePrefix : String = "") {
         assets.perCategory[category]?.namedValues.append(
             (name  : withNamePrefix + asset.name,
              value : asset.value(atEndOf: year).rounded()))
     }
     
-    mutating func appendToLiabilities(_ category       : LiabilitiesCategory,
-                                      _ liability      : NameableValuable,
-                                      _ year           : Int,
-                                      _ withNamePrefix : String = "") {
+    fileprivate mutating func appendToLiabilities(_ category       : LiabilitiesCategory,
+                                                  _ liability      : NameableValuable,
+                                                  _ year           : Int,
+                                                  _ withNamePrefix : String = "") {
         liabilities.perCategory[category]?.namedValues.append(
             (name  : withNamePrefix + liability.name,
              value : liability.value(atEndOf: year).rounded()))

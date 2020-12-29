@@ -49,7 +49,7 @@ struct SocialAccounts {
     /// - Parameters:
     ///   - kpis: les KPI à utiliser
     ///   - simulationMode: mode de simluation en cours
-    func computeMinimumAssetKpiValue(withKPIs kpiDefinitions : inout KpiArray,
+    fileprivate func computeMinimumAssetKpiValue(withKPIs kpiDefinitions : inout KpiArray,
                                      withMode simulationMode : SimulationModeEnum,
                                      currentKPIs             : inout DictionaryOfKpiResults) {
         let minBalanceSheetLine = balanceArray.min { a, b in
@@ -66,7 +66,7 @@ struct SocialAccounts {
     ///   - kpis: les KPI à utiliser
     ///   - year: année du run courant
     ///   - currentKPIs: valeur des KPIs pour le run courant
-    func computeCurrentKpisValues(year                    : Int,
+    fileprivate func computeCurrentKpisValues(year                    : Int,
                                   withFamily family       : Family,
                                   withKPIs kpiDefinitions : inout KpiArray,
                                   currentKPIs             : inout DictionaryOfKpiResults,
@@ -109,7 +109,7 @@ struct SocialAccounts {
     }
     
     /// gérer les KPI n°1, 2, 3 au décès de l'un ou des 2 conjoints
-    func computeKpisAtDeath (year                    : Int, // swiftlint:disable:this function_parameter_count
+    fileprivate func computeKpisAtDeath (year                    : Int, // swiftlint:disable:this function_parameter_count
                              withFamily family       : Family,
                              withKPIs kpiDefinitions : inout KpiArray,
                              currentKPIs             : inout DictionaryOfKpiResults,

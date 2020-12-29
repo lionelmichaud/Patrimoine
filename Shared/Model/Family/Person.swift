@@ -103,7 +103,7 @@ class Person : ObservableObject, Identifiable, CustomStringConvertible, Codable 
     
     // MARK: - Properties
     // retirer
-//    var test: Double = Economy.model.longTermRate.value()
+//    var test: Double = Economy.model.securedRate.value()
 
     let id                    = UUID()
     let sexe                  : Sexe
