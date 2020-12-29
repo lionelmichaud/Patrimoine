@@ -62,10 +62,6 @@ struct RegimeGeneral: Codable {
     
     // MARK: - Static Methods
     
-    static var inflation: Double { // %
-        Economy.model.inflation.value(withMode: simulationMode)
-    }
-    
     static var devaluationRate: Double { // %
         SocioEconomy.model.pensionDevaluationRate.value(withMode: simulationMode)
     }

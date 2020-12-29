@@ -23,17 +23,17 @@ struct PeriodicInvestement: Identifiable, Codable, NameableValuable, Ownable {
     // MARK: - Static Methods
     
     static var inflation: Double { // %
-        Economy.model.inflation.value(withMode: simulationMode)
+        Economy.model.randomizers.inflation.value(withMode: simulationMode)
     }
     
-    /// taux à long terme - rendement d'un fond en euro
-    private static var securedRate: Double { // %
-        Economy.model.securedRate.value(withMode: simulationMode)
+    /// taux à long terme - rendement d'un fond en euro - en valeure moyenne
+    private static var averageSecuredRate: Double { // %
+        Economy.model.randomizers.securedRate.value(withMode: simulationMode)
     }
     
-    /// rendement des actions
-    private static var stockRate: Double { // %
-        Economy.model.stockRate.value(withMode: simulationMode)
+    /// rendement des actions - en valeure moyenne
+    private static var averageStockRate: Double { // %
+        Economy.model.randomizers.stockRate.value(withMode: simulationMode)
     }
     
     // MARK: - Properties
@@ -53,29 +53,31 @@ struct PeriodicInvestement: Identifiable, Codable, NameableValuable, Ownable {
     var initialValue    : Double = 0.0
     var initialInterest : Double = 0.0 // portion of interests included in the initialValue
     // rendement
-    var interestRateType: InterestRateType // type de taux de rendement
-    var interestRate    : Double {// % avant charges sociales si prélevées à la source annuellement
+    var interestRateType    : InterestRateType // type de taux de rendement
+    var averageInterestRate : Double {// % avant charges sociales si prélevées à la source annuellement
         switch interestRateType {
             case .contractualRate( let fixedRate):
+                // taux contractuel fixe
                 return fixedRate - PeriodicInvestement.inflation
                 
             case .marketRate(let stockRatio):
+                // taux de marché variable
                 let stock = stockRatio / 100.0
                 // taux d'intérêt composite fonction de la composition du portefeuille
-                let rate = stock * PeriodicInvestement.stockRate + (1.0 - stock) * PeriodicInvestement.securedRate
+                let rate = stock * PeriodicInvestement.averageStockRate + (1.0 - stock) * PeriodicInvestement.averageSecuredRate
                 return rate - PeriodicInvestement.inflation
         }
     }
-    var interestRateNet : Double { // % fixe après charges sociales si prélevées à la source annuellement
+    var averageInterestRateNet : Double { // % fixe après charges sociales si prélevées à la source annuellement
         switch type {
             case .lifeInsurance(let periodicSocialTaxes, _):
                 // si assurance vie: le taux net est le taux brut - charges sociales si celles-ci sont prélèvées à la source anuellement
                 return (periodicSocialTaxes ?
-                            Fiscal.model.socialTaxesOnFinancialRevenu.net(interestRate) :
-                            interestRate)
+                            Fiscal.model.socialTaxesOnFinancialRevenu.net(averageInterestRate) :
+                            averageInterestRate)
             default:
                 // dans tous les autres cas: pas de charges sociales prélevées à la source anuellement (capitalisation et taxation à la sortie)
-                return interestRate
+                return averageInterestRate
         }
     }
     // liquidation
@@ -123,7 +125,7 @@ struct PeriodicInvestement: Identifiable, Codable, NameableValuable, Ownable {
             return 0.0
         }
         return futurValue(payement     : yearlyPayement,
-                          interestRate : interestRateNet/100,
+                          interestRate : averageInterestRateNet/100,
                           nbPeriod     : year - firstYear,
                           initialValue : initialValue)
     }
@@ -140,7 +142,6 @@ struct PeriodicInvestement: Identifiable, Codable, NameableValuable, Ownable {
                     atEndOf year     : Int,
                     evaluationMethod : EvaluationMethod) -> Double {
         var evaluatedValue : Double
-//        Swift.print("  Actif: \(name)")
 
         switch evaluationMethod {
             case .inheritance:
@@ -148,7 +149,6 @@ struct PeriodicInvestement: Identifiable, Codable, NameableValuable, Ownable {
                 switch type {
                     case .lifeInsurance:
                         // les assurance vie ne sont pas inclues car hors succession
-//                        Swift.print("  valeur: 0")
                         return 0
                         
                     default:
@@ -156,7 +156,6 @@ struct PeriodicInvestement: Identifiable, Codable, NameableValuable, Ownable {
                         if ownership.isAnUsufructOwner(ownerName: ownerName) {
                             // si oui alors l'usufruit rejoint la nu-propriété sans droit de succession
                             // l'usufruit n'est donc pas intégré à la masse successorale du défunt
-//                            Swift.print("  valeur: 0")
                             return 0
                         }
                         // pas de décote
@@ -172,7 +171,6 @@ struct PeriodicInvestement: Identifiable, Codable, NameableValuable, Ownable {
                                                                    ofValue          : evaluatedValue,
                                                                    atEndOf          : year,
                                                                    evaluationMethod : evaluationMethod)
-//        Swift.print("  valeur: \(value)")
         return value
     }
     
@@ -229,7 +227,7 @@ struct PeriodicInvestement: Identifiable, Codable, NameableValuable, Ownable {
         Swift.print("       type", type)
         Swift.print("       first year:        ", firstYear, "last year: ", lastYear)
         Swift.print("       initial Value:     ", initialValue, "initial Interests: ", initialInterest)
-        Swift.print("       yearly Payement:   ", yearlyPayement.rounded(), "interest Rate Brut: ", interestRate, "%", "interest Rate Net: ", interestRateNet, "%")
+        Swift.print("       yearly Payement:   ", yearlyPayement.rounded(), "interest Rate Brut: ", averageInterestRate, "%", "interest Rate Net: ", averageInterestRateNet, "%")
         Swift.print("       liquidation value: ", value(atEndOf: lastYear).rounded(), "cumulated interests: ", cumulatedInterests(atEndOf: lastYear).rounded())
     }
 }
@@ -252,7 +250,7 @@ extension PeriodicInvestement: CustomStringConvertible {
         initial Value:     \(initialValue.€String) initial Interests: \(initialInterest.€String)
         yearly Payement:   \(yearlyPayement.€String)
         liquidation value: \(value(atEndOf: lastYear).€String) cumulated interests: \(cumulatedInterests(atEndOf: lastYear).€String)
-        interest Rate Brut:\(interestRate) % interest Rate Net:\(interestRateNet) %
+        interest Rate Brut:\(averageInterestRate) % interest Rate Net:\(averageInterestRateNet) %
         
         """
     }

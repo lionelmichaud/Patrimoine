@@ -12,19 +12,22 @@ struct KpiListSummaryView: View {
     @EnvironmentObject var simulation : Simulation
     
     var body: some View {
-        Text("Mode de Calcul " + simulation.mode.displayString)
-            .bold()
-        Form {
-            ForEach(simulation.kpis) { kpi in
-                Section(header: Text(kpi.name)) {
-                    KpiSummaryView(kpi         : kpi,
-                                   withPadding : false,
-                                   withDetails : false)
+        VStack(alignment: .leading) {
+            Text("Mode de Calcul " + simulation.mode.displayString)
+                .bold()
+                .padding()
+            Form {
+                ForEach(simulation.kpis) { kpi in
+                    Section(header: Text(kpi.name)) {
+                        KpiSummaryView(kpi         : kpi,
+                                       withPadding : false,
+                                       withDetails : false)
+                    }
                 }
             }
         }
         .navigationTitle("Synthèse des KPI")
-        .navigationBarTitleDisplayMode(.inline)
+        //.navigationBarTitleDisplayMode(.inline)
     }
 }
 

@@ -48,11 +48,11 @@ struct SCPIDetailedView: View {
                 AmountView(label: "Revenu annuel brut (avant prélèvements sociaux et IRPP)",
                            amount: localItem.yearlyRevenue(atEndOf: Date.now.year).revenue)
                     .foregroundColor(.secondary)
-                AmountView(label: "Revenu annuel net de charges sociales (remboursable par une SCI)",
-                           amount: localItem.yearlyRevenue(atEndOf: Date.now.year).taxableIrpp)
-                    .foregroundColor(.secondary)
                 AmountView(label: "Charges sociales",
                            amount: localItem.yearlyRevenue(atEndOf: Date.now.year).socialTaxes)
+                    .foregroundColor(.secondary)
+                AmountView(label: "Revenu annuel net de charges sociales (remboursable par une SCI)",
+                           amount: localItem.yearlyRevenue(atEndOf: Date.now.year).taxableIrpp)
                     .foregroundColor(.secondary)
                 PercentEditView(label: "Taux de réévaluation annuel",
                                 percent: $localItem.revaluatRate)

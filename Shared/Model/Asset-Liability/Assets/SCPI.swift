@@ -23,7 +23,7 @@ struct SCPI: Identifiable, Codable, Equatable, NameableValuable, Ownable {
     
     // tous ces actifs sont dépréciés de l'inflation
     static var inflation: Double { // %
-        Economy.model.inflation.value(withMode: simulationMode)
+        Economy.model.randomizers.inflation.value(withMode: simulationMode)
     }
     
     // MARK: - Properties

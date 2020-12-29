@@ -51,8 +51,8 @@ struct PeriodicInvestDetailedView: View {
             
             Section(header: Text("RENTABILITE")) {
                 InterestRateTypeEditView(rateType: $localItem.interestRateType)
-                PercentView(label: "Rendement net d'inflation",
-                            percent: localItem.interestRateNet/100.0)
+                PercentView(label: "Rendement moyen net d'inflation",
+                            percent: localItem.averageInterestRateNet/100.0)
                     .foregroundColor(.secondary)
             }
             
@@ -60,7 +60,7 @@ struct PeriodicInvestDetailedView: View {
                 YearPicker(title: "Année de liquidation (fin d'année)",
                            inRange: localItem.firstYear...localItem.firstYear + 100,
                            selection: $localItem.lastYear)
-                AmountView(label: "Valeure liquidative avant prélèvements sociaux et IRPP",
+                AmountView(label: "Valeur liquidative avant prélèvements sociaux et IRPP",
                            amount: liquidatedValue())
                     .foregroundColor(.secondary)
                 AmountView(label: "Prélèvements sociaux",

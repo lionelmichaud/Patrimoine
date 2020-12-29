@@ -127,12 +127,14 @@ struct RealEstateDetailedView: View {
                     Group {
                         FromToEditView(from : $assetVM.rentalFromVM,
                                        to   : $assetVM.rentalToVM)
-                        AmountEditView(label: "Loyer mensuel net de frais",
+                        AmountEditView(label : "Loyer mensuel net de frais",
                                        amount: $localItem.monthlyRentAfterCharges)
-                        AmountView(label: "Charges sociales annuelles sur loyers",
+                        AmountView(label : "Charges sociales annuelles sur loyers",
                                    amount: localItem.yearlyRentSocialTaxes)
                             .foregroundColor(.secondary)
-                        PercentView(label: "Rendement locatif net de charges sociales",
+                        AmountView(label : "Loyer annuel net de charges sociales",
+                                   amount: localItem.yearlyRentAfterCharges)
+                        PercentView(label  : "Rendement locatif net de charges sociales",
                                     percent: localItem.profitability)
                             .foregroundColor(.secondary)
                     }.padding(.leading)

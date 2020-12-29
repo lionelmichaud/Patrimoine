@@ -259,7 +259,7 @@ final class Patrimoin: ObservableObject {
     ///   - patrimoine: du patrimoine
     ///   - amount: capacité d'épargne = montant à investir
     func investNetCashFlow(_ amount: Double) {
-        assets.freeInvests.items.sort(by: {$0.interestRate > $1.interestRate})
+        assets.freeInvests.items.sort(by: {$0.averageInterestRate > $1.averageInterestRate})
         
         // investir en priorité dans une assurance vie
         for idx in 0..<assets.freeInvests.items.count {
@@ -313,7 +313,7 @@ final class Patrimoin: ObservableObject {
         var amountRemainingToRemove = amount
         var totalTaxableInterests   = 0.0
         
-        assets.freeInvests.items.sort(by: {$0.interestRate < $1.interestRate})
+        assets.freeInvests.items.sort(by: {$0.averageInterestRate < $1.averageInterestRate})
         
         // retirer le montant d'un investissement libre: d'abord le PEA procurant le moins bon rendement
         for idx in 0..<assets.freeInvests.items.count where assets.freeInvests.items[idx].type == .pea {

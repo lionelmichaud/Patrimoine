@@ -8,6 +8,7 @@
 
 import SwiftUI
 
+/// Affiche les valeurs déterministes retenues pour les paramètres des modèles dans une simulation "déterministe"
 struct ModelDeterministicView: View {
     var body: some View {
         VStack {
@@ -22,11 +23,11 @@ struct ModelDeterministicView: View {
                 }
                 Section(header: Text("Modèle Economique")) {
                     PercentView(label   : "Inflation",
-                                percent : Economy.model.inflation.value(withMode: .deterministic)/100.0)
+                                percent : Economy.model.randomizers.inflation.value(withMode: .deterministic)/100.0)
                     PercentView(label   : "Rendement sans Risque",
-                                percent : Economy.model.securedRate.value(withMode: .deterministic)/100.0)
+                                percent : Economy.model.randomizers.securedRate.value(withMode: .deterministic)/100.0)
                     PercentView(label   : "Rendement des Actions",
-                                percent : Economy.model.stockRate.value(withMode: .deterministic)/100.0)
+                                percent : Economy.model.randomizers.stockRate.value(withMode: .deterministic)/100.0)
                 }
                 Section(header: Text("Modèle Sociologique")) {
                     PercentView(label   : "Dévaluation anuelle des pensions par rapport à l'inflation",

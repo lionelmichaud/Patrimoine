@@ -21,7 +21,7 @@ where R: Codable,
     var rndGenerator         : R
     private var defaultValue : Double = 0 // valeur par defaut déterministe
     private var randomValue  : Double = 0 // dernière valeur randomisée
-    var randomHistory        : [Double]? // historique
+    var randomHistory        : [Double]? // historique des tirages aléatoires
     
     // MARK: - Methods
     

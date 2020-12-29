@@ -116,17 +116,21 @@ struct FiscalSummarySection: View {
                            amount: cashFlow!.taxes.perCategory[.irpp]!.total)
                 IntegerView(label   : "Quotient familial",
                             integer : Int(cashFlow!.taxes.irpp.familyQuotient))
+                    .foregroundColor(.secondary)
                     .padding(.leading)
-                IntegerView(label   : "Atux moyen d'imposition",
-                            integer : Int(cashFlow!.taxes.irpp.averageRate))
+                PercentView(label   : "Taux moyen d'imposition",
+                            percent : cashFlow!.taxes.irpp.averageRate)
+                    .foregroundColor(.secondary)
                     .padding(.leading)
                 AmountView(label : "Montant de l'ISF",
                            amount: cashFlow!.taxes.perCategory[.isf]!.total)
                 AmountView(label  : "Assiette ISF",
                            amount : cashFlow!.taxes.isf.taxable)
+                    .foregroundColor(.secondary)
                     .padding(.leading)
                 PercentView(label   : "Taux ISF",
                             percent : cashFlow!.taxes.isf.marginalRate)
+                    .foregroundColor(.secondary)
                     .padding(.leading)
                 AmountView(label : "Taxes locales",
                            amount: cashFlow!.taxes.perCategory[.localTaxes]!.total)

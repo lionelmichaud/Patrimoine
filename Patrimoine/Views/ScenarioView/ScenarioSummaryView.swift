@@ -8,6 +8,7 @@
 
 import SwiftUI
 
+/// Affiche des valeures des modèles utilisées pour le dernier Run de simulation
 struct ScenarioSummaryView: View {
     @EnvironmentObject var simulation : Simulation
     @EnvironmentObject var family     : Family
@@ -33,11 +34,19 @@ struct ScenarioSummaryView: View {
                 }
                 Section(header: Text("Modèle Economique")) {
                     PercentView(label   : "Inflation",
-                                percent : Economy.model.inflation.value(withMode: simulation.mode)/100.0)
-                    PercentView(label   : "Rendement sans Risque",
-                                percent : Economy.model.securedRate.value(withMode: simulation.mode)/100.0)
-                    PercentView(label   : "Rendement des Actions",
-                                percent : Economy.model.stockRate.value(withMode: simulation.mode)/100.0)
+                                percent : Economy.model.randomizers.inflation.value(withMode: simulation.mode)/100.0)
+                    PercentView(label   : "Rendement annuel moyen des Obligations sans risque",
+                                percent : Economy.model.randomizers.securedRate.value(withMode: simulation.mode)/100.0)
+                    if Economy.model.randomizers.simulateVolatility {
+                        PercentView(label   : "Volatilité des Obligations sans risque",
+                                    percent : Economy.model.randomizers.securedVolatility/100.0)
+                    }
+                    PercentView(label   : "Rendement annuel moyen des Actions",
+                                percent : Economy.model.randomizers.stockRate.value(withMode: simulation.mode)/100.0)
+                    if Economy.model.randomizers.simulateVolatility {
+                        PercentView(label   : "Volatilité des Actions",
+                                    percent : Economy.model.randomizers.stockVolatility/100.0)
+                    }
                 }
                 Section(header: Text("Modèle Sociologique")) {
                     PercentView(label   : "Dévaluation anuelle des pensions par rapport à l'inflation",

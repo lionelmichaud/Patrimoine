@@ -42,7 +42,8 @@ struct SocialAccounts {
         balanceArray  = BalanceSheetArray()
         firstYear     = Date.now.year
         lastYear      = Date.now.year
-        successions   = []
+        successions        = []
+        lifeInsSuccessions = []
 }
     
     /// Mémorise le niveau le bas atteint par les actifs financiers au cours du run
@@ -50,8 +51,8 @@ struct SocialAccounts {
     ///   - kpis: les KPI à utiliser
     ///   - simulationMode: mode de simluation en cours
     fileprivate func computeMinimumAssetKpiValue(withKPIs kpiDefinitions : inout KpiArray,
-                                     withMode simulationMode : SimulationModeEnum,
-                                     currentKPIs             : inout DictionaryOfKpiResults) {
+                                                 withMode simulationMode : SimulationModeEnum,
+                                                 currentKPIs             : inout DictionaryOfKpiResults) {
         let minBalanceSheetLine = balanceArray.min { a, b in
             a.totalFinancialAssets < b.totalFinancialAssets
         }
@@ -67,10 +68,10 @@ struct SocialAccounts {
     ///   - year: année du run courant
     ///   - currentKPIs: valeur des KPIs pour le run courant
     fileprivate func computeCurrentKpisValues(year                    : Int,
-                                  withFamily family       : Family,
-                                  withKPIs kpiDefinitions : inout KpiArray,
-                                  currentKPIs             : inout DictionaryOfKpiResults,
-                                  withMode simulationMode : SimulationModeEnum) {
+                                              withFamily family       : Family,
+                                              withKPIs kpiDefinitions : inout KpiArray,
+                                              currentKPIs             : inout DictionaryOfKpiResults,
+                                              withMode simulationMode : SimulationModeEnum) {
         customLog.log(level: .info, "Arrêt de la construction de la table de Comptes sociaux: Actifs financiers = 0 \(Self.self, privacy: .public)")
         Swift.print("Arrêt de la construction de la table de Comptes sociaux: Actifs financiers = 0")
         
@@ -110,11 +111,11 @@ struct SocialAccounts {
     
     /// gérer les KPI n°1, 2, 3 au décès de l'un ou des 2 conjoints
     fileprivate func computeKpisAtDeath (year                    : Int, // swiftlint:disable:this function_parameter_count
-                             withFamily family       : Family,
-                             withKPIs kpiDefinitions : inout KpiArray,
-                             currentKPIs             : inout DictionaryOfKpiResults,
-                             withMode simulationMode : SimulationModeEnum,
-                             withbalanceSheetLine    : BalanceSheetLine) {
+                                         withFamily family       : Family,
+                                         withKPIs kpiDefinitions : inout KpiArray,
+                                         currentKPIs             : inout DictionaryOfKpiResults,
+                                         withMode simulationMode : SimulationModeEnum,
+                                         withbalanceSheetLine    : BalanceSheetLine) {
         let netAsset = withbalanceSheetLine.netAssets
         switch family.nbOfAdultAlive(atEndOf: year) {
             case 1:

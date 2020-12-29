@@ -147,8 +147,8 @@ final class Simulation: ObservableObject {
             KpiArray.reset(theseKPIs: &kpis, withMode: mode)
         }
         
-        firstYear    = nil
-        lastYear     = nil
+//        firstYear    = nil
+//        lastYear     = nil
         isComputed   = false
         isSaved      = false
     }
@@ -171,6 +171,11 @@ final class Simulation: ObservableObject {
             Simulation.player.play()
         }
 //        isComputing    = true
+
+        //propriétés indépendantes du nombre de run
+        firstYear   = Date.now.year
+        lastYear    = firstYear + nbOfYears - 1
+
         let monteCarlo = nbOfRuns > 1
         var dicoOfEconomyRandomVariables      = Economy.DictionaryOfRandomVariable()
         var dicoOfSocioEconomyRandomVariables = SocioEconomy.DictionaryOfRandomVariable()
@@ -192,7 +197,8 @@ final class Simulation: ObservableObject {
                 // réinitialiser les propriétés aléatoires de la famille
                 family.nextRandomProperties()
                 // réinitialiser les propriétés aléatoires du modèle macro économique
-                dicoOfEconomyRandomVariables      = Economy.model.next()
+                dicoOfEconomyRandomVariables      = Economy.model.nextRun(firstYear : firstYear!,
+                                                                          lastYear  : lastYear!)
                 // réinitialiser les propriétés aléatoires du modèle socio économique
                 dicoOfSocioEconomyRandomVariables = SocioEconomy.model.next()
             }
@@ -233,9 +239,7 @@ final class Simulation: ObservableObject {
                 }
             }
         }
-        //propriétés indépendantes du nombre de run
-        firstYear   = Date.now.year
-        lastYear    = firstYear + nbOfYears - 1
+        
         isComputed  = true
         isSaved     = false
 //        isComputing = false
@@ -244,11 +248,19 @@ final class Simulation: ObservableObject {
     func replay(thisRun                   : SimulationResultLine,
                 withFamily family         : Family,
                 withPatrimoine patrimoine : Patrimoin) {
+        // propriétés indépendantes du nombre de run
+        guard let nbOfYears = lastYear - firstYear + 1 else {
+            fatalError()
+        }
+        firstYear   = Date.now.year
+        lastYear    = firstYear + nbOfYears - 1
+
         currentRunNb = 1
-        let nbOfYears = lastYear - firstYear + 1
-        
+
         // fixer tous les paramètres du run à rejouer
-        Economy.model.setRandomValue(to: thisRun.dicoOfEconomyRandomVariables)
+        Economy.model.setRandomValue(to        : thisRun.dicoOfEconomyRandomVariables,
+                                     firstYear : firstYear!,
+                                     lastYear  : lastYear!)
         SocioEconomy.model.setRandomValue(to: thisRun.dicoOfSocioEconomyRandomVariables)
         family.members.forEach { person in
             if let adult = person as? Adult {
@@ -264,15 +276,12 @@ final class Simulation: ObservableObject {
         // construire les comptes sociaux du patrimoine de la famille:
         // - personnes
         // - dépenses
-        _ = socialAccounts.build(nbOfYears      : nbOfYears!,
+        _ = socialAccounts.build(nbOfYears      : nbOfYears,
                                  withFamily     : family,
                                  withPatrimoine : patrimoine,
                                  withKPIs       : &kpis,
                                  withMode       : mode)
         
-        // propriétés indépendantes du nombre de run
-        firstYear   = Date.now.year
-        lastYear    = firstYear + nbOfYears - 1
         isComputed  = true
         isSaved     = false
     }

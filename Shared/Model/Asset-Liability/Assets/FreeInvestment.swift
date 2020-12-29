@@ -36,17 +36,17 @@ struct FreeInvestement: Identifiable, Codable, NameableValuable, Ownable {
     // MARK: - Static Methods
     
     private static var inflation: Double { // %
-        Economy.model.inflation.value(withMode: simulationMode)
+        Economy.model.randomizers.inflation.value(withMode: simulationMode)
     }
     
-    /// taux à long terme - rendement d'un fond en euro
-    private static var securedRate: Double { // %
-        Economy.model.securedRate.value(withMode: simulationMode)
+    /// taux à long terme - rendement d'un fond en euro - en moyenne
+    private static var averageSecuredRate: Double { // %
+        Economy.model.randomizers.securedRate.value(withMode: simulationMode)
     }
     
-    /// rendement des actions
-    private static var stockRate: Double { // %
-        Economy.model.stockRate.value(withMode: simulationMode)
+    /// rendement des actions - en moyenne
+    private static var averageStockRate: Double { // %
+        Economy.model.randomizers.stockRate.value(withMode: simulationMode)
     }
     
     // MARK: - Properties
@@ -60,41 +60,40 @@ struct FreeInvestement: Identifiable, Codable, NameableValuable, Ownable {
     var ownership            : Ownership = Ownership()
     var type                 : InvestementType // type de l'investissement
     var interestRateType     : InterestRateType // type de taux de rendement
-    var interestRate         : Double {// % avant charges sociales si prélevées à la source annuellement
+    var averageInterestRate  : Double {// % avant charges sociales si prélevées à la source annuellement
         switch interestRateType {
             case .contractualRate(let fixedRate):
+                // taux contractuel fixe
                 return fixedRate - FreeInvestement.inflation
                 
             case .marketRate(let stockRatio):
+                // taux de marché variable
                 let stock = stockRatio / 100.0
                 // taux d'intérêt composite fonction de la composition du portefeuille
-                let rate = stock * FreeInvestement.stockRate + (1.0 - stock) * FreeInvestement.securedRate
+                let rate = stock * FreeInvestement.averageStockRate + (1.0 - stock) * FreeInvestement.averageSecuredRate
                 return rate - FreeInvestement.inflation
         }
     }
-    var interestRateNet      : Double { // % fixe après charges sociales si prélevées à la source annuellement
+    var averageInterestRateNet: Double { // % fixe après charges sociales si prélevées à la source annuellement
         switch type {
             case .lifeInsurance(let periodicSocialTaxes, _):
                 // si assurance vie: le taux net est le taux brut - charges sociales si celles-ci sont prélèvées à la source anuellement
                 return (periodicSocialTaxes ?
-                            Fiscal.model.socialTaxesOnFinancialRevenu.net(interestRate) :
-                            interestRate)
+                            Fiscal.model.socialTaxesOnFinancialRevenu.net(averageInterestRate) :
+                            averageInterestRate)
             default:
                 // dans tous les autres cas: pas de charges sociales prélevées à la source anuellement (capitalisation et taxation à la sortie)
-                return interestRate
+                return averageInterestRate
         }
     }
-    var initialState         : State {// dernière constitution du capital connue
+    var initialState: State {// dernière constitution du capital connue
         didSet {
             resetCurrentState()
         }
     }
-    private var currentState : State // constitution du capital à l'instant présent
-    private var cumulatedInterests : Double {// intérêts cumulés au cours du temps jusqu'à à l'instant présent
+    private var currentState       : State // constitution du capital à l'instant présent
+    private var cumulatedInterests : Double {// intérêts cumulés au cours du temps jusqu'à l'instant présent
         currentState.interest
-    }
-    private var yearlyInterest     : Double { // intérêts annuels du capital accumulé à l'instant présent
-        currentState.value * interestRateNet / 100.0
     }
     
     // MARK: - Initialization
@@ -118,6 +117,33 @@ struct FreeInvestement: Identifiable, Codable, NameableValuable, Ownable {
     
     // MARK: - Methods
 
+    /// Taux d'intérêt annuel en % net de  charges sociales si prélevées à la source annuellement
+    /// - Parameter idx: [0, nb d'années simulées - 1]
+    /// - Returns: Taux d'intérêt annuel en % [0, 100%]
+    private func interestRateNet(in year: Int) -> Double {
+        switch interestRateType {
+            case .contractualRate(let fixedRate):
+                // taux contractuel fixe
+                return fixedRate - FreeInvestement.inflation
+                
+            case .marketRate(let stockRatio):
+                // taux de marché variable
+                let stock = stockRatio / 100.0
+                let rates = Economy.model.rates(in       : year,
+                                                withMode : PeriodicInvestement.simulationMode)
+                // taux d'intérêt composite fonction de la composition du portefeuille
+                let rate = stock * rates.stockRate + (1.0 - stock) * rates.securedRate
+                return rate - FreeInvestement.inflation
+        }
+    }
+    
+    /// Intérêts annuels en € du capital accumulé à l'instant présent
+    /// - Parameter idx: [0, nb d'années simulées - 1]
+    /// - Returns: Intérêts annuels en €
+    private func yearlyInterest(in year: Int) -> Double {
+        currentState.value * interestRateNet(in: year) / 100.0
+    }
+    
     /// Fractionnement d'un retrait entre: versements cumulés et intérêts cumulés
     /// - Parameter amount: montant du retrait
     func split(removal amount: Double) -> (investement: Double, interest: Double) {
@@ -129,9 +155,9 @@ struct FreeInvestement: Identifiable, Codable, NameableValuable, Ownable {
     /// somme des versements + somme des intérêts
     func value(atEndOf year: Int) -> Double {
         guard year == self.currentState.year else {
-            // revaloriser la valeur par extrapolation à partir de la situation initiale
+            // extrapoler la valeur à partir de la situation initiale avec un taux constant moyen
             return futurValue(payement     : 0,
-                              interestRate : interestRateNet/100,
+                              interestRate : averageInterestRateNet/100,
                               nbPeriod     : year - initialState.year,
                               initialValue : initialState.value)
         }
@@ -151,7 +177,6 @@ struct FreeInvestement: Identifiable, Codable, NameableValuable, Ownable {
                     atEndOf year     : Int,
                     evaluationMethod : EvaluationMethod) -> Double {
         var evaluatedValue : Double
-//        Swift.print("  Actif: \(name)")
 
         switch evaluationMethod {
             case .inheritance:
@@ -159,7 +184,6 @@ struct FreeInvestement: Identifiable, Codable, NameableValuable, Ownable {
                 switch type {
                     case .lifeInsurance:
                         // les assurance vie ne sont pas inclues car hors succession
-//                        Swift.print("  valeur: 0")
                         return 0
 
                     default:
@@ -167,7 +191,6 @@ struct FreeInvestement: Identifiable, Codable, NameableValuable, Ownable {
                         if ownership.isAnUsufructOwner(ownerName: ownerName) {
                             // si oui alors l'usufruit rejoint la nu-propriété sans droit de succession
                             // l'usufruit n'est donc pas intégré à la masse successorale du défunt
-//                            Swift.print("  valeur: 0")
                             return 0
                         }
                         // pas de décote
@@ -183,7 +206,6 @@ struct FreeInvestement: Identifiable, Codable, NameableValuable, Ownable {
                                                                    ofValue          : evaluatedValue,
                                                                    atEndOf          : year,
                                                                    evaluationMethod : evaluationMethod)
-//        Swift.print("  valeur: \(value)")
         return value
     }
     
@@ -288,8 +310,9 @@ struct FreeInvestement: Identifiable, Codable, NameableValuable, Ownable {
     }
     
     /// Capitaliser les intérêts d'une année: à faire une fois par an et apparaissent dans l'année courante
+    /// - Note: Si la volatilité est prise en compte dans le modèle économique alors le taux change chaque année
     mutating func capitalize(atEndOf year: Int) {
-        currentState.interest += yearlyInterest
+        currentState.interest += yearlyInterest(in: year)
         currentState.year = year
     }
     
@@ -297,13 +320,14 @@ struct FreeInvestement: Identifiable, Codable, NameableValuable, Ownable {
     mutating func resetCurrentState() {
         // calculer la valeur de currentState à la date de fin d'année passée
         let estimationYear = Date.now.year - 1
+        
         if estimationYear == initialState.year {
             currentState = initialState
             
         } else if estimationYear > initialState.year {
-            // revaloriser la valeure par extrapolation à partir de la situation initiale
+            // extrapoler la valeure à partir de la situation initiale
             let futurVal = futurValue(payement     : 0,
-                                      interestRate : interestRateNet/100,
+                                      interestRate : averageInterestRateNet/100,
                                       nbPeriod     : estimationYear - initialState.year,
                                       initialValue : initialState.value)
             currentState.year       = estimationYear
@@ -316,13 +340,12 @@ struct FreeInvestement: Identifiable, Codable, NameableValuable, Ownable {
                           "didSet: estimationYear (\(estimationYear, privacy: .public)) < initialState.year")
             fatalError("didSet: estimationYear (\(estimationYear)) < initialState.year (\(initialState.year))")
         }
-//        currentState = initialState
     }
 
     func print() {
         Swift.print("    ", name)
         Swift.print("       type", type)
-        Swift.print("       interest Rate: ", interestRate, "%")
+        Swift.print("       interest Rate: ", averageInterestRate, "%")
         Swift.print("       year:     ", currentState.year, "value: ", currentState.value)
         Swift.print("       investement: ", currentState.investment, "interest: ", currentState.interest)
     }
@@ -343,8 +366,7 @@ extension FreeInvestement: CustomStringConvertible {
           valeur:        \(value(atEndOf: Date.now.year).€String)
           initial state: (year: \(initialState.year), interest: \(initialState.interest.€String), invest: \(initialState.investment.€String), Value: \(initialState.value.€String))
           current state: (year: \(currentState.year), interest: \(currentState.interest.€String), invest: \(currentState.investment.€String), Value: \(currentState.value.€String))
-          interest Rate: \(interestRate) %
-          yearly interest: \(yearlyInterest.€String)
+          interest Rate: \(averageInterestRate) %
 
         """
     }

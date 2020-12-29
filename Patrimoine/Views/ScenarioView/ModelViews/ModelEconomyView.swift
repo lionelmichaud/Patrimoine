@@ -8,24 +8,25 @@
 
 import SwiftUI
 
+/// Affiche un graphique des fonctions de distribution des modèles statistiques
 struct ModelEconomyView: View {
     @State private var modelChoice: Economy.RandomVariable = .inflation
     
     var body: some View {
         VStack {
-            // sélecteur: Actif / Passif / Tout
+            // sélecteur: inflation / securedRate / stockRate
             CasePicker(pickedCase: $modelChoice, label: "")
                 .padding(.horizontal)
                 .pickerStyle(SegmentedPickerStyle())
             switch modelChoice {
                 case .inflation:
-                    BetaRandomizerView(randomizer: Economy.model.inflation)
+                    BetaRandomizerView(randomizer: Economy.model.randomizers.inflation)
 
                 case .securedRate:
-                    BetaRandomizerView(randomizer: Economy.model.securedRate)
+                    BetaRandomizerView(randomizer: Economy.model.randomizers.securedRate)
 
                 case .stockRate:
-                    BetaRandomizerView(randomizer: Economy.model.stockRate)
+                    BetaRandomizerView(randomizer: Economy.model.randomizers.stockRate)
             }
         }
         .navigationTitle("Fonctions de Distribution")
