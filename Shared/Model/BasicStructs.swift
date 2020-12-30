@@ -156,9 +156,16 @@ extension ItemSelectionList {
 
 ///  - Note: [Reference](https://en.wikipedia.org/wiki/Software_versioning)
 struct Version: Codable {
-    let version : String? // "Major.Minor.Patch"
-    let date    : Date?
-    let comment : String?
+    
+    // MARK: - Properties
+    
+    var name    : String?
+    var version : String? // "Major.Minor.Patch"
+    var date    : Date?
+    var comment : String?
+
+    // MARK: - Computed Properties
+    
     var major   : Int? {
         guard let version = version else { return nil }
         if let major = version.split(whereSeparator: { $0 == "." }).first {
@@ -167,7 +174,7 @@ struct Version: Codable {
             return nil
         }
     }
-    var minor    : Int? {
+    var minor   : Int? {
         guard let version = version else { return nil }
         let parts = version.split(whereSeparator: { $0 == "." })
         if parts.count >= 1 {
@@ -176,7 +183,7 @@ struct Version: Codable {
             return nil
         }
     }
-    var patch    : Int? {
+    var patch   : Int? {
         guard let version = version else { return nil }
         let parts = version.split(whereSeparator: { $0 == "." })
         if parts.count >= 2 {
@@ -185,6 +192,9 @@ struct Version: Codable {
             return nil
         }
     }
+
+    // MARK: - Static Methods
+    
     static func toVersion(major: Int,
                           minor: Int,
                           patch: Int?) -> String {
@@ -193,7 +203,20 @@ struct Version: Codable {
         } else {
             return String(major) + "." + String(minor)
         }
-
+    }
+    
+    // MARK: - Methods
+    
+    mutating func initializeWithBundleValues() {
+        if version == nil {
+            version = Bundle.mainAppVersion
+        }
+        if name == nil {
+            name = Bundle.mainAppName
+        }
+        if date == nil {
+            date = Bundle.mainBuildDate
+        }
     }
 }
 

@@ -35,5 +35,6 @@ struct AppSettings: Decodable {
                                   from                 : "AppSettings.json",
                                   dateDecodingStrategy : .iso8601,
                                   keyDecodingStrategy  : .useDefaultKeys)
+        appVersion.initializeWithBundleValues()
     }
 }

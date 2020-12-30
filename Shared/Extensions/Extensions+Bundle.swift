@@ -14,7 +14,23 @@ extension Bundle {
         self.infoDictionary?["CFBundleShortVersionString"] as? String
     }
     
+    var appName: String? {
+        self.infoDictionary?["CFBundleDisplayName"] as? String
+    }
+    
+    static var mainBuildDate: Date {
+        if let infoPath = Bundle.main.path(forResource: "Info", ofType: "plist"),
+           let infoAttr = try? FileManager.default.attributesOfItem(atPath: infoPath),
+           let infoDate = infoAttr[.modificationDate] as? Date {
+            return infoDate
+        }
+        return Date()
+    }
+    
     static var mainAppVersion: String? {
         Bundle.main.appVersion
+    }
+    static var mainAppName: String? {
+        Bundle.main.appName
     }
 }

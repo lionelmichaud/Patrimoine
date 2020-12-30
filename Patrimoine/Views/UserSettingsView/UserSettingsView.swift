@@ -11,7 +11,7 @@ import SwiftUI
 struct UserSettingsView: View {
     var body: some View {
         VStack {
-            Text("PATRIMOINE").font(.title)
+            Text(AppSettings.shared.appVersion.name ?? "?").font(.title)
                 .fontWeight(.heavy)
             Text("Version: \(AppSettings.shared.appVersion.version ?? "?")")
             if let date = AppSettings.shared.appVersion.date {
