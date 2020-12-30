@@ -76,14 +76,14 @@ func residualValue(loanedValue  : Double,
         customLog.log(level: .fault, "lastYear \(lastYear, privacy: .public) < firstYear \(firstYear, privacy: .public)")
         fatalError("lastYear \(lastYear) < firstYear \(firstYear)")
     }
-    //Swift.print("currentYear = \(currentYear)")
+    // Swift.print("currentYear = \(currentYear)")
     let nbPeriod = (lastYear - firstYear + 1)
-    //Swift.print("nbPeriod = \(nbPeriod)")
+    // Swift.print("nbPeriod = \(nbPeriod)")
     let payement = loanPayement(loanedValue  : loanedValue,
                                 interestRate : interestRate,
                                 nbPeriod     : nbPeriod)
-    //Swift.print("payement = \(payement)")
+    // Swift.print("payement = \(payement)")
     let residualValue = payement * (1 - pow((1 + interestRate), Double((currentYear - firstYear) - (lastYear - firstYear)))) / interestRate
-    //Swift.print("residualValue = \(residualValue)")
+    // Swift.print("residualValue = \(residualValue)")
     return residualValue
 }

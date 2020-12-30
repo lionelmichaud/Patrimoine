@@ -21,36 +21,31 @@ struct SimulationView: View {
     
     var body: some View {
         NavigationView {
-            VStack {
-                // entête
-                //SimulationHeaderView()
-                
-                //liste
-                List {
-                    // calcul de simulation
-                    NavigationLink(destination : ComputationView(),
-                                   tag         : .computationView,
-                                   selection   : $uiState.simulationViewState.selectedItem) {
-                        Text("Calculs")
-                    }
-                    .isDetailLink(true)
-                    
-                    // affichage des résultats des KPIs
-                    KpiView()
-                    
-                    // affichage des résultats graphiques
-                    ChartsView()
-                    
-                    // affichage des autres résultats
-                    SimulationOthersView()
-
+            //liste
+            List {
+                // calcul de simulation
+                NavigationLink(destination : ComputationView(),
+                               tag         : .computationView,
+                               selection   : $uiState.simulationViewState.selectedItem) {
+                    Text("Calculs")
                 }
-                .defaultSideBarListStyle()
-                //.listStyle(InsetGroupedListStyle())
-                .environment(\.horizontalSizeClass, .regular)
+                .isDetailLink(true)
+                
+                // affichage des résultats des KPIs
+                KpiSectionView()
+                
+                // affichage des résultats graphiques
+                ChartsSectionView()
+                
+                // affichage des autres résultats
+                SuccessionsSectionView()
+                
             }
+            //.defaultSideBarListStyle()
+            .listStyle(SidebarListStyle())
+            .environment(\.horizontalSizeClass, .regular)
             .navigationTitle("Simulation")
-
+            
             // vue par défaut
             //SimulationHeaderView()
         }

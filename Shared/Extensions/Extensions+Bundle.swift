@@ -8,7 +8,7 @@
 
 import Foundation
 
-//let appVersion = Bundle.mainAppVersion
+// let appVersion = Bundle.mainAppVersion
 extension Bundle {
     var appVersion: String? {
         self.infoDictionary?["CFBundleShortVersionString"] as? String

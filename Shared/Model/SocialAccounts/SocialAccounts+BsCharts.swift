@@ -233,7 +233,7 @@ extension SocialAccounts {
             return chartView
         }
         
-        //: ### General
+        // : ### General
         chartView.pinchZoomEnabled          = false
         chartView.drawBarShadowEnabled      = false
         chartView.doubleTapToZoomEnabled    = false
@@ -244,7 +244,7 @@ extension SocialAccounts {
         chartView.borderLineWidth           = 1.0
         chartView.drawBordersEnabled        = true
         
-        //: ### xAxis
+        // : ### xAxis
         let xAxis = chartView.xAxis
         xAxis.enabled                 = true
         xAxis.drawLabelsEnabled       = true
@@ -252,14 +252,14 @@ extension SocialAccounts {
         xAxis.labelTextColor          = ChartThemes.DarkChartColors.labelTextColor
         xAxis.labelPosition           = .bottom // .insideChart
         xAxis.centerAxisLabelsEnabled = true
-        //xAxis.labelRotationAngle    = -90
+        // xAxis.labelRotationAngle    = -90
         xAxis.granularityEnabled      = true
         xAxis.granularity             = 1
         xAxis.labelCount              = 200
         xAxis.drawGridLinesEnabled    = true
         xAxis.drawAxisLineEnabled     = true
         
-        //: ### LeftAxis
+        // : ### LeftAxis
         let leftAxis = chartView.leftAxis
         leftAxis.enabled              = true
         leftAxis.labelFont            = ChartThemes.ChartDefaults.smallLabelFont
@@ -268,7 +268,7 @@ extension SocialAccounts {
         leftAxis.drawGridLinesEnabled = true
         leftAxis.drawZeroLineEnabled  = false
         
-        //: ### Legend
+        // : ### Legend
         let legend = chartView.legend
         legend.font                = ChartThemes.ChartDefaults.smallLegendFont
         legend.textColor           = ChartThemes.DarkChartColors.legendColor
@@ -278,11 +278,11 @@ extension SocialAccounts {
         legend.verticalAlignment   = .bottom
         legend.horizontalAlignment = .left
         
-        //: ### Description
+        // : ### Description
         chartView.chartDescription?.text    = "Actifs"
         chartView.chartDescription?.enabled = true
         
-        //: ### ChartDataEntry
+        // : ### ChartDataEntry
         //        var yVals1 = [ChartDataEntry]()
         //        var yVals2 = [ChartDataEntry]()
         //        var yVals3 = [ChartDataEntry]()

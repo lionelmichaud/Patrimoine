@@ -8,17 +8,6 @@
 
 import SwiftUI
 
-struct FamilyHeaderView: View {
-    var body: some View {
-        Section {
-            NavigationLink(destination: FamilySummaryView()) {
-                Text("Résumé").fontWeight(.bold)
-            }
-            .isDetailLink(true)
-        }
-    }
-}
-
 struct FamilySummaryView: View {
     @EnvironmentObject var family     : Family
     @EnvironmentObject var patrimoine : Patrimoin

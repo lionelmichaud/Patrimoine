@@ -27,7 +27,7 @@ struct KpiListSummaryView: View {
             }
         }
         .navigationTitle("Synthèse des KPI")
-        //.navigationBarTitleDisplayMode(.inline)
+        .navigationBarTitleDisplayMode(.inline)
     }
 }
 
@@ -41,16 +41,12 @@ struct KpiSummaryView: View {
         if kpi.hasValue(for: simulation.mode) {
             if withDetails {
                 Text(kpi.note)
-                    .lineLimit(2)
-                    .multilineTextAlignment(.center)
-                    .frame(maxHeight: 45, alignment: .leading)
-                    .padding(.horizontal, 8)
+                    .frame(maxWidth: .infinity)
+                    .padding()
                     .background(Color.secondary)
-                    .cornerRadius(5)
-                    .padding(.top, 3)
                 AmountView(label   : "Valeur Objectif Minimale",
                            amount  : kpi.objective,
-                           comment : simulation.mode == .random ? "à atteindre avec une probabilité ≥ \((kpi.probaObjective * 100.0).percentStringRounded)" : "")
+                           comment : simulation.mode == .random ? "à atteindre avec une probabilité ≥ \(kpi.probaObjective.percentStringRounded)" : "")
                     .padding(EdgeInsets(top: withPadding ? 3 : 0, leading: 0, bottom: withPadding ? 3 : 0, trailing: 0))
                 if simulation.mode == .random {
                     HStack {
@@ -67,7 +63,7 @@ struct KpiSummaryView: View {
             HStack {
                 AmountView(label   : "Valeur Atteinte",
                            amount  : kpi.value(withMode: simulation.mode)!,
-                           comment : simulation.mode == .random ? "avec une probabilité de \((kpi.probaObjective * 100.0).percentStringRounded)" : "")
+                           comment : simulation.mode == .random ? "avec une probabilité de \(kpi.probaObjective.percentStringRounded)" : "")
                 Image(systemName: kpi.objectiveIsReached(withMode: simulation.mode)! ? "checkmark.circle.fill" : "multiply.circle.fill")
                     .imageScale(/*@START_MENU_TOKEN@*/.large/*@END_MENU_TOKEN@*/)
             }

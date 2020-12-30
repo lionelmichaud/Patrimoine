@@ -23,10 +23,10 @@ struct FamilyView: View {
                 FamilyHeaderView()
                 
                 // liste des membres de la famille
-                FamilyListView()
+                FamilySectionView()
             }
-            .defaultSideBarListStyle()
-            //.listStyle(GroupedListStyle())
+            //.defaultSideBarListStyle()
+            .listStyle(SidebarListStyle())
             .environment(\.horizontalSizeClass, .regular)
             .navigationTitle("Famille")
             .navigationBarItems(
@@ -53,6 +53,15 @@ struct FamilyView: View {
                 .environmentObject(self.patrimoine)
                 .environmentObject(self.uiState)
         }
+    }
+}
+
+struct FamilyHeaderView: View {
+    var body: some View {
+        NavigationLink(destination: FamilySummaryView()) {
+            Text("Résumé").fontWeight(.bold)
+        }
+        .isDetailLink(true)
     }
 }
 

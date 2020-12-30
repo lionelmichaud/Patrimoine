@@ -70,7 +70,7 @@ struct KpiDetailedView: View {
         }
         .padding(.horizontal)
         .navigationTitle(kpi.name)
-        //.navigationBarTitleDisplayMode(.inline)
+        .navigationBarTitleDisplayMode(.inline)
     }
 }
 

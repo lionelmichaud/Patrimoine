@@ -27,9 +27,9 @@ var valueKilo€Formatter: NumberFormatter = {
     numFormatter.locale                = Locale(identifier : "fr_FR") // French Locale (fr_FR)
     // if number is less than 1 add 0 before decimal
     numFormatter.minimumIntegerDigits = 1 // how many digits do you want before decimal point
-    //numFormatter.maximumFractionDigits = 1 // how many digits do you want after decimal point
+    // numFormatter.maximumFractionDigits = 1 // how many digits do you want after decimal point
     numFormatter.multiplier           = 0.001
-    //numFormatter.thousandSeparator  = " "
+    // numFormatter.thousandSeparator  = " "
     numFormatter.positiveSuffix       = " k€"
     numFormatter.negativeSuffix       = " k€"
     numFormatter.paddingPosition      = .beforePrefix
@@ -56,7 +56,7 @@ var percentFormatter: NumberFormatter = {
     numFormatter.maximumIntegerDigits  = 3
     numFormatter.minimumFractionDigits = 2
     numFormatter.maximumFractionDigits = 2
-    //numFormatter.positivePrefix      = "+"
+    // numFormatter.positivePrefix      = "+"
     return numFormatter
 }()
 
@@ -69,7 +69,7 @@ var percentIntegerFormatter: NumberFormatter = {
     numFormatter.maximumIntegerDigits  = 3
     numFormatter.minimumFractionDigits = 0
     numFormatter.maximumFractionDigits = 0
-    //numFormatter.positivePrefix      = "+"
+    // numFormatter.positivePrefix      = "+"
     return numFormatter
 }()
 
@@ -81,7 +81,7 @@ var decimalFormatter: NumberFormatter = {
     numFormatter.minimumIntegerDigits  = 1
     numFormatter.minimumFractionDigits = 2
     numFormatter.maximumFractionDigits = 2
-    //numFormatter.positivePrefix      = "+"
+    // numFormatter.positivePrefix      = "+"
     return numFormatter
 }()
 
@@ -93,7 +93,7 @@ var decimalIntegerFormatter: NumberFormatter = {
     numFormatter.minimumIntegerDigits  = 1
     numFormatter.minimumFractionDigits = 0
     numFormatter.maximumFractionDigits = 0
-    //numFormatter.positivePrefix      = "+"
+    // numFormatter.positivePrefix      = "+"
     return numFormatter
 }()
 
@@ -106,7 +106,7 @@ var decimalX100IntegerFormatter: NumberFormatter = {
     numFormatter.minimumIntegerDigits  = 1
     numFormatter.minimumFractionDigits = 0
     numFormatter.maximumFractionDigits = 0
-    //numFormatter.positivePrefix      = "+"
+    // numFormatter.positivePrefix      = "+"
     return numFormatter
 }()
 

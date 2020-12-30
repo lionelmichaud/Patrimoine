@@ -111,7 +111,7 @@ struct ComputationView: View {
     var body: some View {
         ComputationForm()
             .navigationTitle("Calcul")
-            .navigationBarTitleDisplayMode(.inline)
+            //.navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .automatic) {
                     // bouton sauvegarder

@@ -23,9 +23,10 @@ struct ScenarioView: View {
                 ScenarioHeaderView()
                 
                 // liste des items de la side bar
-                ScenarioModelListView()
+                ScenarioModelSectionsView()
             }
-            .defaultSideBarListStyle()
+            //.defaultSideBarListStyle()
+            .listStyle(SidebarListStyle())
             .environment(\.horizontalSizeClass, .regular)
             .navigationTitle("Scénarios")
             
@@ -40,14 +41,12 @@ struct ScenarioHeaderView: View {
     @EnvironmentObject var uiState: UIState
     
     var body: some View {
-        Section {
-            NavigationLink(destination : ScenarioSummaryView(),
-                           tag         : .summary,
-                           selection   : $uiState.scenarioViewState.selectedItem) {
-                Text("Dernières Valeurs Utilisées")
-            }
-            .isDetailLink(true)
+        NavigationLink(destination : ScenarioSummaryView(),
+                       tag         : .summary,
+                       selection   : $uiState.scenarioViewState.selectedItem) {
+            Text("Dernières Valeurs Utilisées")
         }
+        .isDetailLink(true)
     }
 }
 

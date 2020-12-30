@@ -139,7 +139,7 @@ struct CashFlowLine {
                                           for year        : Int) {
         // FIXME: - en fait il faudrait traiter les sucessions en séquences: calcul taxe => transmission => calcul tax => transmission
         let decedents : [Person] = family.members.compactMap { member in
-            if !member.isAlive(atEndOf: year) && member.isAlive(atEndOf: year-1) {
+            if member is Adult && !member.isAlive(atEndOf: year) && member.isAlive(atEndOf: year-1) {
                 // un décès est survenu
                 return member
             } else {

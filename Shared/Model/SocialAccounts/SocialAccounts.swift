@@ -10,12 +10,12 @@ struct SocialAccounts {
     
     // MARK: - Static Properties
     
-    //#if DEBUG
+    // #if DEBUG
     /// URL du fichier de stockage du résultat de calcul au format CSV
     static let balanceSheetFileUrl = Bundle.main.url(forResource: "BalanceSheet.csv", withExtension: nil)
     /// URL du fichier de stockage du résultat de calcul au format CSV
     static let cashFlowFileUrl = Bundle.main.url(forResource: "CashFlow.csv", withExtension: nil)
-    //#endif
+    // #endif
     
     // MARK: - Properties
     

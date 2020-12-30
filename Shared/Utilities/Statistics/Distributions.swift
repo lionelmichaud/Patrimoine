@@ -7,7 +7,6 @@
 //
 
 import Foundation
-//import Numerics
 
 struct BetaDistribution: Distribution {
     typealias Number = Double

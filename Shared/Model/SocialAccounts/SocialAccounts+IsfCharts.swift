@@ -28,7 +28,7 @@ extension SocialAccounts {
         // si la table est vide alors quitter
         guard !cashFlowArray.isEmpty else { return nil }
         
-        //: ### ChartDataEntry
+        // : ### ChartDataEntry
         var yVals1 = [ChartDataEntry]()
         var yVals2 = [ChartDataEntry]()
         // revenu imposable
