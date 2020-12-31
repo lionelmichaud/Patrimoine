@@ -197,7 +197,8 @@ final class Simulation: ObservableObject {
                 // réinitialiser les propriétés aléatoires de la famille
                 family.nextRandomProperties()
                 // réinitialiser les propriétés aléatoires du modèle macro économique
-                dicoOfEconomyRandomVariables      = Economy.model.nextRun(firstYear : firstYear!,
+                dicoOfEconomyRandomVariables      = Economy.model.nextRun(withMode  : mode,
+                                                                          firstYear : firstYear!,
                                                                           lastYear  : lastYear!)
                 // réinitialiser les propriétés aléatoires du modèle socio économique
                 dicoOfSocioEconomyRandomVariables = SocioEconomy.model.next()
@@ -259,6 +260,7 @@ final class Simulation: ObservableObject {
 
         // fixer tous les paramètres du run à rejouer
         Economy.model.setRandomValue(to        : thisRun.dicoOfEconomyRandomVariables,
+                                     withMode  : mode,
                                      firstYear : firstYear!,
                                      lastYear  : lastYear!)
         SocioEconomy.model.setRandomValue(to: thisRun.dicoOfSocioEconomyRandomVariables)
@@ -290,7 +292,8 @@ final class Simulation: ObservableObject {
     func save() {
         /// - un fichier pour le Cash Flow
         /// - un fichier pour le Bilan
-        socialAccounts.save(simulationTitle: title)
+        socialAccounts.save(simulationTitle: title,
+                            withMode       : mode)
         
         /// - un fichier pour le tableau de résultat de Monté-Carlo
         resultTable.save(simulationTitle: title)

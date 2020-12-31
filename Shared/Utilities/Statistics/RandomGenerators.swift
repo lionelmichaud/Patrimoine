@@ -188,3 +188,7 @@ struct DiscreteRandomGenerator: RandomGenerator, Codable {
         }
     }
 }
+
+struct Random {
+    static var `default` = SystemRandomNumberGenerator()
+}

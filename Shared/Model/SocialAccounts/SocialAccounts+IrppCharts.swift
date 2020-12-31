@@ -147,7 +147,7 @@ extension SocialAccounts {
         // si la table est vide alors quitter
         guard !cashFlowArray.isEmpty else { return nil }
         // si l'année n'existe pas dans le tableau de cash flow
-        guard let cfLine = cashFlowArray.yearCashFlow(for: year) else { return nil }
+        guard let cfLine = cashFlowArray[year] else { return nil }
         
         let slicedIrpp = Fiscal.model.incomeTaxes.slicedIrpp(taxableIncome : cfLine.taxes.irpp.amount / cfLine.taxes.irpp.averageRate,
                                                              nbAdults      : nbAdults,

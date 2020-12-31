@@ -48,6 +48,7 @@
 		7975E4E6252E20400036C1F5 /* HumanLifeModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7975E4E5252E20400036C1F5 /* HumanLifeModel.swift */; };
 		7975E4EA252E21B30036C1F5 /* HumanLifeModelConfig.json in Resources */ = {isa = PBXBuildFile; fileRef = 7975E4E9252E21B30036C1F5 /* HumanLifeModelConfig.json */; };
 		7975E4ED252E21D00036C1F5 /* SocioEconomyModelConfig.json in Resources */ = {isa = PBXBuildFile; fileRef = 7975E4EC252E21D00036C1F5 /* SocioEconomyModelConfig.json */; };
+		79777F9C259D3378008C84A3 /* RNGExtension in Frameworks */ = {isa = PBXBuildFile; productRef = 79777F9B259D3378008C84A3 /* RNGExtension */; };
 		79785D5C257FAFDA00E8E35D /* FiscalHousehold.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79785D5B257FAFDA00E8E35D /* FiscalHousehold.swift */; };
 		7988807D258790550098E30C /* Ownership+TransferFullOwnership.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7988807C258790550098E30C /* Ownership+TransferFullOwnership.swift */; };
 		798C790325117231003BF2AA /* RandomGenerators.swift in Sources */ = {isa = PBXBuildFile; fileRef = 798C790225117231003BF2AA /* RandomGenerators.swift */; };
@@ -450,6 +451,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				79CAD664249E51CB00319BCD /* TypePreservingCodingAdapter in Frameworks */,
+				79777F9C259D3378008C84A3 /* RNGExtension in Frameworks */,
 				79CAD66A249E547200319BCD /* Disk in Frameworks */,
 				7997F995251F9D5100A79194 /* RealModule in Frameworks */,
 				79AA94C324BA746400BD3FCD /* StepperView in Frameworks */,
@@ -1124,6 +1126,7 @@
 				79A4CCCC2506A672003E6172 /* SigmaSwiftStatistics */,
 				7997F994251F9D5100A79194 /* RealModule */,
 				7997F996251F9D5100A79194 /* Numerics */,
+				79777F9B259D3378008C84A3 /* RNGExtension */,
 			);
 			productName = Patrimoine;
 			productReference = 799488A6249E4F4600DAFF1E /* Patrimoine.app */;
@@ -1161,6 +1164,7 @@
 				79AA94C124BA746400BD3FCD /* XCRemoteSwiftPackageReference "StepperView" */,
 				79A4CCCB2506A671003E6172 /* XCRemoteSwiftPackageReference "SigmaSwiftStatistics" */,
 				7997F993251F9D5100A79194 /* XCRemoteSwiftPackageReference "swift-numerics" */,
+				79777F9A259D3378008C84A3 /* XCRemoteSwiftPackageReference "rng-extension" */,
 			);
 			productRefGroup = 799488A7249E4F4600DAFF1E /* Products */;
 			projectDirPath = "";
@@ -1624,6 +1628,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		79777F9A259D3378008C84A3 /* XCRemoteSwiftPackageReference "rng-extension" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/t-ae/rng-extension.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.2;
+			};
+		};
 		7997F993251F9D5100A79194 /* XCRemoteSwiftPackageReference "swift-numerics" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/apple/swift-numerics.git";
@@ -1684,6 +1696,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		79777F9B259D3378008C84A3 /* RNGExtension */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 79777F9A259D3378008C84A3 /* XCRemoteSwiftPackageReference "rng-extension" */;
+			productName = RNGExtension;
+		};
 		7997F994251F9D5100A79194 /* RealModule */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 7997F993251F9D5100A79194 /* XCRemoteSwiftPackageReference "swift-numerics" */;

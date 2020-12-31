@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import RNGExtension
 
 // MARK: - Economy Model
 
@@ -131,18 +132,22 @@ struct Economy {
         /// - Parameters:
         ///   - firstYear: première année
         ///   - lastYear: dernière année
-        private mutating func generateRandomSamples(firstYear : Int,
+        ///   - withMode: mode de simulation qui détermine quelle sera la valeure moyenne retenue
+        private mutating func generateRandomSamples(withMode  : SimulationModeEnum,
+                                                    firstYear : Int,
                                                     lastYear  : Int) {
             if randomizers.simulateVolatility {
                 guard lastYear >= firstYear else {
                     fatalError("nbOfYears ≤ 0 in generateRandomSamples")
                 }
-                firstYearSampled = firstYear
-                securedRateSamples = []
-                stockRateSamples   = []
+                firstYearSampled        = firstYear
+                securedRateSamples      = []
+                stockRateSamples        = []
                 for _ in firstYear...lastYear {
-                    securedRateSamples.append(0)
-                    stockRateSamples.append(0)
+                    securedRateSamples.append(Random.default.normal.next(mu   : randomizers.securedRate.value(withMode: withMode),
+                                                                         sigma: randomizers.securedVolatility))
+                    stockRateSamples.append(Random.default.normal.next(mu   : randomizers.stockRate.value(withMode: withMode),
+                                                                       sigma: randomizers.stockVolatility))
                 }
             }
         }
@@ -157,12 +162,14 @@ struct Economy {
         ///   - firstYear: première année
         ///   - lastYear: dernière année
         /// - Returns: dictionnaire des échantillon de valeurs moyennes pour le prochain Run
-        mutating func nextRun(firstYear : Int,
+        mutating func nextRun(withMode  : SimulationModeEnum,
+                              firstYear : Int,
                               lastYear  : Int) -> DictionaryOfRandomVariable {
             // tirer au hazard une nouvelle valeure moyenne pour le prochain run
             let dico = randomizers.next()
             // à partir de la nouvelle valeure moyenne, tirer au hazard une valeur pour chaque année
-            generateRandomSamples(firstYear : firstYear,
+            generateRandomSamples(withMode  : withMode,
+                                  firstYear : firstYear,
                                   lastYear  : lastYear)
             return dico
         }
@@ -173,11 +180,13 @@ struct Economy {
         ///   - firstYear: première année
         ///   - lastYear: dernière année
         mutating func setRandomValue(to values : DictionaryOfRandomVariable,
+                                     withMode  : SimulationModeEnum,
                                      firstYear : Int,
                                      lastYear  : Int) {
             randomizers.setRandomValue(to: values)
             // à partir de la nouvelle valeure moyenne, tirer au hazard une valeur pour chaque année
-            generateRandomSamples(firstYear : firstYear,
+            generateRandomSamples(withMode  : withMode,
+                                  firstYear : firstYear,
                                   lastYear  : lastYear)
         }
     }

@@ -6,7 +6,8 @@ import Disk
 typealias BalanceSheetArray = [BalanceSheetLine]
 
 extension BalanceSheetArray {
-    func storeTableCSV(simulationTitle: String) {
+    func storeTableCSV(simulationTitle: String,
+                       withMode mode  : SimulationModeEnum) {
         var heading = String()
         var rows    = [String]()
         
@@ -65,8 +66,29 @@ extension BalanceSheetArray {
         // ligne de titre du tableau: utiliser la première ligne de la table de bilan
         heading = "YEAR; " // + self.first!.headerCSV
         rows = self.map { "\($0.year); " }
+
+        // inflation
+        // heading
+        heading += "Inflation; "
+        // valeurs
+        let rowsInflationRate = self.map { _ in "\(Economy.model.randomizers.inflation.value(withMode: mode).percentString(digit: 1)); " }
+        rows = zip(rows, rowsInflationRate).map(+)
         
-        // construire la partie Actifs du tableau
+        // taux des obligations
+        // heading
+        heading += "Taux Oblig; "
+        // valeurs
+        let rowsSecuredRate = self.map { "\(Economy.model.rates(in: $0.year, withMode: mode).securedRate.percentString(digit: 1)); " }
+        rows = zip(rows, rowsSecuredRate).map(+)
+        
+        // taux des actions
+        // heading
+        heading += "Taux Action; "
+        // valeurs
+        let rowsStockRate = self.map { "\(Economy.model.rates(in: $0.year, withMode: mode).stockRate.percentString(digit: 1)); " }
+        rows = zip(rows, rowsStockRate).map(+)
+        
+       // construire la partie Actifs du tableau
         buildAssetsTableCSV(firstLine: firstLine)
         
         // construire la partie Passifs du tableau

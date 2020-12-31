@@ -17,8 +17,8 @@ extension CashFlowArray {
     /// Rend la ligne de Cash Flow pour une année donnée
     /// - Parameter year: l'année recherchée
     /// - Returns: le cash flow de l'année
-    func yearCashFlow(for year: Int) -> CashFlowLine? {
-        return self.first { line in
+    subscript(year: Int) -> CashFlowLine? {
+        self.first { line in
             line.year == year
         }
     }

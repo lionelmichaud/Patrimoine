@@ -256,8 +256,10 @@ struct SocialAccounts {
     /// - un fichier pour le Bilan
     ///
     /// - Parameter simulationTitle: Titre de la simulation utilisé pour générer les nom de répertoire
-    func save(simulationTitle: String) {
-        balanceArray.storeTableCSV(simulationTitle: simulationTitle)
+    func save(simulationTitle: String,
+              withMode mode  : SimulationModeEnum) {
+        balanceArray.storeTableCSV(simulationTitle: simulationTitle,
+                                   withMode: mode)
         cashFlowArray.storeTableCSV(simulationTitle: simulationTitle)
     }
     
