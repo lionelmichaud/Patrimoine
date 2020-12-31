@@ -169,9 +169,10 @@ class Person : ObservableObject, Identifiable, CustomStringConvertible, Codable 
         }
     }
         
-    init(sexe: Sexe,
-         givenName: String, familyName: String,
-         birthDate : Date,
+    init(sexe       : Sexe,
+         givenName  : String,
+         familyName : String,
+         birthDate  : Date,
          ageOfDeath : Int = CalendarCst.forever) {
         self.sexe                = sexe
         self.name                = PersonNameComponents()
@@ -228,11 +229,13 @@ class Person : ObservableObject, Identifiable, CustomStringConvertible, Codable 
     func nextRandomProperties() {
         switch self.sexe {
             case .male:
-                self.ageOfDeath = Int(HumanLife.model.menLifeEpectation.next())
+                ageOfDeath = Int(HumanLife.model.menLifeEpectation.next())
                 
             case .female:
-                self.ageOfDeath = Int(HumanLife.model.womenLifeExpectation.next())
+                ageOfDeath = Int(HumanLife.model.womenLifeExpectation.next())
         }
+        // on ne peut mourire à un age < à celui que l'on a déjà
+        ageOfDeath = max(ageOfDeath, age(atEndOf: Date.now.year))
     }
     
     func print() {

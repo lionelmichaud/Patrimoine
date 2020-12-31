@@ -403,6 +403,9 @@ final class Adult: Person { // swiftlint:disable:this type_body_length
         // Get superDecoder for superclass and call super.init(from:) with it
         //let superDecoder = try container.superDecoder()
         try super.init(from: decoder)
+
+        // pas de dépendance avant l'âge de 65 ans
+        nbOfYearOfDependency = min(nbOfYearOfDependency, max(ageOfDeath - 65, 0))
     }
     
     override init(sexe       : Sexe,
@@ -513,6 +516,9 @@ final class Adult: Person { // swiftlint:disable:this type_body_length
         // générer une nouvelle valeure aléatoire
         // réinitialiser la durée de dépendance
         nbOfYearOfDependency = Int(HumanLife.model.nbOfYearsOfdependency.next())
+        
+        // pas de dépendance avant l'âge de 65 ans
+        nbOfYearOfDependency = min(nbOfYearOfDependency, max(ageOfDeath - 65, 0))
     }
 
     override func print() {

@@ -22,13 +22,15 @@ extension DictionaryOfKpiResults {
         for kpi in SimulationKPIEnum.allCases {
             if let objectiveIsReached = self[kpi]?.objectiveIsReached {
                 if !objectiveIsReached {
+                    // un résultat est défini avec un objectif non atteint
                     return .someObjectiveMissed
                 }
             } else {
-                // un résultat inconnu
+                // un résultat non défini
                 return .someObjectiveUndefined
             }
         }
+        // tous les résultats sont définis et les objectifs sont toujours atteints
         return .allObjectivesReached
     }
 }

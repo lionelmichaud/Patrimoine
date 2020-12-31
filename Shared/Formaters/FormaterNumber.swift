@@ -34,7 +34,7 @@ var valueKilo€Formatter: NumberFormatter = {
     numFormatter.negativeSuffix       = " k€"
     numFormatter.paddingPosition      = .beforePrefix
     numFormatter.paddingCharacter     = "0"
-    numFormatter.zeroSymbol           = ""
+    numFormatter.zeroSymbol           = "-"
     return numFormatter
 }()
 

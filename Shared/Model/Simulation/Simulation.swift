@@ -49,11 +49,11 @@ enum SimulationKPIEnum: Int, PickableEnum, Codable, Hashable {
     var note: String {
         switch self {
             case .minimumAsset:
-                return "Valeure minimale atteinte dans le temps pour la somme des actifs financiers nets (hors immobilier physique)"
+                return "Valeur minimale atteinte dans le temps pour la somme des actifs financiers (hors immobilier physique)"
             case .assetAt1stDeath:
-                return "Valeure totale des actifs financiers nets (immobilier inclus) au premier décès"
+                return "Valeur totale des actifs financiers NET (hors immobilier d'habitation) au premier décès"
             case .assetAt2ndtDeath:
-                return "Valeure totale des actifs financiers nets (immobilier inclus) au second décès"
+                return "Valeur totale des actifs financiers NET (hors immobilier d'habitation) au second décès"
         }
     }
 }

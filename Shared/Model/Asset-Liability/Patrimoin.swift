@@ -315,11 +315,11 @@ final class Patrimoin: ObservableObject {
         
         assets.freeInvests.items.sort(by: {$0.averageInterestRate < $1.averageInterestRate})
         
-        // retirer le montant d'un investissement libre: d'abord le PEA procurant le moins bon rendement
+        // PEA: retirer le montant d'un investissement libre: d'abord le PEA procurant le moins bon rendement
         for idx in 0..<assets.freeInvests.items.count where assets.freeInvests.items[idx].type == .pea {
             // tant que l'on a pas retiré le montant souhaité
-            // retirer le montant du PEA s'il n'est pas vide
-            if amountRemainingToRemove > 0.0 && assets.freeInvests.items[idx].value(atEndOf: year) > 0.0 {
+            // retirer le montant du PEA s'il y en avait assez à la fin de l'année dernière
+            if amountRemainingToRemove > 0.0 && assets.freeInvests.items[idx].value(atEndOf: year-1) > 0.0 {
                 let removal = assets.freeInvests.items[idx].remove(netAmount: amountRemainingToRemove)
                 amountRemainingToRemove -= removal.revenue
                 // IRPP: les plus values PEA ne sont pas imposables à l'IRPP
@@ -328,13 +328,13 @@ final class Patrimoin: ObservableObject {
             }
         }
         
-        // si le solde des PEA n'était pas suffisant alors retirer de l'Assurances vie procurant le moins bon rendement
+        // ASSURANCE VIE: si le solde des PEA n'était pas suffisant alors retirer de l'Assurances vie procurant le moins bon rendement
         for idx in 0..<assets.freeInvests.items.count {
             switch assets.freeInvests.items[idx].type {
                 case .lifeInsurance:
                     // tant que l'on a pas retiré le montant souhaité
-                    // retirer le montant de l'Assurances vie si elle n'est pas vide
-                    if amountRemainingToRemove > 0.0 && assets.freeInvests.items[idx].value(atEndOf: year) > 0.0 {
+                    // retirer le montant de l'Assurances vie s'il y en avait assez à la fin de l'année dernière
+                    if amountRemainingToRemove > 0.0 && assets.freeInvests.items[idx].value(atEndOf: year-1) > 0.0 {
                         let removal = assets.freeInvests.items[idx].remove(netAmount: amountRemainingToRemove)
                         amountRemainingToRemove -= removal.revenue
                         // IRPP: part des produit de la liquidation inscrit en compte courant imposable à l'IRPP après déduction de ce qu'il reste de franchise

@@ -150,8 +150,12 @@ struct BalanceSheetLine {
     var netAssets   : Double {
         assets.total + liabilities.total
     }
-    // tous les actifs sauf immobilier
-    var totalFinancialAssets: Double {
+    // tous les actifs net sauf immobilier physique
+    var netFinancialAssets : Double {
+        netAssets - assets.perCategory[.realEstates]?.total ?? 0.0
+    }
+    // tous les actifs sauf immobilier physique
+    var financialAssets: Double {
         assets.total - assets.perCategory[.realEstates]?.total ?? 0.0
     }
     
