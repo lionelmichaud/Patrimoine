@@ -24,7 +24,7 @@ struct SocialAccounts {
     var firstYear     = Date.now.year
     var lastYear      = Date.now.year
     // les successions légales
-    var successions   : [Succession] = []
+    var legalSuccessions   : [Succession] = []
     // les transmissions d'assurances vie
     var lifeInsSuccessions : [Succession] = []
 
@@ -42,7 +42,7 @@ struct SocialAccounts {
         balanceArray  = BalanceSheetArray()
         firstYear     = Date.now.year
         lastYear      = Date.now.year
-        successions        = []
+        legalSuccessions        = []
         lifeInsSuccessions = []
 }
     
@@ -216,7 +216,7 @@ struct SocialAccounts {
                                                        taxableIrppRevenueDelayedFromLastyear : lastYearDelayedTaxableIrppRevenue)
                 cashFlowArray.append(newCashFlowLine)
                 // ajouter les éventuelles successions survenues pendant l'année à la liste globale
-                successions        += newCashFlowLine.successions
+                legalSuccessions        += newCashFlowLine.successions
                 // ajouter les éventuelles transmissions d'assurance vie survenues pendant l'année à la liste globale
                 lifeInsSuccessions += newCashFlowLine.lifeInsSuccessions
             } catch {

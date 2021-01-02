@@ -90,10 +90,13 @@ final class Simulation: ObservableObject {
     
     // MARK: - Computed Properties
     
-    var occuredSuccessions: [Succession] {
-        socialAccounts.successions
+    var occuredLegalSuccessions: [Succession] {
+        socialAccounts.legalSuccessions
     }
-
+    var occuredLifeInsSuccessions: [Succession] {
+        socialAccounts.lifeInsSuccessions
+    }
+    
     // MARK: - Initializers
     
     init() {

@@ -12,7 +12,7 @@ struct SuccessionsView: View {
     @EnvironmentObject var simulation : Simulation
     @EnvironmentObject var uiState    : UIState
     
-    private var successions: [Succession]
+    var successions: [Succession]
     
     var body: some View {
         if successions.isEmpty {
@@ -50,9 +50,9 @@ struct SuccessionsView: View {
         }
     }
     
-    init(simulation: Simulation) {
-        self.successions = simulation.occuredSuccessions
-    }
+//    init(simulation: Simulation) {
+//        self.successions = simulation.occuredLegalSuccessions
+//    }
 }
 
 struct CumulatedSuccessorsDisclosureGroup: View {
@@ -170,7 +170,7 @@ struct SuccessionsView_Previews: PreviewProvider {
     static var previews: some View {
         let simulation = initializedSimulation()
         
-        return SuccessionsView(simulation: simulation)
+        return SuccessionsView(successions: simulation.occuredLegalSuccessions)
             .preferredColorScheme(.dark)
             .environmentObject(uiState)
             .environmentObject(family)

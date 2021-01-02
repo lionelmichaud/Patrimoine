@@ -15,10 +15,16 @@ struct SuccessionsSectionView: View {
     var body: some View {
         if simulation.isComputed {
             Section(header: Text("Successions") ) {
-                NavigationLink(destination : SuccessionsView(simulation: simulation),
-                               tag         : .successions,
+                NavigationLink(destination : SuccessionsView(successions: simulation.occuredLegalSuccessions),
+                               tag         : .successionsLegal,
                                selection   : $uiState.simulationViewState.selectedItem) {
                     Text("Légales")
+                }
+                .isDetailLink(true)
+                NavigationLink(destination : SuccessionsView(successions: simulation.occuredLifeInsSuccessions),
+                               tag         : .successionsAssVie,
+                               selection   : $uiState.simulationViewState.selectedItem) {
+                    Text("Assurance Vie")
                 }
                 .isDetailLink(true)
             }

@@ -16,7 +16,7 @@ struct SimulationView: View {
         case computationView, bilanSynthese, bilanDetail, cfSynthese, cfDetail
         case kpiSummaryView, shortGridView
         case irppSynthesis, irppSlices, isfSynthesis, isfSlices
-        case successions
+        case successionsLegal, successionsAssVie
     }
     
     var body: some View {
