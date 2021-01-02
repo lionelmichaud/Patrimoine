@@ -16,6 +16,9 @@ extension Ownership {
     ///   - clause: la clause bénéficiare de l'assurance vie
     ///
     mutating func transfertLifeInsuranceUsufruct(clause: LifeInsuranceClause) {
+        guard bareOwners.isNotEmpty else {
+            fatalError("transfertLifeInsuranceUsufruct: Aucun nue-propriétaire à qui transmettre l'usufruit de l'assurance vie")
+        }
         isDismembered = false
         fullOwners = []
         // chaque nue-propriétaire devient PP de sa propre part
@@ -38,9 +41,12 @@ extension Ownership {
     ///
     mutating func transferLifeInsuranceUsufructAndBareOwnership(clause: LifeInsuranceClause) {
         guard clause.bareRecipients.isNotEmpty else {
-            fatalError("Aucun bénéficiaire dans la clause bénéficiaire de l'assurance vie")
+            fatalError("transferLifeInsuranceUsufructAndBareOwnership: Aucun nue-propriétaire désigné dans la clause bénéficiaire démembrée de l'assurance vie")
         }
-        
+        guard clause.usufructRecipient.isNotEmpty else {
+            fatalError("transferLifeInsuranceUsufructAndBareOwnership: Aucun usufruitier désigné dans la clause bénéficiaire démembrée de l'assurance vie")
+        }
+        isDismembered = true
         self.fullOwners = []
         // un seul usufruitier
         self.usufructOwners = [Owner(name     : clause.usufructRecipient,

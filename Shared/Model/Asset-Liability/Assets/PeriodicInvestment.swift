@@ -14,7 +14,7 @@ typealias PeriodicInvestementArray = ItemArray<PeriodicInvestement>
 
 /// Placement à versements périodiques, fixes, annuels et à taux fixe
 /// Tous les intérêts sont capitalisés
-struct PeriodicInvestement: Identifiable, Codable, NameableValuable, Ownable {
+struct PeriodicInvestement: Identifiable, Codable, NameableValuable, Ownable, FinancialEnvelop {
     
     // MARK: - Static Properties
     
@@ -144,7 +144,7 @@ struct PeriodicInvestement: Identifiable, Codable, NameableValuable, Ownable {
         var evaluatedValue : Double
 
         switch evaluationMethod {
-            case .inheritance:
+            case .legalSuccession:
                 // le bien est-il une assurance vie ?
                 switch type {
                     case .lifeInsurance:
@@ -162,7 +162,19 @@ struct PeriodicInvestement: Identifiable, Codable, NameableValuable, Ownable {
                         evaluatedValue = value(atEndOf: year)
                 }
                 
-            default:
+            case .lifeInsuranceSuccession:
+                // le bien est-il une assurance vie ?
+                switch type {
+                    case .lifeInsurance:
+                        // pas de décote
+                        evaluatedValue = value(atEndOf: year)
+                        
+                    default:
+                        // on recherche uniquement les assurances vies
+                        return 0
+                }
+                
+            case .ifi, .isf, .patrimoine:
                 // pas de décote
                 evaluatedValue = value(atEndOf: year)
         }

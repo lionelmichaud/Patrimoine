@@ -204,6 +204,8 @@ struct LifeInsuranceInheritance: Codable {
         }
     }
     
+    /// Calcul les taxes sur la transmission de l'assurance vie vers un enfant
+    /// - Parameter partSuccession: masse transmise vers un enfant
     func heritageToChild(partSuccession: Double)
     -> (netAmount : Double,
         taxe      : Double) {
@@ -218,6 +220,8 @@ struct LifeInsuranceInheritance: Codable {
         }
     }
     
+    /// Calcul les taxes sur la transmission de l'assurance vie vers un conjoint
+    /// - Parameter partSuccession: masse transmise vers un conjoint
     func heritageToConjoint(partSuccession: Double)
     -> (netAmount : Double,
         taxe      : Double) {

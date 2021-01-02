@@ -17,7 +17,7 @@ typealias FreeInvestmentArray = ItemArray<FreeInvestement>
 
 /// Placement à versement et retrait libres et à taux fixe
 /// Les intérêts sont capitalisés lors de l'appel à capitalize()
-struct FreeInvestement: Identifiable, Codable, NameableValuable, Ownable {
+struct FreeInvestement: Identifiable, Codable, NameableValuable, Ownable, FinancialEnvelop {
     
     // nested types
     
@@ -176,14 +176,12 @@ struct FreeInvestement: Identifiable, Codable, NameableValuable, Ownable {
     func ownedValue(by ownerName     : String,
                     atEndOf year     : Int,
                     evaluationMethod : EvaluationMethod) -> Double {
-        var evaluatedValue : Double
-
         switch evaluationMethod {
-            case .inheritance:
+            case .legalSuccession:
                 // le bien est-il une assurance vie ?
                 switch type {
                     case .lifeInsurance:
-                        // les assurance vie ne sont pas inclues car hors succession
+                        // les assurance vie ne sont pas inclues car hors succession légale
                         return 0
 
                     default:
@@ -194,13 +192,29 @@ struct FreeInvestement: Identifiable, Codable, NameableValuable, Ownable {
                             return 0
                         }
                         // pas de décote
-                        evaluatedValue = value(atEndOf: year)
+                        ()
                 }
 
-            default:
+            case .lifeInsuranceSuccession:
+                // le bien est-il une assurance vie ?
+                switch type {
+                    case .lifeInsurance:
+                        // pas de décote
+                        ()
+                        
+                    default:
+                        // on recherche uniquement les assurances vies
+                        return 0
+                }
+                
+            case .ifi, .isf, .patrimoine:
                 // pas de décote
-                evaluatedValue = value(atEndOf: year)
+                ()
+                
         }
+        // prendre la valeur totale du bien sans aucune décote (par défaut)
+        let evaluatedValue = value(atEndOf: year)
+
         // calculer la part de propriété
         let value = evaluatedValue == 0 ? 0 : ownership.ownedValue(by               : ownerName,
                                                                    ofValue          : evaluatedValue,

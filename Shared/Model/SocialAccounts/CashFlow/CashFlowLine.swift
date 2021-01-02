@@ -137,7 +137,7 @@ struct CashFlowLine {
     fileprivate mutating func manageDeath(of family       : Family,
                                           with patrimoine : Patrimoin,
                                           for year        : Int) {
-        // FIXME: - en fait il faudrait traiter les sucessions en séquences: calcul taxe => transmission => calcul tax => transmission
+        // FIXME: - en fait il faudrait traiter les sucessions en séquences: calcul taxe => transmission puis calcul tax => transmission
         let decedents : [Person] = family.members.compactMap { member in
             if member is Adult && !member.isAlive(atEndOf: year) && member.isAlive(atEndOf: year-1) {
                 // un décès est survenu
@@ -152,13 +152,16 @@ struct CashFlowLine {
         var totalLiSuccessionTax = 0.0
         // pour chaque défunt
         decedents.forEach { decedent in
+            Swift.print("Succession de \(decedent.displayName) en \(year)")
             // droits de successions légales
-            let succession = patrimoine.succession(of: decedent, atEndOf: year)
+            let succession = patrimoine.legalSuccession(of      : decedent,
+                                                        atEndOf : year)
             successions.append(succession)
             totalSuccessionTax += succession.tax
             
             // droits de transmission assurances vies
-            let liSuccession = patrimoine.lifeInsuraceSuccession(of: decedent, atEndOf: year)
+            let liSuccession = patrimoine.lifeInsuraceSuccession(of      : decedent,
+                                                                 atEndOf : year)
             lifeInsSuccessions.append(liSuccession)
             totalLiSuccessionTax += liSuccession.tax
             

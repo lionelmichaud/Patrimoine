@@ -47,36 +47,98 @@ protocol Ownable: NameableValuable {
     func ownedValue(by ownerName     : String,
                     atEndOf year     : Int,
                     evaluationMethod : EvaluationMethod) -> Double
+    
+    func ownedValues(atEndOf year     : Int,
+                     evaluationMethod : EvaluationMethod) -> [String : Double]
+
 }
 extension Ownable {
     // implémentation par défaut
     func ownedValue(by ownerName     : String,
                     atEndOf year     : Int,
                     evaluationMethod : EvaluationMethod) -> Double {
-//        Swift.print("  Actif: \(name)")
+        //        Swift.print("  Actif: \(name)")
         switch evaluationMethod {
-            case .inheritance:
+            case .legalSuccession:
                 // cas particulier d'une succession:
                 //   le défunt est-il usufruitier ?
                 if ownership.isAnUsufructOwner(ownerName: ownerName) {
                     // si oui alors l'usufruit rejoint la nu-propriété sans droit de succession
                     // l'usufruit n'est donc pas intégré à la masse successorale du défunt
-//                    Swift.print("  valeur: 0")
+                    //                    Swift.print("  valeur: 0")
                     return 0
                 }
                 
-            default:
+            case .lifeInsuranceSuccession:
+                // cas particulier d'une succession:
+                // on recherche uniquement les assurances vies
+                return 0
+                
+            case .ifi, .isf, .patrimoine:
                 ()
         }
         // prendre la valeur totale du bien sans aucune décote (par défaut)
         let evaluatedValue = value(atEndOf: year)
-        // prendre la part de pripriété
+        // prendre la part de propriété
         let value = evaluatedValue == 0 ? 0 : ownership.ownedValue(by               : ownerName,
                                                                    ofValue          : evaluatedValue,
                                                                    atEndOf          : year,
                                                                    evaluationMethod : evaluationMethod)
-//        Swift.print("  valeur: \(value)")
+        //        Swift.print("  valeur: \(value)")
         return value
+    }
+    
+    // implémentation par défaut
+    func ownedValues(atEndOf year     : Int,
+                     evaluationMethod : EvaluationMethod) -> [String : Double] {
+        var dico: [String : Double] = [:]
+        if ownership.isDismembered {
+            for owner in ownership.bareOwners {
+                dico[owner.name] = ownedValue(by               : owner.name,
+                                              atEndOf          : year,
+                                              evaluationMethod : evaluationMethod)
+            }
+            for owner in ownership.usufructOwners {
+                dico[owner.name] = ownedValue(by               : owner.name,
+                                              atEndOf          : year,
+                                              evaluationMethod : evaluationMethod)
+            }
+
+        } else {
+            for owner in ownership.fullOwners {
+                dico[owner.name] = ownedValue(by               : owner.name,
+                                              atEndOf          : year,
+                                              evaluationMethod : evaluationMethod)
+            }
+        }
+        return dico
+    }
+}
+
+// MARK: Protocol d'enveloppe financière
+
+protocol FinancialEnvelop: Ownable {
+    var type            : InvestementType { get set }
+    var isLifeInsurance : Bool { get }
+    var clause          : LifeInsuranceClause? { get }
+}
+
+extension FinancialEnvelop {
+    var isLifeInsurance: Bool {
+        switch type {
+            case .lifeInsurance:
+                return true
+            case .other, .pea:
+                return false
+        }
+    }
+    var clause: LifeInsuranceClause? {
+        switch type {
+            case .lifeInsurance(_, let clause):
+                return clause
+            case .other, .pea:
+                return nil
+        }
     }
 }
 

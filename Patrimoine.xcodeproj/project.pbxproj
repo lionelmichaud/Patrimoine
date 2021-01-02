@@ -180,6 +180,8 @@
 		79A8083824A3C76200957B79 /* RetirementModelConfig.json in Resources */ = {isa = PBXBuildFile; fileRef = 79A8083724A3C76200957B79 /* RetirementModelConfig.json */; };
 		79AA94C324BA746400BD3FCD /* StepperView in Frameworks */ = {isa = PBXBuildFile; productRef = 79AA94C224BA746400BD3FCD /* StepperView */; };
 		79AA94C624BA7CC900BD3FCD /* PersonLifeLineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79AA94C524BA7CC900BD3FCD /* PersonLifeLineView.swift */; };
+		79AB0BAB25A075A200242DDA /* bell.wav in Resources */ = {isa = PBXBuildFile; fileRef = 79AB0BAA25A075A200242DDA /* bell.wav */; };
+		79AB0BAE25A07EB300242DDA /* Patrimoin+Succession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79AB0BAD25A07EB300242DDA /* Patrimoin+Succession.swift */; };
 		79AD6EFA251FB0C400490472 /* StatisticsProtocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79AD6EF9251FB0C400490472 /* StatisticsProtocols.swift */; };
 		79B44A9A24BB7B67001C8767 /* StepperHelperViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79B44A9924BB7B67001C8767 /* StepperHelperViews.swift */; };
 		79B46F9E25378CF300D6FFEF /* InterestRateType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79B46F9D25378CF300D6FFEF /* InterestRateType.swift */; };
@@ -400,6 +402,8 @@
 		79A423902516673E008383A1 /* AssetsCategory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssetsCategory.swift; sourceTree = "<group>"; };
 		79A8083724A3C76200957B79 /* RetirementModelConfig.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = RetirementModelConfig.json; sourceTree = "<group>"; };
 		79AA94C524BA7CC900BD3FCD /* PersonLifeLineView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersonLifeLineView.swift; sourceTree = "<group>"; };
+		79AB0BAA25A075A200242DDA /* bell.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = bell.wav; sourceTree = "<group>"; };
+		79AB0BAD25A07EB300242DDA /* Patrimoin+Succession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Patrimoin+Succession.swift"; sourceTree = "<group>"; };
 		79AD6EF9251FB0C400490472 /* StatisticsProtocols.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatisticsProtocols.swift; sourceTree = "<group>"; };
 		79B44A9924BB7B67001C8767 /* StepperHelperViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StepperHelperViews.swift; sourceTree = "<group>"; };
 		79B46F9D25378CF300D6FFEF /* InterestRateType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InterestRateType.swift; sourceTree = "<group>"; };
@@ -579,6 +583,7 @@
 		796FC437259A67E400EE4CB1 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				79AB0BAA25A075A200242DDA /* bell.wav */,
 				796FC438259A680700EE4CB1 /* ding.wav */,
 			);
 			path = Resources;
@@ -910,10 +915,11 @@
 			isa = PBXGroup;
 			children = (
 				79948939249E4FC200DAFF1E /* Patrimoin.swift */,
-				7994893A249E4FC200DAFF1E /* Assets */,
-				79948936249E4FC200DAFF1E /* Liabilities */,
+				79AB0BAD25A07EB300242DDA /* Patrimoin+Succession.swift */,
 				79785D5B257FAFDA00E8E35D /* FiscalHousehold.swift */,
 				79C7B201258D2783004B38E7 /* Succession.swift */,
+				7994893A249E4FC200DAFF1E /* Assets */,
+				79948936249E4FC200DAFF1E /* Liabilities */,
 			);
 			path = "Asset-Liability";
 			sourceTree = "<group>";
@@ -1195,6 +1201,7 @@
 				799489AC249E4FF500DAFF1E /* Colors.xcassets in Resources */,
 				79A4237925165D3E008383A1 /* Logement_LifeExpense.json in Resources */,
 				7975E4ED252E21D00036C1F5 /* SocioEconomyModelConfig.json in Resources */,
+				79AB0BAB25A075A200242DDA /* bell.wav in Resources */,
 				796FC439259A680700EE4CB1 /* ding.wav in Resources */,
 				79A4236D25165CD7008383A1 /* Abonnements_LifeExpense.json in Resources */,
 				799488E3249E4FA800DAFF1E /* BalanceSheet.csv in Resources */,
@@ -1302,6 +1309,7 @@
 				7956C6282538FA2900C92A28 /* ScenarioListView.swift in Sources */,
 				79948970249E4FC200DAFF1E /* ExpenseSummaryView.swift in Sources */,
 				79948991249E4FC200DAFF1E /* Debt.swift in Sources */,
+				79AB0BAE25A07EB300242DDA /* Patrimoin+Succession.swift in Sources */,
 				79E7588B250D5A3100153AB6 /* EconomyModel.swift in Sources */,
 				79CD02E124D066200055CEF5 /* PensionReversion.swift in Sources */,
 				7937A6D0257D8AC000ED645A /* isfEvolutionChartView.swift in Sources */,

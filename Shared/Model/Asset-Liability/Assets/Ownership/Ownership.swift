@@ -214,13 +214,13 @@ struct Ownership: Codable {
                 case .ifi, .isf :
                     // calcul de la part de pleine-propriété détenue
                     if let owner = usufructOwners.first(where: { $0.name == ownerName }) {
-                        // on a trouvé un usufruitier
+                        // on a trouvé un usufruitier => on prend la valeur en PP
                         return owner.ownedValue(from: totalValue)
                     } else {
                         return 0.0
                     }
                     
-                default:
+                case .legalSuccession, .lifeInsuranceSuccession, .patrimoine:
                     // démembrement
                     var usufructValue : Double = 0.0
                     var bareValue     : Double = 0.0
@@ -406,7 +406,7 @@ struct Ownership: Codable {
             }
 
         } else {
-            // le capital de l'assurane vie n'est pas démembré
+            // le capital de l'assurance vie n'est pas démembré
             // le défunt est-il un des PP propriétaires du capital de l'assurance vie ?
             if fullOwners.contains(where: { decedentName == $0.name }) {
                 if fullOwners.count == 1 {

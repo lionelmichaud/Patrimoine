@@ -251,7 +251,7 @@ private struct InheritanceSectionView: View {
     func inheritanceDisclosure(label        : String,
                                atEndOf year : Int,
                                decedent     : Adult) -> some View {
-        let succession = patrimoine.succession(of: decedent, atEndOf: year)
+        let succession = patrimoine.legalSuccession(of: decedent, atEndOf: year)
         
         return DisclosureGroup(
             content: {

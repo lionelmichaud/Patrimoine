@@ -73,7 +73,7 @@ struct Liabilities {
         }
     }
     
-    /// Calcule  la valeur nette taxable du patrimoine immobilier de la famille selon la méthode de calcul choisie
+    /// Calcule  la valeur du patrimoine immobilier de la famille selon la méthode de calcul choisie
     /// - Parameters:
     ///   - year: année d'évaluation
     ///   - evaluationMethod: méthode d'évalution des biens
@@ -90,26 +90,13 @@ struct Liabilities {
                                      evaluationMethod : evaluationMethod)
                 }
                 
-            default:
+            case .legalSuccession, .patrimoine:
                 /// on prend la valeure totale de toutes les emprunts
                 return loans.value(atEndOf: year)
+                
+            case .lifeInsuranceSuccession:
+                return 0
         }
-    }
-    
-    /// Calcule le passif taxable à la succession d'une personne
-    /// - Note: [Reference](https://www.service-public.fr/particuliers/vosdroits/F14198)
-    /// - Parameters:
-    ///   - year: année d'évaluation
-    ///   - decedent: personne dont on calcule la succession
-    /// - Returns: passif taxable à la succession
-    func taxableInheritanceValue(of decedent  : Person,
-                                 atEndOf year : Int) -> Double {
-        loans.ownedValue(by               : decedent.displayName,
-                         atEndOf          : year,
-                         evaluationMethod : .inheritance) +
-            debts.ownedValue(by               : decedent.displayName,
-                             atEndOf          : year,
-                             evaluationMethod : .inheritance)
     }
     
     func valueOfDebts(atEndOf year: Int) -> Double {

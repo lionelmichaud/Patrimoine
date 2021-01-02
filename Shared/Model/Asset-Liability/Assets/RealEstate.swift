@@ -155,7 +155,7 @@ struct RealEstateAsset: Identifiable, Codable, Equatable, NameableValuable, Owna
                 // appliquer la décote IFI
                 evaluatedValue = ifiValue(atEndOf: year)
                 
-            case .inheritance:
+            case .legalSuccession:
                 // le défunt est-il usufruitier ?
                 if ownership.isAnUsufructOwner(ownerName: ownerName) {
                     // si oui alors l'usufruit rejoint la nu-propriété sans droit de succession
@@ -166,7 +166,11 @@ struct RealEstateAsset: Identifiable, Codable, Equatable, NameableValuable, Owna
                 // appliquer la décote succession
                 evaluatedValue = inheritanceValue(atEndOf: year)
                 
-            default:
+            case .lifeInsuranceSuccession:
+                // on recherche uniquement les assurances vies
+                return 0
+
+            case .patrimoine:
                 // pas de décote
                 evaluatedValue = value(atEndOf: year)
         }

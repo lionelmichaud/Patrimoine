@@ -204,38 +204,17 @@ struct Assets {
                                              evaluationMethod : evaluationMethod)
                 }
 
-            default:
+            case .legalSuccession, .patrimoine:
                 /// on prend la valeure totale de tous les biens immobiliers
                 return
                     realEstates.value(atEndOf: year) +
                     scpis.value(atEndOf: year) +
                     sci.scpis.value(atEndOf: year)
+                
+            case .lifeInsuranceSuccession:
+                // on recherche uniquement les assurances vies
+                return 0
         }
     }
     
-    /// Calcule l'actif taxable à la succession d'une personne
-    /// - Note: [Reference](https://www.service-public.fr/particuliers/vosdroits/F14198)
-    /// - Parameters:
-    ///   - year: année d'évaluation
-    ///   - decedent: personne dont on calcule la succession
-    /// - Returns: actif taxable à la succession
-    func taxableInheritanceValue(of decedent  : Person,
-                                 atEndOf year : Int) -> Double {
-        return
-            realEstates.ownedValue(by               : decedent.displayName,
-                                   atEndOf          : year,
-                                   evaluationMethod : .inheritance) +
-            scpis.ownedValue(by               : decedent.displayName,
-                             atEndOf          : year,
-                             evaluationMethod : .inheritance) +
-            sci.scpis.ownedValue(by               : decedent.displayName,
-                                 atEndOf          : year,
-                                 evaluationMethod : .inheritance) +
-            periodicInvests.ownedValue(by               : decedent.displayName,
-                                       atEndOf          : year,
-                                       evaluationMethod : .inheritance) +
-            freeInvests.ownedValue(by               : decedent.displayName,
-                                   atEndOf          : year,
-                                   evaluationMethod : .inheritance)
-    }
 }

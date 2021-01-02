@@ -44,6 +44,41 @@
                 "interest"   : 0,
                 "investment" : 0
             }
+        },
+        {
+            "id"           : "4A6940AE-3D5B-4F3E-BB23-CF076F9CA5B2",
+            "name"         : "PEA Lionel Bourso",
+            "note"         : "Ouvert le 04/03/2012\nFonds actions",
+            "ownership"               :
+            {
+                "est_démembré"        : false,
+                "plein_propriétaires" :
+                [
+                    {
+                        "name"     : "M. Lionel MICHAUD",
+                        "fraction" : 100
+                    }
+                ],
+                "nue_propriétaires"   : [ ],
+                "usufruitiers"        : [ ]
+            },
+            "initialState" : {
+                "year"       : 2019,
+                "interest"   : 4685,
+                "investment" : 168448
+            },
+            "type" : {
+                "PEA" : true
+            },
+            "interestRateType" : {
+                "marketRate_stockRatio" : 100.0
+            },
+            "currentState" : {
+                "year"       : 0,
+                "interest"   : 0,
+                "investment" : 0
+            }
         }
+
     ]
 }
