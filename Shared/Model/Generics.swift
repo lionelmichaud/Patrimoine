@@ -23,3 +23,11 @@ func rawValueGeneric<T: CaseIterable >(of enu: T) -> Int where T: Equatable, T.A
         })!
     }
 }
+
+func zeroOrPositive<T: Comparable>(_ x: T) -> T where T: SignedNumeric {
+    if abs(x) == -x {
+        return .zero
+    } else {
+        return x
+    }
+}

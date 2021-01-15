@@ -1,0 +1,48 @@
+{
+    "version" :
+    {
+        "version" : "0.1",
+        "date"    : "2020-11-27T23:00:00+01:00",
+        "comment" : null
+    },
+    "seuil"           : 1300000.0,
+    "seuil2"          : 0.0,
+    "decote€"         : 17500.0,
+    "decoteCoef"      : 1.25,
+    "decoteResidence" : 30.0,
+    "decoteLocation"  : 20.0,
+    "decoteIndivision": 30.0,
+    "grid" : [
+        {
+            "floor" : 0,
+            "rate"  : 0,
+            "disc"  : 0
+        },
+        {
+            "floor" : 800000.0,
+            "rate"  : 0.005,
+            "disc"  : 0
+        },
+        {
+            "floor" : 1300000.0,
+            "rate"  : 0.007,
+            "disc"  : 0
+        },
+        {
+            "floor" : 2570000,
+            "rate"  : 0.01,
+            "disc"  : 0
+        },
+        {
+            "floor"  : 5000000,
+            "rate"  : 0.0125,
+            "disc"  : 0
+        },
+        {
+            "floor"  : 10000000,
+            "rate"  : 0.015,
+            "disc"  : 0
+        }
+    ]
+}
+

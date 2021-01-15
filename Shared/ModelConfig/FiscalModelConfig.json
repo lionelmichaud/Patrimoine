@@ -7,7 +7,7 @@
     },
     "PASS" : 41136,
     
-    "irppOnEstateCapitalGain" :
+    "estateCapitalGainIrpp" :
     {
         "model" :
         {
@@ -17,7 +17,9 @@
                 "date"    : "2020-09-12T23:00:00+01:00",
                 "comment" : null
             },
-            "irpp" : 19.0,
+            "irpp"            : 19.0,
+            "discountTravaux" : 15.0,
+            "discountAfter"   : 5,
             "exoGrid" :
             [
                 {
@@ -39,7 +41,7 @@
         }
     },
     
-    "socialTaxesOnEstateCapitalGain" :
+    "estateCapitalGainTaxes" :
     {
         "model" :
         {
@@ -49,9 +51,11 @@
                 "date"    : "2020-09-12T23:00:00+01:00",
                 "comment" : null
             },
-            "CRDS"         : 0.5,
-            "CSG"          : 9.2,
-            "prelevSocial" : 7.5,
+            "discountTravaux" : 15.0,
+            "discountAfter"   : 5,
+            "CRDS"            : 0.5,
+            "CSG"             : 9.2,
+            "prelevSocial"    : 7.5,
             "exoGrid" :
             [
                 {
@@ -99,7 +103,7 @@
         }
     },
     
-    "socialTaxesOnFinancialRevenu" :
+    "financialRevenuTaxes" :
     {
         "model":
         {
@@ -115,7 +119,7 @@
         }
     },
     
-    "socialTaxesOnTurnover" :
+    "turnoverTaxes" :
     {
         "model" :
         {
@@ -125,11 +129,11 @@
                 "date"    : "2020-09-12T23:00:00+01:00",
                 "comment" : null
             },
-            "URSSAF" : 24
+            "URSSAF" : 22
         }
     },
     
-    "socialTaxesOnAllocationChomage" :
+    "allocationChomageTaxes" :
     {
         "model":
         {
@@ -139,10 +143,12 @@
                 "date"    : "2020-09-12T23:00:00+01:00",
                 "comment" : null
             },
+            "assiette"      : 98.5,
             "seuilCsgCrds"  : 51.0,
             "CRDS"          : 0.5,
             "CSG"           : 6.2,
-            "retraiteCompl" : 3.0
+            "retraiteCompl" : 3.0,
+            "seuilRetCompl" : 29.26
         }
     },
     
@@ -189,38 +195,39 @@
         {
             "version" :
             {
-                "version" : "0.1",
-                "date"    : "2020-09-12T23:00:00+01:00",
-                "comment" : null
+                "version" : "0.2",
+                "date"    : "2021-01-12T23:00:00+01:00",
+                "comment" : "Impôt 2021 sur le revenu 2020"
             },
-            "turnOverRebate" : 34.0,
-            "salaryRebate"   : 10.0,
-            "minRebate"      :   441.0,
-            "maxRebate"      : 12627.0,
-            "childRebate"    :  1512.0,
-            "irppGrid" : [
+            "turnOverRebate"    : 32.0,
+            "minTurnOverRebate" :   305.0,
+            "salaryRebate"      : 10.0,
+            "minSalaryRebate"   :   442.0,
+            "maxSalaryRebate"   : 12652.0,
+            "childRebate"       :  1570.0,
+            "grid" : [
                 {
                     "floor" : 0,
                     "rate"  : 0,
                     "disc"  : 0
                 },
                 {
-                    "floor" : 10064.0,
+                    "floor" : 10084.0,
                     "rate"  : 0.11,
                     "disc"  : 0
                 },
                 {
-                    "floor" : 25659.0,
+                    "floor" : 25710.0,
                     "rate"  : 0.3,
                     "disc"  : 0
                 },
                 {
-                    "floor" : 73369.0,
+                    "floor" : 73516.0,
                     "rate"  : 0.41,
                     "disc"  : 0
                 },
                 {
-                    "floor"  : 157806.0,
+                    "floor"  : 158122.0,
                     "rate"  : 0.45,
                     "disc"  : 0
                 }
@@ -245,7 +252,7 @@
             "decoteResidence" : 30.0,
             "decoteLocation"  : 20.0,
             "decoteIndivision": 30.0,
-            "isfGrid" : [
+            "grid" : [
                 {
                     "floor" : 0,
                     "rate"  : 0,

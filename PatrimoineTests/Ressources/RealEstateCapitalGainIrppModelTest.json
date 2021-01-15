@@ -1,0 +1,29 @@
+{
+    "version" :
+    {
+        "version" : "0.1",
+        "date"    : "2020-09-12T23:00:00+01:00",
+        "comment" : null
+    },
+    "irpp"            : 19.0,
+    "discountTravaux" : 15.0,
+    "discountAfter"   : 5,
+    "exoGrid" :
+    [
+        {
+            "floor"        : 5,
+            "discountRate" : 6.0,
+            "prevDiscount" : 0.0
+        },
+        {
+            "floor"        : 21,
+            "discountRate" : 4.0,
+            "prevDiscount" : 96.0
+        },
+        {
+            "floor"        : 22,
+            "discountRate" : 0.0,
+            "prevDiscount" : 100.0
+        }
+    ]
+}

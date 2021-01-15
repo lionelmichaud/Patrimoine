@@ -10,9 +10,14 @@ import Foundation
 
 // MARK: - Impôts sur le revenu
 
-struct IncomeTaxes: Codable {
+struct IncomeTaxesModel: Codable {
     
-    // nested types
+    // MARK: - Nested types
+    
+    enum ModelError: Error {
+        case outOfBounds
+        case gridSliceIssue
+    }
     
     typealias IRPP = (amount         : Double,
                       familyQuotient : Double,
@@ -27,41 +32,27 @@ struct IncomeTaxes: Codable {
                              irppWithChildren    : Double,
                              irppWithoutChildren : Double)]
     
-    // tranche de barême de l'IRPP
-    struct IrppSlice: Codable {
-        let floor : Double // euro
-        let rate  : Double // %
-        var disc  : Double // euro
+    struct Model: Codable, Versionable, RateGridable {
+        var version           : Version
+        var grid              : RateGrid
+        let turnOverRebate    : Double // 34.0 %
+        let minTurnOverRebate : Double // 305 €
+        let salaryRebate      : Double // 10.0 %
+        let minSalaryRebate   : Double // 441 €
+        let maxSalaryRebate   : Double // 12_627 €
+        let childRebate       : Double // 1_512.0 €
     }
     
-    struct Model: Codable, Versionable {
-        var version        : Version
-        var irppGrid       : [IrppSlice]
-        let turnOverRebate : Double // 34.0 // %
-        let salaryRebate   : Double // 10.0 // %
-        let minRebate      : Double // 441 // €
-        let maxRebate      : Double // 12_627 // €
-        let childRebate    : Double // 1_512.0 // €
-    }
-    
-    // properties
+    // MARK: - Properties
     
     // barême de l'exoneration de charges sociale sur les plus-values immobilières
     var model: Model
     
-    // methods
-    
+    // MARK: - Methods
+
     /// Initializer les paramètres calculés pour les tranches d'imposition à partir des seuils et des taux
-    mutating func initialize() {
-        for idx in model.irppGrid.startIndex ..< model.irppGrid.endIndex {
-            if idx == 0 {
-                model.irppGrid[idx].disc = model.irppGrid[idx].floor * (model.irppGrid[idx].rate - 0)
-            } else {
-                model.irppGrid[idx].disc =
-                    model.irppGrid[idx-1].disc +
-                    model.irppGrid[idx].floor * (model.irppGrid[idx].rate - model.irppGrid[idx-1].rate)
-            }
-        }
+    mutating func initialize() throws {
+        try model.initializeGrid()
     }
     
     /// Quotion familial
@@ -69,23 +60,48 @@ struct IncomeTaxes: Codable {
     ///   - nbAdults: nombre d'adultes
     ///   - nbChildren: nombre d'enfants
     /// - Returns: Quotion familial
-    func familyQuotient(nbAdults: Int, nbChildren: Int) -> Double {
-        Double(nbAdults) + Double(nbChildren) / 2.0
+    /// - Note: [reference](https://www.economie.gouv.fr/particuliers/quotient-familial)
+    func familyQuotient(nbAdults: Int, nbChildren: Int) throws -> Double {
+        guard nbAdults >= 0 else {
+            throw ModelError.outOfBounds
+        }
+        switch nbChildren {
+            case ...(-1):
+                throw ModelError.outOfBounds
+            case 0...2:
+                return Double(nbAdults) + Double(nbChildren) / 2.0
+            default:
+                return Double(nbAdults) + 1.0 + Double(nbChildren - 2)
+        }
     }
     
     /// Calcul du revenu imposable
     /// - Parameter personalIncome: revenus
     /// - Returns: revenu imposable
+    /// - Note:
+    ///   - [reference](https://www.economie.gouv.fr/particuliers/revenu-imposable-revenu-fiscal-reference)
+    ///   - [reference](https://www.economie.gouv.fr/particuliers/decote-impot-revenu)
+    ///   - [reference](https://www.service-public.fr/professionnels-entreprises/vosdroits/F32105)
+    ///   - [micr-entrepreneur](https://www.service-public.fr/professionnels-entreprises/vosdroits/F23267)
     func taxableIncome(from personalIncome: WorkIncomeType) -> Double {
         switch personalIncome {
             case .salary(_, let taxableSalary, _, _, _):
+                guard taxableSalary >= 0 else {
+                    return 0
+                }
                 // application du rabais sur le salaire imposable
-                let rebate = (taxableSalary * Fiscal.model.incomeTaxes.model.salaryRebate / 100.0).clamp(low : model.minRebate,
-                                                                                                         high: model.maxRebate)
-                return taxableSalary - rebate
+                let rebate = (taxableSalary * model.salaryRebate / 100.0).clamp(low : model.minSalaryRebate,
+                                                                                high: model.maxSalaryRebate)
+                return zeroOrPositive(taxableSalary - rebate)
                 
             case .turnOver(let BNC, _):
-                return BNC * (1 - Fiscal.model.incomeTaxes.model.turnOverRebate / 100.0)
+                guard BNC >= 0 else {
+                    return 0
+                }
+                // TODO: - prendre en compte le régime du micro-fiscal forfaitaire à 22% si le revenu fiscal de référence est < 80_000€
+                let rebate = max(model.minTurnOverRebate,
+                                 BNC * model.turnOverRebate / 100.0)
+                return zeroOrPositive(BNC - rebate)
         }
     }
     
@@ -96,7 +112,7 @@ struct IncomeTaxes: Codable {
     ///   - nbChildren: nb d'enfant dans la famille
     func slicedIrpp(taxableIncome : Double,
                     nbAdults      : Int,
-                    nbChildren    : Int) -> SlicedIRPP {
+                    nbChildren    : Int) throws -> SlicedIRPP {
         
         func buildSlice(index                        : Int,
                         sliceWithChildrent           : Int,
@@ -107,14 +123,14 @@ struct IncomeTaxes: Codable {
             var irppMax            : Double
             var sizeithChildren    : Double
             var sizeithoutChildren : Double
-            let rate = model.irppGrid[index].rate
+            let rate = model.grid[index].rate
             
-            if index == model.irppGrid.endIndex - 1 {
+            if index == model.grid.endIndex - 1 {
                 size    = 10000
                 irppMax = 0
             } else {
-                size    = model.irppGrid[index+1].floor - model.irppGrid[index].floor
-                irppMax = model.irppGrid[index].rate * size
+                size    = model.grid[index+1].floor - model.grid[index].floor
+                irppMax = model.grid[index].rate * size
             }
             
             var irppWithChildren: Double
@@ -124,7 +140,7 @@ struct IncomeTaxes: Codable {
                     irppWithChildren = irppMax
                     
                 case sliceWithChildrent:
-                    sizeithChildren = incomeWithChildren - model.irppGrid[index].floor
+                    sizeithChildren = incomeWithChildren - model.grid[index].floor
                     irppWithChildren = rate * sizeithChildren
                     
                 case (sliceWithChildrent+1)... :
@@ -143,7 +159,7 @@ struct IncomeTaxes: Codable {
                     irppWithoutChildren = irppMax
                     
                 case sliceWoutChildren:
-                    sizeithoutChildren  = incomeWithoutChildren - model.irppGrid[index].floor
+                    sizeithoutChildren  = incomeWithoutChildren - model.grid[index].floor
                     irppWithoutChildren = rate * sizeithoutChildren
                     
                 case (sliceWoutChildren+1)... :
@@ -169,22 +185,22 @@ struct IncomeTaxes: Codable {
             return []
         }
         
-        let familyQuotient = self.familyQuotient(nbAdults  : nbAdults,
+        let familyQuotient = try self.familyQuotient(nbAdults  : nbAdults,
                                                  nbChildren: nbChildren)
         let taxableIncomeWithChildren = taxableIncome / familyQuotient
-        guard let irppSliceIdx = model.irppGrid.lastIndex(where: { $0.floor < taxableIncomeWithChildren}) else {
+        guard let irppSliceIdx = model.sliceIndex(containing: taxableIncomeWithChildren) else {
             return []
         }
         
-        let QuotientWithoutChildren = self.familyQuotient(nbAdults  : nbAdults,
+        let QuotientWithoutChildren = try self.familyQuotient(nbAdults  : nbAdults,
                                                           nbChildren: 0)
         let taxableIncomeWithoutChildren = taxableIncome / QuotientWithoutChildren
-        guard let irppSliceIdx2 = model.irppGrid.lastIndex(where: { $0.floor < taxableIncomeWithoutChildren}) else {
+        guard let irppSliceIdx2 = model.sliceIndex(containing: taxableIncomeWithoutChildren) else {
             return []
         }
         
         var slices = SlicedIRPP()
-        for idx in 0 ..< model.irppGrid.count {
+        for idx in 0 ..< model.grid.count {
             buildSlice(index                 : idx,
                        sliceWithChildrent    : irppSliceIdx,
                        incomeWithChildren    : taxableIncomeWithChildren,
@@ -201,34 +217,34 @@ struct IncomeTaxes: Codable {
     ///   - nbAdults: nombre d'adulte dans la famille
     ///   - nbChildren: nombre d'enfant dans la famille
     /// - Returns: Impôt sur le revenu
-    func irpp (taxableIncome : Double,
-               nbAdults      : Int,
-               nbChildren    : Int) -> IRPP {
-        guard nbAdults != 0 else {
+    /// - Note: [reference](https://www.economie.gouv.fr/particuliers/tranches-imposition-impot-revenu)
+    func irpp(taxableIncome : Double,
+              nbAdults      : Int,
+              nbChildren    : Int) throws -> IRPP {
+        guard nbAdults != 0 && taxableIncome >= 0.0 else {
             return (amount         : 0.0,
                     familyQuotient : 0.0,
                     marginalRate   : 0.0,
                     averageRate    : 0.0)
         }
         
-        // FIXME: Vérifier calcul
-        let familyQuotient = self.familyQuotient(nbAdults  : nbAdults,
-                                                 nbChildren: nbChildren)
-        if let irppSlice = model.irppGrid.last(where: { $0.floor < taxableIncome / familyQuotient}) {
+        let familyQuotient = try self.familyQuotient(nbAdults  : nbAdults,
+                                                     nbChildren: nbChildren)
+        if let irppSlice = model.slice(containing: taxableIncome / familyQuotient) {
             // calcul de l'impot avec les parts des enfants
-            let taxWithChildren = taxableIncome * irppSlice.rate - familyQuotient * irppSlice.disc
+            let taxWithChildren = familyQuotient * (try! irppSlice.tax(for: taxableIncome / familyQuotient))
             //print("impot avec les parts des enfants =",taxWithChildren)
             // calcul de l'impot sans les parts des enfants
-            let QuotientWithoutChildren = self.familyQuotient(nbAdults  : nbAdults,
-                                                              nbChildren: 0)
-            if let irppSlice2 = model.irppGrid.last(where: { $0.floor < taxableIncome / QuotientWithoutChildren}) {
-                let taxWithoutChildren = taxableIncome * irppSlice2.rate - QuotientWithoutChildren * irppSlice2.disc
+            let QuotientWithoutChildren = try self.familyQuotient(nbAdults  : nbAdults,
+                                                                  nbChildren: 0)
+            if let tax = model.tax(for: taxableIncome / QuotientWithoutChildren) {
+                let taxWithoutChildren = tax * QuotientWithoutChildren
                 //print("impot sans les parts des enfants =",taxWithoutChildren)
                 // gain lié aux parts des enfants
                 let gain = taxWithoutChildren - taxWithChildren
                 //print("gain =",gain)
-                // plafond de gain
-                let maxGain = Double(nbChildren) * model.childRebate
+                // plafond de gain en fonction du nombre de 1/2 part supplémentaire
+                let maxGain = Double(familyQuotient - QuotientWithoutChildren) * 2.0 * model.childRebate
                 //print("gain max=",maxGain)
                 // plafonnement du gain lié aux parts des enfants
                 if gain > maxGain {
@@ -245,7 +261,7 @@ struct IncomeTaxes: Codable {
                             averageRate    : irpp / taxableIncome)
                 }
             } else {
-                fatalError()
+                throw ModelError.gridSliceIssue
             }
         }
         return (amount         : 0.0,

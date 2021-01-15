@@ -149,9 +149,9 @@ extension SocialAccounts {
         // si l'année n'existe pas dans le tableau de cash flow
         guard let cfLine = cashFlowArray[year] else { return nil }
         
-        let slicedIrpp = Fiscal.model.incomeTaxes.slicedIrpp(taxableIncome : cfLine.taxes.irpp.amount / cfLine.taxes.irpp.averageRate,
-                                                             nbAdults      : nbAdults,
-                                                             nbChildren    : nbChildren)
+        let slicedIrpp = try! Fiscal.model.incomeTaxes.slicedIrpp(taxableIncome : cfLine.taxes.irpp.amount / cfLine.taxes.irpp.averageRate,
+                                                                  nbAdults      : nbAdults,
+                                                                  nbChildren    : nbChildren)
         maxCumulatedSlices = 0.0
         let bars = IrppEnum.allCases.map { (xLabel) -> BarChartDataEntry in
             var yVals = [Double]()

@@ -12,7 +12,12 @@ import Foundation
 
 struct IsfModel: Codable {
     
-    // nested types
+    // MARK: - Nested types
+    
+    enum ModelError: Error {
+        case outOfBounds
+        case irppSlicesIssue
+    }
     
     typealias ISF = (amount       : Double,
                      taxable      : Double,
@@ -26,16 +31,9 @@ struct IsfModel: Codable {
                             irppWithChildren    : Double,
                             irppWithoutChildren : Double)]
     
-    // tranche de barême de l'ISF
-    struct IsfSlice: Codable {
-        let floor : Double // euro
-        let rate  : Double // %
-        var disc  : Double // euro
-    }
-    
-    struct Model: Codable, Versionable {
+    struct Model: Codable, Versionable, RateGridable {
         var version         : Version
-        var isfGrid         : [IsfSlice]
+        var grid            : RateGrid // barême de l'ISF
         let seuil           : Double // 1_300_000 // €
         var seuil2          : Double // 1_400_000 // €
         // Un système de décote a été mis en place pour les patrimoines nets taxables compris entre 1,3 million et 1,4 million d’euros.
@@ -50,50 +48,43 @@ struct IsfModel: Codable {
         let decoteIndivision: Double // 30% // %
     }
     
-    // properties
+    // MARK: - Properties
     
     // barême de l'exoneration de charges sociale sur les plus-values immobilières
     var model: Model
     
-    // methods
-    
+    // MARK: - Methods
+
     /// Initializer les paramètres calculés pour les tranches d'imposition à partir des seuils et des taux
-    mutating func initialize() {
-        for idx in model.isfGrid.startIndex ..< model.isfGrid.endIndex {
-            if idx == 0 {
-                model.isfGrid[idx].disc = model.isfGrid[idx].floor * (model.isfGrid[idx].rate - 0)
-            } else {
-                model.isfGrid[idx].disc =
-                    model.isfGrid[idx-1].disc +
-                    model.isfGrid[idx].floor * (model.isfGrid[idx].rate - model.isfGrid[idx-1].rate)
-            }
-        }
+    mutating func initialize() throws {
+        try model.initializeGrid()
         model.seuil2 = model.decote€ / (model.decoteCoef/100.0)
     }
-    
+
     /// Impôt sur le revenu
     /// - Parameters:
     ///   - taxableAsset: actif net imposable en €
     ///   - inhabitedAsset: valeur nette de la résidence principale en €
     /// - Returns: Impôt sur le revenu
-    func isf (taxableAsset : Double) -> ISF {
+    /// - Note: [reference](https://www.impots.gouv.fr/portail/particulier/calcul-de-lifi)
+    func isf (taxableAsset : Double) throws -> ISF {
         // seuil d'imposition
         guard taxableAsset > model.seuil else {
             return (amount       : 0,
-                    taxable      : taxableAsset,
+                    taxable      : 0,
                     marginalRate : 0)
         }
         
-        if let isfSlice = model.isfGrid.last(where: { $0.floor < taxableAsset }) {
+        if let isfSlice = model.slice(containing: taxableAsset) {
             let marginalRate = isfSlice.rate
-            var isf = taxableAsset * isfSlice.rate - isfSlice.disc
+            var isf = try! isfSlice.tax(for: taxableAsset)
             // decote sur le montant de l'impot
             isf -= max(model.decote€ - taxableAsset * model.decoteCoef/100.0, 0.0)
             return (amount       : isf,
                     taxable      : taxableAsset,
                     marginalRate : marginalRate)
         } else {
-            fatalError()
+            throw ModelError.irppSlicesIssue
         }
     }
 }

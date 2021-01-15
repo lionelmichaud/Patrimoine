@@ -79,7 +79,7 @@ struct FreeInvestement: Identifiable, Codable, NameableValuable, Ownable, Financ
             case .lifeInsurance(let periodicSocialTaxes, _):
                 // si assurance vie: le taux net est le taux brut - charges sociales si celles-ci sont prélèvées à la source anuellement
                 return (periodicSocialTaxes ?
-                            Fiscal.model.socialTaxesOnFinancialRevenu.net(averageInterestRate) :
+                            Fiscal.model.financialRevenuTaxes.net(averageInterestRate) :
                             averageInterestRate)
             default:
                 // dans tous les autres cas: pas de charges sociales prélevées à la source anuellement (capitalisation et taxation à la sortie)
@@ -156,10 +156,10 @@ struct FreeInvestement: Identifiable, Codable, NameableValuable, Ownable, Financ
     func value(atEndOf year: Int) -> Double {
         guard year == self.currentState.year else {
             // extrapoler la valeur à partir de la situation initiale avec un taux constant moyen
-            return futurValue(payement     : 0,
-                              interestRate : averageInterestRateNet/100,
-                              nbPeriod     : year - initialState.year,
-                              initialValue : initialState.value)
+            return try! futurValue(payement     : 0,
+                                   interestRate : averageInterestRateNet/100,
+                                   nbPeriod     : year - initialState.year,
+                                   initialValue : initialState.value)
         }
         // valeur de la dernière année simulée
         return currentState.value
@@ -256,11 +256,11 @@ struct FreeInvestement: Identifiable, Codable, NameableValuable, Ownable, Financ
         switch type {
             case .lifeInsurance(let periodicSocialTaxes, _):
                 // montant brut à retirer pour obtenir le montant net souhaité
-                brutAmount = (periodicSocialTaxes ? netAmount : Fiscal.model.socialTaxesOnFinancialRevenu.brut(netAmount))
+                brutAmount = (periodicSocialTaxes ? netAmount : Fiscal.model.financialRevenuTaxes.brut(netAmount))
                 // on ne peut pas retirer plus que la capital présent
                 if brutAmount > currentState.value {
                     brutAmount = currentState.value
-                    revenue    = (periodicSocialTaxes ? brutAmount : Fiscal.model.socialTaxesOnFinancialRevenu.net(brutAmount))
+                    revenue    = (periodicSocialTaxes ? brutAmount : Fiscal.model.financialRevenuTaxes.net(brutAmount))
                 }
                 // parts d'intérêt et de capital contenues dans le brut retiré
                 brutAmountSplit = split(removal: brutAmount)
@@ -269,39 +269,39 @@ struct FreeInvestement: Identifiable, Codable, NameableValuable, Ownable, Financ
                     netInterests = brutAmountSplit.interest
                     socialTaxes  = 0.0
                 } else {
-                    netInterests = Fiscal.model.socialTaxesOnFinancialRevenu.net(brutAmountSplit.interest)
-                    socialTaxes  = Fiscal.model.socialTaxesOnFinancialRevenu.socialTaxes(brutAmountSplit.interest)
+                    netInterests = Fiscal.model.financialRevenuTaxes.net(brutAmountSplit.interest)
+                    socialTaxes  = Fiscal.model.financialRevenuTaxes.socialTaxes(brutAmountSplit.interest)
                 }
                 // Assurance vie: les plus values sont imposables à l'IRPP (mais avec une franchise applicable à la totalité des interets retirés dans l'année: calculé ailleurs)
                 taxableInterests = netInterests
             case .pea:
                 // montant brut à retirer pour obtenir le montant net souhaité
-                brutAmount = Fiscal.model.socialTaxesOnFinancialRevenu.brut(netAmount)
+                brutAmount = Fiscal.model.financialRevenuTaxes.brut(netAmount)
                 // on ne peut pas retirer plus que la capital présent
                 if brutAmount > currentState.value {
                     brutAmount = currentState.value
-                    revenue    = Fiscal.model.socialTaxesOnFinancialRevenu.net(brutAmount)
+                    revenue    = Fiscal.model.financialRevenuTaxes.net(brutAmount)
                 }
                 // parts d'intérêt et de capital contenues dans le brut retiré
                 brutAmountSplit = split(removal: brutAmount)
                 // intérêts nets de charges sociales
-                netInterests = Fiscal.model.socialTaxesOnFinancialRevenu.net(brutAmountSplit.interest)
-                socialTaxes  = Fiscal.model.socialTaxesOnFinancialRevenu.socialTaxes(brutAmountSplit.interest)
+                netInterests = Fiscal.model.financialRevenuTaxes.net(brutAmountSplit.interest)
+                socialTaxes  = Fiscal.model.financialRevenuTaxes.socialTaxes(brutAmountSplit.interest)
                 // PEA: les plus values ne sont pas imposables à l'IRPP
                 taxableInterests = 0.0
             case .other:
                 // montant brut à retirer pour obtenir le montant net souhaité
-                brutAmount = Fiscal.model.socialTaxesOnFinancialRevenu.brut(netAmount)
+                brutAmount = Fiscal.model.financialRevenuTaxes.brut(netAmount)
                 // on ne peut pas retirer plus que la capital présent
                 if brutAmount > currentState.value {
                     brutAmount = currentState.value
-                    revenue    = Fiscal.model.socialTaxesOnFinancialRevenu.net(brutAmount)
+                    revenue    = Fiscal.model.financialRevenuTaxes.net(brutAmount)
                 }
                 // parts d'intérêt et de capital contenues dans le brut retiré
                 brutAmountSplit = split(removal: brutAmount)
                 // intérêts nets de charges sociales
-                netInterests = Fiscal.model.socialTaxesOnFinancialRevenu.net(brutAmountSplit.interest)
-                socialTaxes  = Fiscal.model.socialTaxesOnFinancialRevenu.socialTaxes(brutAmountSplit.interest)
+                netInterests = Fiscal.model.financialRevenuTaxes.net(brutAmountSplit.interest)
+                socialTaxes  = Fiscal.model.financialRevenuTaxes.socialTaxes(brutAmountSplit.interest)
                 // autre cas: les plus values sont totalement imposables à l'IRPP
                 taxableInterests = netInterests
         }
@@ -338,24 +338,29 @@ struct FreeInvestement: Identifiable, Codable, NameableValuable, Ownable, Financ
         if estimationYear == initialState.year {
             currentState = initialState
             
-        } else if estimationYear > initialState.year {
-            // extrapoler la valeure à partir de la situation initiale
-            let futurVal = futurValue(payement     : 0,
-                                      interestRate : averageInterestRateNet/100,
-                                      nbPeriod     : estimationYear - initialState.year,
-                                      initialValue : initialState.value)
-            currentState.year       = estimationYear
-            currentState.investment = initialState.investment
-            currentState.interest   = initialState.interest + (futurVal - initialState.value)
-            
         } else {
-            // on ne remonte pas le temps
-            customLog.log(level: .fault,
-                          "didSet: estimationYear (\(estimationYear, privacy: .public)) < initialState.year")
-            fatalError("didSet: estimationYear (\(estimationYear)) < initialState.year (\(initialState.year))")
+            // extrapoler la valeure à partir de la situation initiale
+            do {
+                let futurVal = try futurValue(payement     : 0,
+                                              interestRate : averageInterestRateNet/100,
+                                              nbPeriod     : estimationYear - initialState.year,
+                                              initialValue : initialState.value)
+                currentState.year       = estimationYear
+                currentState.investment = initialState.investment
+                currentState.interest   = initialState.interest + (futurVal - initialState.value)
+            } catch FinancialMathError.negativeNbPeriod {
+                // on ne remonte pas le temps
+                customLog.log(level: .fault,
+                              "estimationYear (\(estimationYear, privacy: .public)) < initialState.year")
+                fatalError("estimationYear (\(estimationYear)) < initialState.year (\(initialState.year))")
+            } catch {
+                customLog.log(level: .fault, "FinancialMathError")
+                fatalError("FinancialMathError")
+            }
+            
         }
     }
-
+    
     func print() {
         Swift.print("    ", name)
         Swift.print("       type", type)

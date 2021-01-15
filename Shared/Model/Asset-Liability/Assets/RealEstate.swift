@@ -48,8 +48,8 @@ struct RealEstateAsset: Identifiable, Codable, Equatable, NameableValuable, Owna
         guard let sellingDate = sellingYear.year, let buyingDate = buyingYear.year else { return 0 }
         let detentionDuration = sellingDate - buyingDate
         let capitalGain       = self.sellingNetPrice - buyingPrice
-        let socialTaxes       = Fiscal.model.socialTaxesOnEstateCapitalGain.socialTaxes(capitalGain: max(capitalGain, 0.0), detentionDuration: detentionDuration)
-        let irpp              = Fiscal.model.irppOnEstateCapitalGain.irpp(capitalGain: max(capitalGain, 0.0), detentionDuration: detentionDuration)
+        let socialTaxes       = Fiscal.model.estateCapitalGainTaxes.socialTaxes(capitalGain: max(capitalGain, 0.0), detentionDuration: detentionDuration)
+        let irpp              = Fiscal.model.estateCapitalGainIrpp.irpp(capitalGain: max(capitalGain, 0.0), detentionDuration: detentionDuration)
         return self.sellingNetPrice - socialTaxes - irpp
     }
     // habitation
@@ -70,7 +70,7 @@ struct RealEstateAsset: Identifiable, Codable, Equatable, NameableValuable, Owna
     }
     // même base que pour le calcul de l'IRPP
     var yearlyRentSocialTaxes   : Double {
-        return Fiscal.model.socialTaxesOnFinancialRevenu.socialTaxes(yearlyRentAfterCharges)
+        return Fiscal.model.financialRevenuTaxes.socialTaxes(yearlyRentAfterCharges)
     }
     // profitabilité nette de charges (frais agence, taxe foncière et assurance)
     var profitability           : Double {
@@ -276,9 +276,9 @@ struct RealEstateAsset: Identifiable, Codable, Equatable, NameableValuable, Owna
         }
         let detentionDuration = sellingYear.year! - buyingYear.year!
         let capitalGain       = self.sellingNetPrice - buyingPrice
-        let socialTaxes       = Fiscal.model.socialTaxesOnEstateCapitalGain.socialTaxes(capitalGain      : max(capitalGain, 0.0),
-                                                                                        detentionDuration: detentionDuration)
-        let irpp              = Fiscal.model.irppOnEstateCapitalGain.irpp(capitalGain: max(capitalGain, 0.0),
+        let socialTaxes       = Fiscal.model.estateCapitalGainTaxes.socialTaxes(capitalGain      : max(capitalGain, 0.0),
+                                                                                detentionDuration: detentionDuration)
+        let irpp              = Fiscal.model.estateCapitalGainIrpp.irpp(capitalGain: max(capitalGain, 0.0),
                                                                           detentionDuration: detentionDuration)
         return (revenue     : self.sellingNetPrice,
                 capitalGain : capitalGain,

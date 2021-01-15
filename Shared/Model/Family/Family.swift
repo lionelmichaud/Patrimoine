@@ -29,11 +29,11 @@ final class Family: ObservableObject, CustomStringConvertible {
     }
     // coefficient familial
     var familyQuotient   : Double { // computed
-        Fiscal.model.incomeTaxes.familyQuotient(nbAdults: nbOfAdults, nbChildren: nbOfChildren)
+        try! Fiscal.model.incomeTaxes.familyQuotient(nbAdults: nbOfAdults, nbChildren: nbOfChildren)
     }
     // impots
     var irpp             : Double { // computed
-        Fiscal.model.incomeTaxes.irpp(taxableIncome: workTaxableIncome, nbAdults: nbOfAdults, nbChildren: nbOfChildren).amount
+        try! Fiscal.model.incomeTaxes.irpp(taxableIncome: workTaxableIncome, nbAdults: nbOfAdults, nbChildren: nbOfChildren).amount
     }
     var description      : String {
         return members.debugDescription + "\n"
@@ -137,16 +137,16 @@ final class Family: ObservableObject, CustomStringConvertible {
         return (totalNetIncome, totalTaxableIncome)
     }
     
-    /// Quotien familiale durant l'année
+    /// Quotient familiale durant l'année
     /// - Parameter year: année
     func familyQuotient (during year: Int) -> Double {
-        Fiscal.model.incomeTaxes.familyQuotient(nbAdults: nbOfAdultAlive(atEndOf: year), nbChildren: nbOfFiscalChildren(during: year))
+        try! Fiscal.model.incomeTaxes.familyQuotient(nbAdults: nbOfAdultAlive(atEndOf: year), nbChildren: nbOfFiscalChildren(during: year))
     }
     
     /// IRPP sur les revenus du travail de la famille
     /// - Parameter year: année
     func irpp (for year: Int) -> Double {
-        Fiscal.model.incomeTaxes.irpp(
+        try! Fiscal.model.incomeTaxes.irpp(
             // FIXME: A CORRIGER pour prendre en compte tous les revenus imposable
             taxableIncome : income(during : year).taxableIncome, // A CORRIGER
             nbAdults      : nbOfAdultAlive(atEndOf    : year),

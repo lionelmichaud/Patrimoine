@@ -16,6 +16,7 @@ disabled_rules: # rule identifiers to exclude from running
 #- function_parameter_count
 - force_cast
 - large_tuple
+- force_try
 
 line_length:
 - 150 # warning

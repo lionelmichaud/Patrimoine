@@ -21,48 +21,24 @@
 		791A4ADA24B8B8210013A3F1 /* RetirementEditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 791A4AD924B8B8210013A3F1 /* RetirementEditView.swift */; };
 		791D70B0250E4DFB000A20D0 /* Extensions+Bundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 791D70AF250E4DFB000A20D0 /* Extensions+Bundle.swift */; };
 		7922CFD92587A37D00CF8317 /* Ownership+TransferBareOwnership.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7922CFD82587A37D00CF8317 /* Ownership+TransferBareOwnership.swift */; };
-		792F38D125B093DB004BB7CD /* RateGrid.swift in Sources */ = {isa = PBXBuildFile; fileRef = 792F38D025B093DB004BB7CD /* RateGrid.swift */; };
-		792F38D525B0947C004BB7CD /* RealEstateCapitalGainTaxesModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 792F38D425B0947C004BB7CD /* RealEstateCapitalGainTaxesModel.swift */; };
-		792F38D925B094C4004BB7CD /* RealEstateCapitalGainTaxesModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 792F38D825B094C4004BB7CD /* RealEstateCapitalGainTaxesModelTests.swift */; };
-		792F38DF25B095CC004BB7CD /* RealEstateCapitalGainTaxesModelTest.json in Resources */ = {isa = PBXBuildFile; fileRef = 792F38DE25B095CC004BB7CD /* RealEstateCapitalGainTaxesModelTest.json */; };
-		792F38E325B0A0C9004BB7CD /* LayOffTaxesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 792F38E225B0A0C9004BB7CD /* LayOffTaxesTests.swift */; };
-		792F38E725B0A114004BB7CD /* LayOffTaxesModelTest.json in Resources */ = {isa = PBXBuildFile; fileRef = 792F38E625B0A114004BB7CD /* LayOffTaxesModelTest.json */; };
 		7937A6D0257D8AC000ED645A /* isfEvolutionChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7937A6CF257D8AC000ED645A /* isfEvolutionChartView.swift */; };
 		7937A6D4257D932300ED645A /* SocialAccounts+IsfCharts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7937A6D3257D932300ED645A /* SocialAccounts+IsfCharts.swift */; };
 		793BA8E92539FFF7003DCFA4 /* ModelEconomyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 793BA8E82539FFF7003DCFA4 /* ModelEconomyView.swift */; };
 		793BA8EC253A001B003DCFA4 /* ModelHumanView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 793BA8EB253A001B003DCFA4 /* ModelHumanView.swift */; };
 		793BA8EF253A0039003DCFA4 /* ModelSociologyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 793BA8EE253A0039003DCFA4 /* ModelSociologyView.swift */; };
-		793D1E7C25A8C7A00083E2BD /* FinancialMathTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 793D1E7B25A8C7A00083E2BD /* FinancialMathTests.swift */; };
+		793D1E7C25A8C7A00083E2BD /* PatrimoineTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 793D1E7B25A8C7A00083E2BD /* PatrimoineTests.swift */; };
+		793D1E8925A8DCDA0083E2BD /* test_futurValue.xlsx in Resources */ = {isa = PBXBuildFile; fileRef = 793D1E8825A8DCDA0083E2BD /* test_futurValue.xlsx */; };
 		793E16CC2543554D00699E62 /* ModelDeterministicView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 793E16CB2543554D00699E62 /* ModelDeterministicView.swift */; };
 		7940694724D33E62002FD72E /* SwiftUIconditional.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7940694624D33E62002FD72E /* SwiftUIconditional.swift */; };
-		7946510F25ADB0E100BC9F99 /* DemembrementModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7946510E25ADB0E100BC9F99 /* DemembrementModel.swift */; };
-		7946511325ADB11500BC9F99 /* LayOffTaxes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7946511225ADB11500BC9F99 /* LayOffTaxes.swift */; };
-		7946511725ADB17200BC9F99 /* PensionTaxesModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7946511625ADB17200BC9F99 /* PensionTaxesModel.swift */; };
-		7946511B25ADB1B800BC9F99 /* RealEstateCapitalGainIrppModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7946511A25ADB1B800BC9F99 /* RealEstateCapitalGainIrppModel.swift */; };
-		7946512125ADB5CB00BC9F99 /* IsfModelTest.json in Resources */ = {isa = PBXBuildFile; fileRef = 7946512025ADB5CB00BC9F99 /* IsfModelTest.json */; };
-		7946512525ADB62500BC9F99 /* IsfModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7946512425ADB62500BC9F99 /* IsfModelTests.swift */; };
-		7946513325ADDCB200BC9F99 /* PensionTaxesModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7946513225ADDCB200BC9F99 /* PensionTaxesModelTests.swift */; };
-		7946513725ADDD0100BC9F99 /* PensionTaxesModelTest.json in Resources */ = {isa = PBXBuildFile; fileRef = 7946513625ADDD0100BC9F99 /* PensionTaxesModelTest.json */; };
 		7946A48624D7116700B86BAD /* TaxeCategory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7946A48524D7116700B86BAD /* TaxeCategory.swift */; };
 		7946A48824D712A100B86BAD /* ValuedTaxes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7946A48724D712A100B86BAD /* ValuedTaxes.swift */; };
 		7950B9572520D03F007EC0F8 /* StatisticsChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7950B9562520D03F007EC0F8 /* StatisticsChartView.swift */; };
 		7951A5082520F10E001ED840 /* SpecialFunctions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7951A5072520F10E001ED840 /* SpecialFunctions.swift */; };
 		7956C6252538FA0F00C92A28 /* ScenarioSummaryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7956C6242538FA0F00C92A28 /* ScenarioSummaryView.swift */; };
 		7956C6282538FA2900C92A28 /* ScenarioListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7956C6272538FA2900C92A28 /* ScenarioListView.swift */; };
-		7957E67325AA2F370039784A /* IncomeTaxesModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7957E67225AA2F370039784A /* IncomeTaxesModelTests.swift */; };
-		7957E67925AA34020039784A /* IncomeTaxesModelTest.json in Resources */ = {isa = PBXBuildFile; fileRef = 7957E67825AA34020039784A /* IncomeTaxesModelTest.json */; };
-		7958A0D025B0B899005E3ADA /* DemembrementModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7958A0CF25B0B899005E3ADA /* DemembrementModelTests.swift */; };
-		7958A0D425B0B960005E3ADA /* DemembrementModelTest.json in Resources */ = {isa = PBXBuildFile; fileRef = 7958A0D325B0B960005E3ADA /* DemembrementModelTest.json */; };
-		7958A0DA25B0CA48005E3ADA /* InheritanceDonationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7958A0D925B0CA48005E3ADA /* InheritanceDonationTests.swift */; };
-		79607F7425AFAB090028C7F9 /* CompanyProfitTaxesModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79607F7325AFAB090028C7F9 /* CompanyProfitTaxesModelTests.swift */; };
-		79607F7825AFAC7D0028C7F9 /* CompanyProfitTaxesModelTest.json in Resources */ = {isa = PBXBuildFile; fileRef = 79607F7725AFAC7D0028C7F9 /* CompanyProfitTaxesModelTest.json */; };
-		79607F8025AFB1920028C7F9 /* RealEstateCapitalGainIrppModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79607F7F25AFB1920028C7F9 /* RealEstateCapitalGainIrppModelTests.swift */; };
-		79607F8425AFB1CD0028C7F9 /* RealEstateCapitalGainIrppModelTest.json in Resources */ = {isa = PBXBuildFile; fileRef = 79607F8325AFB1CD0028C7F9 /* RealEstateCapitalGainIrppModelTest.json */; };
-		7964C5ED25865EA900B1D505 /* IncomeTaxesModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7964C5EC25865EA900B1D505 /* IncomeTaxesModel.swift */; };
-		7964C5F125865F6D00B1D505 /* ISFModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7964C5F025865F6D00B1D505 /* ISFModel.swift */; };
+		7964C5ED25865EA900B1D505 /* IncomeTaxes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7964C5EC25865EA900B1D505 /* IncomeTaxes.swift */; };
+		7964C5F125865F6D00B1D505 /* ISF.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7964C5F025865F6D00B1D505 /* ISF.swift */; };
 		7964C5F425865FA900B1D505 /* InheritanceDonation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7964C5F325865FA900B1D505 /* InheritanceDonation.swift */; };
-		796EE9F225AF708000F8379E /* GlobalFunctions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 796EE9F125AF708000F8379E /* GlobalFunctions.swift */; };
-		796EE9F825AF7DFF00F8379E /* GridSliceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 796EE9F725AF7DFF00F8379E /* GridSliceTests.swift */; };
 		796FC432259A65FE00EE4CB1 /* AVPlayer+Ding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 796FC431259A65FE00EE4CB1 /* AVPlayer+Ding.swift */; };
 		796FC435259A67C200EE4CB1 /* Color+Codable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 796FC434259A67C200EE4CB1 /* Color+Codable.swift */; };
 		796FC439259A680700EE4CB1 /* ding.wav in Resources */ = {isa = PBXBuildFile; fileRef = 796FC438259A680700EE4CB1 /* ding.wav */; };
@@ -216,10 +192,6 @@
 		79BF6FB22574112800F19A81 /* OwnershipView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79BF6FB12574112800F19A81 /* OwnershipView.swift */; };
 		79C26F082566CE5F0016B3F5 /* Extensions+Ranges.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79C26F072566CE5F0016B3F5 /* Extensions+Ranges.swift */; };
 		79C6FC0D24BF9D0400D99594 /* UnemployementDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79C6FC0C24BF9D0400D99594 /* UnemployementDetailView.swift */; };
-		79C7A1DC25AE418000EFBF53 /* TurnoverTaxesModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79C7A1DB25AE418000EFBF53 /* TurnoverTaxesModelTests.swift */; };
-		79C7A1E025AE454900EFBF53 /* TurnoverTaxesModelTests.json in Resources */ = {isa = PBXBuildFile; fileRef = 79C7A1DF25AE454900EFBF53 /* TurnoverTaxesModelTests.json */; };
-		79C7A1E625AE51EF00EFBF53 /* AllocationChomageTaxesModelTest.json in Resources */ = {isa = PBXBuildFile; fileRef = 79C7A1E525AE51EF00EFBF53 /* AllocationChomageTaxesModelTest.json */; };
-		79C7A1EA25AE531600EFBF53 /* AllocationChomageTaxesModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79C7A1E925AE531600EFBF53 /* AllocationChomageTaxesModelTests.swift */; };
 		79C7B1FC258B98CD004B38E7 /* Extensions+Collection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79C7B1FB258B98CD004B38E7 /* Extensions+Collection.swift */; };
 		79C7B1FF258B9D96004B38E7 /* Ownership+TransferLifeInsurance.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79C7B1FE258B9D96004B38E7 /* Ownership+TransferLifeInsurance.swift */; };
 		79C7B202258D2783004B38E7 /* Succession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79C7B201258D2783004B38E7 /* Succession.swift */; };
@@ -227,8 +199,6 @@
 		79CAD667249E525F00319BCD /* Charts in Frameworks */ = {isa = PBXBuildFile; productRef = 79CAD666249E525F00319BCD /* Charts */; };
 		79CAD66A249E547200319BCD /* Disk in Frameworks */ = {isa = PBXBuildFile; productRef = 79CAD669249E547200319BCD /* Disk */; };
 		79CAD66D249E54A800319BCD /* ActivityIndicatorView in Frameworks */ = {isa = PBXBuildFile; productRef = 79CAD66C249E54A800319BCD /* ActivityIndicatorView */; };
-		79CB810825AE1C6D00DC7FCC /* FinancialRevenuTaxesModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79CB810725AE1C6D00DC7FCC /* FinancialRevenuTaxesModelTests.swift */; };
-		79CB810C25AE1E7A00DC7FCC /* FinancialRevenuTaxesModelTest.json in Resources */ = {isa = PBXBuildFile; fileRef = 79CB810B25AE1E7A00DC7FCC /* FinancialRevenuTaxesModelTest.json */; };
 		79CC729D24BC6B0D000302C5 /* UnemploymentModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79CC729C24BC6B0D000302C5 /* UnemploymentModel.swift */; };
 		79CC729F24BC6DB8000302C5 /* UnemploymentModelConfig.json in Resources */ = {isa = PBXBuildFile; fileRef = 79CC729E24BC6DB8000302C5 /* UnemploymentModelConfig.json */; };
 		79CD02DF24D065D20055CEF5 /* RetirementModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79CD02DE24D065D20055CEF5 /* RetirementModel.swift */; };
@@ -254,7 +224,6 @@
 		79E6B73625042C9D00CE6F0D /* Histogram.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79E6B73525042C9D00CE6F0D /* Histogram.swift */; };
 		79E7588B250D5A3100153AB6 /* EconomyModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79E7588A250D5A3100153AB6 /* EconomyModel.swift */; };
 		79E7B4322513DDB100FC308C /* EconomyModelConfig.json in Resources */ = {isa = PBXBuildFile; fileRef = 79E7B4312513DDB100FC308C /* EconomyModelConfig.json */; };
-		79ED5AE525A9E2FC00609DDA /* test_futurValue.xlsx in Resources */ = {isa = PBXBuildFile; fileRef = 79ED5AE425A9E2FC00609DDA /* test_futurValue.xlsx */; };
 		79EEEC6C256FF33B00778588 /* AppSettings.json in Resources */ = {isa = PBXBuildFile; fileRef = 79EEEC6B256FF33B00778588 /* AppSettings.json */; };
 		79EEEC752570141800778588 /* UserSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79EEEC742570141800778588 /* UserSettingsView.swift */; };
 		79EF511C255C932000B46303 /* Extensions+Binding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79EF511B255C932000B46303 /* Extensions+Binding.swift */; };
@@ -289,50 +258,26 @@
 		791A4AD924B8B8210013A3F1 /* RetirementEditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RetirementEditView.swift; sourceTree = "<group>"; };
 		791D70AF250E4DFB000A20D0 /* Extensions+Bundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Extensions+Bundle.swift"; sourceTree = "<group>"; };
 		7922CFD82587A37D00CF8317 /* Ownership+TransferBareOwnership.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Ownership+TransferBareOwnership.swift"; sourceTree = "<group>"; };
-		792F38D025B093DB004BB7CD /* RateGrid.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RateGrid.swift; sourceTree = "<group>"; };
-		792F38D425B0947C004BB7CD /* RealEstateCapitalGainTaxesModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealEstateCapitalGainTaxesModel.swift; sourceTree = "<group>"; };
-		792F38D825B094C4004BB7CD /* RealEstateCapitalGainTaxesModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealEstateCapitalGainTaxesModelTests.swift; sourceTree = "<group>"; };
-		792F38DE25B095CC004BB7CD /* RealEstateCapitalGainTaxesModelTest.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = RealEstateCapitalGainTaxesModelTest.json; sourceTree = "<group>"; };
-		792F38E225B0A0C9004BB7CD /* LayOffTaxesTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LayOffTaxesTests.swift; sourceTree = "<group>"; };
-		792F38E625B0A114004BB7CD /* LayOffTaxesModelTest.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = LayOffTaxesModelTest.json; sourceTree = "<group>"; };
 		7937A6CF257D8AC000ED645A /* isfEvolutionChartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = isfEvolutionChartView.swift; sourceTree = "<group>"; };
 		7937A6D3257D932300ED645A /* SocialAccounts+IsfCharts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SocialAccounts+IsfCharts.swift"; sourceTree = "<group>"; };
 		793BA8E82539FFF7003DCFA4 /* ModelEconomyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelEconomyView.swift; sourceTree = "<group>"; };
 		793BA8EB253A001B003DCFA4 /* ModelHumanView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelHumanView.swift; sourceTree = "<group>"; };
 		793BA8EE253A0039003DCFA4 /* ModelSociologyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelSociologyView.swift; sourceTree = "<group>"; };
 		793D1E7925A8C7A00083E2BD /* PatrimoineTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PatrimoineTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		793D1E7B25A8C7A00083E2BD /* FinancialMathTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FinancialMathTests.swift; sourceTree = "<group>"; };
+		793D1E7B25A8C7A00083E2BD /* PatrimoineTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PatrimoineTests.swift; sourceTree = "<group>"; };
 		793D1E7D25A8C7A00083E2BD /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		793D1E8825A8DCDA0083E2BD /* test_futurValue.xlsx */ = {isa = PBXFileReference; lastKnownFileType = file; path = test_futurValue.xlsx; sourceTree = "<group>"; };
 		793E16CB2543554D00699E62 /* ModelDeterministicView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelDeterministicView.swift; sourceTree = "<group>"; };
 		7940694624D33E62002FD72E /* SwiftUIconditional.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftUIconditional.swift; sourceTree = "<group>"; };
-		7946510E25ADB0E100BC9F99 /* DemembrementModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemembrementModel.swift; sourceTree = "<group>"; };
-		7946511225ADB11500BC9F99 /* LayOffTaxes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LayOffTaxes.swift; sourceTree = "<group>"; };
-		7946511625ADB17200BC9F99 /* PensionTaxesModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PensionTaxesModel.swift; sourceTree = "<group>"; };
-		7946511A25ADB1B800BC9F99 /* RealEstateCapitalGainIrppModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealEstateCapitalGainIrppModel.swift; sourceTree = "<group>"; };
-		7946512025ADB5CB00BC9F99 /* IsfModelTest.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = IsfModelTest.json; sourceTree = "<group>"; };
-		7946512425ADB62500BC9F99 /* IsfModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IsfModelTests.swift; sourceTree = "<group>"; };
-		7946513225ADDCB200BC9F99 /* PensionTaxesModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PensionTaxesModelTests.swift; sourceTree = "<group>"; };
-		7946513625ADDD0100BC9F99 /* PensionTaxesModelTest.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = PensionTaxesModelTest.json; sourceTree = "<group>"; };
 		7946A48524D7116700B86BAD /* TaxeCategory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaxeCategory.swift; sourceTree = "<group>"; };
 		7946A48724D712A100B86BAD /* ValuedTaxes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ValuedTaxes.swift; sourceTree = "<group>"; };
 		7950B9562520D03F007EC0F8 /* StatisticsChartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatisticsChartView.swift; sourceTree = "<group>"; };
 		7951A5072520F10E001ED840 /* SpecialFunctions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpecialFunctions.swift; sourceTree = "<group>"; };
 		7956C6242538FA0F00C92A28 /* ScenarioSummaryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScenarioSummaryView.swift; sourceTree = "<group>"; };
 		7956C6272538FA2900C92A28 /* ScenarioListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScenarioListView.swift; sourceTree = "<group>"; };
-		7957E67225AA2F370039784A /* IncomeTaxesModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IncomeTaxesModelTests.swift; sourceTree = "<group>"; };
-		7957E67825AA34020039784A /* IncomeTaxesModelTest.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = IncomeTaxesModelTest.json; sourceTree = "<group>"; };
-		7958A0CF25B0B899005E3ADA /* DemembrementModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemembrementModelTests.swift; sourceTree = "<group>"; };
-		7958A0D325B0B960005E3ADA /* DemembrementModelTest.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = DemembrementModelTest.json; sourceTree = "<group>"; };
-		7958A0D925B0CA48005E3ADA /* InheritanceDonationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InheritanceDonationTests.swift; sourceTree = "<group>"; };
-		79607F7325AFAB090028C7F9 /* CompanyProfitTaxesModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompanyProfitTaxesModelTests.swift; sourceTree = "<group>"; };
-		79607F7725AFAC7D0028C7F9 /* CompanyProfitTaxesModelTest.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = CompanyProfitTaxesModelTest.json; sourceTree = "<group>"; };
-		79607F7F25AFB1920028C7F9 /* RealEstateCapitalGainIrppModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealEstateCapitalGainIrppModelTests.swift; sourceTree = "<group>"; };
-		79607F8325AFB1CD0028C7F9 /* RealEstateCapitalGainIrppModelTest.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = RealEstateCapitalGainIrppModelTest.json; sourceTree = "<group>"; };
-		7964C5EC25865EA900B1D505 /* IncomeTaxesModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IncomeTaxesModel.swift; sourceTree = "<group>"; };
-		7964C5F025865F6D00B1D505 /* ISFModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ISFModel.swift; sourceTree = "<group>"; };
+		7964C5EC25865EA900B1D505 /* IncomeTaxes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IncomeTaxes.swift; sourceTree = "<group>"; };
+		7964C5F025865F6D00B1D505 /* ISF.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ISF.swift; sourceTree = "<group>"; };
 		7964C5F325865FA900B1D505 /* InheritanceDonation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InheritanceDonation.swift; sourceTree = "<group>"; };
-		796EE9F125AF708000F8379E /* GlobalFunctions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlobalFunctions.swift; sourceTree = "<group>"; };
-		796EE9F725AF7DFF00F8379E /* GridSliceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GridSliceTests.swift; sourceTree = "<group>"; };
 		796FC431259A65FE00EE4CB1 /* AVPlayer+Ding.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "AVPlayer+Ding.swift"; sourceTree = "<group>"; };
 		796FC434259A67C200EE4CB1 /* Color+Codable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Color+Codable.swift"; sourceTree = "<group>"; };
 		796FC438259A680700EE4CB1 /* ding.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = ding.wav; sourceTree = "<group>"; };
@@ -483,15 +428,9 @@
 		79BF6FB12574112800F19A81 /* OwnershipView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OwnershipView.swift; sourceTree = "<group>"; };
 		79C26F072566CE5F0016B3F5 /* Extensions+Ranges.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Extensions+Ranges.swift"; sourceTree = "<group>"; };
 		79C6FC0C24BF9D0400D99594 /* UnemployementDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnemployementDetailView.swift; sourceTree = "<group>"; };
-		79C7A1DB25AE418000EFBF53 /* TurnoverTaxesModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TurnoverTaxesModelTests.swift; sourceTree = "<group>"; };
-		79C7A1DF25AE454900EFBF53 /* TurnoverTaxesModelTests.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = TurnoverTaxesModelTests.json; sourceTree = "<group>"; };
-		79C7A1E525AE51EF00EFBF53 /* AllocationChomageTaxesModelTest.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = AllocationChomageTaxesModelTest.json; sourceTree = "<group>"; };
-		79C7A1E925AE531600EFBF53 /* AllocationChomageTaxesModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AllocationChomageTaxesModelTests.swift; sourceTree = "<group>"; };
 		79C7B1FB258B98CD004B38E7 /* Extensions+Collection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Extensions+Collection.swift"; sourceTree = "<group>"; };
 		79C7B1FE258B9D96004B38E7 /* Ownership+TransferLifeInsurance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Ownership+TransferLifeInsurance.swift"; sourceTree = "<group>"; };
 		79C7B201258D2783004B38E7 /* Succession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Succession.swift; sourceTree = "<group>"; };
-		79CB810725AE1C6D00DC7FCC /* FinancialRevenuTaxesModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FinancialRevenuTaxesModelTests.swift; sourceTree = "<group>"; };
-		79CB810B25AE1E7A00DC7FCC /* FinancialRevenuTaxesModelTest.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = FinancialRevenuTaxesModelTest.json; sourceTree = "<group>"; };
 		79CC729C24BC6B0D000302C5 /* UnemploymentModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnemploymentModel.swift; sourceTree = "<group>"; };
 		79CC729E24BC6DB8000302C5 /* UnemploymentModelConfig.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = UnemploymentModelConfig.json; sourceTree = "<group>"; };
 		79CD02DE24D065D20055CEF5 /* RetirementModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RetirementModel.swift; sourceTree = "<group>"; };
@@ -517,7 +456,6 @@
 		79E6B73525042C9D00CE6F0D /* Histogram.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Histogram.swift; sourceTree = "<group>"; };
 		79E7588A250D5A3100153AB6 /* EconomyModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EconomyModel.swift; sourceTree = "<group>"; };
 		79E7B4312513DDB100FC308C /* EconomyModelConfig.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = EconomyModelConfig.json; path = Shared/ModelConfig/EconomyModelConfig.json; sourceTree = SOURCE_ROOT; };
-		79ED5AE425A9E2FC00609DDA /* test_futurValue.xlsx */ = {isa = PBXFileReference; lastKnownFileType = file; path = test_futurValue.xlsx; sourceTree = "<group>"; };
 		79EEEC6B256FF33B00778588 /* AppSettings.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = AppSettings.json; sourceTree = "<group>"; };
 		79EEEC742570141800778588 /* UserSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserSettingsView.swift; sourceTree = "<group>"; };
 		79EF511B255C932000B46303 /* Extensions+Binding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Extensions+Binding.swift"; sourceTree = "<group>"; };
@@ -640,21 +578,8 @@
 			isa = PBXGroup;
 			children = (
 				793D1E8725A8DCAB0083E2BD /* Ressources */,
-				796EE9F725AF7DFF00F8379E /* GridSliceTests.swift */,
-				79607F7325AFAB090028C7F9 /* CompanyProfitTaxesModelTests.swift */,
-				793D1E7B25A8C7A00083E2BD /* FinancialMathTests.swift */,
-				7957E67225AA2F370039784A /* IncomeTaxesModelTests.swift */,
-				7946512425ADB62500BC9F99 /* IsfModelTests.swift */,
-				7946513225ADDCB200BC9F99 /* PensionTaxesModelTests.swift */,
-				79CB810725AE1C6D00DC7FCC /* FinancialRevenuTaxesModelTests.swift */,
-				79C7A1DB25AE418000EFBF53 /* TurnoverTaxesModelTests.swift */,
-				79C7A1E925AE531600EFBF53 /* AllocationChomageTaxesModelTests.swift */,
+				793D1E7B25A8C7A00083E2BD /* PatrimoineTests.swift */,
 				793D1E7D25A8C7A00083E2BD /* Info.plist */,
-				79607F7F25AFB1920028C7F9 /* RealEstateCapitalGainIrppModelTests.swift */,
-				792F38D825B094C4004BB7CD /* RealEstateCapitalGainTaxesModelTests.swift */,
-				792F38E225B0A0C9004BB7CD /* LayOffTaxesTests.swift */,
-				7958A0CF25B0B899005E3ADA /* DemembrementModelTests.swift */,
-				7958A0D925B0CA48005E3ADA /* InheritanceDonationTests.swift */,
 			);
 			path = PatrimoineTests;
 			sourceTree = "<group>";
@@ -662,18 +587,7 @@
 		793D1E8725A8DCAB0083E2BD /* Ressources */ = {
 			isa = PBXGroup;
 			children = (
-				79ED5AE425A9E2FC00609DDA /* test_futurValue.xlsx */,
-				7957E67825AA34020039784A /* IncomeTaxesModelTest.json */,
-				7946512025ADB5CB00BC9F99 /* IsfModelTest.json */,
-				7946513625ADDD0100BC9F99 /* PensionTaxesModelTest.json */,
-				79CB810B25AE1E7A00DC7FCC /* FinancialRevenuTaxesModelTest.json */,
-				79C7A1DF25AE454900EFBF53 /* TurnoverTaxesModelTests.json */,
-				79C7A1E525AE51EF00EFBF53 /* AllocationChomageTaxesModelTest.json */,
-				79607F7725AFAC7D0028C7F9 /* CompanyProfitTaxesModelTest.json */,
-				79607F8325AFB1CD0028C7F9 /* RealEstateCapitalGainIrppModelTest.json */,
-				792F38DE25B095CC004BB7CD /* RealEstateCapitalGainTaxesModelTest.json */,
-				792F38E625B0A114004BB7CD /* LayOffTaxesModelTest.json */,
-				7958A0D325B0B960005E3ADA /* DemembrementModelTest.json */,
+				793D1E8825A8DCDA0083E2BD /* test_futurValue.xlsx */,
 			);
 			path = Ressources;
 			sourceTree = "<group>";
@@ -691,15 +605,9 @@
 			isa = PBXGroup;
 			children = (
 				79948922249E4FC200DAFF1E /* FiscalModel.swift */,
-				7964C5EC25865EA900B1D505 /* IncomeTaxesModel.swift */,
-				7964C5F025865F6D00B1D505 /* ISFModel.swift */,
-				7946511A25ADB1B800BC9F99 /* RealEstateCapitalGainIrppModel.swift */,
-				792F38D425B0947C004BB7CD /* RealEstateCapitalGainTaxesModel.swift */,
+				7964C5EC25865EA900B1D505 /* IncomeTaxes.swift */,
+				7964C5F025865F6D00B1D505 /* ISF.swift */,
 				7964C5F325865FA900B1D505 /* InheritanceDonation.swift */,
-				7946510E25ADB0E100BC9F99 /* DemembrementModel.swift */,
-				7946511225ADB11500BC9F99 /* LayOffTaxes.swift */,
-				7946511625ADB17200BC9F99 /* PensionTaxesModel.swift */,
-				792F38D025B093DB004BB7CD /* RateGrid.swift */,
 			);
 			path = FiscalModel;
 			sourceTree = "<group>";
@@ -813,7 +721,6 @@
 				799488EB249E4FC100DAFF1E /* FileUtilities.swift */,
 				799488EC249E4FC100DAFF1E /* CSV-Utilities.swift */,
 				799488ED249E4FC100DAFF1E /* ExcelFormulas.swift */,
-				796EE9F125AF708000F8379E /* GlobalFunctions.swift */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -1345,18 +1252,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				7946513725ADDD0100BC9F99 /* PensionTaxesModelTest.json in Resources */,
-				792F38DF25B095CC004BB7CD /* RealEstateCapitalGainTaxesModelTest.json in Resources */,
-				79C7A1E625AE51EF00EFBF53 /* AllocationChomageTaxesModelTest.json in Resources */,
-				792F38E725B0A114004BB7CD /* LayOffTaxesModelTest.json in Resources */,
-				79607F7825AFAC7D0028C7F9 /* CompanyProfitTaxesModelTest.json in Resources */,
-				79C7A1E025AE454900EFBF53 /* TurnoverTaxesModelTests.json in Resources */,
-				79CB810C25AE1E7A00DC7FCC /* FinancialRevenuTaxesModelTest.json in Resources */,
-				79607F8425AFB1CD0028C7F9 /* RealEstateCapitalGainIrppModelTest.json in Resources */,
-				7958A0D425B0B960005E3ADA /* DemembrementModelTest.json in Resources */,
-				7946512125ADB5CB00BC9F99 /* IsfModelTest.json in Resources */,
-				7957E67925AA34020039784A /* IncomeTaxesModelTest.json in Resources */,
-				79ED5AE525A9E2FC00609DDA /* test_futurValue.xlsx in Resources */,
+				793D1E8925A8DCDA0083E2BD /* test_futurValue.xlsx in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1430,20 +1326,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				7958A0DA25B0CA48005E3ADA /* InheritanceDonationTests.swift in Sources */,
-				796EE9F825AF7DFF00F8379E /* GridSliceTests.swift in Sources */,
-				7946513325ADDCB200BC9F99 /* PensionTaxesModelTests.swift in Sources */,
-				79607F7425AFAB090028C7F9 /* CompanyProfitTaxesModelTests.swift in Sources */,
-				79CB810825AE1C6D00DC7FCC /* FinancialRevenuTaxesModelTests.swift in Sources */,
-				79607F8025AFB1920028C7F9 /* RealEstateCapitalGainIrppModelTests.swift in Sources */,
-				7957E67325AA2F370039784A /* IncomeTaxesModelTests.swift in Sources */,
-				7958A0D025B0B899005E3ADA /* DemembrementModelTests.swift in Sources */,
-				793D1E7C25A8C7A00083E2BD /* FinancialMathTests.swift in Sources */,
-				79C7A1EA25AE531600EFBF53 /* AllocationChomageTaxesModelTests.swift in Sources */,
-				79C7A1DC25AE418000EFBF53 /* TurnoverTaxesModelTests.swift in Sources */,
-				792F38D925B094C4004BB7CD /* RealEstateCapitalGainTaxesModelTests.swift in Sources */,
-				792F38E325B0A0C9004BB7CD /* LayOffTaxesTests.swift in Sources */,
-				7946512525ADB62500BC9F99 /* IsfModelTests.swift in Sources */,
+				793D1E7C25A8C7A00083E2BD /* PatrimoineTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1502,7 +1385,7 @@
 				79001638256E8ACA0088A460 /* FormaterOthers.swift in Sources */,
 				79948962249E4FC200DAFF1E /* LiabilityView.swift in Sources */,
 				7994898F249E4FC200DAFF1E /* Generics.swift in Sources */,
-				7964C5F125865F6D00B1D505 /* ISFModel.swift in Sources */,
+				7964C5F125865F6D00B1D505 /* ISF.swift in Sources */,
 				7994896B249E4FC200DAFF1E /* FamilySummaryView.swift in Sources */,
 				79DB52BB2586620F00BC6E84 /* CashFlowArray.swift in Sources */,
 				7956C6282538FA2900C92A28 /* ScenarioListView.swift in Sources */,
@@ -1512,7 +1395,6 @@
 				79E7588B250D5A3100153AB6 /* EconomyModel.swift in Sources */,
 				79CD02E124D066200055CEF5 /* PensionReversion.swift in Sources */,
 				7937A6D0257D8AC000ED645A /* isfEvolutionChartView.swift in Sources */,
-				792F38D525B0947C004BB7CD /* RealEstateCapitalGainTaxesModel.swift in Sources */,
 				79948972249E4FC200DAFF1E /* BoundaryEditView.swift in Sources */,
 				7964C5F425865FA900B1D505 /* InheritanceDonation.swift in Sources */,
 				79C7B1FC258B98CD004B38E7 /* Extensions+Collection.swift in Sources */,
@@ -1533,7 +1415,7 @@
 				7997F99A251FA73B00A79194 /* ModelRandomizer.swift in Sources */,
 				79948980249E4FC200DAFF1E /* FormaterDate.swift in Sources */,
 				796FC432259A65FE00EE4CB1 /* AVPlayer+Ding.swift in Sources */,
-				7964C5ED25865EA900B1D505 /* IncomeTaxesModel.swift in Sources */,
+				7964C5ED25865EA900B1D505 /* IncomeTaxes.swift in Sources */,
 				79F9BB48250197A100A74D8D /* MainScene.swift in Sources */,
 				7994896C249E4FC200DAFF1E /* ScenarioView.swift in Sources */,
 				79DB52C4258663EB00BC6E84 /* CheckBoxStyles.swift in Sources */,
@@ -1548,7 +1430,6 @@
 				7994896A249E4FC200DAFF1E /* MemberDetailView.swift in Sources */,
 				79BF6FB22574112800F19A81 /* OwnershipView.swift in Sources */,
 				7994899A249E4FC200DAFF1E /* Liabilities.swift in Sources */,
-				792F38D125B093DB004BB7CD /* RateGrid.swift in Sources */,
 				79948976249E4FC200DAFF1E /* ComputationView.swift in Sources */,
 				7994897A249E4FC200DAFF1E /* AlertView.swift in Sources */,
 				7994896E249E4FC200DAFF1E /* TimeSpanEditView.swift in Sources */,
@@ -1557,12 +1438,10 @@
 				7994899F249E4FC200DAFF1E /* WorkIncome.swift in Sources */,
 				79C6FC0D24BF9D0400D99594 /* UnemployementDetailView.swift in Sources */,
 				799489A3249E4FC200DAFF1E /* Extensions+URL.swift in Sources */,
-				7946510F25ADB0E100BC9F99 /* DemembrementModel.swift in Sources */,
 				7905A50624CF03060049F4ED /* RevenueCategory.swift in Sources */,
 				791A4ADA24B8B8210013A3F1 /* RetirementEditView.swift in Sources */,
 				79A40B552527DD3500B640FD /* KpiListView.swift in Sources */,
 				7951A5082520F10E001ED840 /* SpecialFunctions.swift in Sources */,
-				7946511B25ADB1B800BC9F99 /* RealEstateCapitalGainIrppModel.swift in Sources */,
 				79B46FA12537A56500D6FFEF /* InterestRateTypeView.swift in Sources */,
 				79948957249E4FC200DAFF1E /* FinancialMath.swift in Sources */,
 				799488C4249E4F9700DAFF1E /* AppSettings.swift in Sources */,
@@ -1595,13 +1474,11 @@
 				7994899E249E4FC200DAFF1E /* LifeExpense.swift in Sources */,
 				7994897F249E4FC200DAFF1E /* FormaterNumber.swift in Sources */,
 				79948968249E4FC200DAFF1E /* MemberEditView.swift in Sources */,
-				796EE9F225AF708000F8379E /* GlobalFunctions.swift in Sources */,
 				79948958249E4FC200DAFF1E /* FileUtilities.swift in Sources */,
 				799489AA249E4FC200DAFF1E /* Extensions+Published-Codable.swift in Sources */,
 				7975E4E6252E20400036C1F5 /* HumanLifeModel.swift in Sources */,
 				7994896F249E4FC200DAFF1E /* ExpenseView.swift in Sources */,
 				7940694724D33E62002FD72E /* SwiftUIconditional.swift in Sources */,
-				7946511325ADB11500BC9F99 /* LayOffTaxes.swift in Sources */,
 				7994898A249E4FC200DAFF1E /* Simulation.swift in Sources */,
 				791027BA2549F37700016A62 /* SimulationResultTable.swift in Sources */,
 				79B46F9E25378CF300D6FFEF /* InterestRateType.swift in Sources */,
@@ -1617,7 +1494,6 @@
 				7994895C249E4FC200DAFF1E /* PatrimoineView.swift in Sources */,
 				793E16CC2543554D00699E62 /* ModelDeterministicView.swift in Sources */,
 				79948973249E4FC200DAFF1E /* BalanceSheetChartView.swift in Sources */,
-				7946511725ADB17200BC9F99 /* PensionTaxesModel.swift in Sources */,
 				7950B9572520D03F007EC0F8 /* StatisticsChartView.swift in Sources */,
 				79D3DD85256805AA00E914F5 /* SocialAccounts+IrppCharts.swift in Sources */,
 				7994898B249E4FC200DAFF1E /* ItemArrayGeneric.swift in Sources */,

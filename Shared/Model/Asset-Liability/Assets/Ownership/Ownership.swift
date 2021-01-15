@@ -181,8 +181,8 @@ struct Ownership: Codable {
             // valeur de son usufuit
             let usufruiterAge = ageOf!(usufruitier.name, year)
             
-            let (usuFruit, nueProp) = Fiscal.model.demembrement.demembrement(of              : ownedValue,
-                                                                             usufructuaryAge : usufruiterAge)
+            let (usuFruit, nueProp) = try! Fiscal.model.demembrement.demembrement(of              : ownedValue,
+                                                                                  usufructuaryAge : usufruiterAge)
             usufructValue += usuFruit
             bareValue     += nueProp
         }
@@ -231,8 +231,8 @@ struct Ownership: Codable {
                         let ownedValue = totalValue * usufruitier.fraction / 100.0
                         // valeur de son usufuit
                         let usufruiterAge = ageOf!(usufruitier.name, year)
-                        let (usuFruit, nueProp) = Fiscal.model.demembrement.demembrement(of              : ownedValue,
-                                                                                         usufructuaryAge : usufruiterAge)
+                        let (usuFruit, nueProp) = try! Fiscal.model.demembrement.demembrement(of              : ownedValue,
+                                                                                              usufructuaryAge : usufruiterAge)
                         usufructValue += usuFruit
                         bareValue     += nueProp
                     }
@@ -251,8 +251,8 @@ struct Ownership: Codable {
                         // valeur de son usufuit
                         let usufruiterAge = ageOf!(owner.name, year)
                         
-                        value += Fiscal.model.demembrement.demembrement(of              : ownedValue,
-                                                                        usufructuaryAge : usufruiterAge).usufructValue
+                        value += try! Fiscal.model.demembrement.demembrement(of              : ownedValue,
+                                                                             usufructuaryAge : usufruiterAge).usufructValue
                     }
                     return value
             }

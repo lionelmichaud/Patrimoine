@@ -87,7 +87,7 @@ extension Adult {
                 net  += pensionReversion.net
             }
         }
-        let taxable = Fiscal.model.pensionTaxes.taxable(from: brut)
+        let taxable = try! Fiscal.model.pensionTaxes.taxable(brut: brut, net: net)
         return BrutNetTaxable(brut: brut, net: net, taxable: taxable)
     }
     
@@ -110,19 +110,20 @@ extension Adult {
         guard spouse.isAlive(atEndOf: year) else {
             return nil
         }
-        // somme des pensions brutes l'année précédent le décès du conjoint décédé
+        // somme des pensions brutes l'année précédent le décès
         // et de l'année courante pour le conjoint survivant
         let yearBeforeDeath         = self.yearOfDeath - 1
         let pensionDuDecede         = self.pension(during        : yearBeforeDeath,
-                                                   withReversion : false).brut
+                                                   withReversion : false)
         let pensionDuConjoint       = spouse.pension(during        : year,
-                                                     withReversion : false).brut
-        let pensionTotaleAvantDeces = pensionDuDecede + pensionDuConjoint
+                                                     withReversion : false)
+        let pensionTotaleAvantDeces = (brut: pensionDuDecede.brut + pensionDuConjoint.brut,
+                                       net : pensionDuDecede.net  + pensionDuConjoint.net)
         // la pension du conjoint survivant, avec réversion, est limitée à un % de la somme des deux
-        let pensionApresDeces = pensionTotaleAvantDeces * Pension.model.reversion.model.tauxReversion / 100.0
+        let pensionBruteApresDeces = pensionTotaleAvantDeces.brut * Pension.model.reversion.model.tauxReversion / 100.0
         // le complément de réversion est calculé en conséquence
-        let brut = max(0, pensionApresDeces - pensionDuConjoint)
-        let net  = Pension.model.reversion.net(brut)
-        return (brut, net)
+        let reversionBrut = zeroOrPositive(pensionBruteApresDeces - pensionDuConjoint.brut)
+        let reversionNet  = reversionBrut * (pensionTotaleAvantDeces.net / pensionTotaleAvantDeces.brut)
+        return (reversionBrut, reversionNet)
     }
 }

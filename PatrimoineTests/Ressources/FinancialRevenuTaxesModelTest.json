@@ -1,0 +1,11 @@
+{
+    "version" :
+    {
+        "version" : "0.1",
+        "date"    : "2020-09-12T23:00:00+01:00",
+        "comment" : null
+    },
+    "CRDS"         : 0.5,
+    "CSG"          : 9.5,
+    "prelevSocial" : 7.5
+}

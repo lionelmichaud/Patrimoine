@@ -1,0 +1,14 @@
+{
+    "version" :
+    {
+        "version" : "0.1",
+        "date"    : "2020-09-12T23:00:00+01:00",
+        "comment" : null
+    },
+    "assiette"      : 90.0,
+    "seuilCsgCrds"  : 50.0,
+    "CRDS"          : 0.5,
+    "CSG"           : 6.5,
+    "retraiteCompl" : 4.0,
+    "seuilRetCompl" : 30.0
+}

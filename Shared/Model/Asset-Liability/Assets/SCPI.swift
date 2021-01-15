@@ -51,7 +51,7 @@ struct SCPI: Identifiable, Codable, Equatable, NameableValuable, Ownable {
     /// - Parameter year: fin de l'année
     func value (atEndOf year: Int) -> Double {
         if isOwned(before: year) {
-            return futurValue(payement     : 0,
+            return try! futurValue(payement     : 0,
                               interestRate : (revaluatRate - SCPI.inflation) / 100.0,
                               nbPeriod     : year - buyingDate.year,
                               initialValue : buyingPrice) * (1.0 - SCPI.saleCommission / 100.0)
@@ -69,7 +69,7 @@ struct SCPI: Identifiable, Codable, Equatable, NameableValuable, Ownable {
         taxableIrpp: Double,
         socialTaxes: Double) {
         let revenue     = (isOwned(before: year) ? buyingPrice * (interestRate - SCPI.inflation) / 100.0 : 0.0)
-        let taxableIrpp = Fiscal.model.socialTaxesOnFinancialRevenu.net(revenue)
+        let taxableIrpp = Fiscal.model.financialRevenuTaxes.net(revenue)
         return (revenue    : revenue,
                 taxableIrpp: taxableIrpp,
                 socialTaxes: revenue - taxableIrpp)
@@ -119,9 +119,9 @@ struct SCPI: Identifiable, Codable, Equatable, NameableValuable, Ownable {
         let detentionDuration = sellingDate.year - buyingDate.year
         let currentValue      = value(atEndOf: sellingDate.year)
         let capitalGain       = currentValue - buyingPrice
-        let socialTaxes       = Fiscal.model.socialTaxesOnEstateCapitalGain.socialTaxes(capitalGain      : max(capitalGain, 0.0),
-                                                                                        detentionDuration: detentionDuration)
-        let irpp              = Fiscal.model.irppOnEstateCapitalGain.irpp(capitalGain      : max(capitalGain, 0.0),
+        let socialTaxes       = Fiscal.model.estateCapitalGainTaxes.socialTaxes(capitalGain      : max(capitalGain, 0.0),
+                                                                                detentionDuration: detentionDuration)
+        let irpp              = Fiscal.model.estateCapitalGainIrpp.irpp(capitalGain      : max(capitalGain, 0.0),
                                                                           detentionDuration: detentionDuration)
         return (revenue     : currentValue,
                 capitalGain : capitalGain,

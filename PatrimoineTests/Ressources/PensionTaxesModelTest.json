@@ -1,0 +1,17 @@
+{
+    "version" :
+    {
+        "version" : "0.1",
+        "date"    : "2020-09-12T23:00:00+01:00",
+        "comment" : null
+    },
+    "rebate"            : 10.0,
+    "minRebate"         :  393.0,
+    "maxRebate"         : 3850.0,
+    "CSGdeductible"     : 5.9,
+    "CRDS"              : 0.5,
+    "CSG"               : 8.3,
+    "additionalContrib" : 0.3,
+    "healthInsurance"   : 1.0
+}
+

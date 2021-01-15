@@ -175,9 +175,9 @@ struct CashFlowLine {
     }
     
     fileprivate mutating func populateIrpp(of family: Family) {
-        taxes.irpp = Fiscal.model.incomeTaxes.irpp(taxableIncome : revenues.totalTaxableIrpp,
-                                                   nbAdults      : family.nbOfAdultAlive(atEndOf: year),
-                                                   nbChildren    : family.nbOfFiscalChildren(during: year))
+        taxes.irpp = try! Fiscal.model.incomeTaxes.irpp(taxableIncome : revenues.totalTaxableIrpp,
+                                                        nbAdults      : family.nbOfAdultAlive(atEndOf: year),
+                                                        nbChildren    : family.nbOfFiscalChildren(during: year))
         taxes.perCategory[.irpp]?.namedValues.append((name  : TaxeCategory.irpp.rawValue,
                                                       value : taxes.irpp.amount.rounded()))
     }
@@ -187,7 +187,7 @@ struct CashFlowLine {
                                           for year        : Int) {
         let taxableAsset = patrimoine.realEstateValue(atEndOf          : year,
                                                       evaluationMethod : .ifi)
-        taxes.isf = Fiscal.model.isf.isf(taxableAsset: taxableAsset)
+        taxes.isf = try! Fiscal.model.isf.isf(taxableAsset: taxableAsset)
         taxes.perCategory[.isf]?.namedValues.append((name  : TaxeCategory.isf.rawValue,
                                                      value : taxes.isf.amount.rounded()))
     }
@@ -324,7 +324,7 @@ struct CashFlowLine {
                 case .lifeInsurance:
                     var taxableInterests: Double
                     // apply rebate if some is remaining
-                    taxableInterests = max(0.0, liquidatedValue.taxableIrppInterests - lifeInsuranceRebate)
+                    taxableInterests = zeroOrPositive(liquidatedValue.taxableIrppInterests - lifeInsuranceRebate)
                     lifeInsuranceRebate -= (liquidatedValue.taxableIrppInterests - taxableInterests)
                     // part des produit de la liquidation inscrit en compte courant imposable à l'IRPP
                     revenues.perCategory[.financials]?.taxablesIrpp.namedValues.append(

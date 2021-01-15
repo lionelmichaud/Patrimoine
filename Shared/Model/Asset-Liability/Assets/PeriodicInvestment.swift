@@ -73,7 +73,7 @@ struct PeriodicInvestement: Identifiable, Codable, NameableValuable, Ownable, Fi
             case .lifeInsurance(let periodicSocialTaxes, _):
                 // si assurance vie: le taux net est le taux brut - charges sociales si celles-ci sont prélèvées à la source anuellement
                 return (periodicSocialTaxes ?
-                            Fiscal.model.socialTaxesOnFinancialRevenu.net(averageInterestRate) :
+                            Fiscal.model.financialRevenuTaxes.net(averageInterestRate) :
                             averageInterestRate)
             default:
                 // dans tous les autres cas: pas de charges sociales prélevées à la source anuellement (capitalisation et taxation à la sortie)
@@ -124,10 +124,10 @@ struct PeriodicInvestement: Identifiable, Codable, NameableValuable, Ownable, Fi
         guard (firstYear...lastYear).contains(year) else {
             return 0.0
         }
-        return futurValue(payement     : yearlyPayement,
-                          interestRate : averageInterestRateNet/100,
-                          nbPeriod     : year - firstYear,
-                          initialValue : initialValue)
+        return try! futurValue(payement     : yearlyPayement,
+                               interestRate : averageInterestRateNet/100,
+                               nbPeriod     : year - firstYear,
+                               initialValue : initialValue)
     }
     
     /// Calcule la valeur d'un bien possédée par un personne donnée à une date donnée
@@ -218,13 +218,13 @@ struct PeriodicInvestement: Identifiable, Codable, NameableValuable, Ownable, Fi
         switch type {
             case .lifeInsurance(let periodicSocialTaxes, _):
                 // Si les intérêts sont prélevés au fil de l'eau on les prélève pas à la liquidation
-                netInterests     = (periodicSocialTaxes ? cumulatedInterest : Fiscal.model.socialTaxesOnFinancialRevenu.net(cumulatedInterest))
+                netInterests     = (periodicSocialTaxes ? cumulatedInterest : Fiscal.model.financialRevenuTaxes.net(cumulatedInterest))
                 taxableInterests = netInterests
             case .pea:
-                netInterests     = Fiscal.model.socialTaxesOnFinancialRevenu.net(cumulatedInterest)
+                netInterests     = Fiscal.model.financialRevenuTaxes.net(cumulatedInterest)
                 taxableInterests = 0.0
             case .other:
-                netInterests     = Fiscal.model.socialTaxesOnFinancialRevenu.net(cumulatedInterest)
+                netInterests     = Fiscal.model.financialRevenuTaxes.net(cumulatedInterest)
                 taxableInterests = netInterests
         }
         return (revenue              : value(atEndOf: year),

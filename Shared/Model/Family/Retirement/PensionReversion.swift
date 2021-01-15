@@ -23,7 +23,4 @@ struct PensionReversion: Codable {
     
     // MARK: - Methods
     
-    func net(_ brut: Double) -> Double {
-        Fiscal.model.pensionTaxes.net(brut)
-    }
 }

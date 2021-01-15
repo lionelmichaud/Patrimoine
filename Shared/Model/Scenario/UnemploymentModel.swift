@@ -364,8 +364,8 @@ struct UnemploymentCompensation: Codable {
                                   high : plafond)
         
         // nette de charges sociales
-        let net = Fiscal.model.socialTaxesOnAllocationChomage.net(brut : brut,
-                                                                  SJR  : SJR)
+        let net = try! Fiscal.model.allocationChomageTaxes.net(brut : brut,
+                                                               SJR  : SJR)
         return (brut: brut, net: net)
     }
 }

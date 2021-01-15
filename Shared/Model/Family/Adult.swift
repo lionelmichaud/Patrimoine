@@ -52,7 +52,7 @@ final class Adult: Person { // swiftlint:disable:this type_body_length
             case .salary(_, _, let netSalary, _, _):
                 return netSalary
             case .turnOver(let BNC, _):
-                return Fiscal.model.socialTaxesOnTurnover.net(BNC)
+                return Fiscal.model.turnoverTaxes.net(BNC)
             case .none:
                 return 0
         }
@@ -62,7 +62,7 @@ final class Adult: Person { // swiftlint:disable:this type_body_length
             case .salary(_, _, let netSalary, _, let charge):
                 return netSalary - charge
             case .turnOver(let BNC, let charge):
-                return Fiscal.model.socialTaxesOnTurnover.net(BNC) - charge
+                return Fiscal.model.turnoverTaxes.net(BNC) - charge
             case .none:
                 return 0
         }
@@ -324,13 +324,13 @@ final class Adult: Person { // swiftlint:disable:this type_body_length
         }
     } // computed
     
-    /// RETRAITE: pension évalée l'année de la liquidation de la pension (non révaluée)
+    /// RETRAITE: pension évaluée l'année de la liquidation de la pension (non révaluée)
     var pension: BrutNetTaxable { // computed
         let pensionGeneral = pensionRegimeGeneral
         let pensionAgirc   = pensionRegimeAgirc
         let brut           = pensionGeneral.brut + pensionAgirc.brut
         let net            = pensionGeneral.net  + pensionAgirc.net
-        let taxable        = Fiscal.model.pensionTaxes.taxable(from: brut)
+        let taxable        = try! Fiscal.model.pensionTaxes.taxable(brut: brut, net:net)
         return BrutNetTaxable(brut: brut, net: net, taxable: taxable)
     } // computed
     

@@ -19,8 +19,8 @@ struct InheritanceSharing {
 ///   - [capital.fr](https://www.capital.fr/votre-argent/succession-les-mesures-a-prendre-pour-proteger-son-conjoint-1027822)
 struct InheritanceDonation: Codable {
     
-    // nested types
-    
+    // MARK: - Nested types
+
     // options fiscale du conjoint à la succession
     enum FiscalOption: String, PickableEnum, Codable {
         case fullUsufruct      = "100% Usufruit"
@@ -42,7 +42,7 @@ struct InheritanceDonation: Codable {
             forSpouse : Double) {
             switch self {
                 case .fullUsufruct:
-                    let demembrement = Fiscal.model.demembrement.demembrement(of: 1.0, usufructuaryAge : spouseAge)
+                    let demembrement = try! Fiscal.model.demembrement.demembrement(of: 1.0, usufructuaryAge : spouseAge)
                     return (forChild : demembrement.bareValue / nbChildren.double(),
                             forSpouse: demembrement.usufructValue)
                     
@@ -53,7 +53,7 @@ struct InheritanceDonation: Codable {
                             forSpouse: spouseShare)
                     
                 case .usufructPlusBare:
-                    let demembrement = Fiscal.model.demembrement.demembrement(of: 1.0, usufructuaryAge : spouseAge)
+                    let demembrement = try! Fiscal.model.demembrement.demembrement(of: 1.0, usufructuaryAge : spouseAge)
                     // Conjoint = 1/4 PP + 3/4 UF
                     let spouseShare  = 0.25 + 0.75 * demembrement.usufructValue
                     return (forChild : (1.0 - spouseShare) / nbChildren.double(),
@@ -98,12 +98,12 @@ struct InheritanceDonation: Codable {
         let decoteResidence      : Double // 20% // %
     }
     
-    // properties
-    
+    // MARK: - Properties
+
     var model: Model
     
-    // methods
-    
+    // MARK: - Methods
+
     /// Calcule la part d'héritage de chaque enfant en l'absence de conjoint survivant
     /// - Parameter nbChildren: nb d'enfant à se partager l'héritage
     static func childShare(nbChildren: Int) -> Double {
@@ -137,7 +137,7 @@ struct InheritanceDonation: Codable {
     -> (netAmount : Double,
         taxe      : Double) {
         // abattement avant application du barême
-        let taxable = max(0, partSuccession - model.abatLigneDirecte)
+        let taxable = zeroOrPositive(partSuccession - model.abatLigneDirecte)
         
         // application du barême
         if let slice = model.gridLigneDirecte.last(where: { $0.floor <= taxable }) {
@@ -154,7 +154,7 @@ struct InheritanceDonation: Codable {
     -> (netAmount : Double,
         taxe      : Double) {
         // abattement avant application du barême
-        let taxable = max(0, donation - model.abatConjoint)
+        let taxable = zeroOrPositive(donation - model.abatConjoint)
         
         // application du barême
         if let slice = model.gridLigneDirecte.last(where: { $0.floor <= taxable }) {
@@ -171,8 +171,9 @@ struct InheritanceDonation: Codable {
 // MARK: - Droits de succession sur assurance vie
 ///  - Note: [Reference](https://www.impots.gouv.fr/portail/international-particulier/questions/comment-sont-imposees-les-assurances-vie-en-cas-de-deces-du)
 struct LifeInsuranceInheritance: Codable {
-    // nested types
-    
+
+    // MARK: - Nested types
+
     // tranche de barême
     struct Slice: Codable {
         let floor : Double // €
@@ -185,12 +186,12 @@ struct LifeInsuranceInheritance: Codable {
         var grid       : [Slice]
     }
     
-    // properties
-    
+    // MARK: - Properties
+
     var model: Model
     
-    // methods
-    
+    // MARK: - Methods
+
     /// Initializer les paramètres calculés pour les tranches d'imposition à partir des seuils et des taux
     mutating func initialize() {
         for idx in model.grid.startIndex ..< model.grid.endIndex {

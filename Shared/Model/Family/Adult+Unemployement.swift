@@ -40,11 +40,11 @@ extension Adult {
             // intersection de l'année avec la période taux plein
             var debut   = max(dateDebAlloc, firstYearDay)
             var fin     = min(dateReducAlloc, lastYearDay)
-            let nbDays1 = max(0, numberOfDays(from : debut, to : fin).day!)
+            let nbDays1 = zeroOrPositive(numberOfDays(from : debut, to : fin).day!)
             // intersection de l'année avec la période taux réduit
             debut       = max(dateReducAlloc, firstYearDay)
             fin         = min(dateFinAlloc, lastYearDay)
-            let nbDays2 = max(0, numberOfDays(from : debut, to : fin).day!)
+            let nbDays2 = zeroOrPositive(numberOfDays(from : debut, to : fin).day!)
             // somme des deux parties
             let brut = alloc.brut/365 * nbDays1.double() +
                 allocReduite.brut/365 * nbDays2.double()

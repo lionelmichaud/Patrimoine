@@ -321,7 +321,7 @@ struct RegimeAgirc: Codable {
         var pensionBrute = projectedNumberOfPoints.double() * model.valeurDuPoint * coefMinoration
         // customLog.log(level: .info, "pension Brute = \(projectedNumberOfPoints, privacy: .public)")
 
-        var pensionNette = Fiscal.model.pensionTaxes.net(pensionBrute)
+        var pensionNette = Fiscal.model.pensionTaxes.netRegimeAgirc(pensionBrute)
         // customLog.log(level: .info, "pension Nette = \(pensionNette, privacy: .public)")
         
         if let yearEval = year {

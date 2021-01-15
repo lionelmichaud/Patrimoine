@@ -1,0 +1,42 @@
+
+    {
+        "version" :
+        {
+            "version" : "0.1",
+            "date"    : "2020-09-12T23:00:00+01:00",
+            "comment" : "Impôt 2020 sur le revenu 2019"
+        },
+        "turnOverRebate"    : 34.0,
+        "minTurnOverRebate" :   305.0,
+        "salaryRebate"      : 10.0,
+        "minSalaryRebate"   :   442.0,
+        "maxSalaryRebate"   : 12627.0,
+        "childRebate"       :  1567.0,
+        "grid" : [
+            {
+                "floor" : 0,
+                "rate"  : 0,
+                "disc"  : 0
+            },
+            {
+                "floor" : 10064.0,
+                "rate"  : 0.11,
+                "disc"  : 0
+            },
+            {
+                "floor" : 25659.0,
+                "rate"  : 0.3,
+                "disc"  : 0
+            },
+            {
+                "floor" : 73369.0,
+                "rate"  : 0.41,
+                "disc"  : 0
+            },
+            {
+                "floor"  : 157806.0,
+                "rate"  : 0.45,
+                "disc"  : 0
+            }
+        ]
+    }

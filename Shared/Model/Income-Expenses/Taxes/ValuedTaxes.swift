@@ -16,7 +16,7 @@ struct ValuedTaxes: DictionaryOfNamedValueTable {
     
     var name        : String                          = ""
     var perCategory : [TaxeCategory: NamedValueTable] = [:]
-    var irpp        : IncomeTaxes.IRPP
+    var irpp        : IncomeTaxesModel.IRPP
     var isf         : IsfModel.ISF
 
     init() {

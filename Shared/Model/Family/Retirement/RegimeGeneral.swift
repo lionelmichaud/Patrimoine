@@ -230,11 +230,11 @@ struct RegimeGeneral: Codable {
         let (q1, r1) = duree.month!.quotientAndRemainder(dividingBy: 3)
         
         //    Le nombre de trimestres est arrondi au chiffre supérieur
-        let trimestresManquantAgeTauxPlein = max(0, (duree.year! * 4) + (r1 > 0 ? q1 + 1 : q1))
+        let trimestresManquantAgeTauxPlein = zeroOrPositive((duree.year! * 4) + (r1 > 0 ? q1 + 1 : q1))
         // customLog.log(level: .info, "trimestres Manquant Age Taux Plein = \(trimestresManquantAgeTauxPlein, privacy: .public)")
         
         /// le nombre de trimestres manquant entre le nb de trimestre accumulés à la date de votre départ en retraite et la durée d'assurance retraite ouvrant droit au taux plein
-        let trimestresManquantNbTrimestreTauxPlein = max(0, dureeDeReference - dureeAssurance)
+        let trimestresManquantNbTrimestreTauxPlein = zeroOrPositive(dureeDeReference - dureeAssurance)
         // customLog.log(level: .info, "trimestres Manquant Nb Trimestre Taux Plein = \(trimestresManquantNbTrimestreTauxPlein, privacy: .public)")
         // customLog.log(level: .info, "model.max Nb Trimestre Decote = \(model.maxNbTrimestreDecote, privacy: .public)")
         
@@ -283,7 +283,7 @@ struct RegimeGeneral: Codable {
                                                      to  : dateFinAssurance)
             let (q, _) = duree.month!.quotientAndRemainder(dividingBy: 3)
             //    Le nombre de trimestres est arrondi au chiffre inférieur
-            let nbTrimestreFutur = max(0, (duree.year! * 4) + q)
+            let nbTrimestreFutur = zeroOrPositive((duree.year! * 4) + q)
             
             return lastKnownSituation.nbTrimestreAcquis + nbTrimestreFutur
         }
@@ -355,7 +355,7 @@ struct RegimeGeneral: Codable {
             customLog.log(level: .default, "duree De Reference = nil")
             return nil
         }
-        let trimestreRestant = max(0, dureeDeReference - lastKnownSituation.nbTrimestreAcquis)
+        let trimestreRestant = zeroOrPositive(dureeDeReference - lastKnownSituation.nbTrimestreAcquis)
         let dateRefComp = DateComponents(calendar : Date.calendar,
                                          year     : lastKnownSituation.atEndOf,
                                          month    : 12,
@@ -454,7 +454,7 @@ struct RegimeGeneral: Codable {
                                                                         dateOfPensionLiquid : dateOfPensionLiquid)
         }
         
-        let pensionNette = Fiscal.model.pensionTaxes.net(pensionBrute)
+        let pensionNette = Fiscal.model.pensionTaxes.netRegimeGeneral(pensionBrute)
         
         return (brut : pensionBrute,
                 net  : pensionNette)
@@ -513,7 +513,7 @@ struct RegimeGeneral: Codable {
                                    dureeDeReference : dureeDeReference)
         // customLog.log(level: .info, "pension Brute = \(pensionBrute, privacy: .public)")
 
-        var pensionNette = Fiscal.model.pensionTaxes.net(pensionBrute)
+        var pensionNette = Fiscal.model.pensionTaxes.netRegimeGeneral(pensionBrute)
         // customLog.log(level: .info, "pension Nette = \(pensionNette, privacy: .public)")
 
         if let yearEval = year {
