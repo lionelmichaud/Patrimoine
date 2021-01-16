@@ -15,16 +15,12 @@ class IncomeTaxesModelTests: XCTestCase {
     
     // MARK: Helpers
     
-    override class func setUp() { // 1.
-        // This is the setUp() class method.
-        // It is called before the first test method begins.
-        // Set up any overall initial state here.
+    override class func setUp() {
         super.setUp()
-        let testBundle = Bundle(for: IncomeTaxesModelTests.self)
-        let model = testBundle.decode(IncomeTaxesModel.Model.self,
-                                      from                 : "IncomeTaxesModelTest.json",
-                                      dateDecodingStrategy : .iso8601,
-                                      keyDecodingStrategy  : .useDefaultKeys)
+        let model = IncomeTaxesModel.Model(for: IncomeTaxesModelTests.self,
+                                           from                 : "IncomeTaxesModelTest.json",
+                                           dateDecodingStrategy : .iso8601,
+                                           keyDecodingStrategy  : .useDefaultKeys)
         IncomeTaxesModelTests.incomeTaxes = IncomeTaxesModel(model: model)
         try! IncomeTaxesModelTests.incomeTaxes.initialize()
     }

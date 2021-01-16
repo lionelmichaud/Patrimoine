@@ -15,7 +15,7 @@ struct ModelDeterministicView: View {
             Form {
                 Section(header: Text("Modèle Humain")) {
                     IntegerView(label   : "Espérance de vie d'un Homme",
-                                integer : Int(HumanLife.model.menLifeEpectation.value(withMode: .deterministic)))
+                                integer : Int(HumanLife.model.menLifeExpectation.value(withMode: .deterministic)))
                     IntegerView(label   : "Espérance de vie d'une Femme",
                                 integer : Int(HumanLife.model.womenLifeExpectation.value(withMode: .deterministic)))
                     IntegerView(label   : "Nombre d'années de dépendance",

@@ -15,7 +15,7 @@ struct HumanLife {
     // MARK: - Nested Types
     
     enum RandomVariable: String, PickableEnum {
-        case menLifeEpectation     = "Espérance de Vie d'un Homme"
+        case menLifeExpectation    = "Espérance de Vie d'un Homme"
         case womenLifeExpectation  = "Espérance de Vie d'uns Femme"
         case nbOfYearsOfdependency = "Nombre d'années de Dépendance"
         
@@ -24,47 +24,37 @@ struct HumanLife {
         }
     }
     
-    struct Model: Codable {
-        var menLifeEpectation     : ModelRandomizer<DiscreteRandomGenerator>
+    struct Model: BundleCodable {
+        static var defaultFileName : String = "HumanLifeModelConfig.json"
+        var menLifeExpectation    : ModelRandomizer<DiscreteRandomGenerator>
         var womenLifeExpectation  : ModelRandomizer<DiscreteRandomGenerator>
         var nbOfYearsOfdependency : ModelRandomizer<DiscreteRandomGenerator>
         
-        init() {
-            self = Bundle.main.decode(Model.self,
-                                      from                 : "HumanLifeModelConfig.json",
-                                      dateDecodingStrategy : .iso8601,
-                                      keyDecodingStrategy  : .useDefaultKeys)
-            menLifeEpectation.rndGenerator.initialize()
-            womenLifeExpectation.rndGenerator.initialize()
-            nbOfYearsOfdependency.rndGenerator.initialize()
+        /// Lit le modèle dans un fichier JSON du Bundle Main
+        func initialized() -> Model {
+            var model = self
+            model.menLifeExpectation.rndGenerator.initialize()
+            model.womenLifeExpectation.rndGenerator.initialize()
+            model.nbOfYearsOfdependency.rndGenerator.initialize()
+            return model
         }
         
-        func storeItemsToFile(fileNamePrefix: String = "") {
-            // encode to JSON file
-            Bundle.main.encode(self,
-                               to                   : "HumanLifeModelConfig.json",
-                               dateEncodingStrategy : .iso8601,
-                               keyEncodingStrategy  : .useDefaultKeys)
-        }
-        
+        /// Vide l'ihistorique des tirages de chaque variable aléatoire du modèle
         mutating func resetRandomHistory() {
-            menLifeEpectation.resetRandomHistory()
+            menLifeExpectation.resetRandomHistory()
             womenLifeExpectation.resetRandomHistory()
             nbOfYearsOfdependency.resetRandomHistory()
         }
         
-//        mutating func next() {
-//            menLifeEpectation.next()
-//            womenLifeExpectation.next()
-//            nbOfYearsOfdependency.next()
-//        }
-//
+        /// Retourne un dictionnaire donnant pour chaque variable aléatoire son historique de tirage
+        /// Retourne la suite de valeurs aléatoires tirées pour chaque Run d'un Monté-Carlo
+        /// - Returns: dictionnaire donnant pour chaque variable aléatoire son historique de tirage
         func randomHistories() -> [RandomVariable: [Double]?] {
             var dico = [RandomVariable: [Double]?]()
             for randomVariable in RandomVariable.allCases {
                 switch randomVariable {
-                    case .menLifeEpectation:
-                        dico[randomVariable] = menLifeEpectation.randomHistory
+                    case .menLifeExpectation:
+                        dico[randomVariable] = menLifeExpectation.randomHistory
                     case .womenLifeExpectation:
                         dico[randomVariable] = womenLifeExpectation.randomHistory
                     case .nbOfYearsOfdependency:
@@ -77,5 +67,5 @@ struct HumanLife {
     
     // MARK: - Static Properties
     
-    static var model: Model = Model()
+    static var model: Model = Model().initialized()
 }

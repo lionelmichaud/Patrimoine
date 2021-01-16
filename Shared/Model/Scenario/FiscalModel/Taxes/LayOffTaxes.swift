@@ -28,7 +28,8 @@ struct LayOffTaxes: Codable {
             rateDeductible + rateNonDeductible
         }
     }
-    struct Model: Codable, Versionable {
+    struct Model: BundleCodable, Versionable {
+        static var defaultFileName : String = "LayOffTaxesModel.json"
         var version     : Version
         let socialTaxes : SocialTaxes
         let csgCrds     : CsgCrds

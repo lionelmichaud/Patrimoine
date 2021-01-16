@@ -15,16 +15,12 @@ class DemembrementModelTests: XCTestCase {
     
     // MARK: Helpers
     
-    override class func setUp() { // 1.
-        // This is the setUp() class method.
-        // It is called before the first test method begins.
-        // Set up any overall initial state here.
+    override class func setUp() {
         super.setUp()
-        let testBundle = Bundle(for: DemembrementModelTests.self)
-        let model = testBundle.decode(DemembrementModel.Model.self,
-                                      from                 : "DemembrementModelTest.json",
-                                      dateDecodingStrategy : .iso8601,
-                                      keyDecodingStrategy  : .useDefaultKeys)
+        let model = DemembrementModel.Model(for: DemembrementModelTests.self,
+                                            from                 : "DemembrementModelTest.json",
+                                            dateDecodingStrategy : .iso8601,
+                                            keyDecodingStrategy  : .useDefaultKeys)
         DemembrementModelTests.demembrement = DemembrementModel(model: model)
     }
     

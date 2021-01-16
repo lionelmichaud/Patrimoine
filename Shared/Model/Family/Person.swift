@@ -162,7 +162,7 @@ class Person : ObservableObject, Identifiable, CustomStringConvertible, Codable 
         // initialiser avec la valeur moyenne déterministe
         switch self.sexe {
             case .male:
-                self.ageOfDeath = Int(HumanLife.model.menLifeEpectation.value(withMode: .deterministic))
+                self.ageOfDeath = Int(HumanLife.model.menLifeExpectation.value(withMode: .deterministic))
 
             case .female:
                 self.ageOfDeath = Int(HumanLife.model.womenLifeExpectation.value(withMode: .deterministic))
@@ -229,7 +229,7 @@ class Person : ObservableObject, Identifiable, CustomStringConvertible, Codable 
     func nextRandomProperties() {
         switch self.sexe {
             case .male:
-                ageOfDeath = Int(HumanLife.model.menLifeEpectation.next())
+                ageOfDeath = Int(HumanLife.model.menLifeExpectation.next())
                 
             case .female:
                 ageOfDeath = Int(HumanLife.model.womenLifeExpectation.next())

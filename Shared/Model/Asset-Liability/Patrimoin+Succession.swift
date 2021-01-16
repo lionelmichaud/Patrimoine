@@ -180,7 +180,7 @@ extension Patrimoin {
         // WARNING: prendre en compte la capital à la fin de l'année précédent le décès. Important pour FreeInvestement.
         let totalTaxableInheritance = taxableLifeInsuraceInheritanceValue(of      : decedent,
                                                                           atEndOf : year - 1)
-        print("  Masse successorale d'assurance vie = \(totalTaxableInheritance.rounded())")
+//        print("  Masse successorale d'assurance vie = \(totalTaxableInheritance.rounded())")
         
         // pour chaque assurance vie
         assets.freeInvests.items.forEach { invest in
@@ -207,8 +207,8 @@ extension Patrimoin {
                     // les enfants
                     heritage = Fiscal.model.lifeInsuranceInheritance.heritageToChild(partSuccession: masse)
                 }
-                print("  Part d'héritage de \(member.displayName) = \(masse.rounded())")
-                print("    Taxe = \(heritage.taxe.rounded())")
+//                print("  Part d'héritage de \(member.displayName) = \(masse.rounded())")
+//                print("    Taxe = \(heritage.taxe.rounded())")
                 inheritances.append(Inheritance(person  : member,
                                                 percent : masse / totalTaxableInheritance,
                                                 brut    : masse,
@@ -217,8 +217,8 @@ extension Patrimoin {
             }
         }
         
-        print("  Masse totale = ", inheritances.sum(for: \.brut).rounded())
-        print("  Taxe totale = ", inheritances.sum(for: \.tax).rounded())
+//        print("  Masse totale = ", inheritances.sum(for: \.brut).rounded())
+//        print("  Taxe totale = ", inheritances.sum(for: \.tax).rounded())
         return Succession(yearOfDeath  : year,
                           decedent     : decedent,
                           taxableValue : totalTaxableInheritance,
@@ -267,8 +267,8 @@ extension Patrimoin {
             // caluler les droits de succession du conjoint
             let tax = 0.0
             
-            print("  Part d'héritage de \(conjointSurvivant.displayName) = \(brut.rounded())")
-            print("    Taxe = \(tax.rounded())")
+//            print("  Part d'héritage de \(conjointSurvivant.displayName) = \(brut.rounded())")
+//            print("    Taxe = \(tax.rounded())")
             inheritances.append(Inheritance(person  : conjointSurvivant,
                                             percent : share,
                                             brut    : brut,
@@ -300,8 +300,8 @@ extension Patrimoin {
                     // caluler les droits de succession du conjoint
                     let inheritance = Fiscal.model.inheritanceDonation.heritageOfChild(partSuccession: brut)
                     
-                    print("  Part d'héritage de \(child.displayName) = \(brut.rounded())")
-                    print("    Taxe = \(inheritance.taxe.rounded())")
+//                    print("  Part d'héritage de \(child.displayName) = \(brut.rounded())")
+//                    print("    Taxe = \(inheritance.taxe.rounded())")
                     inheritances.append(Inheritance(person  : child,
                                                     percent : share,
                                                     brut    : brut,
@@ -310,7 +310,7 @@ extension Patrimoin {
                 }
             }
         }
-        print("  Taxe totale = ", inheritances.sum(for: \.tax).rounded())
+//        print("  Taxe totale = ", inheritances.sum(for: \.tax).rounded())
         return Succession(yearOfDeath  : year,
                           decedent     : decedent,
                           taxableValue : totalTaxableInheritance,

@@ -32,7 +32,8 @@ struct IncomeTaxesModel: Codable {
                              irppWithChildren    : Double,
                              irppWithoutChildren : Double)]
     
-    struct Model: Codable, Versionable, RateGridable {
+    struct Model: BundleCodable, Versionable, RateGridable {
+        static var defaultFileName : String = "IncomeTaxesModel.json"
         var version           : Version
         var grid              : RateGrid
         let turnOverRebate    : Double // 34.0 %
@@ -50,6 +51,10 @@ struct IncomeTaxesModel: Codable {
     
     // MARK: - Methods
 
+    static func load(from file: String) {
+        
+    }
+    
     /// Initializer les paramètres calculés pour les tranches d'imposition à partir des seuils et des taux
     mutating func initialize() throws {
         try model.initializeGrid()

@@ -23,17 +23,14 @@ struct Pension: Codable {
     
     // MARK: - Nested types
     
-    struct Model: Codable {
+    struct Model: BundleCodable {
+        static var defaultFileName : String = "RetirementModelConfig.json"
         var regimeGeneral: RegimeGeneral
         var regimeAgirc  : RegimeAgirc
         var reversion    : PensionReversion
     }
     
     // MARK: - Static properties
-
-    static var model: Model =
-        Bundle.main.decode(Model.self,
-                           from                 : "RetirementModelConfig.json",
-                           dateDecodingStrategy : .iso8601,
-                           keyDecodingStrategy  : .useDefaultKeys)
+    
+    static var model: Model = Model()
 }

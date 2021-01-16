@@ -28,8 +28,9 @@ struct Economy {
     typealias DictionaryOfRandomVariable = [RandomVariable: Double]
     
     // MARK: - Modèles statistiques de générateurs aléatoires
-    struct RandomizersModel: Codable {
-        
+    struct RandomizersModel: BundleCodable {
+        static var defaultFileName : String = "EconomyModelConfig.json"
+
         // MARK: - Properties
         
         var inflation   : ModelRandomizer<BetaRandomGenerator>
@@ -38,30 +39,30 @@ struct Economy {
         var simulateVolatility: Bool = false
         var securedVolatility : Double // % [0, 100]
         var stockVolatility   : Double // % [0, 100]
-
+        
         // MARK: - Initializers
         
-        init() {
-            self = Bundle.main.decode(RandomizersModel.self,
-                                      from                 : "EconomyModelConfig.json",
-                                      dateDecodingStrategy : .iso8601,
-                                      keyDecodingStrategy  : .useDefaultKeys)
-            inflation.rndGenerator.initialize()
-            securedRate.rndGenerator.initialize()
-            stockRate.rndGenerator.initialize()
+        /// Lit le modèle dans un fichier JSON du Bundle Main
+        func initialized() -> RandomizersModel {
+            var model = self
+            model.inflation.rndGenerator.initialize()
+            model.securedRate.rndGenerator.initialize()
+            model.stockRate.rndGenerator.initialize()
+            return model
         }
-
+        
         // MARK: - Methods
         
-        func storeItemsToFile(fileNamePrefix: String = "") {
-            // encode to JSON file
-            Bundle.main.encode(self,
-                               to                   : "EconomyModelConfig.json",
-                               dateEncodingStrategy : .iso8601,
-                               keyEncodingStrategy  : .useDefaultKeys)
-        }
+        /// Enregistre le modèle au format JSON dans un fichier du Bundle Main
+        /// - Parameter fileNamePrefix: préfixe du nom de fichier
+//        func saveToBundleFile(fileNamePrefix: String = "") {
+//            // encode to JSON file
+//            self.encodeToBundle(to                   : "EconomyModelConfig.json",
+//                        dateEncodingStrategy : .iso8601,
+//                        keyEncodingStrategy  : .useDefaultKeys)
+//        }
         
-        /// Remettre à zéro les historiques des tirages aléatoires
+        /// Vide l'ihistorique des tirages de chaque variable aléatoire du modèle
         fileprivate mutating func resetRandomHistory() {
             inflation.resetRandomHistory()
             securedRate.resetRandomHistory()
@@ -85,7 +86,8 @@ struct Economy {
             stockRate.setRandomValue(to: values[.stockRate]!)
         }
         
-        /// Retourne la suite de valeurs aléatoires tirées pour chque Run d'un Monté-Carlo
+        /// Retourne un dictionnaire donnant pour chaque variable aléatoire son historique de tirage
+        /// Retourne la suite de valeurs aléatoires tirées pour chaque Run d'un Monté-Carlo
         func randomHistories() -> [RandomVariable: [Double]?] {
             var dico = [RandomVariable: [Double]?]()
             for randomVariable in RandomVariable.allCases {
@@ -107,7 +109,7 @@ struct Economy {
         
         // MARK: - Properties
         
-        var randomizers        : RandomizersModel = RandomizersModel() // les modèles de générateurs aléatoires
+        var randomizers        : RandomizersModel = RandomizersModel().initialized() // les modèles de générateurs aléatoires
         var firstYearSampled   : Int = 0
         var securedRateSamples : [Double] = [ ] // les échatillons tirés aléatoirement à chaque simulation
         var stockRateSamples   : [Double] = [ ] // les échatillons tirés aléatoirement à chaque simulation

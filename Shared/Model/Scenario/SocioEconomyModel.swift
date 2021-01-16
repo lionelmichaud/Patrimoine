@@ -25,36 +25,39 @@ struct SocioEconomy {
     }
     
     typealias DictionaryOfRandomVariable = [RandomVariable: Double]
-
-    struct Model: Codable {
+    
+    struct Model: BundleCodable {
+        static var defaultFileName : String = "SocioEconomyModelConfig.json"
         var pensionDevaluationRate     : ModelRandomizer<BetaRandomGenerator>
         var nbTrimTauxPlein            : ModelRandomizer<DiscreteRandomGenerator>
         var expensesUnderEvaluationrate: ModelRandomizer<BetaRandomGenerator>
-
-        init() {
-            self = Bundle.main.decode(Model.self,
-                                      from                 : "SocioEconomyModelConfig.json",
-                                      dateDecodingStrategy : .iso8601,
-                                      keyDecodingStrategy  : .useDefaultKeys)
-            pensionDevaluationRate.rndGenerator.initialize()
-            nbTrimTauxPlein.rndGenerator.initialize()
-            expensesUnderEvaluationrate.rndGenerator.initialize()
+        
+        /// Lit le modèle dans un fichier JSON du Bundle Main
+        func initialized() -> Model {
+            var model = self
+            model.pensionDevaluationRate.rndGenerator.initialize()
+            model.nbTrimTauxPlein.rndGenerator.initialize()
+            model.expensesUnderEvaluationrate.rndGenerator.initialize()
+            return model
         }
         
-        func storeItemsToFile(fileNamePrefix: String = "") {
-            // encode to JSON file
-            Bundle.main.encode(self,
-                               to                   : "SocioEconomyModelConfig.json",
-                               dateEncodingStrategy : .iso8601,
-                               keyEncodingStrategy  : .useDefaultKeys)
-        }
+//        /// Enregistre le modèle au format JSON dans un fichier du Bundle Main
+//        /// - Parameter fileNamePrefix: préfixe du nom de fichier
+//        func saveToBundleFile(fileNamePrefix: String = "") {
+//            // encode to JSON file
+//            self.encodeToBundle(to                   : "SocioEconomyModelConfig.json",
+//                                dateEncodingStrategy : .iso8601,
+//                                keyEncodingStrategy  : .useDefaultKeys)
+//        }
         
+        /// Vide l'ihistorique des tirages de chaque variable aléatoire du modèle
         mutating func resetRandomHistory() {
             pensionDevaluationRate.resetRandomHistory()
             nbTrimTauxPlein.resetRandomHistory()
             expensesUnderEvaluationrate.resetRandomHistory()
         }
         
+        /// Générer les nombres aléatoires suivants et retourner leur valeur pour historisation
         mutating func next() -> DictionaryOfRandomVariable {
             var dicoOfRandomVariable = DictionaryOfRandomVariable()
             dicoOfRandomVariable[.pensionDevaluationRate]      = pensionDevaluationRate.next()
@@ -71,6 +74,8 @@ struct SocioEconomy {
             expensesUnderEvaluationrate.setRandomValue(to: values[.expensesUnderEvaluationrate]!)
         }
         
+        /// Retourne un dictionnaire donnant pour chaque variable aléatoire son historique de tirage
+        /// Retourne la suite de valeurs aléatoires tirées pour chaque Run d'un Monté-Carlo
         func randomHistories() -> [RandomVariable: [Double]?] {
             var dico = [RandomVariable: [Double]?]()
             for randomVariable in RandomVariable.allCases {
@@ -89,5 +94,5 @@ struct SocioEconomy {
     
     // MARK: - Static Properties
     
-    static var model: Model = Model()
+    static var model: Model = Model().initialized()
 }

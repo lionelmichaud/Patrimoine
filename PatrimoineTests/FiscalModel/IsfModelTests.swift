@@ -15,16 +15,12 @@ class IsfModelTests: XCTestCase {
     
     // MARK: Helpers
     
-    override class func setUp() { // 1.
-        // This is the setUp() class method.
-        // It is called before the first test method begins.
-        // Set up any overall initial state here.
+    override class func setUp() {
         super.setUp()
-        let testBundle = Bundle(for: IsfModelTests.self)
-        let model = testBundle.decode(IsfModel.Model.self,
-                                      from                 : "IsfModelTest.json",
-                                      dateDecodingStrategy : .iso8601,
-                                      keyDecodingStrategy  : .useDefaultKeys)
+        let model = IsfModel.Model(for: IsfModelTests.self,
+                                   from: "IsfModelTest.json",
+                                   dateDecodingStrategy : .iso8601,
+                                   keyDecodingStrategy  : .useDefaultKeys)
         IsfModelTests.isfTaxes = IsfModel(model: model)
         try! IsfModelTests.isfTaxes.initialize()
     }

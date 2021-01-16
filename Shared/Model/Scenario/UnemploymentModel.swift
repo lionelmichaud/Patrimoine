@@ -27,18 +27,15 @@ struct Unemployment: Codable {
         }
     }
     
-    struct Model: Codable {
+    struct Model: BundleCodable {
+        static var defaultFileName : String = "UnemploymentModelConfig.json"
         var indemniteLicenciement : LayoffCompensation
         var allocationChomage     : UnemploymentCompensation
     }
     
     // properties
     
-    static var model: Model =
-        Bundle.main.decode(Model.self,
-                           from                 : "UnemploymentModelConfig.json",
-                           dateDecodingStrategy : .iso8601,
-                           keyDecodingStrategy  : .useDefaultKeys)
+    static var model: Model = Model()
     // methods
     
     /// Indique si la personne à droit à une allocation et une indemnité
@@ -81,7 +78,8 @@ struct LayoffCompensation: Codable {
         var maxDiscount                        : Double = 246_816 // €
     }
     
-    struct Model: Codable {
+    struct Model: BundleCodable {
+        static var defaultFileName : String = "LayoffCompensationConfig.json"
         let legalGrid         : [SliceBase]
         let metallurgieGrid   : [SliceBase]
         let correctionAgeGrid : [SliceCorrection]

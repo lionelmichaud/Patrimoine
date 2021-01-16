@@ -31,7 +31,8 @@ struct IsfModel: Codable {
                             irppWithChildren    : Double,
                             irppWithoutChildren : Double)]
     
-    struct Model: Codable, Versionable, RateGridable {
+    struct Model: BundleCodable, Versionable, RateGridable {
+        static var defaultFileName : String = "RealEstateCapitalGainIrppModel.json"
         var version         : Version
         var grid            : RateGrid // barême de l'ISF
         let seuil           : Double // 1_300_000 // €

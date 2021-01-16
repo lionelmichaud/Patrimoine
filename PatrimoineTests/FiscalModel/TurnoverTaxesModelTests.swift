@@ -14,16 +14,12 @@ class TurnoverTaxesModelTests: XCTestCase {
     
     // MARK: Helpers
     
-    override class func setUp() { // 1.
-        // This is the setUp() class method.
-        // It is called before the first test method begins.
-        // Set up any overall initial state here.
+    override class func setUp() {
         super.setUp()
-        let testBundle = Bundle(for: TurnoverTaxesModelTests.self)
-        let model = testBundle.decode(TurnoverTaxesModel.Model.self,
-                                      from                 : "TurnoverTaxesModelTests.json",
-                                      dateDecodingStrategy : .iso8601,
-                                      keyDecodingStrategy  : .useDefaultKeys)
+        let model = TurnoverTaxesModel.Model(for: TurnoverTaxesModelTests.self,
+                                             from                 : "TurnoverTaxesModelTests.json",
+                                             dateDecodingStrategy : .iso8601,
+                                             keyDecodingStrategy  : .useDefaultKeys)
         TurnoverTaxesModelTests.turnoverTaxes = TurnoverTaxesModel(model: model)
     }
     

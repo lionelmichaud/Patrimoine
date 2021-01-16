@@ -112,7 +112,11 @@ extension Adult {
         }
         // somme des pensions brutes l'année précédent le décès
         // et de l'année courante pour le conjoint survivant
-        let yearBeforeDeath         = self.yearOfDeath - 1
+        let yearBeforeDeath = self.yearOfDeath - 1
+        guard isPensioned(during: yearBeforeDeath) else {
+            // la personne n'était pas pensionnée avant son décès => pas de pension de réversion
+            return nil
+        }
         let pensionDuDecede         = self.pension(during        : yearBeforeDeath,
                                                    withReversion : false)
         let pensionDuConjoint       = spouse.pension(during        : year,

@@ -19,7 +19,8 @@ struct PensionTaxesModel: Codable {
         case outOfBounds
     }
     
-    struct Model: Codable, Versionable {
+    struct Model: BundleCodable, Versionable {
+        static var defaultFileName : String = "PensionTaxesModel.json"
         var version           : Version
         let rebate            : Double // 10.0 // %
         let minRebate         : Double // 393   // € par déclarant

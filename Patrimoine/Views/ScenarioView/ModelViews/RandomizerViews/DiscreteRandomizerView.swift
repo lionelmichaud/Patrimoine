@@ -119,6 +119,6 @@ struct DiscreteRandomizerView: UIViewRepresentable {
 
 struct DiscreteRandomizerView_Previews: PreviewProvider {
     static var previews: some View {
-        DiscreteRandomizerView(randomizer: HumanLife.model.menLifeEpectation)
+        DiscreteRandomizerView(randomizer: HumanLife.model.menLifeExpectation)
     }
 }

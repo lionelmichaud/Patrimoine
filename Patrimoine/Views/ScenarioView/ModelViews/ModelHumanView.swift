@@ -9,7 +9,7 @@
 import SwiftUI
 
 struct ModelHumanView: View {
-    @State private var modelChoice: HumanLife.RandomVariable = .menLifeEpectation
+    @State private var modelChoice: HumanLife.RandomVariable = .menLifeExpectation
     
     var body: some View {
         VStack {
@@ -18,8 +18,8 @@ struct ModelHumanView: View {
                 .padding(.horizontal)
                 .pickerStyle(SegmentedPickerStyle())
             switch modelChoice {
-                case .menLifeEpectation:
-                    DiscreteRandomizerView(randomizer: HumanLife.model.menLifeEpectation)
+                case .menLifeExpectation:
+                    DiscreteRandomizerView(randomizer: HumanLife.model.menLifeExpectation)
                 
                 case .womenLifeExpectation:
                     DiscreteRandomizerView(randomizer: HumanLife.model.womenLifeExpectation)

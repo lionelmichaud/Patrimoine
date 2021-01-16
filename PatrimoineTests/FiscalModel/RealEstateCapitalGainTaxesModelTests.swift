@@ -15,16 +15,12 @@ class RealEstateCapitalGainTaxesModelTests: XCTestCase {
     
     // MARK: Helpers
     
-    override class func setUp() { // 1.
-        // This is the setUp() class method.
-        // It is called before the first test method begins.
-        // Set up any overall initial state here.
+    override class func setUp() { 
         super.setUp()
-        let testBundle = Bundle(for: RealEstateCapitalGainTaxesModelTests.self)
-        let model = testBundle.decode(RealEstateCapitalGainTaxesModel.Model.self,
-                                      from                 : "RealEstateCapitalGainTaxesModelTest.json",
-                                      dateDecodingStrategy : .iso8601,
-                                      keyDecodingStrategy  : .useDefaultKeys)
+        let model = RealEstateCapitalGainTaxesModel.Model(for: RealEstateCapitalGainTaxesModelTests.self,
+                                                          from                 : "RealEstateCapitalGainTaxesModelTest.json",
+                                                          dateDecodingStrategy : .iso8601,
+                                                          keyDecodingStrategy  : .useDefaultKeys)
         RealEstateCapitalGainTaxesModelTests.estateCapitalGainTaxes = RealEstateCapitalGainTaxesModel(model: model)
     }
     

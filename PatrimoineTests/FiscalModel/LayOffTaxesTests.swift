@@ -15,13 +15,9 @@ class LayOffTaxesTests: XCTestCase {
     
     // MARK: Helpers
     
-    override class func setUp() { // 1.
-        // This is the setUp() class method.
-        // It is called before the first test method begins.
-        // Set up any overall initial state here.
+    override class func setUp() {
         super.setUp()
-        let testBundle = Bundle(for: LayOffTaxesTests.self)
-        let model = testBundle.decode(LayOffTaxes.Model.self,
+        let model = LayOffTaxes.Model(for: LayOffTaxesTests.self,
                                       from                 : "LayOffTaxesModelTest.json",
                                       dateDecodingStrategy : .iso8601,
                                       keyDecodingStrategy  : .useDefaultKeys)
