@@ -13,8 +13,9 @@ struct PensionReversion: Codable {
     // MARK: - Nested types
     
     // https://www.retraite.com/dossier-retraite/pension-de-reversion/evolution-de-la-pension-de-reversion-dans-la-reforme-des-retraites.html
-    struct Model: Codable {
-        let tauxReversion: Double // 70% de la somme des deux pensions
+    struct Model: BundleCodable {
+        static var defaultFileName : String = "RetirementReversionModelConfig.json"
+        let tauxReversion: Double // [0, 100] // 70% de la somme des deux pensions
     }
     
     // MARK: - Properties

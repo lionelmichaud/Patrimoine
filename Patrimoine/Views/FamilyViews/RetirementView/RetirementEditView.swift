@@ -72,7 +72,7 @@ struct RegimeAgircEditView: View {
         Section(header: Text("RETRAITE - Régime complémentaire")) {
             HStack {
                 Stepper(value: $adultViewModel.ageAgircPension,
-                        in: Pension.model.regimeAgirc.model.ageMinimum ... Pension.model.regimeGeneral.ageTauxPleinLegal(birthYear: personViewModel.birthDate.year)!) {
+                        in: Retirement.model.regimeAgirc.model.ageMinimum ... Retirement.model.regimeGeneral.ageTauxPleinLegal(birthYear: personViewModel.birthDate.year)!) {
                     HStack {
                         Text("Age de liquidation")
                         Spacer()
@@ -115,7 +115,7 @@ struct RegimeGeneralEditView: View {
             // régime complémentaire
             HStack {
                 Stepper(value: $adultViewModel.agePension,
-                        in: Pension.model.regimeGeneral.model.ageMinimumLegal ... Pension.model.regimeGeneral.ageTauxPleinLegal(birthYear: personViewModel.birthDate.year)!) {
+                        in: Retirement.model.regimeGeneral.model.ageMinimumLegal ... Retirement.model.regimeGeneral.ageTauxPleinLegal(birthYear: personViewModel.birthDate.year)!) {
                     HStack {
                         Text("Age de liquidation")
                         Spacer()

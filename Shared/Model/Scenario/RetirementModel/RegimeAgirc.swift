@@ -39,7 +39,8 @@ struct RegimeAgirc: Codable {
         var coef               : Double
     }
     
-    struct Model: Codable {
+    struct Model: BundleCodable {
+        static var defaultFileName : String = "RetirementRegimeAgircModelConfig.json"
         let gridAvant62   : [SliceAvantAgeLegal]
         let gridApres62   : [SliceApresAgeLegal]
         let valeurDuPoint : Double // 1.2714
@@ -231,7 +232,7 @@ struct RegimeAgirc: Codable {
                         return nil
                     }
                     let ndTrimAvantAgeLegal =
-                        Pension.model.regimeGeneral.model.ageMinimumLegal * 4 - (yearOfPensionLiquid * 4 + monthOfPensionLiquid / 3)
+                        Retirement.model.regimeGeneral.model.ageMinimumLegal * 4 - (yearOfPensionLiquid * 4 + monthOfPensionLiquid / 3)
                     
                     // coefficient de minoration
                     guard let coef = coefDeMinorationAvantAgeLegal(ndTrimAvantAgeLegal: ndTrimAvantAgeLegal) else {
@@ -243,7 +244,7 @@ struct RegimeAgirc: Codable {
                 case dateOfAgeMinimumLegal... :
                     // nombre de trimestre manquant au moment de la liquidation de la pension pour pour obtenir le taux plein
                     guard var nbTrimManquantPourTauxPlein =
-                            Pension.model.regimeGeneral.nbTrimManquantPourTauxPlein(birthYear                : birthDate.year,
+                            Retirement.model.regimeGeneral.nbTrimManquantPourTauxPlein(birthYear                : birthDate.year,
                                                                                     lastKnownSituation       : lastKnownSituation,
                                                                                     dateOfRetirement         : dateOfRetirement,
                                                                                     dateOfEndOfUnemployAlloc : dateOfEndOfUnemployAlloc) else {
@@ -259,7 +260,7 @@ struct RegimeAgirc: Codable {
                         customLog.log(level: .default, "yearOfPensionLiquid OU monthOfPensionLiquid = nil")
                         return nil
                     }
-                    let nbTrimPostAgeLegalMin = (yearOfPensionLiquid - Pension.model.regimeGeneral.model.ageMinimumLegal) * 4
+                    let nbTrimPostAgeLegalMin = (yearOfPensionLiquid - Retirement.model.regimeGeneral.model.ageMinimumLegal) * 4
                         + monthOfPensionLiquid / 3
                     if nbTrimPostAgeLegalMin < 0 {
                         customLog.log(level: .error, "nb Trim Post Age Legal Min < 0 = \(nbTrimPostAgeLegalMin, privacy: .public)")
@@ -288,7 +289,7 @@ struct RegimeAgirc: Codable {
         }
         // customLog.log(level: .info, "date Of Age Minimum Agirc = \(dateOfAgeMinimumAgirc, privacy: .public)")
         
-        guard let dateOfAgeMinimumLegal = Pension.model.regimeGeneral.dateAgeMinimumLegal(birthDate:birthDate) else {
+        guard let dateOfAgeMinimumLegal = Retirement.model.regimeGeneral.dateAgeMinimumLegal(birthDate:birthDate) else {
             customLog.log(level: .default, "dateOfAgeMinimumLegal = nil")
             return nil
         }

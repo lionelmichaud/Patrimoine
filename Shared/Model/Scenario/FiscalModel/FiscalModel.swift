@@ -8,7 +8,7 @@
 
 import Foundation
 
-// MARK: - Modèle fiscal
+// MARK: - SINGLETON: Modèle fiscal
 struct Fiscal {
     
     // MARK: - Nested types
@@ -52,15 +52,6 @@ struct Fiscal {
             model.lifeInsuranceInheritance.initialize()
             return model
         }
-
-        /// Enregistre le modèle au format JSON dans un fichier du Bundle Main
-        /// - Parameter fileNamePrefix: préfixe du nom de fichier
-//        func saveToBundleFile(fileNamePrefix: String = "") {
-//            // encode to JSON file
-//            self.encodeToBundle(to                   : "FiscalModelConfig.json",
-//                        dateEncodingStrategy : .iso8601,
-//                        keyEncodingStrategy  : .useDefaultKeys)
-//        }
     }
         
     // MARK: - Static Properties

@@ -25,7 +25,7 @@ extension Adult {
     -> (brut: Double, net: Double) {
         // pension du régime général
         if let (brut, net) =
-            Pension.model.regimeGeneral.pension(birthDate                : birthDate,
+            Retirement.model.regimeGeneral.pension(birthDate                : birthDate,
                                                 dateOfRetirement         : dateOfRetirement,
                                                 dateOfEndOfUnemployAlloc : dateOfEndOfUnemployementAllocation,
                                                 dateOfPensionLiquid      : dateOfPensionLiquid,
@@ -41,7 +41,7 @@ extension Adult {
     func pensionRegimeAgirc(during year: Int)
     -> (brut: Double, net: Double) {
         if let pensionAgirc =
-            Pension.model.regimeAgirc.pension(lastAgircKnownSituation  : lastKnownAgircPensionSituation,
+            Retirement.model.regimeAgirc.pension(lastAgircKnownSituation  : lastKnownAgircPensionSituation,
                                               birthDate                : birthDate,
                                               lastKnownSituation       : lastKnownPensionSituation,
                                               dateOfRetirement         : dateOfRetirement,
@@ -124,7 +124,7 @@ extension Adult {
         let pensionTotaleAvantDeces = (brut: pensionDuDecede.brut + pensionDuConjoint.brut,
                                        net : pensionDuDecede.net  + pensionDuConjoint.net)
         // la pension du conjoint survivant, avec réversion, est limitée à un % de la somme des deux
-        let pensionBruteApresDeces = pensionTotaleAvantDeces.brut * Pension.model.reversion.model.tauxReversion / 100.0
+        let pensionBruteApresDeces = pensionTotaleAvantDeces.brut * Retirement.model.reversion.model.tauxReversion / 100.0
         // le complément de réversion est calculé en conséquence
         let reversionBrut = zeroOrPositive(pensionBruteApresDeces - pensionDuConjoint.brut)
         let reversionNet  = reversionBrut * (pensionTotaleAvantDeces.net / pensionTotaleAvantDeces.brut)

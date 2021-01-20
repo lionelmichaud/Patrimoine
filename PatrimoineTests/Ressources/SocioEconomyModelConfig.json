@@ -1,0 +1,68 @@
+{
+    "pensionDevaluationRate" :
+    {
+        "name"    : "Taux de dévaluation annuel des pensions de retraite",
+        "version" :
+        {
+            "version" : "0.1",
+            "date"    : "2020-10-12T23:00:00+01:00",
+            "comment" : null
+        },
+        "rndGenerator":
+        {
+            "minX"     : 0.5,
+            "maxX"     : 1.25,
+            "alpha"    : 3.0,
+            "beta"     : 1.7,
+            "pdfMax"   : null,
+            "cdfCurve" : null
+        },
+        "defaultValue" : 2.0,
+        "randomValue"  : 0.0
+    },
+    
+    "nbTrimTauxPlein":
+    {
+        "name"    : "Incrément de nb de trimestres pour obtenir le taux plein",
+        "version" :
+        {
+            "version" : "0.1",
+            "date"    : "2020-10-12T23:00:00+01:00",
+            "comment" : null
+        },
+        "rndGenerator":
+        {
+            "pdf" :
+            [
+                { "x": 0, "y": 0.65 },
+                { "x": 4, "y": 0.30 },
+                { "x": 8, "y": 0.05 }
+            ],
+            "pc" : null
+        },
+        "defaultValue" : 4,
+        "randomValue"  : 0.0
+    },
+    
+    "expensesUnderEvaluationrate" :
+    {
+        "name"    : "Taux de sévérisation des dépenses",
+        "version" :
+        {
+            "version" : "0.1",
+            "date"    : "2020-10-12T23:00:00+01:00",
+            "comment" : null
+        },
+        "rndGenerator":
+        {
+            "minX"     : 0.0,
+            "maxX"     : 5.0,
+            "alpha"    : 1.0,
+            "beta"     : 2.0,
+            "pdfMax"   : null,
+            "cdfCurve" : null
+        },
+        "defaultValue" : 10.0,
+        "randomValue"  : 0.0
+    }
+}

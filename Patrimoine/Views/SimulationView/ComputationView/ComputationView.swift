@@ -48,7 +48,7 @@ struct ComputationView: View {
                         .pickerStyle(SegmentedPickerStyle())
                         .onChange(of: simulation.mode) { newMode in
                             Patrimoin.setSimulationMode(to: newMode)
-                            Pension.setSimulationMode(to: newMode)
+                            Retirement.setSimulationMode(to: newMode)
                             LifeExpense.setSimulationMode(to: newMode)
                         }
                     switch simulation.mode {

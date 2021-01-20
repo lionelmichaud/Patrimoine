@@ -163,6 +163,7 @@ struct BalanceSheetLine {
     
     init(withYear year             : Int,
          withPatrimoine patrimoine : Patrimoin) {
+//        autoreleasepool {
         self.year = year
         
         // actifs
@@ -199,6 +200,7 @@ struct BalanceSheetLine {
             // populate loan liabilities
             appendToLiabilities(.loans, liability, year)
         }
+//        }
     }
     
     // MARK: - Methods

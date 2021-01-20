@@ -49,9 +49,9 @@ class AdultViewModel: ObservableObject {
     @Published var hasAllocationSupraLegale  = false
     @Published var allocationSupraLegale     = 0.0
     //@Published var dateOfEndOfUnemployAlloc  = Date()
-    @Published var ageAgircPension           = Pension.model.regimeGeneral.model.ageMinimumLegal
+    @Published var ageAgircPension           = Retirement.model.regimeGeneral.model.ageMinimumLegal
     @Published var trimAgircPension          = 0
-    @Published var agePension                = Pension.model.regimeGeneral.model.ageMinimumLegal
+    @Published var agePension                = Retirement.model.regimeGeneral.model.ageMinimumLegal
     @Published var trimPension               = 0
     @Published var nbYearOfDepend            = 0
     @Published var revIndex                  = 0

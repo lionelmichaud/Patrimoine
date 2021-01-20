@@ -8,7 +8,7 @@
 
 import Foundation
 
-// MARK: - SocioEconomic Model
+// MARK: - SINGLETON: SocioEconomic Model
 
 struct SocioEconomy {
     
@@ -40,15 +40,6 @@ struct SocioEconomy {
             model.expensesUnderEvaluationrate.rndGenerator.initialize()
             return model
         }
-        
-//        /// Enregistre le modèle au format JSON dans un fichier du Bundle Main
-//        /// - Parameter fileNamePrefix: préfixe du nom de fichier
-//        func saveToBundleFile(fileNamePrefix: String = "") {
-//            // encode to JSON file
-//            self.encodeToBundle(to                   : "SocioEconomyModelConfig.json",
-//                                dateEncodingStrategy : .iso8601,
-//                                keyEncodingStrategy  : .useDefaultKeys)
-//        }
         
         /// Vide l'ihistorique des tirages de chaque variable aléatoire du modèle
         mutating func resetRandomHistory() {

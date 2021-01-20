@@ -210,15 +210,15 @@ struct SocialAccounts {
             
             /// ajouter une nouvelle ligne pour une nouvelle année
             do {
-                let newCashFlowLine = try CashFlowLine(withYear                              : year,
-                                                       withFamily                            : family,
-                                                       withPatrimoine                        : patrimoine,
-                                                       taxableIrppRevenueDelayedFromLastyear : lastYearDelayedTaxableIrppRevenue)
-                cashFlowArray.append(newCashFlowLine)
-                // ajouter les éventuelles successions survenues pendant l'année à la liste globale
-                legalSuccessions        += newCashFlowLine.successions
-                // ajouter les éventuelles transmissions d'assurance vie survenues pendant l'année à la liste globale
-                lifeInsSuccessions += newCashFlowLine.lifeInsSuccessions
+                    let newCashFlowLine = try CashFlowLine(withYear                              : year,
+                                                           withFamily                            : family,
+                                                           withPatrimoine                        : patrimoine,
+                                                           taxableIrppRevenueDelayedFromLastyear : lastYearDelayedTaxableIrppRevenue)
+                    cashFlowArray.append(newCashFlowLine)
+                    // ajouter les éventuelles successions survenues pendant l'année à la liste globale
+                    legalSuccessions   += newCashFlowLine.successions
+                    // ajouter les éventuelles transmissions d'assurance vie survenues pendant l'année à la liste globale
+                    lifeInsSuccessions += newCashFlowLine.lifeInsSuccessions
             } catch {
                 /// il n'y a plus de Cash => on arrête la simulation
                 lastYear = year
@@ -230,13 +230,13 @@ struct SocialAccounts {
                                          withbalanceSheetLine : balanceArray.last!)
                 return currentKPIs // arrêter la construction de la table
             }
-            
+
             // construire la ligne annuelle de Bilan de fin d'année
             //-----------------------------------------------------
             let newBalanceSheetLine = BalanceSheetLine(withYear       : year,
                                                        withPatrimoine : patrimoine)
             balanceArray.append(newBalanceSheetLine)
-            
+
             if family.nbOfAdultAlive(atEndOf: year) < family.nbOfAdultAlive(atEndOf: year-1) {
                 // décès d'un adulte
                 // gérer les KPI n°1, 2, 3 au décès de l'un ou des 2 conjoints

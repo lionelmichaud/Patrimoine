@@ -8,13 +8,20 @@
 
 import Foundation
 import RNGExtension
+import os
 
-// MARK: - Economy Model
+private let customLog = Logger(subsystem: "me.michaud.lionel.Patrimoine", category: "Model.Economy")
+
+// MARK: - SINGLETON: Economy Model
 
 struct Economy {
     
     // MARK: - Nested Types
 
+    enum ModelError: Error {
+        case outOfBounds
+    }
+    
     enum RandomVariable: String, PickableEnum, CaseIterable {
         case inflation   = "Inflation"
         case securedRate = "Rendements Sûrs"
@@ -52,15 +59,6 @@ struct Economy {
         }
         
         // MARK: - Methods
-        
-        /// Enregistre le modèle au format JSON dans un fichier du Bundle Main
-        /// - Parameter fileNamePrefix: préfixe du nom de fichier
-//        func saveToBundleFile(fileNamePrefix: String = "") {
-//            // encode to JSON file
-//            self.encodeToBundle(to                   : "EconomyModelConfig.json",
-//                        dateEncodingStrategy : .iso8601,
-//                        keyEncodingStrategy  : .useDefaultKeys)
-//        }
         
         /// Vide l'ihistorique des tirages de chaque variable aléatoire du modèle
         fileprivate mutating func resetRandomHistory() {
@@ -111,40 +109,51 @@ struct Economy {
         
         var randomizers        : RandomizersModel = RandomizersModel().initialized() // les modèles de générateurs aléatoires
         var firstYearSampled   : Int = 0
+        // utilisés uniqument si mode == .random && randomizers.simulateVolatility
         var securedRateSamples : [Double] = [ ] // les échatillons tirés aléatoirement à chaque simulation
         var stockRateSamples   : [Double] = [ ] // les échatillons tirés aléatoirement à chaque simulation
         
         // MARK: - Methods
         
+        /// Retourne les taux pour une année donnée
+        /// - Parameters:
+        ///   - year: année
+        ///   - mode: mode de simulation : Monté-Carlo ou Détermnisite
+        /// - Returns: Taux Oblig / Taux Action
+        /// - Important: Les taux changent d'une année à l'autre seuelement en mode Monté-Carlo
+        ///             et si la ‘volatilité‘ à été activée dans le fichier de conf
         func rates(in year       : Int,
                    withMode mode : SimulationModeEnum)
         -> (securedRate : Double,
             stockRate   : Double) {
             if mode == .random && randomizers.simulateVolatility {
+                // utiliser la séquence tirée aléatoirement au début du run par la fonction 'generateRandomSamples'
                 return (securedRate : securedRateSamples[year - firstYearSampled],
                         stockRate   : stockRateSamples[year - firstYearSampled])
                 
             } else {
+                // utiliser la valeur constante pour toute la durée du run
                 return (securedRate : randomizers.securedRate.value(withMode: mode),
                         stockRate   : randomizers.stockRate.value(withMode: mode))
             }
         }
         
-        /// Tirer au hazard une valeur pour chaque année
+        /// Tirer au hazard les taux pour chaque année
         /// - Parameters:
         ///   - firstYear: première année
         ///   - lastYear: dernière année
         ///   - withMode: mode de simulation qui détermine quelle sera la valeure moyenne retenue
         private mutating func generateRandomSamples(withMode  : SimulationModeEnum,
                                                     firstYear : Int,
-                                                    lastYear  : Int) {
-            if randomizers.simulateVolatility {
-                guard lastYear >= firstYear else {
-                    fatalError("nbOfYears ≤ 0 in generateRandomSamples")
-                }
-                firstYearSampled        = firstYear
-                securedRateSamples      = []
-                stockRateSamples        = []
+                                                    lastYear  : Int) throws {
+            guard lastYear >= firstYear else {
+                customLog.log(level: .fault, "generateRandomSamples: lastYear < firstYear")
+                throw ModelError.outOfBounds
+            }
+            firstYearSampled        = firstYear
+            securedRateSamples      = []
+            stockRateSamples        = []
+            if withMode == .random && randomizers.simulateVolatility {
                 for _ in firstYear...lastYear {
                     securedRateSamples.append(Random.default.normal.next(mu   : randomizers.securedRate.value(withMode: withMode),
                                                                          sigma: randomizers.securedVolatility))
@@ -155,6 +164,7 @@ struct Economy {
         }
         
         /// Remettre à zéro les historiques des tirages aléatoires
+        /// - Note : Appeler avant de lancer une simulation
         mutating func resetRandomHistory() {
             randomizers.resetRandomHistory()
         }
@@ -164,32 +174,39 @@ struct Economy {
         ///   - firstYear: première année
         ///   - lastYear: dernière année
         /// - Returns: dictionnaire des échantillon de valeurs moyennes pour le prochain Run
+        /// - Note : Appeler avant de lancer un Run de simulation
         mutating func nextRun(withMode  : SimulationModeEnum,
                               firstYear : Int,
-                              lastYear  : Int) -> DictionaryOfRandomVariable {
+                              lastYear  : Int) throws -> DictionaryOfRandomVariable {
+            guard lastYear >= firstYear else {
+                customLog.log(level: .fault, "nextRun: lastYear < firstYear")
+                throw ModelError.outOfBounds
+            }
             // tirer au hazard une nouvelle valeure moyenne pour le prochain run
             let dico = randomizers.next()
             // à partir de la nouvelle valeure moyenne, tirer au hazard une valeur pour chaque année
-            generateRandomSamples(withMode  : withMode,
-                                  firstYear : firstYear,
-                                  lastYear  : lastYear)
+            try generateRandomSamples(withMode  : withMode,
+                                      firstYear : firstYear,
+                                      lastYear  : lastYear)
             return dico
         }
 
-        /// Définir une valeur pour la variable aléatoire avant un rejeu
+        /// Définir une valeur pour chaque variable aléatoire avant un rejeu
         /// - Parameters:
         ///   - value: nouvelle valeure à rejouer
         ///   - firstYear: première année
         ///   - lastYear: dernière année
+        /// - Note : Appeler avant de rejouer un Run de simulation
         mutating func setRandomValue(to values : DictionaryOfRandomVariable,
                                      withMode  : SimulationModeEnum,
                                      firstYear : Int,
-                                     lastYear  : Int) {
+                                     lastYear  : Int) throws {
+            // Définir une valeur pour chaque variable aléatoire avant un rejeu
             randomizers.setRandomValue(to: values)
             // à partir de la nouvelle valeure moyenne, tirer au hazard une valeur pour chaque année
-            generateRandomSamples(withMode  : withMode,
-                                  firstYear : firstYear,
-                                  lastYear  : lastYear)
+            try generateRandomSamples(withMode  : withMode,
+                                      firstYear : firstYear,
+                                      lastYear  : lastYear)
         }
     }
     

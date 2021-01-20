@@ -87,39 +87,41 @@ struct CashFlowLine {
         sciCashFlowLine = SciCashFlowLine(withYear : year,
                                           withSCI  : patrimoine.assets.sci)
         
-        /// INCOME: populate Ages and Work incomes
-        populateIncomes(of: family)
-        
-        /// REAL ESTATE: populate produit de vente, loyers, taxes sociales et taxes locales des bien immobiliers
-        populateRealEstateCashFlow(of: patrimoine)
-        
-        /// SCPI: populate produit de vente, dividendes, taxes sociales des SCPI
-        populateScpiCashFlow(of: patrimoine)
-        
-        /// PERIODIC INVEST: populate revenue, des investissements financiers périodiques
-        populatePeriodicInvestmentsCashFlow(of                  : patrimoine,
-                                            lifeInsuranceRebate : &lifeInsuranceRebate)
-        
-        // Note: les intérêts des investissements financiers libres sont capitalisés
-        // => ne génèrent des charges sociales et de l'IRPP qu'au moment de leur liquidation
-        
-        /// IRPP: calcule de l'impot sur l'ensemble des revenus
-        populateIrpp(of: family)
-        
-        /// ISF: calcule de l'impot sur la fortune
-        populateISF(of   : family,
-                    with : patrimoine,
-                    for  : year)
-        /// EXPENSES: compute and populate family expenses
-        lifeExpenses.namedValueTable.namedValues = family.expenses.namedValueTable(atEndOf: year)
-        
-        /// LOAN: populate remboursement d'emprunts
-        populateLoanCashFlow(of: patrimoine)
-        
-        /// SUCCESSIONS: calcule des droits de successions y.c. assurances vies + réalise la tranmission de patrimoine
-        manageDeath(of   : family,
-                    with : patrimoine,
-                    for  : year)
+        autoreleasepool {
+            /// INCOME: populate Ages and Work incomes
+            populateIncomes(of: family)
+            
+            /// REAL ESTATE: populate produit de vente, loyers, taxes sociales et taxes locales des bien immobiliers
+            populateRealEstateCashFlow(of: patrimoine)
+            
+            /// SCPI: populate produit de vente, dividendes, taxes sociales des SCPI
+            populateScpiCashFlow(of: patrimoine)
+            
+            /// PERIODIC INVEST: populate revenue, des investissements financiers périodiques
+            populatePeriodicInvestmentsCashFlow(of                  : patrimoine,
+                                                lifeInsuranceRebate : &lifeInsuranceRebate)
+            
+            // Note: les intérêts des investissements financiers libres sont capitalisés
+            // => ne génèrent des charges sociales et de l'IRPP qu'au moment de leur liquidation
+            
+            /// IRPP: calcule de l'impot sur l'ensemble des revenus
+            populateIrpp(of: family)
+            
+            /// ISF: calcule de l'impot sur la fortune
+            populateISF(of   : family,
+                        with : patrimoine,
+                        for  : year)
+            /// EXPENSES: compute and populate family expenses
+            lifeExpenses.namedValueTable.namedValues = family.expenses.namedValueTable(atEndOf: year)
+            
+            /// LOAN: populate remboursement d'emprunts
+            populateLoanCashFlow(of: patrimoine)
+            
+            /// SUCCESSIONS: calcule des droits de successions y.c. assurances vies + réalise la tranmission de patrimoine
+            manageDeath(of   : family,
+                        with : patrimoine,
+                        for  : year)
+        }
         
         /// FREE INVEST: populate revenue, des investissements financiers libres et investir/retirer le solde net du cash flow de l'année
         try manageYearlyNetCashFlow(of                  : patrimoine,
@@ -128,7 +130,6 @@ struct CashFlowLine {
         #if DEBUG
         //Swift.print("Year = \(year), Revenus = \(sumOfrevenues), Expenses = \(sumOfExpenses), Net cash flow = \(netCashFlow)")
         #endif
-        
     }
     
     // MARK: - methods

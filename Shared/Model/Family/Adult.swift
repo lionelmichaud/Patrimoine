@@ -283,7 +283,7 @@ final class Adult: Person { // swiftlint:disable:this type_body_length
     var pensionRegimeGeneral: (brut: Double, net: Double) {
         // pension du régime général
         if let (brut, net) =
-            Pension.model.regimeGeneral.pension(birthDate                : birthDate,
+            Retirement.model.regimeGeneral.pension(birthDate                : birthDate,
                                                 dateOfRetirement         : dateOfRetirement,
                                                 dateOfEndOfUnemployAlloc : dateOfEndOfUnemployementAllocation,
                                                 dateOfPensionLiquid      : dateOfPensionLiquid,
@@ -310,7 +310,7 @@ final class Adult: Person { // swiftlint:disable:this type_body_length
     @Published var lastKnownAgircPensionSituation = RegimeAgircSituation()
     var pensionRegimeAgirc: (brut: Double, net: Double) {
         if let pensionAgirc =
-            Pension.model.regimeAgirc.pension(lastAgircKnownSituation  : lastKnownAgircPensionSituation,
+            Retirement.model.regimeAgirc.pension(lastAgircKnownSituation  : lastKnownAgircPensionSituation,
                                               birthDate                : birthDate,
                                               lastKnownSituation       : lastKnownPensionSituation,
                                               dateOfRetirement         : dateOfRetirement,

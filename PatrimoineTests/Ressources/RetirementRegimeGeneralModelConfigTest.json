@@ -1,0 +1,65 @@
+{
+    "ageMinimumLegal"      : 62,
+    "nbOfYearForSAM"       : 25,
+    "maxReversionRate"     : 50.0,
+    "decoteParTrimestre"   : 0.625,
+    "surcoteParTrimestre"  : 1.25,
+    "maxNbTrimestreDecote" : 20,
+    "nbTrimNonIndemniseGrid" : [
+        {
+            "nbTrimestreAcquis"  : 0,
+            "nbTrimNonIndemnise" : 4
+        },
+        {
+            "nbTrimestreAcquis"  : 80,
+            "nbTrimNonIndemnise" : 20
+        }
+    ],
+    "dureeDeReferenceGrid" : [
+        {
+            "birthYear"    : 1953,
+            "ndTrimestre"  : 165,
+            "ageTauxPlein" : 66
+        },
+        {
+            "birthYear"    : 1954,
+            "ndTrimestre"  : 165,
+            "ageTauxPlein" : 67
+        },
+        {
+            "birthYear"    : 1955,
+            "ndTrimestre"  : 166,
+            "ageTauxPlein" : 67
+        },
+        {
+            "birthYear"    : 1958,
+            "ndTrimestre"  : 167,
+            "ageTauxPlein" : 67
+        },
+        {
+            "birthYear"    : 1961,
+            "ndTrimestre"  : 168,
+            "ageTauxPlein" : 67
+        },
+        {
+            "birthYear"    : 1964,
+            "ndTrimestre"  : 169,
+            "ageTauxPlein" : 68
+        },
+        {
+            "birthYear"    : 1967,
+            "ndTrimestre"  : 170,
+            "ageTauxPlein" : 69
+        },
+        {
+            "birthYear"    : 1970,
+            "ndTrimestre"  : 171,
+            "ageTauxPlein" : 70
+        },
+        {
+            "birthYear"    : 1973,
+            "ndTrimestre"  : 172,
+            "ageTauxPlein" : 71
+        }
+    ]
+}

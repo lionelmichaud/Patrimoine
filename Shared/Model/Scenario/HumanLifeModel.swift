@@ -8,7 +8,7 @@
 
 import Foundation
 
-// MARK: - Human Life Model
+// MARK: - SINGLETON: Human Life Model
 
 struct HumanLife {
     

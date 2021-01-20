@@ -13,13 +13,14 @@ import Foundation
 // MARK: - DateComponents from Int
 // https://medium.com/@rserentill/dealing-with-relative-dates-in-swift-the-cool-way-5903a7af2461
 extension Int {
-    var seconds : DateComponents { .init(second : self) }
-    var minutes : DateComponents { .init(minute : self) }
-    var hours   : DateComponents { .init(hour   : self) }
-    var days    : DateComponents { .init(day    : self) }
-    var weeks   : DateComponents { .init(day   : self * 7) }
-    var months  : DateComponents { .init(month  : self) }
-    var years   : DateComponents { .init(year   : self) }
+    var seconds  : DateComponents { .init(second : self) }
+    var minutes  : DateComponents { .init(minute : self) }
+    var hours    : DateComponents { .init(hour   : self) }
+    var days     : DateComponents { .init(day    : self) }
+    var weeks    : DateComponents { .init(day    : self * 7) }
+    var months   : DateComponents { .init(month  : self) }
+    var quarters : DateComponents { .init(month  : self * 3) }
+    var years    : DateComponents { .init(year   : self) }
 }
 // MARK: - Relative Dates from Now or from a another date
 // https://medium.com/@rserentill/dealing-with-relative-dates-in-swift-the-cool-way-5903a7af2461

@@ -1,52 +1,14 @@
 //
-//  Unemployment.swift
-//  Patrimoine
+//  LayoffCompensation.swift
+//  PatrimoineTests
 //
-//  Created by Lionel MICHAUD on 13/07/2020.
-//  Copyright © 2020 Lionel MICHAUD. All rights reserved.
+//  Created by Lionel MICHAUD on 16/01/2021.
+//  Copyright © 2021 Lionel MICHAUD. All rights reserved.
 //
 
 import Foundation
 
-// MARK: - Modèle de Chomage
-struct Unemployment: Codable {
-    
-    // nested types
-    
-    enum Cause: String, PickableEnum, Codable, Hashable {
-        case demission                          = "Démission"
-        case licenciement                       = "Licenciement"
-        case ruptureConventionnelleIndividuelle = "Rupture individuelle"
-        case ruptureConventionnelleCollective   = "Rupture collective"
-        case planSauvegardeEmploi               = "PSE"
-        
-        // methods
-        
-        var pickerString: String {
-            return self.rawValue
-        }
-    }
-    
-    struct Model: BundleCodable {
-        static var defaultFileName : String = "UnemploymentModelConfig.json"
-        var indemniteLicenciement : LayoffCompensation
-        var allocationChomage     : UnemploymentCompensation
-    }
-    
-    // properties
-    
-    static var model: Model = Model()
-    // methods
-    
-    /// Indique si la personne à droit à une allocation et une indemnité
-    /// - Parameter cause: cause de la cessation d'activité
-    /// - Returns: vrai si a droit
-    static func canReceiveAllocation(for cause: Cause) -> Bool {
-        cause != .demission
-    }
-}
-
-// MARK: - Indeminité de licenciement
+// MARK: - Modèle d'Indeminité de licenciement
 // https://www.juritravail.com/Actualite/respecter-salaire-minimum/Id/221441
 // https://www.service-public.fr/particuliers/vosdroits/F408
 // https://www.service-public.fr/particuliers/vosdroits/F987
@@ -161,7 +123,7 @@ struct LayoffCompensation: Codable {
         // indemnité brute légale basée sur le dernier salaire brut
         return nbMonth * yearlyWorkIncomeBrut / 12.0
     }
-
+    
     /// Calcul de l'indemnité de licenciement selon la Convention de la Métalurgie ou Supra-convention
     /// - Parameters:
     ///   - actualCompensationBrut: indemnité licenciement brute si > convention collective
@@ -225,145 +187,5 @@ struct LayoffCompensation: Codable {
                 brut    : brutReel,
                 net     : net,
                 taxable : taxable)
-    }
-}
-
-// MARK: - Allocation chomage
-// https://www.service-public.fr/particuliers/vosdroits/F14860
-// https://www.unedic.org/indemnisation/vos-questions-sur-indemnisation-assurance-chomage/pendant-combien-de-temps-puis-je-etre-indemnisee
-// https://www.unedic.org/indemnisation/vos-questions-sur-indemnisation-assurance-chomage/comment-est-calculee-mon-allocation-chomage
-// https://www.legisocial.fr/actualites-sociales/1097-le-nouveau-regime-differe-specifique-dindemnisation-pole-emploi-est-en-vigueur.html
-// https://www.cadremploi.fr/editorial/conseils/droit-du-travail/detail/article/demission-legitime-et-allocations-chomage.html
-// https://www.cadremploi.fr/editorial/conseils/droit-du-travail/detail/article/ce-que-les-cadres-doivent-savoir-sur-la-nouvelle-convention-dassurance-chomage0.html
-// https://www.cadremploi.fr/editorial/conseils/droit-du-travail/detail/article/allocations-chomage-combien-toucheriez-vous.html
-
-struct UnemploymentCompensation: Codable {
-    
-    // nested types
-    
-    struct DurationSlice: Codable {
-        let fromAge             : Int
-        let maxDuration         : Int // nb de mois d'indemnisation
-        let reduction           : Double // % de dégressivité après le délai de reductionAfter
-        let reductionAfter      : Int // nd de mois d'indemnisation avant dégressivité
-        let reductionSeuilAlloc : Double // € d'allocation SJR min pour se voir appliqué la dégressivité
-    }
-    
-    struct DelayModel: Codable {
-        let delaiAttente                        : Int // 7 // L'ARE ne peut pas être versée avant la fin d'un délai d'attente, fixé à 7 jours
-        let ratioDiffereSpecifique              : Double // 94,4 // nombre de jours obtenu en divisant le montant de l'indemnité prise en compte par 94,4
-        let maxDiffereSpecifique                : Int // 150 // le différé ne doit pas dépasser 150 jours calendaires (5 mois)
-        let maxDiffereSpecifiqueLicenciementEco : Int // 75 // ou, en cas de licenciement pour motif économique, 75 jours calendaires.
-    }
-    
-    struct AmountModel: Codable {
-        let case1Rate          : Double // 40.4 // % du salaire journalier de référence
-        let case1Fix           : Double // 12.0 // € par jour
-        let case2Rate          : Double // 57.0 // % du salaire journalier de référence
-        let minAllocation      : Double // 29.26 // € par jour
-        let maxAllocationPcent : Double // 75.0 // % du salaire journalier de référence
-        let maxAllocationEuro  : Double // 253.14 // en €
-    }
-    
-    struct Model: Codable {
-        let durationGrid : [DurationSlice]
-        let delayModel   : DelayModel
-        let amountModel  : AmountModel
-    }
-    
-    // properties
-    
-    var model: Model
-    
-    // methods
-    
-    /// Durée d'indemnisation en mois
-    /// - Parameter age: age au moment du licenciement
-    /// - Returns: durée d'indemnisation en mois
-    func durationInMonth(age: Int) -> Int {
-        guard let slice = model.durationGrid.last(where: { $0.fromAge <= age }) else {
-            fatalError()
-        }
-        return slice.maxDuration
-    }
-    
-    /// Différé spécifique d'indemnisation (ne réduit pas la durée totale d'indemnisation)
-    /// - Returns: durée en nombre de jours du Différé spécifique d'indemnisation
-    /// - Parameters:
-    ///   - SJR: Salaire Journalier de Référence
-    ///   - compensationSupralegal: indemnités de rupture de contrat en plus des indemnités d'origine légale
-    ///   - causeOfRetirement: cause de la cessation d'activité
-    /// - Returns: Différé spécifique d'indemnisation en jours
-    /// - Note: Lorsque vous percevez des indemnités de rupture de contrat en plus des indemnités d'origine légale,
-    ///           un différé spécifique d'indemnisation est appliqué sur ces sommes.
-    ///           - Ne diminue pas la durée totale d'indemnisation.
-    ///           - Repousse uniquement le point de départ.
-    func differeSpecifique(SJR                    : Double,
-                           compensationSupralegal : Double,
-                           causeOfRetirement      : Unemployment.Cause) -> Int {
-        let delay = (compensationSupralegal / model.delayModel.ratioDiffereSpecifique).rounded(.up)
-        print("delay = \(delay)")
-        // plafonnemment différent selon la cause de licenciement
-        let plafond = causeOfRetirement == .planSauvegardeEmploi ? model.delayModel.maxDiffereSpecifiqueLicenciementEco : model.delayModel.maxDiffereSpecifique
-        print("plafon = \(plafond)")
-        print("retenu = \(min(Int(delay), plafond))")
-        return min(Int(delay), plafond)
-    }
-    
-    /// Période avant réduction de l'allocation journalière
-    /// - Parameters:
-    ///   - age: age au moment du licenciement
-    ///   - SJR: Salaire Journalier de Référence
-    /// - Returns: Période avant réduction de l'allocation journalière en mois
-    func reductionAfter(age: Int, SJR: Double) -> Int? {
-        guard let slice = model.durationGrid.last(where: { $0.fromAge <= age }) else {
-            fatalError()
-        }
-        // réduction application seulement au-dessus d'un certain seuil d'allocation
-        let daylyAlloc = daylyAllocBeforeReduction(SJR: SJR).brut
-        if daylyAlloc >= slice.reductionSeuilAlloc && slice.reduction != 0 {
-            return slice.reductionAfter
-        } else {
-            return nil
-        }
-    }
-    
-    /// Coefficient de réduction de l'allocation journalière
-    /// - Parameters:
-    ///   - age: age au moment du licenciement
-    ///   - daylyAlloc: allocation journalière
-    /// - Returns: Coefficient de réduction de l'allocation journalière et durée de carence avant réduction
-    func reduction(age: Int, daylyAlloc: Double) ->
-    (percentReduc: Double, afterMonth: Int?) {
-        guard let slice = model.durationGrid.last(where: { $0.fromAge <= age }) else {
-            fatalError()
-        }
-        // réduction application seulement au-dessus d'un certain seuil d'allocation
-        if daylyAlloc >= slice.reductionSeuilAlloc && slice.reduction != 0 {
-            return (percentReduc : slice.reduction,
-                    afterMonth   : slice.reductionAfter)
-        } else {
-            return (percentReduc : 0.0,
-                    afterMonth   : nil)
-        }
-    }
-    
-    func daylyAllocBeforeReduction(SJR: Double)
-    -> (brut: Double,
-        net : Double) {
-        
-        // brute avant charges sociales
-        let alloc1  = SJR * model.amountModel.case1Rate / 100.0 + model.amountModel.case1Fix
-        let alloc2  = SJR * model.amountModel.case2Rate / 100.0
-        let alloc   = max(alloc1, alloc2)
-        let plafond = max(SJR * model.amountModel.maxAllocationPcent / 100.0,
-                          model.amountModel.maxAllocationEuro)
-        let brut    = alloc.clamp(low  : model.amountModel.minAllocation,
-                                  high : plafond)
-        
-        // nette de charges sociales
-        let net = try! Fiscal.model.allocationChomageTaxes.net(brut : brut,
-                                                               SJR  : SJR)
-        return (brut: brut, net: net)
     }
 }

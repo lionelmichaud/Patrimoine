@@ -22,9 +22,105 @@ class EconomyModelTests: XCTestCase {
                            dateEncodingStrategy: .iso8601,
                            keyEncodingStrategy: .useDefaultKeys)
     }
+    func test_generation_aleatoire_outOfBounds() {
+        var model = Economy.Model()
+        
+        XCTAssertThrowsError(try model.nextRun(withMode: .random,
+                                               firstYear: 2030,
+                                               lastYear: 2029)) { error in
+            XCTAssertEqual(error as! Economy.ModelError, Economy.ModelError.outOfBounds)
+        }
+        XCTAssertThrowsError(try model.nextRun(withMode: .deterministic,
+                                               firstYear: 2030,
+                                               lastYear: 2029)) { error in
+            XCTAssertEqual(error as! Economy.ModelError, Economy.ModelError.outOfBounds)
+        }
+        
+        var dico = Economy.DictionaryOfRandomVariable()
+        dico[.inflation] = 0.0
+        dico[.securedRate] = 0.0
+        dico[.stockRate]  = 0.0
+        XCTAssertThrowsError(try model.setRandomValue(to: dico,
+                                                      withMode: .random,
+                                                      firstYear: 2030,
+                                                      lastYear: 2029)) { error in
+            XCTAssertEqual(error as! Economy.ModelError, Economy.ModelError.outOfBounds)
+        }
+        XCTAssertThrowsError(try model.setRandomValue(to: dico,
+                                                      withMode: .deterministic,
+                                                      firstYear: 2030,
+                                                      lastYear: 2029)) { error in
+            XCTAssertEqual(error as! Economy.ModelError, Economy.ModelError.outOfBounds)
+        }
+    }
+    
+    func test_generation_aleatoire() throws {
+        var model = Economy.Model()
+        let firstYear = 2020
+        let lastYear = 2030
+        
+        XCTAssertNoThrow(try model.nextRun(withMode: .random, firstYear: firstYear, lastYear: lastYear))
+        XCTAssertNoThrow(try model.nextRun(withMode: .deterministic, firstYear: firstYear, lastYear: lastYear))
+        
+        // deterministe
+        var dico = try model.nextRun(withMode: .deterministic, firstYear: firstYear, lastYear: lastYear)
+        XCTAssertNotNil(dico[.inflation])
+        XCTAssertNotNil(dico[.securedRate])
+        XCTAssertNotNil(dico[.stockRate])
+        
+        XCTAssertEqual(model.firstYearSampled, firstYear)
+        XCTAssertEqual(model.securedRateSamples.count, 0)
+        XCTAssertEqual(model.stockRateSamples.count, 0)
+        
+        // random
+        model.randomizers.simulateVolatility = true
+        dico = try model.nextRun(withMode: .random, firstYear: firstYear, lastYear: lastYear)
+        XCTAssertNotNil(dico[.inflation])
+        XCTAssertNotNil(dico[.securedRate])
+        XCTAssertNotNil(dico[.stockRate])
+        
+        XCTAssertEqual(model.firstYearSampled, firstYear)
+        XCTAssertEqual(model.securedRateSamples.count, lastYear - firstYear + 1)
+        XCTAssertEqual(model.stockRateSamples.count, lastYear - firstYear + 1)
+        
+        model.randomizers.simulateVolatility = false
+        dico = try model.nextRun(withMode: .random, firstYear: firstYear, lastYear: lastYear)
+        XCTAssertNotNil(dico[.inflation])
+        XCTAssertNotNil(dico[.securedRate])
+        XCTAssertNotNil(dico[.stockRate])
+        
+        XCTAssertEqual(model.firstYearSampled, firstYear)
+        XCTAssertEqual(model.securedRateSamples.count, 0)
+        XCTAssertEqual(model.stockRateSamples.count, 0)
+    }
+    
+    func test_reinit_rejeu() throws {
+        var model = Economy.Model()
+        let firstYear = 2020
+        let lastYear = 2030
+        var dico = Economy.DictionaryOfRandomVariable()
+        dico[.inflation] = 0.0
+        dico[.securedRate] = 0.0
+        dico[.stockRate]  = 0.0
 
-//    func Générer_les_nombres_aléatoires() {
-//        var model = Economy.Model()
-//        var sample1 = model.randomizers.next
-//    }
+        // deterministe
+        model.randomizers.simulateVolatility = true
+        try model.setRandomValue(to: dico, withMode: .deterministic, firstYear: firstYear, lastYear: lastYear)
+        XCTAssertEqual(model.firstYearSampled, firstYear)
+        XCTAssertEqual(model.securedRateSamples.count, 0)
+        XCTAssertEqual(model.stockRateSamples.count, 0)
+        
+        // random
+        model.randomizers.simulateVolatility = true
+        try model.setRandomValue(to: dico, withMode: .random, firstYear: firstYear, lastYear: lastYear)
+        XCTAssertEqual(model.firstYearSampled, firstYear)
+        XCTAssertEqual(model.securedRateSamples.count, lastYear - firstYear + 1)
+        XCTAssertEqual(model.stockRateSamples.count, lastYear - firstYear + 1)
+        
+        model.randomizers.simulateVolatility = false
+        try model.setRandomValue(to: dico, withMode: .random, firstYear: firstYear, lastYear: lastYear)
+        XCTAssertEqual(model.firstYearSampled, firstYear)
+        XCTAssertEqual(model.securedRateSamples.count, 0)
+        XCTAssertEqual(model.stockRateSamples.count, 0)
+   }
 }

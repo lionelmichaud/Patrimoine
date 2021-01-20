@@ -200,9 +200,9 @@ final class Simulation: ObservableObject {
                 // réinitialiser les propriétés aléatoires de la famille
                 family.nextRandomProperties()
                 // réinitialiser les propriétés aléatoires du modèle macro économique
-                dicoOfEconomyRandomVariables      = Economy.model.nextRun(withMode  : mode,
-                                                                          firstYear : firstYear!,
-                                                                          lastYear  : lastYear!)
+                dicoOfEconomyRandomVariables      = try! Economy.model.nextRun(withMode  : mode,
+                                                                               firstYear : firstYear!,
+                                                                               lastYear  : lastYear!)
                 // réinitialiser les propriétés aléatoires du modèle socio économique
                 dicoOfSocioEconomyRandomVariables = SocioEconomy.model.next()
             }
@@ -262,10 +262,10 @@ final class Simulation: ObservableObject {
         currentRunNb = 1
 
         // fixer tous les paramètres du run à rejouer
-        Economy.model.setRandomValue(to        : thisRun.dicoOfEconomyRandomVariables,
-                                     withMode  : mode,
-                                     firstYear : firstYear!,
-                                     lastYear  : lastYear!)
+        try! Economy.model.setRandomValue(to        : thisRun.dicoOfEconomyRandomVariables,
+                                          withMode  : mode,
+                                          firstYear : firstYear!,
+                                          lastYear  : lastYear!)
         SocioEconomy.model.setRandomValue(to: thisRun.dicoOfSocioEconomyRandomVariables)
         family.members.forEach { person in
             if let adult = person as? Adult {

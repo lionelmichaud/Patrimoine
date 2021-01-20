@@ -9,6 +9,16 @@
             "decoteParTrimestre"   : 0.625,
             "surcoteParTrimestre"  : 1.25,
             "maxNbTrimestreDecote" : 20,
+            "nbTrimNonIndemniseGrid" : [
+                {
+                    "nbTrimestreAcquis"  : 0,
+                    "nbTrimNonIndemnise" : 4
+                },
+                {
+                    "nbTrimestreAcquis"  : 80,
+                    "nbTrimNonIndemnise" : 20
+                }
+            ],
             "dureeDeReferenceGrid" : [
                 {
                     "birthYear"    : 1953,

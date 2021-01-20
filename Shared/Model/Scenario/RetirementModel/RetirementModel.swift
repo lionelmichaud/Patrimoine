@@ -10,7 +10,9 @@ import Foundation
 
 // https://www.service-public.fr/particuliers/vosdroits/F21552
 
-struct Pension: Codable {
+// MARK: - SINGLETON: Modèle de pension de retraite
+
+struct Retirement: Codable {
     
     /// Définir le mode de simulation à utiliser pour tous les calculs futurs
     /// - Parameter simulationMode: mode de simulation à utiliser
