@@ -284,11 +284,11 @@ final class Adult: Person { // swiftlint:disable:this type_body_length
         // pension du régime général
         if let (brut, net) =
             Retirement.model.regimeGeneral.pension(birthDate                : birthDate,
-                                                dateOfRetirement         : dateOfRetirement,
-                                                dateOfEndOfUnemployAlloc : dateOfEndOfUnemployementAllocation,
-                                                dateOfPensionLiquid      : dateOfPensionLiquid,
-                                                lastKnownSituation       : lastKnownPensionSituation,
-                                                nbEnfant                 : 3) {
+                                                   dateOfRetirement         : dateOfRetirement,
+                                                   dateOfEndOfUnemployAlloc : dateOfEndOfUnemployementAllocation,
+                                                   dateOfPensionLiquid      : dateOfPensionLiquid,
+                                                   lastKnownSituation       : lastKnownPensionSituation,
+                                                   nbEnfant                 : 3) {
             return (brut, net)
         } else {
             return (0, 0)

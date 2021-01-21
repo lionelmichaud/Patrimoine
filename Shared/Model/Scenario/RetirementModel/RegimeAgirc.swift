@@ -27,7 +27,7 @@ struct RegimeAgirc: Codable {
                                 projectedNbOfPoints : Int,
                                 pensionBrute        : Double,
                                 pensionNette        : Double)?
-
+    
     struct SliceAvantAgeLegal: Codable {
         var ndTrimAvantAgeLegal : Int
         var coef                : Double
@@ -240,14 +240,14 @@ struct RegimeAgirc: Codable {
                         return nil
                     }
                     return coef
-
+                    
                 case dateOfAgeMinimumLegal... :
                     // nombre de trimestre manquant au moment de la liquidation de la pension pour pour obtenir le taux plein
                     guard var nbTrimManquantPourTauxPlein =
-                            Retirement.model.regimeGeneral.nbTrimManquantPourTauxPlein(birthYear                : birthDate.year,
-                                                                                    lastKnownSituation       : lastKnownSituation,
-                                                                                    dateOfRetirement         : dateOfRetirement,
-                                                                                    dateOfEndOfUnemployAlloc : dateOfEndOfUnemployAlloc) else {
+                            Retirement.model.regimeGeneral.nbTrimManquantPourTauxPlein(birthDate                : birthDate,
+                                                                                       lastKnownSituation       : lastKnownSituation,
+                                                                                       dateOfRetirement         : dateOfRetirement,
+                                                                                       dateOfEndOfUnemployAlloc : dateOfEndOfUnemployAlloc) else {
                         customLog.log(level: .default, "nbTrimManquantPourTauxPlein = nil")
                         return nil
                     }
@@ -303,7 +303,7 @@ struct RegimeAgirc: Codable {
                     pensionNette        : 0)
         }
         // customLog.log(level: .info, "date Of Pension Liquid = \(dateOfPensionLiquid, privacy: .public)")
-
+        
         guard let coefMinoration = coefMinoration(dateOfAgeMinimumLegal: dateOfAgeMinimumLegal) else {
             customLog.log(level: .default, "coefMinoration = nil")
             return nil
@@ -317,11 +317,11 @@ struct RegimeAgirc: Codable {
             return nil
         }
         // customLog.log(level: .info, "projected Number Of Points = \(projectedNumberOfPoints, privacy: .public)")
-
+        
         // Pension = Nombre de points X Valeurs du point X Coefficient de minoration
         var pensionBrute = projectedNumberOfPoints.double() * model.valeurDuPoint * coefMinoration
         // customLog.log(level: .info, "pension Brute = \(projectedNumberOfPoints, privacy: .public)")
-
+        
         var pensionNette = Fiscal.model.pensionTaxes.netRegimeAgirc(pensionBrute)
         // customLog.log(level: .info, "pension Nette = \(pensionNette, privacy: .public)")
         
@@ -336,7 +336,7 @@ struct RegimeAgirc: Codable {
             pensionBrute *= coefReavluation
             pensionNette *= coefReavluation
         }
-
+        
         return (coefMinoration      : coefMinoration,
                 projectedNbOfPoints : projectedNumberOfPoints,
                 pensionBrute        : pensionBrute,

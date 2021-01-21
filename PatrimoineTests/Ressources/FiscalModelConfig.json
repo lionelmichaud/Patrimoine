@@ -1,0 +1,485 @@
+{
+    "version" :
+    {
+        "version" : "0.1",
+        "date"    : "2020-09-12T23:00:00+01:00",
+        "comment" : null
+    },
+    "PASS" : 41136,
+    
+    "estateCapitalGainIrpp" :
+    {
+        "model" :
+        {
+            "version" :
+            {
+                "version" : "0.1",
+                "date"    : "2020-09-12T23:00:00+01:00",
+                "comment" : null
+            },
+            "irpp"            : 19.0,
+            "discountTravaux" : 15.0,
+            "discountAfter"   : 5,
+            "exoGrid" :
+            [
+                {
+                    "floor"        : 5,
+                    "discountRate" : 6.0,
+                    "prevDiscount" : 0.0
+                },
+                {
+                    "floor"        : 21,
+                    "discountRate" : 4.0,
+                    "prevDiscount" : 96.0
+                },
+                {
+                    "floor"        : 22,
+                    "discountRate" : 0.0,
+                    "prevDiscount" : 100.0
+                }
+            ]
+        }
+    },
+    
+    "estateCapitalGainTaxes" :
+    {
+        "model" :
+        {
+            "version" :
+            {
+                "version" : "0.1",
+                "date"    : "2020-09-12T23:00:00+01:00",
+                "comment" : null
+            },
+            "discountTravaux" : 15.0,
+            "discountAfter"   : 5,
+            "CRDS"            : 0.5,
+            "CSG"             : 9.2,
+            "prelevSocial"    : 7.5,
+            "exoGrid" :
+            [
+                {
+                    "floor"        : 5,
+                    "discountRate" : 1.65,
+                    "prevDiscount" : 0.0
+                },
+                {
+                    "floor"        : 21,
+                    "discountRate" : 1.6,
+                    "prevDiscount" : 26.4
+                },
+                {
+                    "floor"        : 22,
+                    "discountRate" : 9.0,
+                    "prevDiscount" : 28.0
+                },
+                {
+                    "floor"        : 30,
+                    "discountRate" : 0.0,
+                    "prevDiscount" : 100.0
+                }
+            ]
+        }
+    },
+    
+    "pensionTaxes" :
+    {
+        "model" :
+        {
+            "version" :
+            {
+                "version" : "0.1",
+                "date"    : "2020-09-12T23:00:00+01:00",
+                "comment" : null
+            },
+            "rebate"            : 10.0,
+            "minRebate"         :  393.0,
+            "maxRebate"         : 3850.0,
+            "CSGdeductible"     : 5.9,
+            "CRDS"              : 0.5,
+            "CSG"               : 8.3,
+            "additionalContrib" : 0.3,
+            "healthInsurance"   : 1.0
+        }
+    },
+    
+    "financialRevenuTaxes" :
+    {
+        "model":
+        {
+            "version" :
+            {
+                "version" : "0.1",
+                "date"    : "2020-09-12T23:00:00+01:00",
+                "comment" : null
+            },
+            "CRDS"         : 0.5,
+            "CSG"          : 9.2,
+            "prelevSocial" : 7.5
+        }
+    },
+    
+    "turnoverTaxes" :
+    {
+        "model" :
+        {
+            "version" :
+            {
+                "version" : "0.1",
+                "date"    : "2020-09-12T23:00:00+01:00",
+                "comment" : null
+            },
+            "URSSAF" : 22
+        }
+    },
+    
+    "allocationChomageTaxes" :
+    {
+        "model":
+        {
+            "version" :
+            {
+                "version" : "0.1",
+                "date"    : "2020-09-12T23:00:00+01:00",
+                "comment" : null
+            },
+            "assiette"      : 98.5,
+            "seuilCsgCrds"  : 51.0,
+            "CRDS"          : 0.5,
+            "CSG"           : 6.2,
+            "retraiteCompl" : 3.0,
+            "seuilRetCompl" : 29.26
+        }
+    },
+    
+    "layOffTaxes" :
+    {
+        "model":
+        {
+            "version" :
+            {
+                "version" : "0.1",
+                "date"    : "2020-09-12T23:00:00+01:00",
+                "comment" : null
+            },
+            "socialTaxes" :
+            {
+                "maxRebateCoef" : 2.0,
+                "rate"          : 13.0
+            },
+            "csgCrds" :
+            {
+                "rateDeductible" : 6.8,
+                "rateNonDeductible" : 2.9
+            }
+        }
+    },
+    
+    "lifeInsuranceTaxes" :
+    {
+        "model" :
+        {
+            "version" :
+            {
+                "version" : "0.1",
+                "date"    : "2020-09-12T23:00:00+01:00",
+                "comment" : null
+            },
+            "rebatePerPerson" : 4800.0
+        }
+    },
+    
+    "incomeTaxes" :
+    {
+        "model" :
+        {
+            "version" :
+            {
+                "version" : "0.2",
+                "date"    : "2021-01-12T23:00:00+01:00",
+                "comment" : "Impôt 2021 sur le revenu 2020"
+            },
+            "turnOverRebate"    : 32.0,
+            "minTurnOverRebate" :   305.0,
+            "salaryRebate"      : 10.0,
+            "minSalaryRebate"   :   442.0,
+            "maxSalaryRebate"   : 12652.0,
+            "childRebate"       :  1570.0,
+            "grid" : [
+                {
+                    "floor" : 0,
+                    "rate"  : 0,
+                    "disc"  : 0
+                },
+                {
+                    "floor" : 10084.0,
+                    "rate"  : 0.11,
+                    "disc"  : 0
+                },
+                {
+                    "floor" : 25710.0,
+                    "rate"  : 0.3,
+                    "disc"  : 0
+                },
+                {
+                    "floor" : 73516.0,
+                    "rate"  : 0.41,
+                    "disc"  : 0
+                },
+                {
+                    "floor"  : 158122.0,
+                    "rate"  : 0.45,
+                    "disc"  : 0
+                }
+            ]
+        }
+    },
+    
+    "isf" :
+    {
+        "model" :
+        {
+            "version" :
+            {
+                "version" : "0.1",
+                "date"    : "2020-11-27T23:00:00+01:00",
+                "comment" : null
+            },
+            "seuil"           : 1300000.0,
+            "seuil2"          : 0.0,
+            "decote€"         : 17500.0,
+            "decoteCoef"      : 1.25,
+            "decoteResidence" : 30.0,
+            "decoteLocation"  : 20.0,
+            "decoteIndivision": 30.0,
+            "grid" : [
+                {
+                    "floor" : 0,
+                    "rate"  : 0,
+                    "disc"  : 0
+                },
+                {
+                    "floor" : 800000.0,
+                    "rate"  : 0.005,
+                    "disc"  : 0
+                },
+                {
+                    "floor" : 1300000.0,
+                    "rate"  : 0.007,
+                    "disc"  : 0
+                },
+                {
+                    "floor" : 2570000,
+                    "rate"  : 0.01,
+                    "disc"  : 0
+                },
+                {
+                    "floor"  : 5000000,
+                    "rate"  : 0.0125,
+                    "disc"  : 0
+                },
+                {
+                    "floor"  : 10000000,
+                    "rate"  : 0.015,
+                    "disc"  : 0
+                }
+            ]
+        }
+    },
+    
+    "companyProfitTaxes" :
+    {
+        "model" :
+        {
+            "version" :
+            {
+                "version" : "0.1",
+                "date"    : "2020-09-12T23:00:00+01:00",
+                "comment" : null
+            },
+            "rate" : 15.0
+        }
+    },
+    
+    "demembrement" :
+    {
+        "model" :
+        {
+            "version" :
+            {
+                "version" : "0.1",
+                "date"    : "2020-11-27T23:00:00+01:00",
+                "comment" : null
+            },
+            "grid" : [
+                {
+                    "floor"    : 0,
+                    "usuFruit" : 0.9,
+                    "nueProp"  : 0.1
+                },
+                {
+                    "floor"    : 20,
+                    "usuFruit" : 0.8,
+                    "nueProp"  : 0.2
+                },
+                {
+                    "floor"    : 30,
+                    "usuFruit" : 0.7,
+                    "nueProp"  : 0.3
+                },
+                {
+                    "floor"    : 40,
+                    "usuFruit" : 0.6,
+                    "nueProp"  : 0.4
+                },
+                {
+                    "floor"    : 50,
+                    "usuFruit" : 0.5,
+                    "nueProp"  : 0.5
+                },
+                {
+                    "floor"    : 60,
+                    "usuFruit" : 0.4,
+                    "nueProp"  : 0.6
+                },
+                {
+                    "floor"    : 70,
+                    "usuFruit" : 0.3,
+                    "nueProp"  : 0.7
+                },
+                {
+                    "floor"    : 80,
+                    "usuFruit" : 0.2,
+                    "nueProp"  : 0.8
+                },
+                {
+                    "floor"    : 90,
+                    "usuFruit" : 0.1,
+                    "nueProp"  : 0.9
+                }
+            ]
+        }
+    },
+    
+    "inheritanceDonation" :
+    {
+        "model" :
+        {
+            "version" :
+            {
+                "version" : "0.1",
+                "date"    : "2020-11-27T23:00:00+01:00",
+                "comment" : null
+            },
+            "fraisFunéraires" :   1500.0,
+            "abatLigneDirecte": 100000.0,
+            "abatConjoint"    :  80724.0,
+            "decoteResidence" : 20.0,
+            "gridDonationConjoint" : [
+                {
+                    "floor" : 0,
+                    "rate"  : 0.05,
+                    "disc"  : 0
+                },
+                {
+                    "floor" : 8072,
+                    "rate"  : 0.10,
+                    "disc"  : 0
+                },
+                {
+                    "floor" : 15932,
+                    "rate"  : 0.15,
+                    "disc"  : 0
+                },
+                {
+                    "floor" : 31865,
+                    "rate"  : 0.20,
+                    "disc"  : 0
+                },
+                {
+                    "floor" : 552324,
+                    "rate"  : 0.30,
+                    "disc"  : 0
+                },
+                {
+                    "floor" : 902838,
+                    "rate"  : 0.40,
+                    "disc"  : 0
+                },
+                {
+                    "floor" : 1805677,
+                    "rate"  : 0.45,
+                    "disc"  : 0
+                }
+            ],
+            "gridLigneDirecte" : [
+                {
+                    "floor" : 0,
+                    "rate"  : 0.05,
+                    "disc"  : 0
+                },
+                {
+                    "floor" : 8072,
+                    "rate"  : 0.10,
+                    "disc"  : 0
+                },
+                {
+                    "floor" : 12109,
+                    "rate"  : 0.15,
+                    "disc"  : 0
+                },
+                {
+                    "floor" : 15932,
+                    "rate"  : 0.20,
+                    "disc"  : 0
+                },
+                {
+                    "floor" : 552324,
+                    "rate"  : 0.30,
+                    "disc"  : 0
+                },
+                {
+                    "floor" : 902838,
+                    "rate"  : 0.40,
+                    "disc"  : 0
+                },
+                {
+                    "floor" : 1805677,
+                    "rate"  : 0.45,
+                    "disc"  : 0
+                }
+            ]
+       }
+    },
+
+    "lifeInsuranceInheritance" :
+    {
+        "model" :
+        {
+            "version" :
+            {
+                "version" : "0.1",
+                "date"    : "2020-11-27T23:00:00+01:00",
+                "comment" : null
+            },
+            "grid" : [
+                {
+                    "floor" : 0,
+                    "rate"  : 0.0,
+                    "disc"  : 0
+                },
+                {
+                    "floor" : 152500.0,
+                    "rate"  : 0.20,
+                    "disc"  : 0
+                },
+                {
+                    "floor" : 852500.0,
+                    "rate"  : 0.3125,
+                    "disc"  : 0
+                }
+            ]
+        }
+    }
+    
+}

@@ -282,11 +282,11 @@ func max(_ date1: Date, _ date2: Date) -> Date {
 }
 
 func firstDayOf(year: Int) -> Date {
-    Date.calendar.date(from: DateComponents(year: year, month: 1, day: 1))!
+    Date.calendar.date(from: DateComponents(year: year, month: 1, day: 1, hour: 0))!
 }
 
 func lastDayOf(year: Int) -> Date {
-    Date.calendar.date(from: DateComponents(year: year, month: 12, day: 31))!
+    Date.calendar.date(from: DateComponents(year: year, month: 12, day: 31, hour: 23))!
 }
 
 func numberOfDays(from: Date, to: Date) -> DateComponents {

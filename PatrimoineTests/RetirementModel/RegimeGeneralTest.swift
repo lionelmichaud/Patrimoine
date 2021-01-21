@@ -9,7 +9,7 @@
 import XCTest
 @testable import Patrimoine
 
-class RegimeGeneralTest: XCTestCase {
+class RegimeGeneralTest: XCTestCase { // swiftlint:disable:this type_body_length
     
     static var regimeGeneral: RegimeGeneral!
     
@@ -30,9 +30,30 @@ class RegimeGeneralTest: XCTestCase {
                                dateDecodingStrategy : .iso8601,
                                keyDecodingStrategy  : .useDefaultKeys)
             .initialized()
+        RegimeGeneral.fiscalModel =
+            Fiscal.Model(for: FiscalModelTests.self,
+                         from                 : "FiscalModelConfig.json",
+                         dateDecodingStrategy : .iso8601,
+                         keyDecodingStrategy  : .useDefaultKeys)
+            .initialized()
+    }
+    
+    func date(year: Int, month: Int, day: Int) -> Date {
+        let dateRefComp = DateComponents(calendar : Date.calendar,
+                                         year     : year,
+                                         month    : month,
+                                         day      : day)
+        return Date.calendar.date(from: dateRefComp)!
     }
     
     // MARK: Tests
+    
+    func test_saving_to_test_bundle() throws {
+        RegimeGeneralTest.regimeGeneral.model.saveToBundle(for: RegimeGeneralTest.self,
+                                                           to: "RetirementRegimeGeneralModelConfigTest.json",
+                                                           dateEncodingStrategy: .iso8601,
+                                                           keyEncodingStrategy: .useDefaultKeys)
+    }
     
     func test_pension_devaluation_rate() {
         XCTAssertEqual(2.0, RegimeGeneral.devaluationRate)
@@ -51,32 +72,54 @@ class RegimeGeneralTest: XCTestCase {
         XCTAssertEqual(pow((1.0 + -2.0/100.0), 10.0), coef)
     }
     
-    func test_saving_to_test_bundle() throws {
-        RegimeGeneralTest.regimeGeneral.model.saveToBundle(for: RegimeGeneralTest.self,
-                                                           to: "RetirementRegimeGeneralModelConfigTest.json",
-                                                           dateEncodingStrategy: .iso8601,
-                                                           keyEncodingStrategy: .useDefaultKeys)
-    }
-    
     func test_recherche_nb_Trim_Acquis_Apres_Period_Chomage_Non_Indemnise() {
-        var nbTrimDejaCotises: Int
-        var nb: Int?
+        var nbTrimDejaCotises     : Int
+        var ageEnFinIndemnisation : Int
+        var nb                    : Int?
         
-        nbTrimDejaCotises = 1
-        nb = RegimeGeneralTest.regimeGeneral.nbTrimAcquisApresPeriodNonIndemnise(nbTrimestreAcquis: nbTrimDejaCotises)
+        nbTrimDejaCotises     = 19
+        ageEnFinIndemnisation = 50
+        nb = RegimeGeneralTest.regimeGeneral.nbTrimAcquisApresPeriodNonIndemnise(
+            nbTrimestreAcquis: nbTrimDejaCotises,
+            ageAtEndOfUnemployementAlloc: ageEnFinIndemnisation)
         XCTAssertEqual(4, nb)
         
-        nbTrimDejaCotises = 90
-        nb = RegimeGeneralTest.regimeGeneral.nbTrimAcquisApresPeriodNonIndemnise(nbTrimestreAcquis: nbTrimDejaCotises)
+        nbTrimDejaCotises     = 90
+        ageEnFinIndemnisation = 50
+        nb = RegimeGeneralTest.regimeGeneral.nbTrimAcquisApresPeriodNonIndemnise(
+            nbTrimestreAcquis: nbTrimDejaCotises,
+            ageAtEndOfUnemployementAlloc: ageEnFinIndemnisation)
+        XCTAssertEqual(4, nb)
+        
+        nbTrimDejaCotises     = 90
+        ageEnFinIndemnisation = 56
+        nb = RegimeGeneralTest.regimeGeneral.nbTrimAcquisApresPeriodNonIndemnise(
+            nbTrimestreAcquis: nbTrimDejaCotises,
+            ageAtEndOfUnemployementAlloc: ageEnFinIndemnisation)
         XCTAssertEqual(20, nb)
+        
+        nbTrimDejaCotises     = 19
+        ageEnFinIndemnisation = 56
+        nb = RegimeGeneralTest.regimeGeneral.nbTrimAcquisApresPeriodNonIndemnise(
+            nbTrimestreAcquis: nbTrimDejaCotises,
+            ageAtEndOfUnemployementAlloc: ageEnFinIndemnisation)
+        XCTAssertEqual(4, nb)
     }
     
     func test_recherche_age_Taux_Plein_Legal() {
         var age: Int?
+        age = RegimeGeneralTest.regimeGeneral.ageTauxPleinLegal(birthYear: 1948)
+        XCTAssertEqual(61, age)
+        age = RegimeGeneralTest.regimeGeneral.ageTauxPleinLegal(birthYear: 1953)
+        XCTAssertEqual(62, age)
+        age = RegimeGeneralTest.regimeGeneral.ageTauxPleinLegal(birthYear: 1956)
+        XCTAssertEqual(64, age)
         age = RegimeGeneralTest.regimeGeneral.ageTauxPleinLegal(birthYear: 1963)
-        XCTAssertEqual(67, age)
+        XCTAssertEqual(66, age)
         age = RegimeGeneralTest.regimeGeneral.ageTauxPleinLegal(birthYear: 1964)
-        XCTAssertEqual(68, age)
+        XCTAssertEqual(67, age)
+        age = RegimeGeneralTest.regimeGeneral.ageTauxPleinLegal(birthYear: 1967)
+        XCTAssertEqual(67, age)
         age = RegimeGeneralTest.regimeGeneral.ageTauxPleinLegal(birthYear: 1980)
         XCTAssertEqual(71, age)
     }
@@ -90,73 +133,108 @@ class RegimeGeneralTest: XCTestCase {
         duree = RegimeGeneralTest.regimeGeneral.dureeDeReference(birthYear: 1980)
         XCTAssertEqual(172, duree)
     }
-    
-    func test_calcul_duree_assurance() {
-        var lastKnownSituation       : RegimeGeneralSituation
-        var dateOfRetirement         : Date
-        var dateOfEndOfUnemployAlloc : Date?
-        var extrapolationDuration    : Int
-        var duree                    : Int
+
+    func test_calcul_duree_assurance_sans_période_de_chomage() {
+        var lastKnownSituation    : RegimeGeneralSituation
+        var dateOfRetirement      : Date
+        var birthDate             : Date
+        var extrapolationDuration : Int
         
+        birthDate = date(year: 1964, month: 9, day: 22)
         lastKnownSituation = RegimeGeneralSituation(atEndOf           : 2019,
                                                     nbTrimestreAcquis : 135,
                                                     sam               : 0.0)
+        // Cessation d'activité 6 ans après la date du dernier relevé de situation
         extrapolationDuration = 6 // ans
         dateOfRetirement = extrapolationDuration.years.from(lastDayOf(year: 2019))!
-        dateOfEndOfUnemployAlloc = nil
-        duree = RegimeGeneralTest.regimeGeneral.dureeAssurance(
+        if let duree = RegimeGeneralTest.regimeGeneral.dureeAssurance(
+            birthDate                : birthDate,
             lastKnownSituation       : lastKnownSituation,
             dateOfRetirement         : dateOfRetirement,
-            dateOfEndOfUnemployAlloc : dateOfEndOfUnemployAlloc
-        )
-        XCTAssertEqual(135 + extrapolationDuration * 4, duree)
+            dateOfEndOfUnemployAlloc : nil
+        ) {
+            let theory = 135 + extrapolationDuration * 4 // 159
+            XCTAssertEqual(theory, duree.plafonne)
+            XCTAssertEqual(theory, duree.deplafonne)
+        } else {
+            XCTFail("dureeAssurance failed")
+        }
         
+        // Cessation d'activité 6 ans + 9 mois après la date du dernier relevé de situation
         dateOfRetirement = 3.quarters.from(dateOfRetirement)!
-        duree = RegimeGeneralTest.regimeGeneral.dureeAssurance(
+        if let duree = RegimeGeneralTest.regimeGeneral.dureeAssurance(
+            birthDate                : birthDate,
             lastKnownSituation       : lastKnownSituation,
             dateOfRetirement         : dateOfRetirement,
-            dateOfEndOfUnemployAlloc : dateOfEndOfUnemployAlloc
-        )
-        XCTAssertEqual(135 + extrapolationDuration * 4 + 3, duree)
+            dateOfEndOfUnemployAlloc : nil
+        ) {
+            let theory = 135 + extrapolationDuration * 4 + 3 // 162
+            XCTAssertEqual(theory, duree.plafonne)
+            XCTAssertEqual(theory, duree.deplafonne)
+        } else {
+            XCTFail("dureeAssurance failed")
+        }
         
-        dateOfRetirement = extrapolationDuration.years.before(lastDayOf(year: 2019))!
-        duree = RegimeGeneralTest.regimeGeneral.dureeAssurance(
+        // Cessation d'activité 20 ans après la date du dernier relevé de situation
+        // la durée d'assurance ne peut dépasser la durée de référence soit 169 trimestres
+        extrapolationDuration = 20 // ans
+        dateOfRetirement = extrapolationDuration.years.from(lastDayOf(year: 2019))!
+        if let duree = RegimeGeneralTest.regimeGeneral.dureeAssurance(
+            birthDate                : birthDate,
             lastKnownSituation       : lastKnownSituation,
             dateOfRetirement         : dateOfRetirement,
-            dateOfEndOfUnemployAlloc : dateOfEndOfUnemployAlloc
-        )
-        XCTAssertEqual(135, duree)
+            dateOfEndOfUnemployAlloc : nil
+        ) {
+            let theory = 169 // durée de référence pour une personne née en 1964
+            XCTAssertEqual(theory, duree.plafonne)
+        } else {
+            XCTFail("dureeAssurance failed")
+        }
+    }
+
+    func test_calcul_duree_assurance_avec_periode_de_chomage() {
+        var lastKnownSituation       : RegimeGeneralSituation
+        var dateOfRetirement         : Date
+        var dateOfEndOfUnemployAlloc : Date?
+        var birthDate                : Date
         
-        extrapolationDuration = 6 // ans
-        dateOfRetirement = 6.years.from(lastDayOf(year: 2019))!
-        dateOfEndOfUnemployAlloc = 2.years.from(lastDayOf(year: 2019))!
-        duree = RegimeGeneralTest.regimeGeneral.dureeAssurance(
+        birthDate = date(year: 1964, month: 9, day: 22)
+        lastKnownSituation = RegimeGeneralSituation(atEndOf           : 2019,
+                                                    nbTrimestreAcquis : 135,
+                                                    sam               : 0.0)
+        // cas où la période de 20 trimestres chomage (+55 ans) se prolonge au-delà de l'age min de départ à la retraite (62 ans)
+        dateOfRetirement = 2.years.from(lastDayOf(year: lastKnownSituation.atEndOf))!
+        dateOfEndOfUnemployAlloc = 3.years.from(dateOfRetirement)!
+        if let duree = RegimeGeneralTest.regimeGeneral.dureeAssurance(
+            birthDate                : birthDate,
             lastKnownSituation       : lastKnownSituation,
             dateOfRetirement         : dateOfRetirement,
             dateOfEndOfUnemployAlloc : dateOfEndOfUnemployAlloc
-        )
-        XCTAssertEqual(135 + 6 * 4, duree)
-        
-        dateOfRetirement = 10.years.from(lastDayOf(year: 2019))!
-        dateOfEndOfUnemployAlloc = 2.years.from(lastDayOf(year: 2019))!
-        duree = RegimeGeneralTest.regimeGeneral.dureeAssurance(
-            lastKnownSituation       : lastKnownSituation,
-            dateOfRetirement         : dateOfRetirement,
-            dateOfEndOfUnemployAlloc : dateOfEndOfUnemployAlloc
-        )
-        XCTAssertEqual(135 + (2 + 5) * 4, duree)
+        ) {
+            let case1 = 135 + (2 * 4) + (3 * 4) + 20 // 175
+            let case2 = 135 - 2 + (1964 + 62 - 2019) * 4 // 161 à 62 ans
+            let theory = min(case1, case2) // 161
+            XCTAssertEqual(theory, duree.plafonne)
+        } else {
+            XCTFail("dureeAssurance failed")
+        }
         
         lastKnownSituation = RegimeGeneralSituation(atEndOf           : 2019,
                                                     nbTrimestreAcquis : 79,
                                                     sam               : 0.0)
-        dateOfRetirement = 10.years.from(lastDayOf(year: 2019))!
+        // cas où la période de 4 trimestres chomage (80 trim acquis) se termine avant l'age min de départ à la retraite (62 ans)
+        dateOfRetirement = 1.years.before(lastDayOf(year: 2019))!
         dateOfEndOfUnemployAlloc = 2.years.from(lastDayOf(year: 2019))!
-        duree = RegimeGeneralTest.regimeGeneral.dureeAssurance(
+        if let duree = RegimeGeneralTest.regimeGeneral.dureeAssurance(
+            birthDate                : birthDate,
             lastKnownSituation       : lastKnownSituation,
             dateOfRetirement         : dateOfRetirement,
             dateOfEndOfUnemployAlloc : dateOfEndOfUnemployAlloc
-        )
-        XCTAssertEqual(79 + (2 + 1) * 4, duree)
+        ) {
+            XCTAssertEqual(79 + (2 + 1) * 4, duree.plafonne)
+        } else {
+            XCTFail("dureeAssurance failed")
+        }
     }
     
     func test_calcul_nb_trimestre_de_surcote() {
@@ -170,11 +248,11 @@ class RegimeGeneralTest: XCTestCase {
         result = RegimeGeneralTest.regimeGeneral.nbTrimestreSurcote(dureeAssurance   : dureeAssurance,
                                                                     dureeDeReference : dureeDeReference)
         switch result {
-        case .success:
-            XCTFail("fail")
-            
-        case .failure(let error):
-            XCTAssertEqual(RegimeGeneral.ModelError.outOfBounds, error)
+            case .success:
+                XCTFail("fail")
+                
+            case .failure(let error):
+                XCTAssertEqual(RegimeGeneral.ModelError.outOfBounds, error)
         }
         
         // surcote
@@ -183,11 +261,11 @@ class RegimeGeneralTest: XCTestCase {
         result = RegimeGeneralTest.regimeGeneral.nbTrimestreSurcote(dureeAssurance   : dureeAssurance,
                                                                     dureeDeReference : dureeDeReference)
         switch result {
-        case .success(let nbTrimestreSurcote):
-            XCTAssertEqual(dureeAssurance - dureeDeReference, nbTrimestreSurcote)
-            
-        case .failure:
-            XCTFail("fail")
+            case .success(let nbTrimestreSurcote):
+                XCTAssertEqual(dureeAssurance - dureeDeReference, nbTrimestreSurcote)
+                
+            case .failure:
+                XCTFail("fail")
         }
     }
     
@@ -209,16 +287,17 @@ class RegimeGeneralTest: XCTestCase {
                                                                    dureeDeReference    : dureeDeReference,
                                                                    dateOfPensionLiquid : dateOfPensionLiquid)
         switch result {
-        case .success:
-            XCTFail("fail")
-            
-        case .failure(let error):
-            XCTAssertEqual(RegimeGeneral.ModelError.outOfBounds, error)
+            case .success:
+                // le test doit échouer car dureeAssurance > dureeDeReference
+                XCTFail("fail")
+                
+            case .failure(let error):
+                XCTAssertEqual(RegimeGeneral.ModelError.outOfBounds, error)
         }
         
         // decote
-        birthDate           = (-65).years.from(now)! // 2 ans = 8 trimestres manquant pour atteindre age du taux plein
-        dateOfPensionLiquid = Date.now
+        birthDate           = date(year: 1964, month: 9, day: 22) // age taux plein = 67 ans
+        dateOfPensionLiquid = 65.years.from(birthDate)! // manquent 2 ans = 8 trimestres manquant pour atteindre age du taux plein
         dureeAssurance      = 140
         dureeDeReference    = 145 // 5 trimestre manquant pour avoir tous les trimestres
         result = RegimeGeneralTest.regimeGeneral.nbTrimestreDecote(birthDate           : birthDate,
@@ -226,32 +305,32 @@ class RegimeGeneralTest: XCTestCase {
                                                                    dureeDeReference    : dureeDeReference,
                                                                    dateOfPensionLiquid : dateOfPensionLiquid)
         switch result {
-        case .success(let nbTrimestreSurcote):
-            XCTAssertEqual(dureeDeReference - dureeAssurance, nbTrimestreSurcote)
-            
-        case .failure:
-            XCTFail("fail")
+            case .success(let nbTrimestreSurcote):
+                XCTAssertEqual(dureeDeReference - dureeAssurance, nbTrimestreSurcote)
+                
+            case .failure:
+                XCTFail("fail")
         }
         
-        birthDate           = (-65).years.from(now)! // 2 ans = 8 trimestres manquant pour atteindre age du taux plein
-        dateOfPensionLiquid = Date.now
+        birthDate           = date(year: 1964, month: 9, day: 22) // age taux plein = 67 ans
+        dateOfPensionLiquid = 65.years.from(birthDate)! // manquent 2 ans = 8 trimestres manquant pour atteindre age du taux plein
         dureeAssurance      = 140
-        dureeDeReference    = 150 // 5 trimestre manquant pour avoir tous les trimestres
+        dureeDeReference    = 150 // 10 trimestre manquant pour avoir tous les trimestres
         result = RegimeGeneralTest.regimeGeneral.nbTrimestreDecote(birthDate           : birthDate,
                                                                    dureeAssurance      : dureeAssurance,
                                                                    dureeDeReference    : dureeDeReference,
                                                                    dateOfPensionLiquid : dateOfPensionLiquid)
         switch result {
-        case .success(let nbTrimestreSurcote):
-            XCTAssertEqual((67 - 65) * 4, nbTrimestreSurcote)
-            
-        case .failure:
-            XCTFail("fail")
+            case .success(let nbTrimestreSurcote):
+                XCTAssertEqual((67 - 65) * 4, nbTrimestreSurcote)
+                
+            case .failure:
+                XCTFail("fail")
         }
         
         // decote plafonnée
-        birthDate           = (-57).years.from(now)! // 10 ans = 40 trimestres manquant pour atteindre age du taux plein
-        dateOfPensionLiquid = Date.now
+        birthDate           = date(year: 1964, month: 9, day: 22) // age taux plein = 67 ans
+        dateOfPensionLiquid = 57.years.from(birthDate)! // manquent 10 ans = 40 trimestres manquant pour atteindre age du taux plein
         dureeAssurance      = 140
         dureeDeReference    = 170 // 30 trimestre manquant pour avoir tous les trimestres
         result = RegimeGeneralTest.regimeGeneral.nbTrimestreDecote(birthDate           : birthDate,
@@ -259,11 +338,11 @@ class RegimeGeneralTest: XCTestCase {
                                                                    dureeDeReference    : dureeDeReference,
                                                                    dateOfPensionLiquid : dateOfPensionLiquid)
         switch result {
-        case .success(let nbTrimestreSurcote):
-            XCTAssertEqual(20, nbTrimestreSurcote)
-            
-        case .failure:
-            XCTFail("fail")
+            case .success(let nbTrimestreSurcote):
+                XCTAssertEqual(20, nbTrimestreSurcote)
+                
+            case .failure:
+                XCTFail("fail")
         }
     }
     
@@ -275,8 +354,8 @@ class RegimeGeneralTest: XCTestCase {
         var nbTrim : Int?
         
         // decote plafonnée
-        birthDate           = 57.years.ago // 10 ans = 40 trimestres manquant pour atteindre age du taux plein
-        dateOfPensionLiquid = Date.now
+        birthDate           = date(year: 1964, month: 9, day: 22) // age taux plein = 67 ans
+        dateOfPensionLiquid = 57.years.from(birthDate)! // manquent 10 ans = 40 trimestres manquant pour atteindre age du taux plein
         dureeAssurance      = 140
         dureeDeReference    = 170 // 30 trimestre manquant pour avoir tous les trimestres
         nbTrim = RegimeGeneralTest.regimeGeneral.nbTrimestreSurDecote(birthDate           : birthDate,
@@ -287,8 +366,8 @@ class RegimeGeneralTest: XCTestCase {
         XCTAssertEqual(-20, nbTrim)
         
         // decote
-        birthDate           = 65.years.ago // 2 ans = 8 trimestres manquant pour atteindre age du taux plein
-        dateOfPensionLiquid = Date.now
+        birthDate           = date(year: 1964, month: 9, day: 22) // age taux plein = 67 ans
+        dateOfPensionLiquid = 65.years.from(birthDate)! // manquent 2 ans = 8 trimestres manquant pour atteindre age du taux plein
         dureeAssurance      = 140
         dureeDeReference    = 150 // 5 trimestre manquant pour avoir tous les trimestres
         nbTrim = RegimeGeneralTest.regimeGeneral.nbTrimestreSurDecote(birthDate           : birthDate,
@@ -299,8 +378,8 @@ class RegimeGeneralTest: XCTestCase {
         XCTAssertEqual(-(67 - 65) * 4, nbTrim)
         
         // surcote
-        birthDate           = 60.years.ago // 2 ans = 8 trimestres manquant pour atteindre age du taux plein
-        dateOfPensionLiquid = Date.now
+        birthDate           = date(year: 1964, month: 9, day: 22) // age taux plein = 67 ans
+        dateOfPensionLiquid = 60.years.from(birthDate)! // manquent 2 ans = 8 trimestres manquant pour atteindre age du taux plein
         dureeAssurance   = 145
         dureeDeReference = 140
         nbTrim = RegimeGeneralTest.regimeGeneral.nbTrimestreSurDecote(birthDate           : birthDate,
@@ -331,7 +410,7 @@ class RegimeGeneralTest: XCTestCase {
                                          month    : 9,
                                          day      : 22)
         birthDate = Date.calendar.date(from: dateRefComp)!
-        date = RegimeGeneralTest.regimeGeneral.dateTauxPlein(
+        date = RegimeGeneralTest.regimeGeneral.dateAgeTauxPlein(
             birthDate          : birthDate,
             lastKnownSituation : lastKnownSituation)
         XCTAssertNotNil(date)
@@ -356,7 +435,7 @@ class RegimeGeneralTest: XCTestCase {
         XCTAssertEqual(22, date!.day)
     }
     
-    func test_date_Taux_Plein_Legal() {
+    func test_date_Age_Taux_Plein_Legal() {
         var birthDate           : Date!
         var date                : Date?
         
@@ -367,16 +446,274 @@ class RegimeGeneralTest: XCTestCase {
         birthDate = Date.calendar.date(from: dateRefComp)!
         date = RegimeGeneralTest.regimeGeneral.dateTauxPleinLegal(birthDate: birthDate)
         XCTAssertNotNil(date)
-        XCTAssertEqual(1964 + 68, date!.year)
+        XCTAssertEqual(1964 + 67, date!.year)
         XCTAssertEqual(9, date!.month)
         XCTAssertEqual(22, date!.day)
     }
     
     func test_calcul_taux_de_pension() {
+        var dureeAssurance      : Int
+        var dureeDeReference    : Int
+        var birthDate           : Date!
+        var dateOfPensionLiquid : Date!
+        var taux : Double?
+        
+        // decote plafonnée
+        birthDate           = date(year: 1964, month: 9, day: 22) // age taux plein = 67 ans
+        dateOfPensionLiquid = 57.years.from(birthDate)! // manquent 10 ans = 40 trimestres manquant pour atteindre age du taux plein
+        dureeAssurance      = 140
+        dureeDeReference    = 170 // 30 trimestre manquant pour avoir tous les trimestres
+        taux = RegimeGeneralTest.regimeGeneral.tauxDePension(birthDate           : birthDate,
+                                                             dureeAssurance      : dureeAssurance,
+                                                             dureeDeReference    : dureeDeReference,
+                                                             dateOfPensionLiquid : dateOfPensionLiquid)
+        XCTAssertNotNil(taux)
+        XCTAssertEqual(50.0 - 20.0 * 0.625, taux)
+        
+        // decote
+        birthDate           = date(year: 1964, month: 9, day: 22) // age taux plein = 67 ans
+        dateOfPensionLiquid = 65.years.from(birthDate)! // manquent 2 ans = 8 trimestres manquant pour atteindre age du taux plein
+        dureeAssurance      = 140
+        dureeDeReference    = 150 // 5 trimestre manquant pour avoir tous les trimestres
+        taux = RegimeGeneralTest.regimeGeneral.tauxDePension(birthDate           : birthDate,
+                                                             dureeAssurance      : dureeAssurance,
+                                                             dureeDeReference    : dureeDeReference,
+                                                             dateOfPensionLiquid : dateOfPensionLiquid)
+        XCTAssertNotNil(taux)
+        XCTAssertEqual(50.0 - (67 - 65) * 4 * 0.625, taux)
+        
+        // surcote
+        birthDate           = date(year: 1964, month: 9, day: 22) // age taux plein = 67 ans
+        dateOfPensionLiquid = 60.years.from(birthDate)! // manquent 7 ans = 28 trimestres manquant pour atteindre age du taux plein
+        dureeAssurance   = 145
+        dureeDeReference = 140
+        taux = RegimeGeneralTest.regimeGeneral.tauxDePension(birthDate           : birthDate,
+                                                             dureeAssurance      : dureeAssurance,
+                                                             dureeDeReference    : dureeDeReference,
+                                                             dateOfPensionLiquid : dateOfPensionLiquid)
+        XCTAssertNotNil(taux)
+        XCTAssertEqual(50.0 * (1.0 + Double(dureeAssurance - dureeDeReference) * 1.25/100.0), taux)
+    }
+    
+    func test_calcul_pension_sans_periode_de_chomage() {
+        var birthDate                : Date
+        var lastKnownSituation       : RegimeGeneralSituation
+        var nbEnfant                 : Int
+        var dateOfRetirement         : Date
+        var dateOfPensionLiquid      : Date
+        var theory                   : Double = 0
+        let sam = 36698.0
+        
+        // cas de travail salarié jusqu'à la retraite à taux plein
+        birthDate          = date(year: 1964, month: 9, day: 22)
+        lastKnownSituation = RegimeGeneralSituation(atEndOf           : 2019,
+                                                    nbTrimestreAcquis : 135,
+                                                    sam               : sam)
+        nbEnfant = 3
+        dateOfRetirement = date(year: 2028, month: 7, day: 1) // date du taux plein
+        dateOfPensionLiquid = dateOfRetirement
+        dateOfEndOfUnemployAlloc = nil
+        
+        if let (tauxDePension,
+                majorationEnfant,
+                dureeDeReference,
+                dureeAssurancePlafonne,
+                dureeAssuranceDeplafonne,
+                pensionBrute,
+                _) = RegimeGeneralTest.regimeGeneral.pension(
+                    birthDate                : birthDate,
+                    dateOfRetirement         : dateOfRetirement,
+                    dateOfEndOfUnemployAlloc : nil,
+                    dateOfPensionLiquid      : dateOfPensionLiquid,
+                    lastKnownSituation       : lastKnownSituation,
+                    nbEnfant                 : nbEnfant,
+                    during                   : nil) {
+            
+            XCTAssertEqual(10.0, majorationEnfant)
+            XCTAssertEqual(169, dureeDeReference)
+            XCTAssertEqual(169, dureeAssurancePlafonne)
+            XCTAssertEqual(169, dureeAssuranceDeplafonne)
+            XCTAssertEqual(50.0, tauxDePension)
+            theory = lastKnownSituation.sam * tauxDePension/100 * (1.0 + majorationEnfant/100) * dureeAssurancePlafonne.double() / dureeDeReference.double()
+            print("** Cas de travail salarié jusqu'à la retraite à taux plein")
+            print("**  - Pension annuelle  = \(theory)")
+            print("**  - Pension mensuelle = \(theory / 12.0)")
+            XCTAssertEqual(theory, pensionBrute)
+        } else {
+            XCTFail("test_calcul_pension = nil")
+        }
+        if let (pensionBrute,
+                _) = RegimeGeneralTest.regimeGeneral.pension(
+                    birthDate                : birthDate,
+                    dateOfRetirement         : dateOfRetirement,
+                    dateOfEndOfUnemployAlloc : nil,
+                    dateOfPensionLiquid      : dateOfPensionLiquid,
+                    lastKnownSituation       : lastKnownSituation,
+                    nbEnfant                 : nbEnfant,
+                    during                   : nil) {
+            XCTAssertEqual(theory, pensionBrute)
+        } else {
+            XCTFail("test_calcul_pension = nil")
+        }
+        
+        // cas de travail salarié jusqu'à la retraite à 62 ans (décote)
+        dateOfRetirement = (62.years + 10.days).from(birthDate)! // pousser au début du trimestre suivant
+        dateOfPensionLiquid = dateOfRetirement
+        if let (tauxDePension,
+                majorationEnfant,
+                dureeDeReference,
+                dureeAssurancePlafonne,
+                dureeAssuranceDeplafonne,
+                pensionBrute,
+                _) = RegimeGeneralTest.regimeGeneral.pension(
+                    birthDate                : birthDate,
+                    dateOfRetirement         : dateOfRetirement,
+                    dateOfEndOfUnemployAlloc : nil,
+                    dateOfPensionLiquid      : dateOfPensionLiquid,
+                    lastKnownSituation       : lastKnownSituation,
+                    nbEnfant                 : nbEnfant,
+                    during                   : nil) {
+            
+            XCTAssertEqual(10.0, majorationEnfant)
+            XCTAssertEqual(169, dureeDeReference)
+            let dureeAssTherory = 135 - 1 + (1964 + 62 - 2019) * 4 // 162
+            XCTAssertEqual(dureeAssTherory, dureeAssurancePlafonne)
+            XCTAssertEqual(dureeAssTherory, dureeAssuranceDeplafonne)
+            let tauxTheory = 50.0 - Double((dureeDeReference - dureeAssuranceDeplafonne)) * 0.625 // 45.625
+            XCTAssertEqual(tauxTheory, tauxDePension)
+            theory = lastKnownSituation.sam * tauxDePension/100 * (1.0 + majorationEnfant/100) * dureeAssurancePlafonne.double() / dureeDeReference.double()
+            print("** Cas de travail salarié jusqu'à la retraite à 62 ans (décote)")
+            print("**  - Pension annuelle  = \(theory)")
+            print("**  - Pension mensuelle = \(theory / 12.0)")
+            XCTAssertEqual(theory, pensionBrute)
+        } else {
+            XCTFail("test_calcul_pension = nil")
+        }
+        if let (pensionBrute,
+                _) = RegimeGeneralTest.regimeGeneral.pension(
+                    birthDate                : birthDate,
+                    dateOfRetirement         : dateOfRetirement,
+                    dateOfEndOfUnemployAlloc : nil,
+                    dateOfPensionLiquid      : dateOfPensionLiquid,
+                    lastKnownSituation       : lastKnownSituation,
+                    nbEnfant                 : nbEnfant,
+                    during                   : nil) {
+            XCTAssertEqual(theory, pensionBrute)
+        } else {
+            XCTFail("test_calcul_pension = nil")
+        }
+        
+        // cas de travail salarié jusqu'à la retraite à 67 ans (surcote)
+        dateOfRetirement = (67.years + 10.days).from(birthDate)!
+        dateOfPensionLiquid = dateOfRetirement
+        if let (tauxDePension,
+                majorationEnfant,
+                dureeDeReference,
+                dureeAssurancePlafonne,
+                dureeAssuranceDeplafonne,
+                pensionBrute,
+                _) = RegimeGeneralTest.regimeGeneral.pension(
+                    birthDate                : birthDate,
+                    dateOfRetirement         : dateOfRetirement,
+                    dateOfEndOfUnemployAlloc : nil,
+                    dateOfPensionLiquid      : dateOfPensionLiquid,
+                    lastKnownSituation       : lastKnownSituation,
+                    nbEnfant                 : nbEnfant,
+                    during                   : nil) {
+            
+            XCTAssertEqual(10.0, majorationEnfant)
+            XCTAssertEqual(169, dureeDeReference)
+            XCTAssertEqual(169, dureeAssurancePlafonne)
+            let tauxTheory = 50.0 * (1.0 + Double(dureeAssuranceDeplafonne - dureeDeReference) * 1.25/100.0) // 66.25
+            XCTAssertEqual(tauxTheory, tauxDePension)
+            theory = lastKnownSituation.sam * tauxDePension/100 * (1.0 + majorationEnfant/100) * dureeAssurancePlafonne.double() / dureeDeReference.double()
+            print("** Cas de travail salarié jusqu'à la retraite à 67 ans (surcote)")
+            print("**  - Pension annuelle  = \(theory)")
+            print("**  - Pension mensuelle = \(theory / 12.0)")
+            XCTAssertEqual(theory, pensionBrute)
+        } else {
+            XCTFail("test_calcul_pension = nil")
+        }
+        if let (pensionBrute,
+                _) = RegimeGeneralTest.regimeGeneral.pension(
+                    birthDate                : birthDate,
+                    dateOfRetirement         : dateOfRetirement,
+                    dateOfEndOfUnemployAlloc : nil,
+                    dateOfPensionLiquid      : dateOfPensionLiquid,
+                    lastKnownSituation       : lastKnownSituation,
+                    nbEnfant                 : nbEnfant,
+                    during                   : nil) {
+            XCTAssertEqual(theory, pensionBrute)
+        } else {
+            XCTFail("test_calcul_pension = nil")
+        }
+        
+        // cas de travail salarié jusqu'à fin 2021 puis rien jusqu'à liquidation à 62 ans
+        dateOfRetirement = 62.years.from(birthDate)!
+        dateOfPensionLiquid = 62.years.from(birthDate)!
         
     }
     
-    func test_calcul_pension() {
+    func test_calcul_pension_avec_periode_de_chomage() {
+        var birthDate                : Date
+        var lastKnownSituation       : RegimeGeneralSituation
+        var nbEnfant                 : Int
+        var dateOfRetirement         : Date
+        var dateOfEndOfUnemployAlloc : Date?
+        var dateOfPensionLiquid      : Date
+        var theory                   : Double = 0
+        let sam = 36698.0
         
+        // cas de travail salarié jusqu'à la retraite à taux plein
+        birthDate          = date(year: 1964, month: 9, day: 22)
+        lastKnownSituation = RegimeGeneralSituation(atEndOf           : 2019,
+                                                    nbTrimestreAcquis : 135,
+                                                    sam               : sam)
+        nbEnfant = 3
+        dateOfRetirement = date(year: 2028, month: 7, day: 1) // date du taux plein
+        dateOfPensionLiquid = dateOfRetirement
+        dateOfEndOfUnemployAlloc = nil
+        
+        if let (tauxDePension,
+                majorationEnfant,
+                dureeDeReference,
+                dureeAssurancePlafonne,
+                dureeAssuranceDeplafonne,
+                pensionBrute,
+                _) = RegimeGeneralTest.regimeGeneral.pension(
+                    birthDate                : birthDate,
+                    dateOfRetirement         : dateOfRetirement,
+                    dateOfEndOfUnemployAlloc : nil,
+                    dateOfPensionLiquid      : dateOfPensionLiquid,
+                    lastKnownSituation       : lastKnownSituation,
+                    nbEnfant                 : nbEnfant,
+                    during                   : nil) {
+            
+            XCTAssertEqual(10.0, majorationEnfant)
+            XCTAssertEqual(169, dureeDeReference)
+            XCTAssertEqual(169, dureeAssurancePlafonne)
+            XCTAssertEqual(169, dureeAssuranceDeplafonne)
+            XCTAssertEqual(50.0, tauxDePension)
+            theory = lastKnownSituation.sam * tauxDePension/100 * (1.0 + majorationEnfant/100) * dureeAssurancePlafonne.double() / dureeDeReference.double()
+            print("** Cas de travail salarié jusqu'à la retraite à taux plein")
+            print("**  - Pension annuelle  = \(theory)")
+            print("**  - Pension mensuelle = \(theory / 12.0)")
+            XCTAssertEqual(theory, pensionBrute)
+        } else {
+            XCTFail("test_calcul_pension = nil")
+        }
+        if let (pensionBrute,
+                _) = RegimeGeneralTest.regimeGeneral.pension(
+                    birthDate                : birthDate,
+                    dateOfRetirement         : dateOfRetirement,
+                    dateOfEndOfUnemployAlloc : nil,
+                    dateOfPensionLiquid      : dateOfPensionLiquid,
+                    lastKnownSituation       : lastKnownSituation,
+                    nbEnfant                 : nbEnfant,
+                    during                   : nil) {
+            XCTAssertEqual(theory, pensionBrute)
+        } else {
+            XCTFail("test_calcul_pension = nil")
+        }
     }
-}
+} // swiftlint:disable:this file_length
