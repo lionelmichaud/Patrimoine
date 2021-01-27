@@ -423,11 +423,116 @@ class RegimeAgircTest: XCTestCase { // swiftlint:disable:this type_body_length
                                         during                   : during))
         coefTheory = 0.43
         XCTAssertEqual(coefTheory, coefMinoration)
-
     }
 
     func test_calcul_coef_minoration_majoration_liquidation_apres_age_legal_avant_taux_plein() throws {
-    }
+        var birthDate                : Date
+        var lastKnownSituation       : RegimeGeneralSituation
+        var dateOfRetirement         : Date
+        var dateOfPensionLiquid      : Date
+        var during                   : Int
+        var coefMinoration           : Double
+        var coefTheory               : Double
+        
+        birthDate = date(year : 1964, month : 9, day : 22)
+        
+        // (1) Liquidation après l'age légal de liquidation de la pension du régime génarle
+        //     Mais sans avoir ne nb de trimestre requis pour avoir la pension générale au taux plein
+        lastKnownSituation = RegimeGeneralSituation(atEndOf           : 2019,
+                                                    nbTrimestreAcquis : 135,
+                                                    sam               : 0)
+
+        // 1 trimestres manquant
+        dateOfRetirement    = (63.years + 8.months + 10.days).from(birthDate)!
+        dateOfPensionLiquid = (63.years + 8.months + 10.days).from(birthDate)!
+        during = dateOfPensionLiquid.year
+        
+        coefMinoration = try XCTUnwrap(RegimeAgircTest.regimeAgirc.coefMinorationMajoration(
+                                        birthDate                : birthDate,
+                                        lastKnownSituation       : lastKnownSituation,
+                                        dateOfRetirement         : dateOfRetirement,
+                                        dateOfEndOfUnemployAlloc : nil,
+                                        dateOfPensionLiquid      : dateOfPensionLiquid,
+                                        during                   : during))
+        coefTheory = 0.99 // 1% de décote = 0.99
+        XCTAssertEqual(coefTheory, coefMinoration)
+
+        // 3 trimestres manquant
+        dateOfRetirement    = (63.years + 10.days).from(birthDate)!
+        dateOfPensionLiquid = (63.years + 10.days).from(birthDate)!
+        during = dateOfPensionLiquid.year
+        
+        coefMinoration = try XCTUnwrap(RegimeAgircTest.regimeAgirc.coefMinorationMajoration(
+                                        birthDate                : birthDate,
+                                        lastKnownSituation       : lastKnownSituation,
+                                        dateOfRetirement         : dateOfRetirement,
+                                        dateOfEndOfUnemployAlloc : nil,
+                                        dateOfPensionLiquid      : dateOfPensionLiquid,
+                                        during                   : during))
+        coefTheory = 0.97 // 3% de décote = 0.97
+        XCTAssertEqual(coefTheory, coefMinoration)
+
+        // 4 + 3 = 7 trimestres manquant
+        dateOfRetirement    = (62.years + 10.days).from(birthDate)!
+        dateOfPensionLiquid = (62.years + 10.days).from(birthDate)!
+        during = dateOfPensionLiquid.year
+        
+        coefMinoration = try XCTUnwrap(RegimeAgircTest.regimeAgirc.coefMinorationMajoration(
+                                        birthDate                : birthDate,
+                                        lastKnownSituation       : lastKnownSituation,
+                                        dateOfRetirement         : dateOfRetirement,
+                                        dateOfEndOfUnemployAlloc : nil,
+                                        dateOfPensionLiquid      : dateOfPensionLiquid,
+                                        during                   : during))
+        coefTheory = 0.93 // 7% de décote = 0.93
+        XCTAssertEqual(coefTheory, coefMinoration)
+        
+        // à 62 ans pile il manquera 8 trimestres
+        dateOfRetirement             = date(year : 2022, month : 1, day : 1)
+        let dateOfEndOfUnemployAlloc = 3.years.from(dateOfRetirement)!
+        dateOfPensionLiquid = (62.years + 10.days).from(birthDate)!
+        during = dateOfPensionLiquid.year
+        
+        coefMinoration = try XCTUnwrap(RegimeAgircTest.regimeAgirc.coefMinorationMajoration(
+                                        birthDate                : birthDate,
+                                        lastKnownSituation       : lastKnownSituation,
+                                        dateOfRetirement         : dateOfRetirement,
+                                        dateOfEndOfUnemployAlloc : dateOfEndOfUnemployAlloc,
+                                        dateOfPensionLiquid      : dateOfPensionLiquid,
+                                        during                   : during))
+        coefTheory = 0.92 // 8% de décote = 0.92
+        XCTAssertEqual(coefTheory, coefMinoration)
+        
+        // (63.75 - 57.25) * 4 = 26 trimestres manquant > 20
+        dateOfRetirement    = date(year : 2022, month : 1, day : 1)
+        dateOfPensionLiquid = (62.years + 10.days).from(birthDate)!
+        during = dateOfPensionLiquid.year
+        
+        coefMinoration = try XCTUnwrap(RegimeAgircTest.regimeAgirc.coefMinorationMajoration(
+                                        birthDate                : birthDate,
+                                        lastKnownSituation       : lastKnownSituation,
+                                        dateOfRetirement         : dateOfRetirement,
+                                        dateOfEndOfUnemployAlloc : nil,
+                                        dateOfPensionLiquid      : dateOfPensionLiquid,
+                                        during                   : during))
+        coefTheory = 0.78 // décote maximale 22% = 0.78
+        XCTAssertEqual(coefTheory, coefMinoration)
+
+        // (63.75 - 60.25) * 4 = 14 trimestres manquant
+        dateOfRetirement    = date(year : 2022, month : 1, day : 1)
+        dateOfRetirement    = 3.years.from(dateOfRetirement)!
+        dateOfPensionLiquid = (62.years + 10.days).from(birthDate)!
+        during = dateOfPensionLiquid.year
+        
+        coefMinoration = try XCTUnwrap(RegimeAgircTest.regimeAgirc.coefMinorationMajoration(
+                                        birthDate                : birthDate,
+                                        lastKnownSituation       : lastKnownSituation,
+                                        dateOfRetirement         : dateOfRetirement,
+                                        dateOfEndOfUnemployAlloc : nil,
+                                        dateOfPensionLiquid      : dateOfPensionLiquid,
+                                        during                   : during))
+        coefTheory = 0.855 // décote maximale 14.5% = 0.855
+        XCTAssertEqual(coefTheory, coefMinoration)    }
     
     func test_calcul_coef_majoration_pour_enfant() {
         XCTAssertEqual(1.0, RegimeAgircTest.regimeAgirc.coefMajorationPourEnfant(nbEnfantACharge: -1))

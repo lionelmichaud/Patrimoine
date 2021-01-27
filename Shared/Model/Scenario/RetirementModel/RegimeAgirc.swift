@@ -124,8 +124,8 @@ struct RegimeAgirc: Codable {
     
     /// Calcul du coefficient de minoration de la pension Agirc si la date de liquidation est après l'age légal (62 ans)
     /// - Parameters:
-    ///   - nbTrimManquantPourTauxPlein: nb de Trimestres Manquants Pour obtenir le Taux Plein
-    ///   - nbTrimPostAgeLegalMin: nb de trimestres entre la date de l'age légal et la date de liquidation Agirc
+    ///   - nbTrimManquantPourTauxPlein: nb de Trimestres Manquants avant l'âge légale du Taux Plein (67)
+    ///   - nbTrimPostAgeLegalMin: nb de trimestres entre la date de l'age minimum légal (62) et la date de demande de liquidation Agirc
     /// - Returns: coefficient de minoration de la pension
     func coefDeMinorationApresAgeLegal(nbTrimManquantPourTauxPlein : Int,
                                        nbTrimPostAgeLegalMin       : Int) -> Double? {
@@ -277,14 +277,16 @@ struct RegimeAgirc: Codable {
                                                          from : dateOfPensionLiquid,
                                                          to   : dateAgeMinimumLegal)
                 let (q1, r1) = delai.month!.quotientAndRemainder(dividingBy: 3)
-                //    Le nombre de trimestres est arrondi au chiffre supérieur
-                let ndTrimAvantAgeLegal = (delai.year! * 4) + (r1 > 0 ? q1 + 1 : q1)
+                //    Le nombre de trimestres manquant est arrondi au chiffre supérieur
+                let ndTrimAvantAgeLegal   = (delai.year! * 4) + (r1 > 0 ? q1 + 1 : q1)
+                //    Le nombre de trimestres excédentaire est arrondi au chiffre inférieur
+                let nbTrimPostAgeLegalMin = -(delai.year! * 4 + q1)
 
                 let ecartTrimAgircLegal = (Retirement.model.regimeGeneral.ageMinimumLegal - model.ageMinimum) * 4
                 //let eacrtTrimLegalTauxPlein =
 
                 switch ndTrimAvantAgeLegal {
-                    case ...(-1):
+                    case ...0:
                         // TODO: - ajouter ici le dernier cas à traiter
                         // Liquidation de la pension AVANT l'obtention du taux plein
                         // et APRES l'age l'age légal de liquidation de la pension du régime général
@@ -292,29 +294,18 @@ struct RegimeAgirc: Codable {
                         // (a) Nombre de trimestre manquant au moment de la liquidation de la pension pour pour obtenir le taux plein
                         let nbTrimManquantPourTauxPlein = -nbTrimAudelaDuTauxPlein
                         // (b) Nombre de trimestre manquant au moment de la liquidation de la pension pour atteindre l'age du taux plein légal
-                        guard let dateAgeTauxPleinLegal = Retirement.model.regimeGeneral.dateTauxPleinLegal(birthDate: birthDate) else {
-                            customLog.log(level: .error,
-                                          "coefMinorationMajoration:dateAgeTauxPleinLegal = nil")
-                            fatalError("coefMinorationMajoration:dateAgeTauxPleinLegal = nil")
-                        }
-                        let delai = Date.calendar.dateComponents([.year, .month, .day],
-                                                                 from : dateOfPensionLiquid,
-                                                                 to   : dateAgeTauxPleinLegal)
-                        let (q1, r1) = delai.month!.quotientAndRemainder(dividingBy: 3)
-                        //    Le nombre de trimestres est arrondi au chiffre supérieur
-                        let nbTrimAvantAgeTauxPlein = (delai.year! * 4) + (r1 > 0 ? q1 + 1 : q1)
-
+                        //   nbTrimPostAgeLegalMin
                         // (c) prendre le cas le plus favorable
                         // coefficient de minoration
                         guard let coef = coefDeMinorationApresAgeLegal(
                                 nbTrimManquantPourTauxPlein : nbTrimManquantPourTauxPlein,
-                                nbTrimPostAgeLegalMin       : nbTrimAvantAgeTauxPlein) else {
+                                nbTrimPostAgeLegalMin       : nbTrimPostAgeLegalMin) else {
                             customLog.log(level: .default, "pension coef = nil")
                             return nil
                         }
                         return coef
 
-                    case 0...ecartTrimAgircLegal:
+                    case 1...ecartTrimAgircLegal:
                         // Liquidation de la pension AVANT l'obtention du taux plein
                         // et AVANT l'age l'age légal de liquidation de la pension du régime général
                         // et APRES l'age minimum de liquidation de la pension AGIRC
