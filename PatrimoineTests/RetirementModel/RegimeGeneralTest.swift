@@ -17,7 +17,7 @@ class RegimeGeneralTest: XCTestCase { // swiftlint:disable:this type_body_length
     
     override class func setUp() {
         super.setUp()
-        let model = RegimeGeneral.Model(for: RegimeGeneralTest.self,
+        let model = RegimeGeneral.Model(for                  : RegimeGeneralTest.self,
                                         from                 : "RetirementRegimeGeneralModelConfigTest.json",
                                         dateDecodingStrategy : .iso8601,
                                         keyDecodingStrategy  : .useDefaultKeys)
@@ -49,10 +49,10 @@ class RegimeGeneralTest: XCTestCase { // swiftlint:disable:this type_body_length
     // MARK: Tests
     
     func test_saving_to_test_bundle() throws {
-        RegimeGeneralTest.regimeGeneral.model.saveToBundle(for: RegimeGeneralTest.self,
-                                                           to: "RetirementRegimeGeneralModelConfigTest.json",
-                                                           dateEncodingStrategy: .iso8601,
-                                                           keyEncodingStrategy: .useDefaultKeys)
+        RegimeGeneralTest.regimeGeneral.saveToBundle(for                  : RegimeGeneralTest.self,
+                                                     to                   : "RetirementRegimeGeneralModelConfigTest.json",
+                                                     dateEncodingStrategy : .iso8601,
+                                                     keyEncodingStrategy  : .useDefaultKeys)
     }
     
     func test_pension_devaluation_rate() {
@@ -512,7 +512,6 @@ class RegimeGeneralTest: XCTestCase { // swiftlint:disable:this type_body_length
         nbEnfant = 3
         dateOfRetirement = date(year: 2028, month: 7, day: 1) // date du taux plein
         dateOfPensionLiquid = dateOfRetirement
-        dateOfEndOfUnemployAlloc = nil
         
         if let (tauxDePension,
                 majorationEnfant,
@@ -670,9 +669,9 @@ class RegimeGeneralTest: XCTestCase { // swiftlint:disable:this type_body_length
                                                     nbTrimestreAcquis : 135,
                                                     sam               : sam)
         nbEnfant = 3
-        dateOfRetirement = date(year: 2028, month: 7, day: 1) // date du taux plein
-        dateOfPensionLiquid = dateOfRetirement
-        dateOfEndOfUnemployAlloc = nil
+        dateOfRetirement         = date(year : 2022, month : 1, day : 1) // fin d'activité salarié
+        dateOfEndOfUnemployAlloc = 3.years.from(dateOfRetirement) // fin d'indemnisation chomage 3 ans plus tard
+        dateOfPensionLiquid      = 62.years.from(birthDate)! // liquidation à 62 ans
         
         if let (tauxDePension,
                 majorationEnfant,
@@ -683,7 +682,7 @@ class RegimeGeneralTest: XCTestCase { // swiftlint:disable:this type_body_length
                 _) = RegimeGeneralTest.regimeGeneral.pension(
                     birthDate                : birthDate,
                     dateOfRetirement         : dateOfRetirement,
-                    dateOfEndOfUnemployAlloc : nil,
+                    dateOfEndOfUnemployAlloc : dateOfEndOfUnemployAlloc,
                     dateOfPensionLiquid      : dateOfPensionLiquid,
                     lastKnownSituation       : lastKnownSituation,
                     nbEnfant                 : nbEnfant,
@@ -691,9 +690,13 @@ class RegimeGeneralTest: XCTestCase { // swiftlint:disable:this type_body_length
             
             XCTAssertEqual(10.0, majorationEnfant)
             XCTAssertEqual(169, dureeDeReference)
-            XCTAssertEqual(169, dureeAssurancePlafonne)
-            XCTAssertEqual(169, dureeAssuranceDeplafonne)
-            XCTAssertEqual(50.0, tauxDePension)
+            let case1 = 135 + (2 * 4) + (3 * 4) + 20 // 175
+            let case2 = 135 - 2 + (1964 + 62 - 2019) * 4 // 161 à 62 ans
+            let dureeAssTheory = min(case1, case2) // 161
+            XCTAssertEqual(dureeAssTheory, dureeAssurancePlafonne)
+            XCTAssertEqual(dureeAssTheory, dureeAssuranceDeplafonne)
+            let tauxTheory = 50.0 - Double(dureeDeReference - dureeAssurancePlafonne) * 0.625
+            XCTAssertEqual(tauxTheory, tauxDePension)
             theory = lastKnownSituation.sam * tauxDePension/100 * (1.0 + majorationEnfant/100) * dureeAssurancePlafonne.double() / dureeDeReference.double()
             print("** Cas de travail salarié jusqu'à la retraite à taux plein")
             print("**  - Pension annuelle  = \(theory)")
@@ -706,7 +709,7 @@ class RegimeGeneralTest: XCTestCase { // swiftlint:disable:this type_body_length
                 _) = RegimeGeneralTest.regimeGeneral.pension(
                     birthDate                : birthDate,
                     dateOfRetirement         : dateOfRetirement,
-                    dateOfEndOfUnemployAlloc : nil,
+                    dateOfEndOfUnemployAlloc : dateOfEndOfUnemployAlloc,
                     dateOfPensionLiquid      : dateOfPensionLiquid,
                     lastKnownSituation       : lastKnownSituation,
                     nbEnfant                 : nbEnfant,

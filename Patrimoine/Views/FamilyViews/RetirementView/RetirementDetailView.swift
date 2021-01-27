@@ -132,7 +132,7 @@ struct RetirementDetailView: View {
                                               dateOfPensionLiquid     : adult.dateOfPensionLiquid,
                                               ageOfPensionLiquidComp  : adult.ageOfAgircPensionLiquidComp) else { return }
         viewModel.agirc.projectedNbOfPoints = projectedNbOfPoints
-        viewModel.agirc.valeurDuPoint       = Retirement.model.regimeAgirc.model.valeurDuPoint
+        viewModel.agirc.valeurDuPoint       = Retirement.model.regimeAgirc.valeurDuPoint
         viewModel.agirc.coefMinoration      = coefMinoration
         viewModel.agirc.pensionBrute        = pensionBruteAgirc
         viewModel.agirc.pensionNette        = pensionNetteAgirc

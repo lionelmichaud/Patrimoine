@@ -8,7 +8,7 @@
 
 import SwiftUI
 
-// MARK: - Saisie dy type d'investissement
+// MARK: - Saisie du type d'investissement
 
 struct TypeInvestEditView : View {
     @EnvironmentObject var family : Family

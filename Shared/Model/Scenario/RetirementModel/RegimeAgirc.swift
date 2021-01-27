@@ -23,11 +23,6 @@ struct RegimeAgirc: Codable {
     
     // MARK: - Nested types
     
-    typealias PensionDetails = (coefMinoration      : Double,
-                                projectedNbOfPoints : Int,
-                                pensionBrute        : Double,
-                                pensionNette        : Double)?
-    
     struct SliceAvantAgeLegal: Codable {
         var ndTrimAvantAgeLegal : Int
         var coef                : Double
@@ -50,11 +45,13 @@ struct RegimeAgirc: Codable {
     // MARK: - Static Properties
     
     static var simulationMode : SimulationModeEnum = .deterministic
-    
+    // dependencies to other Models
+    static var socioEconomyModel : SocioEconomy.Model = SocioEconomy.model
+
     // MARK: - Static Methods
     
     static var devaluationRate: Double { // %
-        SocioEconomy.model.pensionDevaluationRate.value(withMode: simulationMode)
+        socioEconomyModel.pensionDevaluationRate.value(withMode: simulationMode)
     }
     
     static var yearlyRevaluationRate: Double { // %
@@ -82,9 +79,34 @@ struct RegimeAgirc: Codable {
     
     // MARK: - Properties
     
-    var model: Model
+    private var model: Model
+    
+    var valeurDuPoint : Double {
+        model.valeurDuPoint
+    }
+    
+    var ageMinimum    : Int {
+        model.ageMinimum
+    }
+    
+    // MARK: - Initializer
+    
+    init(model: Model) {
+        self.model = model
+    }
     
     // MARK: - Methods
+    
+    /// Encode l'objet dans un fichier stocké dans le Bundle de contenant la définition de la classe aClass
+    func saveToBundle(for aClass           : AnyClass,
+                      to file              : String,
+                      dateEncodingStrategy : JSONEncoder.DateEncodingStrategy,
+                      keyEncodingStrategy  : JSONEncoder.KeyEncodingStrategy) {
+        model.saveToBundle(for                  : aClass,
+                           to                   : file,
+                           dateEncodingStrategy : dateEncodingStrategy,
+                           keyEncodingStrategy  : keyEncodingStrategy)
+    }
     
     /// Age minimum pour demander la liquidation de pension Agirc
     /// - Parameter birthDate: date de naissance
@@ -97,12 +119,7 @@ struct RegimeAgirc: Codable {
     /// - Parameter ndTrimAvantAgeLegal: nb de trimestres entre la date de liquidation Agirc et la date de l'age légal
     /// - Returns: coefficient de minoration de la pension
     func coefDeMinorationAvantAgeLegal(ndTrimAvantAgeLegal: Int) -> Double? {
-        guard let slice = model.gridAvant62.last(where: { $0.ndTrimAvantAgeLegal <= ndTrimAvantAgeLegal})  else {
-            customLog.log(level: .default, "coefDeMinorationAvantAgeLegal slice = nil")
-            return nil
-        }
-        
-        return slice.coef
+        model.gridAvant62.last(\.coef, where: \.ndTrimAvantAgeLegal, <=, ndTrimAvantAgeLegal)
     }
     
     /// Calcul du coefficient de minoration de la pension Agirc si la date de liquidation est après l'age légal (62 ans)
@@ -113,27 +130,27 @@ struct RegimeAgirc: Codable {
     func coefDeMinorationApresAgeLegal(nbTrimManquantPourTauxPlein : Int,
                                        nbTrimPostAgeLegalMin       : Int) -> Double? {
         // coefficient de réduction basé sur le nb de trimestre manquants pour obtenir le taux plein
-        guard let slice1 = model.gridApres62.last(where: { $0.nbTrimManquant <= nbTrimManquantPourTauxPlein})  else {
-            customLog.log(level: .default, "coefDeMinorationApresAgeLegal slice1 = nil")
+        guard let coef1 = model.gridApres62.last(\.coef, where: \.nbTrimManquant, <=, nbTrimManquantPourTauxPlein)  else {
+            customLog.log(level: .default, "coefDeMinorationApresAgeLegal coef1 = nil")
             return nil
         }
-        let coef1 = slice1.coef
         
         // coefficient basé sur l'age
-        guard let slice2 = model.gridApres62.last(where: { $0.ndTrimPostAgeLegal >= nbTrimPostAgeLegalMin})  else {
-            customLog.log(level: .default, "coefDeMinorationApresAgeLegal slice2 = nil")
+        guard let coef2 = model.gridApres62.last(\.coef, where: \.ndTrimPostAgeLegal, >=, nbTrimPostAgeLegalMin)  else {
+            customLog.log(level: .default, "coefDeMinorationApresAgeLegal coef2 = nil")
             return nil
         }
-        let coef2 = slice2.coef
         
-        // le coefficient applicable est déterminé par génération en fonction de l'âge atteint ou de la durée d'assurance, en retenant la solution la plus avantageuse pour l'intéressé
+        // le coefficient applicable est déterminé par génération en fonction de l'âge atteint
+        // ou de la durée d'assurance, en retenant la solution la plus avantageuse pour l'intéressé
         return max(coef1, coef2)
     }
     
     /// Projection du nombre de points Agirc sur la base du dernier relevé de points et de la prévision de carrière future
     /// - Parameters:
     ///   - lastAgircKnownSituation: dernier relevé de situation Agirc
-    ///   - dateOfPensionLiquid: date de liquidation de la pension agirc
+    ///   - dateOfRetirement: date de cessation d'activité
+    ///   - dateOfEndOfUnemployAlloc: date de la fin d'indemnisation chômage après une période de travail
     /// - Returns: nombre de points Agirc projeté à la liquidation de la pension
     func projectedNumberOfPoints(lastAgircKnownSituation  : RegimeAgircSituation,
                                  dateOfRetirement         : Date,
@@ -196,6 +213,205 @@ struct RegimeAgirc: Codable {
         return lastAgircKnownSituation.nbPoints + Int(nbPointsFuturActivite + nbPointsFuturChomage)
     }
     
+    /// Calcul le coefficient de minoration ou de majoration de la pension complémentaire selon
+    /// l'accord du 30 Octobre 2015.
+    /// - Parameters:
+    ///   - birthDate: date de naissance
+    ///   - lastKnownSituation: dernière situation connue pour le régime général
+    ///   - dateOfRetirement: date de cessation d'activité
+    ///   - dateOfEndOfUnemployAlloc: date de fin de perception des allocations chomage
+    ///   - dateOfPensionLiquid: date de demande de liquidation de la pension
+    ///   - year: année de calcul
+    /// - Returns: Coefficient de minoration ou de majoration [0, 1]
+    /// - Note: [www.agirc-arrco.fr](https://www.agirc-arrco.fr/particuliers/demander-retraite/conditions-pour-la-retraite/)
+    func coefMinorationMajoration(birthDate                : Date, // swiftlint:disable:this function_parameter_count cyclomatic_complexity
+                                  lastKnownSituation       : RegimeGeneralSituation,
+                                  dateOfRetirement         : Date,
+                                  dateOfEndOfUnemployAlloc : Date?,
+                                  dateOfPensionLiquid      : Date,
+                                  during year              : Int) -> Double? {
+        // nombre de trimestre manquant au moment de la liquidation de la pension pour pour obtenir le taux plein
+        guard let nbTrimAudelaDuTauxPlein =
+                -Retirement.model.regimeGeneral.nbTrimManquantPourTauxPlein(
+                    birthDate                : birthDate,
+                    lastKnownSituation       : lastKnownSituation,
+                    dateOfRetirement         : dateOfRetirement,
+                    dateOfEndOfUnemployAlloc : dateOfEndOfUnemployAlloc) else {
+            customLog.log(level: .default, "nbTrimManquantPourTauxPlein = nil")
+            return nil
+        }
+        customLog.log(level: .info, "nb Trim Au-delà du Taux Plein = \(nbTrimAudelaDuTauxPlein, privacy: .public)")
+
+        // age actuel et age du taux plein
+        let age = year - birthDate.year
+        guard let ageTauxPleinLegal =
+                Retirement.model.regimeGeneral.ageTauxPleinLegal(birthYear: birthDate.year) else {
+            customLog.log(level: .default, "ageTauxPleinLegal: Age Du Taux Plein = nil")
+            return nil
+        }
+        
+        // délai écoulé depuis la date de liqudation de la pension
+        let dateAtEndOfYear = lastDayOf(year: year)
+        guard let delayAfterPensionLiquidation = Date.calendar.dateComponents([.year, .month, .day],
+                                                       from: dateOfPensionLiquid,
+                                                       to  : dateAtEndOfYear).year else {
+            customLog.log(level: .default, "délai écoulé depuis la date de liqudation de la pension = nil")
+            return nil
+        }
+        guard delayAfterPensionLiquidation >= 0 else {
+            customLog.log(level: .default, "délai écoulé depuis la date de liqudation de la pension < 0")
+            return nil
+        }
+        
+        switch nbTrimAudelaDuTauxPlein {
+            case ...(-1):
+                // Liquidation de la pension AVANT l'obtention du taux plein
+                guard let dateAgeMinimumLegal = Retirement.model.regimeGeneral.dateAgeMinimumLegal(birthDate: birthDate) else {
+                    customLog.log(level: .error,
+                                  "coefMinorationMajoration:dateAgeMinimumLegal = nil")
+                    fatalError("coefMinorationMajoration:dateAgeMinimumLegal = nil")
+                }
+                // pension liquidable mais abattement définitif selon table
+                // Délais restant à courir avant l'âge légal minimal de départ
+                let delai = Date.calendar.dateComponents([.year, .month, .day],
+                                                         from : dateOfPensionLiquid,
+                                                         to   : dateAgeMinimumLegal)
+                let (q1, r1) = delai.month!.quotientAndRemainder(dividingBy: 3)
+                //    Le nombre de trimestres est arrondi au chiffre supérieur
+                let ndTrimAvantAgeLegal = (delai.year! * 4) + (r1 > 0 ? q1 + 1 : q1)
+
+                let ecartTrimAgircLegal = (Retirement.model.regimeGeneral.ageMinimumLegal - model.ageMinimum) * 4
+                //let eacrtTrimLegalTauxPlein =
+
+                switch ndTrimAvantAgeLegal {
+                    case ...(-1):
+                        // TODO: - ajouter ici le dernier cas à traiter
+                        // Liquidation de la pension AVANT l'obtention du taux plein
+                        // et APRES l'age l'age légal de liquidation de la pension du régime général
+                        // coefficient de minoration
+                        // (a) Nombre de trimestre manquant au moment de la liquidation de la pension pour pour obtenir le taux plein
+                        let nbTrimManquantPourTauxPlein = -nbTrimAudelaDuTauxPlein
+                        // (b) Nombre de trimestre manquant au moment de la liquidation de la pension pour atteindre l'age du taux plein légal
+                        guard let dateAgeTauxPleinLegal = Retirement.model.regimeGeneral.dateTauxPleinLegal(birthDate: birthDate) else {
+                            customLog.log(level: .error,
+                                          "coefMinorationMajoration:dateAgeTauxPleinLegal = nil")
+                            fatalError("coefMinorationMajoration:dateAgeTauxPleinLegal = nil")
+                        }
+                        let delai = Date.calendar.dateComponents([.year, .month, .day],
+                                                                 from : dateOfPensionLiquid,
+                                                                 to   : dateAgeTauxPleinLegal)
+                        let (q1, r1) = delai.month!.quotientAndRemainder(dividingBy: 3)
+                        //    Le nombre de trimestres est arrondi au chiffre supérieur
+                        let nbTrimAvantAgeTauxPlein = (delai.year! * 4) + (r1 > 0 ? q1 + 1 : q1)
+
+                        // (c) prendre le cas le plus favorable
+                        // coefficient de minoration
+                        guard let coef = coefDeMinorationApresAgeLegal(
+                                nbTrimManquantPourTauxPlein : nbTrimManquantPourTauxPlein,
+                                nbTrimPostAgeLegalMin       : nbTrimAvantAgeTauxPlein) else {
+                            customLog.log(level: .default, "pension coef = nil")
+                            return nil
+                        }
+                        return coef
+
+                    case 0...ecartTrimAgircLegal:
+                        // Liquidation de la pension AVANT l'obtention du taux plein
+                        // et AVANT l'age l'age légal de liquidation de la pension du régime général
+                        // et APRES l'age minimum de liquidation de la pension AGIRC
+                        // coefficient de minoration
+                        guard let coef = coefDeMinorationAvantAgeLegal(ndTrimAvantAgeLegal: ndTrimAvantAgeLegal) else {
+                            customLog.log(level: .default, "pension coef = nil")
+                            return nil
+                        }
+                        return coef
+                        
+                    case (ecartTrimAgircLegal+1)...:
+                        // Liquidation de la pension AVANT l'obtention du taux plein
+                        // et AVANT l'age l'age légal de liquidation de la pension du régime général
+                        // et AVANT l'age minimum de liquidation de la pension AGIRC
+                        // pas de pension AGIRC avant l'age minimum AGIRC
+                        return nil
+                        
+                    default:
+                        // on ne devrait jamais passer par là
+                        return nil
+                }
+                
+            // Liquidation de la pension APRES l'obtention du taux plein
+            case 0...3:
+                // (1) Liquidation dans l'année date d'obtention du taux plein au régime général
+                if age >= ageTauxPleinLegal {
+                    // (2) on a dépassé l'âge d'obtention du taux plein légal
+                    //     => taux plein
+                    return 1.0
+                } else {
+                    // (2) les 3 années suivant la date d'obtention du taux plein légal (et avant 67 ans)
+                    //     => minoration de 10% pendant 3 ans s’applique au montant de votre retraite complémentaire
+                    return delayAfterPensionLiquidation <= 3 ? 0.9 : 1.0
+                }
+                
+            case 4...7:
+                // (1) Liquidation dans l'année date d'obtention du taux plein au régime général + 1 an
+                //     => taux plein
+                return 1.0
+                
+            case 8...11:
+                // (1) Liquidation dans l'année date d'obtention du taux plein au régime général + 2 ans
+                if age >= ageTauxPleinLegal {
+                    // (2) on a dépassé l'âge d'obtention du taux plein légal
+                    //     => taux plein
+                    return 1.0
+                } else {
+                    // (2) les 3 années suivant la date d'obtention du taux plein légal (et avant 67 ans)
+                    //     => minoration de 10% pendant 3 ans s’applique au montant de votre retraite complémentaire
+                    return delayAfterPensionLiquidation <= 1 ? 1.1 : 1.0
+                }
+                
+            case 12...15:
+                // (1) Liquidation dans l'année date d'obtention du taux plein au régime général + 3 ans
+                if age >= ageTauxPleinLegal {
+                    // (2) on a dépassé l'âge d'obtention du taux plein légal
+                    //     => taux plein
+                    return 1.0
+                } else {
+                    // (2) les 3 années suivant la date d'obtention du taux plein légal (et avant 67 ans)
+                    //     => minoration de 10% pendant 3 ans s’applique au montant de votre retraite complémentaire
+                    return delayAfterPensionLiquidation <= 1 ? 1.2 : 1.0
+                }
+                
+            case 16...19:
+                // (1) Liquidation dans l'année date d'obtention du taux plein au régime général + 4 ans
+                if age >= ageTauxPleinLegal {
+                    // (2) on a dépassé l'âge d'obtention du taux plein légal
+                    //     => taux plein
+                    return 1.0
+                } else {
+                    // (2) les 3 années suivant la date d'obtention du taux plein légal (et avant 67 ans)
+                    //     => minoration de 10% pendant 3 ans s’applique au montant de votre retraite complémentaire
+                    return delayAfterPensionLiquidation <= 1 ? 1.3 : 1.0
+                }
+                
+            case 20...:
+                // ce cas ne devrait pas se produire car (67-62) * 4 = 20
+                return 1.0
+                
+           default:
+                return nil
+        }
+    }
+    
+    /// Calcul du coefficient de majoration pour enfant à charge
+    /// - Parameter nbEnfantACharge: nb d'enfant de moins de 18 ans ou de 25 faisant des études
+    /// - Returns: coefficient de majoration [0, 1]
+    func coefMajorationPourEnfant(nbEnfantACharge: Int) -> Double {
+        switch nbEnfantACharge {
+        case 1...:
+            return 1.0 + Double(nbEnfantACharge) * 0.05
+        default:
+            return 1.0
+        }
+    }
+    
     /// Calcul de la pension Agirc
     /// - Parameters:
     ///   - lastAgircKnownSituation: nière situation connue pour le régime AGIRC
@@ -207,6 +423,8 @@ struct RegimeAgirc: Codable {
     ///   - ageOfPensionLiquidComp:
     ///   - year: année de calcul
     /// - Returns: pension Agirc
+    /// - Waring:
+    ///   - avant l'age du taux plein l'abattement est définitif
     func pension(lastAgircKnownSituation  : RegimeAgircSituation, // swiftlint:disable:this function_parameter_count
                  birthDate                : Date,
                  lastKnownSituation       : RegimeGeneralSituation,
@@ -232,7 +450,8 @@ struct RegimeAgirc: Codable {
                         return nil
                     }
                     let ndTrimAvantAgeLegal =
-                        Retirement.model.regimeGeneral.model.ageMinimumLegal * 4 - (yearOfPensionLiquid * 4 + monthOfPensionLiquid / 3)
+                        Retirement.model.regimeGeneral.ageMinimumLegal * 4
+                        - (yearOfPensionLiquid * 4 + monthOfPensionLiquid / 3)
                     
                     // coefficient de minoration
                     guard let coef = coefDeMinorationAvantAgeLegal(ndTrimAvantAgeLegal: ndTrimAvantAgeLegal) else {
@@ -244,33 +463,39 @@ struct RegimeAgirc: Codable {
                 case dateOfAgeMinimumLegal... :
                     // nombre de trimestre manquant au moment de la liquidation de la pension pour pour obtenir le taux plein
                     guard var nbTrimManquantPourTauxPlein =
-                            Retirement.model.regimeGeneral.nbTrimManquantPourTauxPlein(birthDate                : birthDate,
-                                                                                       lastKnownSituation       : lastKnownSituation,
-                                                                                       dateOfRetirement         : dateOfRetirement,
-                                                                                       dateOfEndOfUnemployAlloc : dateOfEndOfUnemployAlloc) else {
+                            Retirement.model.regimeGeneral.nbTrimManquantPourTauxPlein(
+                                birthDate                : birthDate,
+                                lastKnownSituation       : lastKnownSituation,
+                                dateOfRetirement         : dateOfRetirement,
+                                dateOfEndOfUnemployAlloc : dateOfEndOfUnemployAlloc) else {
                         customLog.log(level: .default, "nbTrimManquantPourTauxPlein = nil")
                         return nil
                     }
-                    nbTrimManquantPourTauxPlein = max(nbTrimManquantPourTauxPlein, 0)
-                    // customLog.log(level: .info, "nb Trim Manquant Pour Taux Plein = \(nbTrimManquantPourTauxPlein, privacy: .public)")
+                    nbTrimManquantPourTauxPlein = zeroOrPositive(nbTrimManquantPourTauxPlein)
+                    customLog.log(level: .info,
+                                  "nb Trim Manquant Pour Taux Plein = \(nbTrimManquantPourTauxPlein, privacy: .public)")
                     
                     // nombre de trimestre au-delà de l'age minimum légal de départ à la retraite au moment de la liquidation de la pension
                     guard let yearOfPensionLiquid = ageOfPensionLiquidComp.year,
                           let monthOfPensionLiquid = ageOfPensionLiquidComp.month else {
-                        customLog.log(level: .default, "yearOfPensionLiquid OU monthOfPensionLiquid = nil")
+                        customLog.log(level: .default,
+                                      "yearOfPensionLiquid OU monthOfPensionLiquid = nil")
                         return nil
                     }
-                    let nbTrimPostAgeLegalMin = (yearOfPensionLiquid - Retirement.model.regimeGeneral.model.ageMinimumLegal) * 4
+                    let nbTrimPostAgeLegalMin =
+                        (yearOfPensionLiquid - Retirement.model.regimeGeneral.ageMinimumLegal) * 4
                         + monthOfPensionLiquid / 3
                     if nbTrimPostAgeLegalMin < 0 {
-                        customLog.log(level: .error, "nb Trim Post Age Legal Min < 0 = \(nbTrimPostAgeLegalMin, privacy: .public)")
+                        customLog.log(level: .error,
+                                      "nb Trim Post Age Legal Min < 0 = \(nbTrimPostAgeLegalMin, privacy: .public)")
                         fatalError("Agirc pension nbTrimPostAgeLegalMin < 0 = \(nbTrimPostAgeLegalMin)")
                     }
-                    // customLog.log(level: .info, "nb Trim Post Age Legal Min = \(nbTrimPostAgeLegalMin, privacy: .public)")
+                    customLog.log(level: .info, "nb Trim Post Age Legal Min = \(nbTrimPostAgeLegalMin, privacy: .public)")
                     
                     // coefficient de minoration
-                    guard let coef = coefDeMinorationApresAgeLegal(nbTrimManquantPourTauxPlein : nbTrimManquantPourTauxPlein,
-                                                                   nbTrimPostAgeLegalMin       : nbTrimPostAgeLegalMin) else {
+                    guard let coef = coefDeMinorationApresAgeLegal(
+                            nbTrimManquantPourTauxPlein : nbTrimManquantPourTauxPlein,
+                            nbTrimPostAgeLegalMin       : nbTrimPostAgeLegalMin) else {
                         customLog.log(level: .default, "pension coef = nil")
                         return nil
                     }
@@ -284,16 +509,19 @@ struct RegimeAgirc: Codable {
         
         //----------------------------------------------------------------------------------------------
         guard let dateOfAgeMinimumAgirc = dateAgeMinimumAgirc(birthDate:birthDate) else {
-            customLog.log(level: .default, "dateOfAgeMinimumAgirc = nil")
+            customLog.log(level: .default,
+                          "pension:dateOfAgeMinimumAgirc = nil")
             return nil
         }
-        // customLog.log(level: .info, "date Of Age Minimum Agirc = \(dateOfAgeMinimumAgirc, privacy: .public)")
+        customLog.log(level: .info,
+                      "date Of Age Minimum Agirc = \(dateOfAgeMinimumAgirc, privacy: .public)")
         
-        guard let dateOfAgeMinimumLegal = Retirement.model.regimeGeneral.dateAgeMinimumLegal(birthDate:birthDate) else {
-            customLog.log(level: .default, "dateOfAgeMinimumLegal = nil")
+        guard let dateOfAgeMinimumLegal =
+                Retirement.model.regimeGeneral.dateAgeMinimumLegal(birthDate:birthDate) else {
+            customLog.log(level: .default, "pension:dateOfAgeMinimumLegal = nil")
             return nil
         }
-        // customLog.log(level: .info, "date Of Age Minimum Legal = \(dateOfAgeMinimumLegal, privacy: .public)")
+        customLog.log(level: .info, "date Of Age Minimum Legal = \(dateOfAgeMinimumLegal, privacy: .public)")
         
         guard dateOfPensionLiquid >= dateOfAgeMinimumAgirc else {
             // pas de pension avant cet age minimum
@@ -302,40 +530,44 @@ struct RegimeAgirc: Codable {
                     pensionBrute        : 0,
                     pensionNette        : 0)
         }
-        // customLog.log(level: .info, "date Of Pension Liquid = \(dateOfPensionLiquid, privacy: .public)")
+        customLog.log(level: .info,
+                      "date Of Pension Liquid = \(dateOfPensionLiquid, privacy: .public)")
         
         guard let coefMinoration = coefMinoration(dateOfAgeMinimumLegal: dateOfAgeMinimumLegal) else {
-            customLog.log(level: .default, "coefMinoration = nil")
+            customLog.log(level: .default, "pension:coefMinoration = nil")
             return nil
         }
         
         // projection du nb de points au moment de la demande de liquidation de la pension
-        guard let projectedNumberOfPoints = self.projectedNumberOfPoints(lastAgircKnownSituation : lastAgircKnownSituation,
-                                                                         dateOfRetirement        : dateOfRetirement,
-                                                                         dateOfEndOfUnemployAlloc: dateOfEndOfUnemployAlloc) else {
-            customLog.log(level: .default, "projectedNumberOfPoints = nil")
+        guard let projectedNumberOfPoints = self.projectedNumberOfPoints(
+                lastAgircKnownSituation : lastAgircKnownSituation,
+                dateOfRetirement        : dateOfRetirement,
+                dateOfEndOfUnemployAlloc: dateOfEndOfUnemployAlloc) else {
+            customLog.log(level: .default, "pension:projectedNumberOfPoints = nil")
             return nil
         }
-        // customLog.log(level: .info, "projected Number Of Points = \(projectedNumberOfPoints, privacy: .public)")
+        customLog.log(level: .info, "projected Number Of Points = \(projectedNumberOfPoints, privacy: .public)")
         
         // Pension = Nombre de points X Valeurs du point X Coefficient de minoration
         var pensionBrute = projectedNumberOfPoints.double() * model.valeurDuPoint * coefMinoration
-        // customLog.log(level: .info, "pension Brute = \(projectedNumberOfPoints, privacy: .public)")
-        
-        var pensionNette = Fiscal.model.pensionTaxes.netRegimeAgirc(pensionBrute)
-        // customLog.log(level: .info, "pension Nette = \(pensionNette, privacy: .public)")
+        customLog.log(level: .info, "pension Brute = \(pensionBrute, privacy: .public)")
         
         if let yearEval = year {
             if yearEval < dateOfPensionLiquid.year {
-                customLog.log(level: .error, "pension / yearEval < dateOfPensionLiquid")
+                customLog.log(level: .error,
+                              "pension:yearEval < dateOfPensionLiquid")
+                fatalError("pension:yearEval < dateOfPensionLiquid")
             }
             // révaluer le montant de la pension à la date demandée
-            let coefReavluation = RegimeAgirc.revaluationCoef(during              : yearEval,
-                                                              dateOfPensionLiquid : dateOfPensionLiquid)
+            let coefReavluation = RegimeAgirc.revaluationCoef(
+                during              : yearEval,
+                dateOfPensionLiquid : dateOfPensionLiquid)
             
             pensionBrute *= coefReavluation
-            pensionNette *= coefReavluation
         }
+        
+        let pensionNette = Fiscal.model.pensionTaxes.netRegimeAgirc(pensionBrute)
+        customLog.log(level: .info, "pension Nette = \(pensionNette, privacy: .public)")
         
         return (coefMinoration      : coefMinoration,
                 projectedNbOfPoints : projectedNumberOfPoints,

@@ -124,7 +124,9 @@ extension Adult {
         let pensionTotaleAvantDeces = (brut: pensionDuDecede.brut + pensionDuConjoint.brut,
                                        net : pensionDuDecede.net  + pensionDuConjoint.net)
         // la pension du conjoint survivant, avec réversion, est limitée à un % de la somme des deux
-        let pensionBruteApresDeces = pensionTotaleAvantDeces.brut * Retirement.model.reversion.model.tauxReversion / 100.0
+        let pensionBruteApresDeces =
+            Retirement.model.reversion.pensionReversion(pensionDecedent : pensionDuDecede.brut,
+                                                        pensionSpouse   : pensionDuConjoint.brut)
         // le complément de réversion est calculé en conséquence
         let reversionBrut = zeroOrPositive(pensionBruteApresDeces - pensionDuConjoint.brut)
         let reversionNet  = reversionBrut * (pensionTotaleAvantDeces.net / pensionTotaleAvantDeces.brut)

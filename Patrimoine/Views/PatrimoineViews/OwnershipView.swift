@@ -123,7 +123,7 @@ struct OwnersListView : View {
     func moveOwners(from indexes: IndexSet, to destination: Int) {
         owners.move(fromOffsets: indexes, toOffset: destination)
     }
-    
+
     func isAnOwner(_ name: String) -> Bool {
         owners.contains(where: { $0.name == name })
     }

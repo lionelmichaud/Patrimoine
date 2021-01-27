@@ -17,7 +17,7 @@ class PensionReversionTest: XCTestCase {
     
     override class func setUp() {
         super.setUp()
-        let model = PensionReversion.Model(for: PensionReversionTest.self,
+        let model = PensionReversion.Model(for                  : PensionReversionTest.self,
                                            from                 : "RetirementReversionModelConfigTest.json",
                                            dateDecodingStrategy : .iso8601,
                                            keyDecodingStrategy  : .useDefaultKeys)
@@ -27,13 +27,19 @@ class PensionReversionTest: XCTestCase {
     // MARK: Tests
     
     func test_saving_to_test_bundle() throws {
-        PensionReversionTest.reversion.model.saveToBundle(for: RegimeGeneralTest.self,
-                                                          to: "RetirementReversionModelConfigTest.json",
-                                                          dateEncodingStrategy: .iso8601,
-                                                          keyEncodingStrategy: .useDefaultKeys)
+        PensionReversionTest.reversion.saveToBundle(for                  : RegimeGeneralTest.self,
+                                                    to                   : "RetirementReversionModelConfigTest.json",
+                                                    dateEncodingStrategy : .iso8601,
+                                                    keyEncodingStrategy  : .useDefaultKeys)
     }
     
-    func test_tauxReversion() {
-        XCTAssertEqual(PensionReversionTest.reversion.model.tauxReversion, 70.0)
+    func test_pension_reversion() {
+        let pensionDecedent = 2000.0
+        let pensionSpouse   = 1000.0
+        
+        let reversion = PensionReversionTest.reversion.pensionReversion(pensionDecedent: pensionDecedent,
+                                                                        pensionSpouse  : pensionSpouse)
+        
+        XCTAssertEqual((pensionDecedent + pensionSpouse) * 0.7, reversion)
     }
 }

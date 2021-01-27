@@ -12,7 +12,7 @@ import Foundation
 
 // MARK: - SINGLETON: Modèle de pension de retraite
 
-struct Retirement: Codable {
+struct Retirement {
     
     /// Définir le mode de simulation à utiliser pour tous les calculs futurs
     /// - Parameter simulationMode: mode de simulation à utiliser

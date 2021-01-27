@@ -20,8 +20,28 @@ struct PensionReversion: Codable {
     
     // MARK: - Properties
     
-    var model: Model
+    private var model: Model
+    
+    // MARK: - Initializer
+    
+    init(model: Model) {
+        self.model = model
+    }
     
     // MARK: - Methods
     
+    /// Encode l'objet dans un fichier stocké dans le Bundle de contenant la définition de la classe aClass
+    func saveToBundle(for aClass           : AnyClass,
+                      to file              : String,
+                      dateEncodingStrategy : JSONEncoder.DateEncodingStrategy,
+                      keyEncodingStrategy  : JSONEncoder.KeyEncodingStrategy) {
+        model.saveToBundle(for                  : aClass,
+                           to                   : file,
+                           dateEncodingStrategy : dateEncodingStrategy,
+                           keyEncodingStrategy  : keyEncodingStrategy)
+    }
+    func pensionReversion(pensionDecedent : Double,
+                          pensionSpouse   : Double) -> Double {
+        (pensionDecedent + pensionSpouse) * model.tauxReversion / 100.0
+    }
 }

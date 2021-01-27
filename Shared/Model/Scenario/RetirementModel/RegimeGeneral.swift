@@ -22,13 +22,6 @@ struct RegimeGeneral: Codable {
     
     // MARK: - Nested types
     
-    typealias PensionDetails = (tauxDePension    : Double,
-                                majorationEnfant : Double,
-                                dureeDeReference : Int,
-                                dureeAssurance   : Int,
-                                pensionBrute     : Double,
-                                pensionNette     : Double)?
-    
     enum ModelError: String, CustomStringConvertible, Error {
         case impossibleToCompute
         case ilegalValue
@@ -39,21 +32,21 @@ struct RegimeGeneral: Codable {
         }
     }
     
-    struct Slice1: Codable {
+    struct SliceRegimeLegal: Codable {
         var birthYear   : Int
         var ndTrimestre : Int // nb de trimestre pour bénéficer du taux plein
         var ageTauxPlein: Int // age minimum pour bénéficer du taux plein sans avoir le nb de trimestres minimum
     }
     
-    struct Slice2: Codable {
+    struct SliceUnemployement: Codable {
         var nbTrimestreAcquis  : Int
         var nbTrimNonIndemnise : Int
     }
     
     struct Model: BundleCodable {
         static var defaultFileName : String = "RetirementRegimeGeneralModelConfig.json"
-        let dureeDeReferenceGrid   : [Slice1]
-        let nbTrimNonIndemniseGrid : [Slice2]
+        let dureeDeReferenceGrid   : [SliceRegimeLegal]
+        let nbTrimNonIndemniseGrid : [SliceUnemployement]
         let ageMinimumLegal        : Int    // 62
         let nbOfYearForSAM         : Int    // 25 pour le calcul du SAM
         let maxReversionRate       : Double // 50.0 // % du SAM
@@ -104,10 +97,30 @@ struct RegimeGeneral: Codable {
     
     // MARK: - Properties
     
-    var model: Model
+    private var model: Model
+    
+    var ageMinimumLegal: Int {
+        model.ageMinimumLegal
+    }
+    
+    // MARK: - Initializer
+    
+    init(model: Model) {
+        self.model = model
+    }
     
     // MARK: - Methods
-    
+
+    /// Encode l'objet dans un fichier stocké dans le Bundle de contenant la définition de la classe aClass
+    func saveToBundle(for aClass           : AnyClass,
+                      to file              : String,
+                      dateEncodingStrategy : JSONEncoder.DateEncodingStrategy,
+                      keyEncodingStrategy  : JSONEncoder.KeyEncodingStrategy) {
+        model.saveToBundle(for                  : aClass,
+                           to                   : file,
+                           dateEncodingStrategy : dateEncodingStrategy,
+                           keyEncodingStrategy  : keyEncodingStrategy)
+    }
     /// Calcul du taux de reversion en tenant compte d'une décote ou d'une surcote éventuelle
     /// - Parameters:
     ///   - birthDate: date de naissance
@@ -256,14 +269,19 @@ struct RegimeGeneral: Codable {
                             model.maxNbTrimestreDecote))
     }
     
-    /// Calcul la durée d'assurance à la date prévisionnelle de demande de liquidation de la pension de retraite
+    /// Calcul la durée d'assurance qui sera obtenue à la date au plus tard entre:
+    /// (a) la date de fin d'activité professionnelle, non suivie de période de chomage (dateOfRetirement)
+    /// (b) la date de la fin d'indemnisation chômage après une période de travail (dateOfEndOfUnemployAlloc)
+    ///
     /// - Parameters:
     ///   - birthDate: date de naissance
     ///   - lastKnownSituation: dernière situation connue (année, nombre de trimestres de cotisation acquis)
     ///   - dateOfRetirement: date de cessation d'activité
     ///   - dateOfEndOfUnemployAlloc: date de la fin d'indemnisation chômage après une période de travail
-    /// - Returns: durée d'assurance en nombre de trimestres
-    /// - Warning: la durée d'assurance ne peut dépasser la durée de référence (le nb de trimestre pour obtenir le taux plein = F(année de naissance))
+    /// - Returns: Durée d'assurance en nombre de trimestres
+    ///    - deplafonne: peut être supérieur au nombre de trimestres de référence nécessaires pour obtenir le taux plein
+    ///    - plafonne: valeur plafonnée au nombre de trimestres de référence nécessaires pour obtenir le taux plein
+    /// - Warning: La durée d'assurance ne peut dépasser la durée de référence (le nb de trimestre pour obtenir le taux plein = F(année de naissance))
     /// - Note:
     ///   - [service-public](https://www.service-public.fr/particuliers/vosdroits/F31249)
     ///   - [la-retraite-en-clair](https://www.la-retraite-en-clair.fr/parcours-professionnel-regimes-retraite/periode-inactivite-retraite/chomage-retraite)
@@ -357,7 +375,9 @@ struct RegimeGeneral: Codable {
         model.dureeDeReferenceGrid.last(\.ndTrimestre, where: \.birthYear, <=, birthYear)
     }
     
-    /// Calcul le nb de trimestre manquant à la date prévisionnelle de demande de liquidation de la pension de retraite pour obtenir le taux plein
+    /// Calcul le nb de trimestre manquant à la date au plus tard entre:
+    /// (a) la date de fin d'activité professionnelle, non suivie de période de chomage (dateOfRetirement)
+    /// (b) la date de la fin d'indemnisation chômage après une période de travail (dateOfEndOfUnemployAlloc)
     /// - Parameters:
     ///   - birthDate: Date de naissance
     ///   - lastKnownSituation: dernière situation connue (année, nombre de trimestres de cotisation acquis)
@@ -372,7 +392,7 @@ struct RegimeGeneral: Codable {
         dureeDeReference(birthYear: birthDate.year) - dureeAssurance(birthDate               : birthDate,
                                                                      lastKnownSituation      : lastKnownSituation,
                                                                      dateOfRetirement        : dateOfRetirement,
-                                                                     dateOfEndOfUnemployAlloc: dateOfEndOfUnemployAlloc)?.plafonne
+                                                                     dateOfEndOfUnemployAlloc: dateOfEndOfUnemployAlloc)?.deplafonne
     }
     
     /// Trouve l'age minimum pour bénéficer du taux plein sans avoir le nb de trimestres minimum
@@ -403,6 +423,8 @@ struct RegimeGeneral: Codable {
     ///   - birthDate: date de naissance
     ///   - lastKnownSituation: dernière situation connue (année, nombre de trimestres de cotisation acquis)
     /// - Returns: date d'obtention de tous les trimestres nécessaire pour obtenir le taux plein de retraite
+    /// - Warning: la calcul suppose que l'on continue à accumuler des trimestre en continu à partir de la date
+    ///            du dernier relevé. C'est donc un meilleur cas.
     func dateAgeTauxPlein(birthDate          : Date,
                           lastKnownSituation : RegimeGeneralSituation) -> Date? {
         guard let dureeDeReference = dureeDeReference(birthYear: birthDate.year) else {
@@ -545,7 +567,8 @@ struct RegimeGeneral: Codable {
         
         if let yearEval = year {
             if yearEval < dateOfPensionLiquid.year {
-                customLog.log(level: .error, "pension / yearEval < dateOfPensionLiquid")
+                customLog.log(level: .error, "pension:yearEval < dateOfPensionLiquid")
+                fatalError("pension:yearEval < dateOfPensionLiquid")
             }
             // révaluer le montant de la pension à la date demandée
             pensionBrute = pensionBrute * RegimeGeneral.revaluationCoef(during              : yearEval,
