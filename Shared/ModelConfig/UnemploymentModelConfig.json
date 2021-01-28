@@ -10,10 +10,10 @@
                 },
                 {
                     "nbYears" : 100,
-                    "coef"    : 0.3333
+                    "coef"    : 0.33333333
                 }
             ],
-            
+
             "metallurgieGrid" : [
                 {
                     "nbYears" : 7,
@@ -24,11 +24,28 @@
                     "coef"    : 0.6
                 }
             ],
-            
+
             "correctionAgeGrid" : [
+                {
+                    "age" : 0,
+                    "correctionAncienneteGrid" : [
+                        {
+                            "anciennete" : 0,
+                            "majoration" : 0.0,
+                            "min"        : 0,
+                            "max"        : 18
+                        }
+                    ]
+                },
                 {
                     "age" : 50,
                     "correctionAncienneteGrid" : [
+                        {
+                            "anciennete" : 0,
+                            "majoration" : 0.0,
+                            "min"        : 0,
+                            "max"        : 18
+                        },
                         {
                             "anciennete" : 5,
                             "majoration" : 20.0,
@@ -40,6 +57,12 @@
                 {
                     "age" : 55,
                     "correctionAncienneteGrid" : [
+                        {
+                            "anciennete" : 0,
+                            "majoration" : 0.0,
+                            "min"        : 0,
+                            "max"        : 18
+                        },
                         {
                             "anciennete" : 2,
                             "majoration" : 0.0,
@@ -54,9 +77,9 @@
                         }
                     ]
                 }
-                
+
             ],
-            
+
             "irppDiscount" : {
                 "multipleOfConventionalCompensation" : 1.0,
                 "multipleOfLastSalaryBrut"           : 2.0,
@@ -64,6 +87,7 @@
                 "maxDiscount"                        : 246816.0
             }
         }
+
     },
     
     "allocationChomage" :

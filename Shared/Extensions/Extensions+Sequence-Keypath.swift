@@ -82,7 +82,7 @@ extension Array {
     ///
     ///     let found = articles.first(\.price, <=, 10.0)
     ///
-    func last<T: Comparable>(_ keyPath: KeyPath<Element, T>, _ f: (T, T) -> Bool, _ value: T) -> Element? {
+    func last<T: Comparable>(where keyPath: KeyPath<Element, T>, _ f: (T, T) -> Bool, _ value: T) -> Element? {
         return last(where: { f($0[keyPath: keyPath], value) })
     }
     

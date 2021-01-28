@@ -22,7 +22,7 @@ struct Economy {
         case outOfBounds
     }
     
-    enum RandomVariable: String, PickableEnum, CaseIterable {
+    enum RandomVariable: String, PickableEnum {
         case inflation   = "Inflation"
         case securedRate = "Rendements Sûrs"
         case stockRate   = "Rendements Actions"

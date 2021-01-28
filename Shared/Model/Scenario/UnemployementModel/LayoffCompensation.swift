@@ -7,6 +7,9 @@
 //
 
 import Foundation
+import os
+
+private let customLog = Logger(subsystem: "me.michaud.lionel.Patrimoine", category: "Model.LayoffCompensation")
 
 // MARK: - Modèle d'Indeminité de licenciement
 // https://www.juritravail.com/Actualite/respecter-salaire-minimum/Id/221441
@@ -59,6 +62,7 @@ struct LayoffCompensation: Codable {
     ///   - nbYearsSeniority: nombre d'année d'ancienneté au moment du licenciement
     ///   - grid: grille à utiliser
     /// - Returns: nombre de mois de salaire de l'indemnité de licenciement selon la grille
+    /// - Note: [travail-emploi.gouv.fr](https://travail-emploi.gouv.fr/droit-du-travail/la-rupture-du-contrat-de-travail/article/l-indemnite-legale-de-licenciement)
     func layoffCompensationInMonth(nbYearsSeniority years : Int,
                                    grid                   : [SliceBase]) -> Double {
         var decompte = years
@@ -78,6 +82,7 @@ struct LayoffCompensation: Codable {
     /// Calcul du nombre de mois de salaire de l'indemnité de licenciement selon le Code du Travail (Légal)
     /// - Parameter nbYearsSeniority: nombre d'année d'ancienneté au moment du licenciement
     /// - Returns: nombre de mois de salaire de l'indemnité de licenciement selon le Code du Travail (Légal)
+    /// - Note: [travail-emploi.gouv.fr](https://travail-emploi.gouv.fr/droit-du-travail/la-rupture-du-contrat-de-travail/article/l-indemnite-legale-de-licenciement)
     func layoffCompensationLegalInMonth(nbYearsSeniority years : Int) -> Double {
         layoffCompensationInMonth(nbYearsSeniority: years,
                                   grid: model.legalGrid)
@@ -88,19 +93,25 @@ struct LayoffCompensation: Codable {
     ///   - age: age au moment du licenciement
     ///   - nbYearsSeniority: nombre d'année d'ancienneté au moment du licenciement
     /// - Returns: nombre de mois de salaire de l'indemnité de licenciement selon la Convention de la Métalurgie
+    /// - Note:
+    ///   - [juritravail.com](https://www.juritravail.com/Actualite/respecter-salaire-minimum/Id/221441)
+    ///   - [editions-tissot.fr](https://www.editions-tissot.fr/actualite/droit-du-travail/indemnite-de-licenciement-des-ingenieurs-et-cadres-de-la-metallurgie-quel-est-le-plafond-d-indemnite-pour-les-salaries-successivement-employes-a-temps-complet-et-a-temps-partiel)
     func layoffCompensationConventionInMonth(age                    : Int,
-                                             nbYearsSeniority years : Int) -> Double {
+                                             nbYearsSeniority years : Int) -> Double? {
         let allocLegale      = layoffCompensationInMonth(nbYearsSeniority: years,
                                                          grid: model.legalGrid)
         var allocMetallurgie = layoffCompensationInMonth(nbYearsSeniority: years,
                                                          grid: model.metallurgieGrid)
         // majoration fonction de l'age
-        guard let sliceAge = model.correctionAgeGrid.last(where: { $0.age <= age }) else {
-            fatalError()
+        guard let correctionAncienneteGrid = model.correctionAgeGrid.last(\.correctionAncienneteGrid, where: \.age, <=, age) else {
+        //guard let sliceAge = model.correctionAgeGrid.last(where: { $0.age <= age }) else {
+            customLog.log(level: .error, "correctionAncienneteGrid = nil")
+            return nil
         }
         // majoration fonction de l'ancienneté
-        guard let slice2 = sliceAge.correctionAncienneteGrid.last(where: { $0.anciennete <= years }) else {
-            fatalError()
+        guard let slice2 = correctionAncienneteGrid.last(where: \.anciennete, <=, years) else {
+            customLog.log(level: .error, "slice2 = nil")
+            return nil
         }
         // application de la majoration
         allocMetallurgie *= (1 + slice2.majoration / 100)
@@ -144,12 +155,16 @@ struct LayoffCompensation: Codable {
         
         var taxable      : Double
         var irppDiscount : Double
-        let nbMonth = layoffCompensationConventionInMonth(age              : age,
-                                                          nbYearsSeniority : years)
+        guard let nbMonth = layoffCompensationConventionInMonth(age              : age,
+                                                                nbYearsSeniority : years) else {
+            customLog.log(level: .error,
+                          "layoffCompensation:layoffCompensationConventionInMonth = nil")
+            fatalError("layoffCompensation:layoffCompensationConventionInMonth = nil")
+        }
         // indemnité brute conventionnelle basée sur le dernier salaire brut
         let brutConventionnel = nbMonth * yearlyWorkIncomeBrut / 12.0
         // indemnité réelle perçue (peut être plus élevée que l'indemnité conventionnelle)
-        let brutReel          = actualCompensationBrut ?? brutConventionnel
+        let brutReel = actualCompensationBrut ?? brutConventionnel
         
         // fraction de l'indemnité taxable à l'IRPP
         switch causeOfRetirement {

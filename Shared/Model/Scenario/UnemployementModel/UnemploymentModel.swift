@@ -9,11 +9,11 @@
 import Foundation
 
 // MARK: - SINGLETON: Modèle d'indemnité de licenciement et de Chomage
-struct Unemployment: Codable {
+struct Unemployment {
     
     // nested types
     
-    enum Cause: String, PickableEnum, Codable, Hashable {
+    enum Cause: String, PickableEnum, Codable {
         case demission                          = "Démission"
         case licenciement                       = "Licenciement"
         case ruptureConventionnelleIndividuelle = "Rupture individuelle"
@@ -29,8 +29,8 @@ struct Unemployment: Codable {
     
     struct Model: BundleCodable {
         static var defaultFileName : String = "UnemploymentModelConfig.json"
-        var indemniteLicenciement : LayoffCompensation
-        var allocationChomage     : UnemploymentCompensation
+        var indemniteLicenciement  : LayoffCompensation
+        var allocationChomage      : UnemploymentCompensation
     }
     
     // properties

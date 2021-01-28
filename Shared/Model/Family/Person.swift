@@ -59,10 +59,6 @@ enum Seniority: Int, PickableEnum {
 // MARK: - Person
 class Person : ObservableObject, Identifiable, CustomStringConvertible, Codable {
     
-    // MARK: - Static properties
-    
-    static var family: Family?
-
     // MARK: - Nested types
 
     private enum CodingKeys : String, CodingKey {

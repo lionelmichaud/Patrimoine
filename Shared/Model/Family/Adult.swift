@@ -27,6 +27,10 @@ final class Adult: Person { // swiftlint:disable:this type_body_length
              work_Income
     }
     
+    // MARK: - Static properties
+    
+    static var family: Family?
+    
     // MARK: - properties
     
     // nombre d'enfants
@@ -283,12 +287,13 @@ final class Adult: Person { // swiftlint:disable:this type_body_length
     var pensionRegimeGeneral: (brut: Double, net: Double) {
         // pension du régime général
         if let (brut, net) =
-            Retirement.model.regimeGeneral.pension(birthDate                : birthDate,
-                                                   dateOfRetirement         : dateOfRetirement,
-                                                   dateOfEndOfUnemployAlloc : dateOfEndOfUnemployementAllocation,
-                                                   dateOfPensionLiquid      : dateOfPensionLiquid,
-                                                   lastKnownSituation       : lastKnownPensionSituation,
-                                                   nbEnfant                 : 3) {
+            Retirement.model.regimeGeneral.pension(
+                birthDate                : birthDate,
+                dateOfRetirement         : dateOfRetirement,
+                dateOfEndOfUnemployAlloc : dateOfEndOfUnemployementAllocation,
+                dateOfPensionLiquid      : dateOfPensionLiquid,
+                lastKnownSituation       : lastKnownPensionSituation,
+                nbEnfant                 : 3) {
             return (brut, net)
         } else {
             return (0, 0)
@@ -310,13 +315,14 @@ final class Adult: Person { // swiftlint:disable:this type_body_length
     @Published var lastKnownAgircPensionSituation = RegimeAgircSituation()
     var pensionRegimeAgirc: (brut: Double, net: Double) {
         if let pensionAgirc =
-            Retirement.model.regimeAgirc.pension(lastAgircKnownSituation  : lastKnownAgircPensionSituation,
-                                              birthDate                : birthDate,
-                                              lastKnownSituation       : lastKnownPensionSituation,
-                                              dateOfRetirement         : dateOfRetirement,
-                                              dateOfEndOfUnemployAlloc : dateOfEndOfUnemployementAllocation,
-                                              dateOfPensionLiquid      : dateOfAgircPensionLiquid,
-                                              ageOfPensionLiquidComp   : ageOfAgircPensionLiquidComp) {
+            Retirement.model.regimeAgirc.pension(
+                lastAgircKnownSituation  : lastKnownAgircPensionSituation,
+                birthDate                : birthDate,
+                lastKnownSituation       : lastKnownPensionSituation,
+                dateOfRetirement         : dateOfRetirement,
+                dateOfEndOfUnemployAlloc : dateOfEndOfUnemployementAllocation,
+                dateOfPensionLiquid      : dateOfAgircPensionLiquid,
+                nbEnfantACharge          : Adult.family!.nbOfFiscalChildren(during: dateOfAgircPensionLiquid.year)) {
             return (pensionAgirc.pensionBrute,
                     pensionAgirc.pensionNette)
         } else {
@@ -471,6 +477,9 @@ final class Adult: Person { // swiftlint:disable:this type_body_length
     }
     func removeChild() {
         if sexe == .female {nbOfChildBirth -= 1}
+    }
+    func nbOfFiscalChildren(during year: Int) -> Int {
+        Adult.family!.nbOfFiscalChildren(during: year)
     }
     func setAgeOfPensionLiquidComp(year: Int, month: Int = 0, day: Int = 0) {
         ageOfPensionLiquidComp = DateComponents(calendar: Date.calendar, year: year, month: month, day: day)

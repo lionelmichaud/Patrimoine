@@ -25,13 +25,14 @@ extension Adult {
     -> (brut: Double, net: Double) {
         // pension du régime général
         if let (brut, net) =
-            Retirement.model.regimeGeneral.pension(birthDate                : birthDate,
-                                                dateOfRetirement         : dateOfRetirement,
-                                                dateOfEndOfUnemployAlloc : dateOfEndOfUnemployementAllocation,
-                                                dateOfPensionLiquid      : dateOfPensionLiquid,
-                                                lastKnownSituation       : lastKnownPensionSituation,
-                                                nbEnfant                 : 3,
-                                                during                   : year) {
+            Retirement.model.regimeGeneral.pension(
+                birthDate                : birthDate,
+                dateOfRetirement         : dateOfRetirement,
+                dateOfEndOfUnemployAlloc : dateOfEndOfUnemployementAllocation,
+                dateOfPensionLiquid      : dateOfPensionLiquid,
+                lastKnownSituation       : lastKnownPensionSituation,
+                nbEnfant                 : 3,
+                during                   : year) {
             return (brut, net)
         } else {
             return (0, 0)
@@ -41,14 +42,15 @@ extension Adult {
     func pensionRegimeAgirc(during year: Int)
     -> (brut: Double, net: Double) {
         if let pensionAgirc =
-            Retirement.model.regimeAgirc.pension(lastAgircKnownSituation  : lastKnownAgircPensionSituation,
-                                              birthDate                : birthDate,
-                                              lastKnownSituation       : lastKnownPensionSituation,
-                                              dateOfRetirement         : dateOfRetirement,
-                                              dateOfEndOfUnemployAlloc : dateOfEndOfUnemployementAllocation,
-                                              dateOfPensionLiquid      : dateOfAgircPensionLiquid,
-                                              ageOfPensionLiquidComp   : ageOfAgircPensionLiquidComp,
-                                              during                   : year) {
+            Retirement.model.regimeAgirc.pension(
+                lastAgircKnownSituation  : lastKnownAgircPensionSituation,
+                birthDate                : birthDate,
+                lastKnownSituation       : lastKnownPensionSituation,
+                dateOfRetirement         : dateOfRetirement,
+                dateOfEndOfUnemployAlloc : dateOfEndOfUnemployementAllocation,
+                dateOfPensionLiquid      : dateOfAgircPensionLiquid,
+                nbEnfantACharge          : nbOfFiscalChildren(during: year),
+                during                   : year) {
             return (pensionAgirc.pensionBrute,
                     pensionAgirc.pensionNette)
         } else {
@@ -82,7 +84,7 @@ extension Adult {
         }
         if withReversion {
             // ajouter la pension de réversion s'il y en a une
-            if let pensionReversion = Person.family?.spouseOf(self)?.pensionReversionForSpouse(during: year) {
+            if let pensionReversion = Adult.family!.spouseOf(self)?.pensionReversionForSpouse(during: year) {
                 brut += pensionReversion.brut
                 net  += pensionReversion.net
             }
@@ -103,7 +105,7 @@ extension Adult {
             return nil
         }
         // le conjoint existe
-        guard let spouse = Person.family?.spouseOf(self) else {
+        guard let spouse = Adult.family!.spouseOf(self) else {
             return nil
         }
         // le conjoint est vivant

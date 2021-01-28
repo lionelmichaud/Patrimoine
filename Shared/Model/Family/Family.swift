@@ -60,7 +60,7 @@ final class Family: ObservableObject, CustomStringConvertible {
         // injection de family dans la propriété statique de Expense pour lier les évenements à des personnes
         LifeExpense.family = self
         // injection de family dans la propriété statique de Person pour lier les évenements à des personnes
-        Person.family = self
+        Adult.family = self
         // injection de family dans la propriété statique de Patrimoin pour lier les ages à des personnes
         Patrimoin.family = self
     }

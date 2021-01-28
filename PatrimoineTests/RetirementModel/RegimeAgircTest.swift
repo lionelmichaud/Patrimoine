@@ -30,6 +30,12 @@ class RegimeAgircTest: XCTestCase { // swiftlint:disable:this type_body_length
                                dateDecodingStrategy : .iso8601,
                                keyDecodingStrategy  : .useDefaultKeys)
             .initialized()
+        RegimeAgirc.fiscalModel =
+            Fiscal.Model(for: FiscalModelTests.self,
+                         from                 : "FiscalModelConfig.json",
+                         dateDecodingStrategy : .iso8601,
+                         keyDecodingStrategy  : .useDefaultKeys)
+            .initialized()
     }
     
     func date(year: Int, month: Int, day: Int) -> Date {
@@ -487,10 +493,14 @@ class RegimeAgircTest: XCTestCase { // swiftlint:disable:this type_body_length
         coefTheory = 0.93 // 7% de décote = 0.93
         XCTAssertEqual(coefTheory, coefMinoration)
         
+        // cas:
+        //  - fin d'activité salarié    : fin 2021
+        //  - fin d'indemnité chômage   : 3 ans plus tard
+        //  - liquidation de la pension : à 62 ans
         // à 62 ans pile il manquera 8 trimestres
         dateOfRetirement             = date(year : 2022, month : 1, day : 1)
         let dateOfEndOfUnemployAlloc = 3.years.from(dateOfRetirement)!
-        dateOfPensionLiquid = (62.years + 10.days).from(birthDate)!
+        dateOfPensionLiquid          = (62.years).from(birthDate)!
         during = dateOfPensionLiquid.year
         
         coefMinoration = try XCTUnwrap(RegimeAgircTest.regimeAgirc.coefMinorationMajoration(
@@ -506,7 +516,7 @@ class RegimeAgircTest: XCTestCase { // swiftlint:disable:this type_body_length
         // (63.75 - 57.25) * 4 = 26 trimestres manquant > 20
         dateOfRetirement    = date(year : 2022, month : 1, day : 1)
         dateOfPensionLiquid = (62.years + 10.days).from(birthDate)!
-        during = dateOfPensionLiquid.year
+        during              = dateOfPensionLiquid.year
         
         coefMinoration = try XCTUnwrap(RegimeAgircTest.regimeAgirc.coefMinorationMajoration(
                                         birthDate                : birthDate,
@@ -547,11 +557,14 @@ class RegimeAgircTest: XCTestCase { // swiftlint:disable:this type_body_length
         var dateOfRetirement         : Date
         var dateOfEndOfUnemployAlloc : Date?
         var dateOfPensionLiquid      : Date
-        var ageOfPensionLiquidComp   : DateComponents
+        var nbEnfantACharge          : Int
         var during                   : Int?
         let sam = 36698.0
-        var nbPointTheory  : Int
-        
+        var nbPointTheory            : Int
+        var coefMajEnfantsTheory     : Double
+        var coefMinorationTheory     : Double
+        var pensionBruteTheory       : Double
+
         birthDate          = date(year: 1964, month: 9, day: 22)
         lastKnownSituation = RegimeGeneralSituation(atEndOf           : 2019,
                                                     nbTrimestreAcquis : 135,
@@ -559,14 +572,14 @@ class RegimeAgircTest: XCTestCase { // swiftlint:disable:this type_body_length
         lastAgircKnownSituation = RegimeAgircSituation(atEndOf     : 2018,
                                                        nbPoints    : 17907,
                                                        pointsParAn : 788)
+        // cas:
+        //  - fin d'activité salarié    : fin 2021
+        //  - fin d'indemnité chômage   : 3 ans plus tard
+        //  - liquidation de la pension : à 62 ans
         dateOfRetirement = date(year : 2022, month : 1, day : 1) // fin d'activité salarié
         dateOfEndOfUnemployAlloc = 3.years.from(dateOfRetirement) // fin d'indemnisation chomage 3 ans plus tard
         dateOfPensionLiquid      = 62.years.from(birthDate)! // liquidation à 62 ans
-        ageOfPensionLiquidComp = DateComponents(calendar : Date.calendar,
-                                                year     : 62,
-                                                month    : 0,
-                                                day      : 0,
-                                                hour     : 0)
+        nbEnfantACharge          = 2
         during = dateOfPensionLiquid.year
         let pension = try XCTUnwrap(RegimeAgircTest.regimeAgirc.pension(
                                         lastAgircKnownSituation  : lastAgircKnownSituation,
@@ -575,14 +588,21 @@ class RegimeAgircTest: XCTestCase { // swiftlint:disable:this type_body_length
                                         dateOfRetirement         : dateOfRetirement,
                                         dateOfEndOfUnemployAlloc : dateOfEndOfUnemployAlloc,
                                         dateOfPensionLiquid      : dateOfPensionLiquid,
-                                        ageOfPensionLiquidComp   : ageOfPensionLiquidComp,
+                                        nbEnfantACharge          : nbEnfantACharge,
                                         during                   : during))
+        coefMinorationTheory = 0.92  // voir autre test
+        XCTAssertEqual(coefMinorationTheory, pension.coefMinoration)
+        
+        coefMajEnfantsTheory = 1.0 + Double(nbEnfantACharge) * 5.0/100.0
+        XCTAssertEqual(coefMajEnfantsTheory , pension.coefMajorationEnfants)
+        
         nbPointTheory = lastAgircKnownSituation.nbPoints +
             (2021 - 2018) * lastAgircKnownSituation.pointsParAn +
-            (3) * lastAgircKnownSituation.pointsParAn
-        XCTAssertEqual(1.0 - 14.5/100.0, pension.coefMinoration)
+            (3) * lastAgircKnownSituation.pointsParAn // voir autre test
         XCTAssertEqual(nbPointTheory, pension.projectedNbOfPoints)
-        XCTAssertEqual(1, pension.pensionBrute)
-        XCTAssertEqual(1, pension.pensionNette)
+        
+        // Pension = Nombre de points X Valeurs du point X Coefficient de minoration X Coefficient de majoration enfants
+        pensionBruteTheory = Double(nbPointTheory) * 1.2714 * coefMinorationTheory * coefMajEnfantsTheory
+        XCTAssertEqual(pensionBruteTheory, pension.pensionBrute)
     }
-}
+}  // swiftlint:disable:this file_length
