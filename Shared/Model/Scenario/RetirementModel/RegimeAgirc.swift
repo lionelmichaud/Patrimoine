@@ -34,12 +34,20 @@ struct RegimeAgirc: Codable {
         var coef               : Double
     }
     
+    struct MajorationPourEnfant: Codable {
+        var majorPourEnfantsNes   : Double // % [0, 100]
+        var nbEnafntNesMin        : Int
+        var majorParEnfantACharge : Double // % [0, 100]
+        var plafondMajoEnfantNe   : Double // €
+    }
+    
     struct Model: BundleCodable {
         static var defaultFileName : String = "RetirementRegimeAgircModelConfig.json"
-        let gridAvant62   : [SliceAvantAgeLegal]
-        let gridApres62   : [SliceApresAgeLegal]
-        let valeurDuPoint : Double // 1.2714
-        let ageMinimum    : Int    // 57
+        let gridAvant62          : [SliceAvantAgeLegal]
+        let gridApres62          : [SliceApresAgeLegal]
+        let valeurDuPoint        : Double // 1.2714
+        let ageMinimum           : Int    // 57
+        let majorationPourEnfant : MajorationPourEnfant
     }
     
     // MARK: - Static Properties
@@ -401,15 +409,46 @@ struct RegimeAgirc: Codable {
         }
     }
     
-    /// Calcul du coefficient de majoration pour enfant à charge
-    /// - Parameter nbEnfantACharge: nb d'enfant de moins de 18 ans ou de 25 faisant des études
+    /// Calcul du coefficient de majoration pour enfants nés ou élevés
+    /// - Parameter nbEnfantNe: nombre d'enfants nés ou élevés
     /// - Returns: coefficient de majoration [0, 1]
-    func coefMajorationPourEnfant(nbEnfantACharge: Int) -> Double {
+    /// - Note:
+    ///   - [agirc-arrco.fr](https://lesexpertsretraite.agirc-arrco.fr/questions/1769054-retraite-complementaire-agirc-arrco-majorations-liees-enfants)
+    ///   - [previssima.fr](https://www.previssima.fr/question-pratique/retraite-agirc-arrco-quelles-sont-les-majorations-pour-enfants.html)
+    func coefMajorationPourEnfantNe(nbEnfantNe: Int) -> Double {
+        switch nbEnfantNe {
+            case 3...:
+                return 1.0 + model.majorationPourEnfant.majorPourEnfantsNes / 100.0
+            default:
+                return 1.0
+        }
+    }
+    
+    /// Calcul de la mojoration de pension en € pour enfants nés ou élevés
+    /// - Parameters:
+    ///   - pensionBrute: montant de la pension brute
+    ///   - nbEnfantNe: nombre d'enfants nés ou élevés
+    /// - Returns: mojoration de pension en €
+    func majorationPourEnfantNe(pensionBrute : Double,
+                                nbEnfantNe   : Int) -> Double {
+        let coefMajoration = coefMajorationPourEnfantNe(nbEnfantNe: nbEnfantNe)
+        let majoration = pensionBrute * (coefMajoration - 1.0)
+        // plafonnement de la majoration
+        return min(majoration, model.majorationPourEnfant.plafondMajoEnfantNe)
+    }
+    
+    /// Calcul du coefficient de majoration pour enfant à charge
+    /// - Parameter nbEnfantACharge: nb d'enfant de moins de 18 ans ou de 21 ans à charge ou de 25 faisant des études
+    /// - Returns: coefficient de majoration [0, 1]
+    /// - Note:
+    ///   - [agirc-arrco.fr](https://lesexpertsretraite.agirc-arrco.fr/questions/1769054-retraite-complementaire-agirc-arrco-majorations-liees-enfants)
+    ///   - [previssima.fr](https://www.previssima.fr/question-pratique/retraite-agirc-arrco-quelles-sont-les-majorations-pour-enfants.html)
+    func coefMajorationPourEnfantACharge(nbEnfantACharge : Int) -> Double {
         switch nbEnfantACharge {
-        case 1...:
-            return 1.0 + Double(nbEnfantACharge) * 0.05
-        default:
-            return 1.0
+            case 1...:
+                return 1.0 + Double(nbEnfantACharge) * model.majorationPourEnfant.majorParEnfantACharge / 100.0
+            default:
+                return 1.0
         }
     }
 }

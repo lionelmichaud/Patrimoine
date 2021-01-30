@@ -14,15 +14,6 @@ import Foundation
 
 struct Retirement {
     
-    /// Définir le mode de simulation à utiliser pour tous les calculs futurs
-    /// - Parameter simulationMode: mode de simulation à utiliser
-    static func setSimulationMode(to simulationMode : SimulationModeEnum) {
-        // injecter l'inflation dans les Types d'investissements procurant
-        // un rendement non réévalué de l'inflation chaque année
-        RegimeGeneral.simulationMode = simulationMode
-        RegimeAgirc.simulationMode   = simulationMode
-    }
-    
     // MARK: - Nested types
     
     struct Model: BundleCodable {
@@ -32,7 +23,23 @@ struct Retirement {
         var reversion    : PensionReversion
     }
     
+    // MARK: - Static methods
+
+    /// Définir le mode de simulation à utiliser pour tous les calculs futurs
+    /// - Parameter simulationMode: mode de simulation à utiliser
+    static func setSimulationMode(to simulationMode : SimulationModeEnum) {
+        // injecter l'inflation dans les Types d'investissements procurant
+        // un rendement non réévalué de l'inflation chaque année
+        RegimeGeneral.simulationMode = simulationMode
+        RegimeAgirc.simulationMode   = simulationMode
+    }
+    
     // MARK: - Static properties
     
     static var model: Model = Model()
+    
+    // MARK: - Initializer
+    
+    private init() {
+    }
 }

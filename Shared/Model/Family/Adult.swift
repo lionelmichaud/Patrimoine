@@ -194,9 +194,8 @@ final class Adult: Person { // swiftlint:disable:this type_body_length
         }
         Swift.print("supralégal = \(compensationSupralegal)")
         return Unemployment.model.allocationChomage.differeSpecifique(
-            SJR                    : SJR,
             compensationSupralegal : compensationSupralegal,
-            causeOfRetirement      : causeOfRetirement)
+            causeOfUnemployement   : causeOfRetirement)
     } // computed
     var unemployementAllocationDuration       : Int? { // en mois
         guard hasUnemployementAllocationPeriod else {
@@ -222,7 +221,7 @@ final class Adult: Person { // swiftlint:disable:this type_body_length
         guard let dateOfStart = dateOfStartOfUnemployementAllocation else {
             return nil
         }
-        return  reductionAfter.months.from(dateOfStart)!
+        return reductionAfter.months.from(dateOfStart)!
     } // computed
     var dateOfEndOfUnemployementAllocation    : Date? { // computed
         guard hasUnemployementAllocationPeriod else {
@@ -322,6 +321,7 @@ final class Adult: Person { // swiftlint:disable:this type_body_length
                 dateOfRetirement         : dateOfRetirement,
                 dateOfEndOfUnemployAlloc : dateOfEndOfUnemployementAllocation,
                 dateOfPensionLiquid      : dateOfAgircPensionLiquid,
+                nbEnfantNe               : Adult.family!.nbOfChildren,
                 nbEnfantACharge          : Adult.family!.nbOfFiscalChildren(during: dateOfAgircPensionLiquid.year)) {
             return (pensionAgirc.pensionBrute,
                     pensionAgirc.pensionNette)
@@ -480,6 +480,9 @@ final class Adult: Person { // swiftlint:disable:this type_body_length
     }
     func nbOfFiscalChildren(during year: Int) -> Int {
         Adult.family!.nbOfFiscalChildren(during: year)
+    }
+    func nbOfChildren() -> Int {
+        Adult.family!.nbOfChildren
     }
     func setAgeOfPensionLiquidComp(year: Int, month: Int = 0, day: Int = 0) {
         ageOfPensionLiquidComp = DateComponents(calendar: Date.calendar, year: year, month: month, day: day)

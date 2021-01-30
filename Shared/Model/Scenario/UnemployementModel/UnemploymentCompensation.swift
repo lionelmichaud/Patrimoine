@@ -7,6 +7,9 @@
 //
 
 import Foundation
+import os
+
+private let customLog = Logger(subsystem: "me.michaud.lionel.Patrimoine", category: "Model.UnemploymentCompensation")
 
 // MARK: - Modèle d'Allocation chomage
 // https://www.service-public.fr/particuliers/vosdroits/F14860
@@ -19,8 +22,8 @@ import Foundation
 
 struct UnemploymentCompensation: Codable {
     
-    // nested types
-    
+    // MARK: - Nested types
+
     struct DurationSlice: Codable {
         let fromAge             : Int
         let maxDuration         : Int // nb de mois d'indemnisation
@@ -40,31 +43,34 @@ struct UnemploymentCompensation: Codable {
         let case1Rate          : Double // 40.4 // % du salaire journalier de référence
         let case1Fix           : Double // 12.0 // € par jour
         let case2Rate          : Double // 57.0 // % du salaire journalier de référence
-        let minAllocation      : Double // 29.26 // € par jour
+        let minAllocationEuro  : Double // 29.26 // € par jour
         let maxAllocationPcent : Double // 75.0 // % du salaire journalier de référence
         let maxAllocationEuro  : Double // 253.14 // en €
     }
     
-    struct Model: Codable {
+    struct Model: BundleCodable {
+        static var defaultFileName: String = "UnemploymentCompensationConfig.json"
+        
         let durationGrid : [DurationSlice]
         let delayModel   : DelayModel
         let amountModel  : AmountModel
     }
     
-    // properties
-    
+    // MARK: - Static Properties
+
+    static var fiscalModel: Fiscal.Model = Fiscal.model
+
+    // MARK: - Properties
+
     var model: Model
     
-    // methods
-    
+    // MARK: - Methods
+
     /// Durée d'indemnisation en mois
     /// - Parameter age: age au moment du licenciement
     /// - Returns: durée d'indemnisation en mois
-    func durationInMonth(age: Int) -> Int {
-        guard let slice = model.durationGrid.last(where: { $0.fromAge <= age }) else {
-            fatalError()
-        }
-        return slice.maxDuration
+    func durationInMonth(age: Int) -> Int? {
+        model.durationGrid.last(\.maxDuration, where: \.fromAge, <=, age)
     }
     
     /// Différé spécifique d'indemnisation (ne réduit pas la durée totale d'indemnisation)
@@ -72,32 +78,34 @@ struct UnemploymentCompensation: Codable {
     /// - Parameters:
     ///   - SJR: Salaire Journalier de Référence
     ///   - compensationSupralegal: indemnités de rupture de contrat en plus des indemnités d'origine légale
-    ///   - causeOfRetirement: cause de la cessation d'activité
+    ///   - causeOfUnemployement: cause de la cessation d'activité
     /// - Returns: Différé spécifique d'indemnisation en jours
     /// - Note: Lorsque vous percevez des indemnités de rupture de contrat en plus des indemnités d'origine légale,
     ///           un différé spécifique d'indemnisation est appliqué sur ces sommes.
     ///           - Ne diminue pas la durée totale d'indemnisation.
     ///           - Repousse uniquement le point de départ.
-    func differeSpecifique(SJR                    : Double,
-                           compensationSupralegal : Double,
-                           causeOfRetirement      : Unemployment.Cause) -> Int {
-        let delay = (compensationSupralegal / model.delayModel.ratioDiffereSpecifique).rounded(.up)
-        print("delay = \(delay)")
+    ///  - [village-justice.com](https://www.village-justice.com/articles/differe-indemnisation-les-regles-avant-apres-reforme,34272.html)
+    func differeSpecifique(compensationSupralegal : Double,
+                           causeOfUnemployement   : Unemployment.Cause) -> Int {
+        let delay = (compensationSupralegal / model.delayModel.ratioDiffereSpecifique).rounded(.down)
         // plafonnemment différent selon la cause de licenciement
-        let plafond = causeOfRetirement == .planSauvegardeEmploi ? model.delayModel.maxDiffereSpecifiqueLicenciementEco : model.delayModel.maxDiffereSpecifique
-        print("plafon = \(plafond)")
-        print("retenu = \(min(Int(delay), plafond))")
+        let plafond = (causeOfUnemployement == .planSauvegardeEmploi) ?
+            model.delayModel.maxDiffereSpecifiqueLicenciementEco :
+            model.delayModel.maxDiffereSpecifique
         return min(Int(delay), plafond)
     }
     
-    /// Période avant réduction de l'allocation journalière
+    /// Calcul de la durée en mois de la période avant réduction de l'allocation journalière
     /// - Parameters:
     ///   - age: age au moment du licenciement
     ///   - SJR: Salaire Journalier de Référence
     /// - Returns: Période avant réduction de l'allocation journalière en mois
+    ///            Retourne `nil` s'il n'y aura jamais de réduction
+    /// - Note: La période commence au premier jour d'indemnisation
     func reductionAfter(age: Int, SJR: Double) -> Int? {
-        guard let slice = model.durationGrid.last(where: { $0.fromAge <= age }) else {
-            fatalError()
+        guard let slice = model.durationGrid.last(where: \.fromAge, <=, age) else {
+            customLog.log(level: .error, "reduction:slice = nil")
+            fatalError("reduction:slice = nil")
         }
         // réduction application seulement au-dessus d'un certain seuil d'allocation
         let daylyAlloc = daylyAllocBeforeReduction(SJR: SJR).brut
@@ -108,15 +116,19 @@ struct UnemploymentCompensation: Codable {
         }
     }
     
-    /// Coefficient de réduction de l'allocation journalière
+    /// Calcul des Durée et Coefficient de réduction de l'allocation journalière
     /// - Parameters:
     ///   - age: age au moment du licenciement
     ///   - daylyAlloc: allocation journalière
     /// - Returns: Coefficient de réduction de l'allocation journalière et durée de carence avant réduction
+    ///            `afterMonth` = `nil` s'il n'y aura jamais de réduction
+    /// - Note: La période commence au premier jour d'indemnisation
     func reduction(age: Int, daylyAlloc: Double) ->
-    (percentReduc: Double, afterMonth: Int?) {
-        guard let slice = model.durationGrid.last(where: { $0.fromAge <= age }) else {
-            fatalError()
+    (percentReduc : Double,
+     afterMonth   : Int?) {
+        guard let slice = model.durationGrid.last(where: \.fromAge, <=, age) else {
+            customLog.log(level: .error, "reduction:slice = nil")
+            fatalError("reduction:slice = nil")
         }
         // réduction application seulement au-dessus d'un certain seuil d'allocation
         if daylyAlloc >= slice.reductionSeuilAlloc && slice.reduction != 0 {
@@ -128,22 +140,32 @@ struct UnemploymentCompensation: Codable {
         }
     }
     
+    /// Calcul l'allocation de recherche d'emploi (ARE) avant son éventuelle réduction
+    /// - Parameters:
+    ///   - SJR: Salaire Journalier de Référence
+    /// - Returns: Allocation de recherche d'emploi (ARE) avant son éventuelle réduction
+    /// - Note: [unedic.org](https://www.unedic.org/indemnisation/vos-questions-sur-indemnisation-assurance-chomage/comment-est-calculee-mon-allocation-chomage)
     func daylyAllocBeforeReduction(SJR: Double)
     -> (brut: Double,
         net : Double) {
         
         // brute avant charges sociales
+        //  1er mode de calcul
         let alloc1  = SJR * model.amountModel.case1Rate / 100.0 + model.amountModel.case1Fix
+        //  2nd mode de calcul
         let alloc2  = SJR * model.amountModel.case2Rate / 100.0
+        //  on retient le meilleur des deux
         let alloc   = max(alloc1, alloc2)
-        let plafond = max(SJR * model.amountModel.maxAllocationPcent / 100.0,
+        let plafond = min(SJR * model.amountModel.maxAllocationPcent / 100.0,
                           model.amountModel.maxAllocationEuro)
-        let brut    = alloc.clamp(low  : model.amountModel.minAllocation,
+        let brut    = alloc.clamp(low  : model.amountModel.minAllocationEuro,
                                   high : plafond)
         
         // nette de charges sociales
-        let net = try! Fiscal.model.allocationChomageTaxes.net(brut : brut,
-                                                               SJR  : SJR)
-        return (brut: brut, net: net)
+        let net = try! UnemploymentCompensation.fiscalModel.allocationChomageTaxes.net(
+            brut : brut,
+            SJR  : SJR)
+        return (brut : brut,
+                net  : net)
     }
 }

@@ -30,7 +30,7 @@ struct HumanLife {
         var womenLifeExpectation  : ModelRandomizer<DiscreteRandomGenerator>
         var nbOfYearsOfdependency : ModelRandomizer<DiscreteRandomGenerator>
         
-        /// Lit le modèle dans un fichier JSON du Bundle Main
+        /// Initialise le modèle après l'avoir chargé à partir d'un fichier JSON du Bundle Main
         func initialized() -> Model {
             var model = self
             model.menLifeExpectation.rndGenerator.initialize()
@@ -68,4 +68,9 @@ struct HumanLife {
     // MARK: - Static Properties
     
     static var model: Model = Model().initialized()
+
+    // MARK: - Initializer
+    
+    private init() {
+    }
 }

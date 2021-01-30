@@ -32,7 +32,7 @@ struct SocioEconomy {
         var nbTrimTauxPlein            : ModelRandomizer<DiscreteRandomGenerator>
         var expensesUnderEvaluationrate: ModelRandomizer<BetaRandomGenerator>
         
-        /// Lit le modèle dans un fichier JSON du Bundle Main
+        /// Initialise le modèle après l'avoir chargé à partir d'un fichier JSON du Bundle Main
         func initialized() -> Model {
             var model = self
             model.pensionDevaluationRate.rndGenerator.initialize()
@@ -86,4 +86,9 @@ struct SocioEconomy {
     // MARK: - Static Properties
     
     static var model: Model = Model().initialized()
+
+    // MARK: - Initializer
+    
+    private init() {
+    }
 }

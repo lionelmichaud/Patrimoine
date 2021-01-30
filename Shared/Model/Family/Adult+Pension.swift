@@ -49,6 +49,7 @@ extension Adult {
                 dateOfRetirement         : dateOfRetirement,
                 dateOfEndOfUnemployAlloc : dateOfEndOfUnemployementAllocation,
                 dateOfPensionLiquid      : dateOfAgircPensionLiquid,
+                nbEnfantNe               : nbOfChildren(),
                 nbEnfantACharge          : nbOfFiscalChildren(during: year),
                 during                   : year) {
             return (pensionAgirc.pensionBrute,

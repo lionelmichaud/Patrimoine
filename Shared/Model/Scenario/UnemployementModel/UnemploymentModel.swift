@@ -11,8 +11,8 @@ import Foundation
 // MARK: - SINGLETON: Modèle d'indemnité de licenciement et de Chomage
 struct Unemployment {
     
-    // nested types
-    
+    // MARK: - Nested types
+
     enum Cause: String, PickableEnum, Codable {
         case demission                          = "Démission"
         case licenciement                       = "Licenciement"
@@ -33,15 +33,21 @@ struct Unemployment {
         var allocationChomage      : UnemploymentCompensation
     }
     
-    // properties
-    
+    // MARK: - Static Properties
+
     static var model: Model = Model()
-    // methods
     
+    // MARK: - Static Methods
+
     /// Indique si la personne à droit à une allocation et une indemnité
     /// - Parameter cause: cause de la cessation d'activité
     /// - Returns: vrai si a droit
     static func canReceiveAllocation(for cause: Cause) -> Bool {
         cause != .demission
+    }
+
+    // MARK: - Initializer
+    
+    private init() {
     }
 }

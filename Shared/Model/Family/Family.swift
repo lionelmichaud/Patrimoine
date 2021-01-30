@@ -94,12 +94,19 @@ final class Family: ObservableObject, CustomStringConvertible {
     }
     
     /// Nombre d'enfant dans le foyer fiscal
-    /// - Parameter year: année
-    /// - Warning: Vérifie que l'enfant est vivant
+    /// - Parameter year: année d'imposition
+    /// - Note: [service-public.fr](https://www.service-public.fr/particuliers/vosdroits/F3085)
     func nbOfFiscalChildren(during year: Int) -> Int {
         members
             .reduce(0) { (result, person) in
-                result + ((person is Child && person.isAlive(atEndOf: year) && !(person as! Child).isIndependant(during: year)) ? 1 : 0)
+                guard let child = person as? Child else {
+                    return result
+                }
+                let isAlive     = child.isAlive(atEndOf: year)
+                let isDependant = !child.isIndependant(during: year)
+                let age         = child.age(atEndOf: year - 1) // au début de l'année d'imposition
+                let isFiscalementACharge = isAlive && ((age <= 21) || (isDependant && age <= 25))
+                return result + (isFiscalementACharge ? 1 : 0)
             }
     }
     

@@ -1,0 +1,50 @@
+{
+    "durationGrid" : [
+        {
+            "fromAge"             : 0,
+            "maxDuration"         : 24,
+            "reduction"           : 30.0,
+            "reductionAfter"      : 6,
+            "reductionSeuilAlloc" : 84.67
+        },
+        {
+            "fromAge"             : 53,
+            "maxDuration"         : 30,
+            "reduction"           : 30.0,
+            "reductionAfter"      : 6,
+            "reductionSeuilAlloc" : 84.67
+        },
+        {
+            "fromAge"             : 55,
+            "maxDuration"         : 36,
+            "reduction"           : 30.0,
+            "reductionAfter"      : 6,
+            "reductionSeuilAlloc" : 84.67
+        },
+        {
+            "fromAge"             : 57,
+            "maxDuration"         : 36,
+            "reduction"           : 0.0,
+            "reductionAfter"      : 6,
+            "reductionSeuilAlloc" : 84.67
+        }
+    ],
+    
+    "delayModel" :
+    {
+        "delaiAttente"                        : 7,
+        "ratioDiffereSpecifique"              : 95.8,
+        "maxDiffereSpecifique"                : 150,
+        "maxDiffereSpecifiqueLicenciementEco" : 75
+    },
+    
+    "amountModel" :
+    {
+        "case1Rate"          : 40.4,
+        "case1Fix"           : 12.05,
+        "case2Rate"          : 57.0,
+        "minAllocationEuro"  : 29.38,
+        "maxAllocationPcent" : 75.0,
+        "maxAllocationEuro"  : 256.96
+    }
+}

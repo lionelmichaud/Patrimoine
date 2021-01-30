@@ -35,7 +35,7 @@ struct Fiscal {
         var inheritanceDonation      : InheritanceDonation
         var lifeInsuranceInheritance : LifeInsuranceInheritance
         
-        /// Lit le modèle dans un fichier JSON du Bundle Main
+        /// Initialise le modèle après l'avoir chargé à partir d'un fichier JSON du Bundle Main
         func initialized() -> Model {
             var model = self
             do {
@@ -57,4 +57,9 @@ struct Fiscal {
     // MARK: - Static Properties
 
     static var model: Model = Model().initialized()
+
+    // MARK: - Initializer
+    
+    private init() {
+    }
 }

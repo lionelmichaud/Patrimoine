@@ -213,4 +213,9 @@ struct Economy {
     // MARK: - Static Properties
     
     static var model: Model = Model()
+
+    // MARK: - Initializer
+    
+    private init() {
+    }
 }

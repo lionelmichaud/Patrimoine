@@ -56,7 +56,7 @@ struct RetirementDetailView: View {
                 IntegerView(label: viewModel.general.nbTrimestreDecote >= 0 ? "Nombre de trimestres de surcote" : "Nombre de trimestres de décote",
                             integer: viewModel.general.nbTrimestreDecote)
                 PercentView(label: "Taux de réversion", percent: viewModel.general.tauxDePension, comment: "Trev")
-                PercentView(label: "Majoration pour enfants", percent: viewModel.general.majorationEnfant, comment: "Menf")
+                AmountView(label: "Majoration pour enfants", amount: viewModel.general.majorationEnfant, comment: "Menf")
                 IntegerView(label: "Durée d'assurance (trimestres)", integer: viewModel.general.dureeAssurance, comment: "Da")
                 IntegerView(label: "Durée de référence (trimestres)", integer: viewModel.general.dureeDeReference, comment: "Dr")
                 AmountView(label: "Pension annuelle brute", amount: viewModel.general.pensionBrute, comment: "Brut = SAM x Trev x (1 + Menf) x Da/Dr")
@@ -66,8 +66,8 @@ struct RetirementDetailView: View {
                 IntegerView(label: "Nombre de points", integer: viewModel.agirc.projectedNbOfPoints, comment: "Npt")
                 AmountView(label: "Valeur de 1000 points", amount: viewModel.agirc.valeurDuPoint * 1000, comment: "Vpt")
                 PercentView(label: "Coeficient de minoration", percent: viewModel.agirc.coefMinoration, comment: "Cmin")
-                PercentView(label: "Coeficient de majoration pour enfants à charge", percent: viewModel.agirc.majorationEnfant, comment: "Cmaj")
-                AmountView(label: "Pension annuelle brute", amount: viewModel.agirc.pensionBrute, comment: "Brut = Npt x Vpt x Cmin x Cmaj")
+                PercentView(label: "Majoration pour enfants", percent: viewModel.agirc.majorationEnfant, comment: "Menf")
+                AmountView(label: "Pension annuelle brute", amount: viewModel.agirc.pensionBrute, comment: "Brut = Npt x Vpt x Cmin + Menf")
                 AmountView(label: "Pension annuelle nette", amount: viewModel.agirc.pensionNette, weight: .bold, comment: "Net = Brut - Prélev sociaux")
             }
         }
@@ -134,11 +134,7 @@ struct RetirementDetailView: View {
         viewModel.general.pensionNette      = pensionNette
         
         // régime complémentaire
-        guard let (coefMinoration,
-                   coefMajorationEnfants,
-                   projectedNbOfPoints,
-                   pensionBruteAgirc,
-                   pensionNetteAgirc) =
+        guard let pension =
                 Retirement.model.regimeAgirc.pension(
                     lastAgircKnownSituation : adult.lastKnownAgircPensionSituation,
                     birthDate               : adult.birthDate,
@@ -146,13 +142,14 @@ struct RetirementDetailView: View {
                     dateOfRetirement        : adult.dateOfRetirement,
                     dateOfEndOfUnemployAlloc: adult.dateOfEndOfUnemployementAllocation,
                     dateOfPensionLiquid     : adult.dateOfPensionLiquid,
+                    nbEnfantNe              : adult.nbOfChildren(),
                     nbEnfantACharge         : adult.nbOfFiscalChildren(during: adult.dateOfPensionLiquid.year)) else { return }
-        viewModel.agirc.projectedNbOfPoints = projectedNbOfPoints
+        viewModel.agirc.projectedNbOfPoints = pension.projectedNbOfPoints
         viewModel.agirc.valeurDuPoint       = Retirement.model.regimeAgirc.valeurDuPoint
-        viewModel.agirc.coefMinoration      = coefMinoration
-        viewModel.agirc.majorationEnfant    = (coefMajorationEnfants - 1.0) * 100.0
-        viewModel.agirc.pensionBrute        = pensionBruteAgirc
-        viewModel.agirc.pensionNette        = pensionNetteAgirc
+        viewModel.agirc.coefMinoration      = pension.coefMinoration
+        viewModel.agirc.majorationEnfant    = pension.majorationPourEnfant
+        viewModel.agirc.pensionBrute        = pension.pensionBrute
+        viewModel.agirc.pensionNette        = pension.pensionNette
     }
 }
 

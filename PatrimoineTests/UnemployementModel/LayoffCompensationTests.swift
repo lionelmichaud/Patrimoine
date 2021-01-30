@@ -11,7 +11,7 @@ import XCTest
 
 class LayoffCompensationTests: XCTestCase {
 
-    static var layoffCompensation  : LayoffCompensation!
+    static var layoffCompensation: LayoffCompensation!
 
     // MARK: Helpers
 
@@ -23,7 +23,13 @@ class LayoffCompensationTests: XCTestCase {
             dateDecodingStrategy : .iso8601,
             keyDecodingStrategy  : .useDefaultKeys)
         LayoffCompensationTests.layoffCompensation = LayoffCompensation(model: model)
-   }
+        LayoffCompensation.fiscalModel =
+            Fiscal.Model(for: FiscalModelTests.self,
+                         from                 : "FiscalModelConfig.json",
+                         dateDecodingStrategy : .iso8601,
+                         keyDecodingStrategy  : .useDefaultKeys)
+            .initialized()
+    }
 
     func date(year: Int, month: Int, day: Int) -> Date {
         let dateRefComp = DateComponents(calendar : Date.calendar,
@@ -49,15 +55,31 @@ class LayoffCompensationTests: XCTestCase {
             nbYearsSeniority: Anciennete)
         XCTAssertEqual(Double(Anciennete) * 1.0/4.0, nbMois)
 
-        Anciennete = 20 // ans
+        Anciennete = 19 // ans
         nbMois = LayoffCompensationTests.layoffCompensation.layoffCompensationLegalInMonth(
             nbYearsSeniority: Anciennete)
-        XCTAssert((10.0 / 4.0 + Double(Anciennete - 10) * 1.0/3.0).isApproximatelyEqual(to: nbMois, relativeTolerance: 0.001))
+        let theory = 10.0 / 4.0 + Double(Anciennete - 10) * 1.0/3.0
+        XCTAssert(theory.isApproximatelyEqual(to: nbMois, relativeTolerance: 0.001))
+        //print("layoffCompensationLegalInMonth = \(theory)")
 
         Anciennete = 30 // ans
         nbMois = LayoffCompensationTests.layoffCompensation.layoffCompensationLegalInMonth(
             nbYearsSeniority: Anciennete)
-        XCTAssert((10.0 / 4.0 + Double(Anciennete - 10) * 1.0/3.0).isApproximatelyEqual(to: nbMois, relativeTolerance: 0.001))
+        XCTAssert((10.0 / 4.0 + Double(Anciennete - 10) * 1.0/3.0).isApproximatelyEqual(to: nbMois,
+                                                                                        relativeTolerance: 0.001))
+    }
+
+    func test_calcul_indemnite_legale() {
+        let yearlyWorkIncomeBrut = 98_400.0
+        let nbYearsSeniority     = 19
+
+        let indemnite = LayoffCompensationTests.layoffCompensation.layoffCompensationLegal(
+            yearlyWorkIncomeBrut : yearlyWorkIncomeBrut,
+            nbYearsSeniority     : nbYearsSeniority)
+        let nbMonth = 5.5
+        let theory  = nbMonth * yearlyWorkIncomeBrut / 12.0
+        XCTAssert(theory.isApproximatelyEqual(to: indemnite))
+        print("***** Indemnité légale de licenciement pour un dernier salaire de \(yearlyWorkIncomeBrut)€ et une ancienneté de \(nbYearsSeniority) ans = \(theory)")
     }
 
     func test_calcul_nb_de_mois_salaire_indemnite_metalurgie() throws {
@@ -113,6 +135,7 @@ class LayoffCompensationTests: XCTestCase {
             nbYearsSeniority : Anciennete))
         theory = 1.3 * (7 * 1.0/5.0 + Double(Anciennete - 7) * 3.0/5.0)
         XCTAssertEqual(theory, nbMois)
+        print("***** layoffCompensationConventionInMonth = \(theory)")
 
         age        = 57 // ans
         Anciennete = 8 // ans -> majoration avec minimum de 6 mois
@@ -124,6 +147,20 @@ class LayoffCompensationTests: XCTestCase {
     }
 
     func test_calcul_indemnite_de_licenciement_metalurgie() {
+        let causeOfRetirement    : Unemployment.Cause = .planSauvegardeEmploi
+        let yearlyWorkIncomeBrut : Double = 98_400.0
+        let age                  : Int = 57
+        let nbYearsSeniority     : Int = 19
 
+        let indemnite = LayoffCompensationTests.layoffCompensation.layoffCompensation(
+            actualCompensationBrut : nil,
+            causeOfRetirement      : causeOfRetirement     ,
+            yearlyWorkIncomeBrut   : yearlyWorkIncomeBrut  ,
+            age                    : age                   ,
+            nbYearsSeniority       : nbYearsSeniority)
+        XCTAssertEqual(11.18, indemnite.nbMonth)
+        let theory = 11.18 * yearlyWorkIncomeBrut / 12.0
+        XCTAssertEqual(theory, indemnite.brut)
+        print("***** Indemnité de licenciement pour un dernier salaire de \(yearlyWorkIncomeBrut)€ et une ancienneté de \(nbYearsSeniority) ans = \(theory)")
     }
 }

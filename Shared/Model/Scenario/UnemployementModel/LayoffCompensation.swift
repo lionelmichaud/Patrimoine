@@ -17,8 +17,8 @@ private let customLog = Logger(subsystem: "me.michaud.lionel.Patrimoine", catego
 // https://www.service-public.fr/particuliers/vosdroits/F987
 struct LayoffCompensation: Codable {
     
-    // nested types
-    
+    // MARK: - Nested types
+
     struct SliceBase: Codable {
         var nbYears : Int // nb d'année d'ancienneté dans l'entreprise
         var coef    : Double // nb de mois de salaire par année d'ancienneté
@@ -45,18 +45,23 @@ struct LayoffCompensation: Codable {
     
     struct Model: BundleCodable {
         static var defaultFileName : String = "LayoffCompensationConfig.json"
+        
         let legalGrid         : [SliceBase]
         let metallurgieGrid   : [SliceBase]
         let correctionAgeGrid : [SliceCorrection]
         let irppDiscount      : IrppDiscount
     }
     
-    // properties
-    
+    // MARK: - Static Properties
+
+    static var fiscalModel: Fiscal.Model = Fiscal.model
+
+    // MARK: - Properties
+
     var model: Model
     
-    // methods
-    
+    // MARK: - Methods
+
     /// Calcul du nombre de mois de salaire de l'indemnité de licenciement pour une grille donnée
     /// - Parameters:
     ///   - nbYearsSeniority: nombre d'année d'ancienneté au moment du licenciement
@@ -105,12 +110,12 @@ struct LayoffCompensation: Codable {
         // majoration fonction de l'age
         guard let correctionAncienneteGrid = model.correctionAgeGrid.last(\.correctionAncienneteGrid, where: \.age, <=, age) else {
         //guard let sliceAge = model.correctionAgeGrid.last(where: { $0.age <= age }) else {
-            customLog.log(level: .error, "correctionAncienneteGrid = nil")
+            customLog.log(level: .error, "layoffCompensationConventionInMonth:correctionAncienneteGrid = nil")
             return nil
         }
         // majoration fonction de l'ancienneté
         guard let slice2 = correctionAncienneteGrid.last(where: \.anciennete, <=, years) else {
-            customLog.log(level: .error, "slice2 = nil")
+            customLog.log(level: .error, "layoffCompensationConventionInMonth:slice2 = nil")
             return nil
         }
         // application de la majoration
@@ -135,7 +140,7 @@ struct LayoffCompensation: Codable {
         return nbMonth * yearlyWorkIncomeBrut / 12.0
     }
     
-    /// Calcul de l'indemnité de licenciement selon la Convention de la Métalurgie ou Supra-convention
+    /// Calcul de l'indemnité de licenciement selon la Convention de la Métalurgie ou Légale ou Supra-convention
     /// - Parameters:
     ///   - actualCompensationBrut: indemnité licenciement brute si > convention collective
     ///   - causeOfRetirement: cause de la cessation d'activité
@@ -155,13 +160,14 @@ struct LayoffCompensation: Codable {
         
         var taxable      : Double
         var irppDiscount : Double
+        // Calcul du nombre de mois d'indemnité de licenciement
         guard let nbMonth = layoffCompensationConventionInMonth(age              : age,
                                                                 nbYearsSeniority : years) else {
             customLog.log(level: .error,
                           "layoffCompensation:layoffCompensationConventionInMonth = nil")
             fatalError("layoffCompensation:layoffCompensationConventionInMonth = nil")
         }
-        // indemnité brute conventionnelle basée sur le dernier salaire brut
+        // indemnité brute basée sur le dernier salaire brut
         let brutConventionnel = nbMonth * yearlyWorkIncomeBrut / 12.0
         // indemnité réelle perçue (peut être plus élevée que l'indemnité conventionnelle)
         let brutReel = actualCompensationBrut ?? brutConventionnel
@@ -180,7 +186,6 @@ struct LayoffCompensation: Codable {
                 var discount2 = model.irppDiscount.multipleOfLastSalaryBrut * yearlyWorkIncomeBrut
                 discount2 = min(discount2, model.irppDiscount.maxDiscount)
                 // 0,5 x le montant de l'indemnité perçue
-                // TODO: - prendre en compte le fait que l'indemnité réelle peut être supérieure à l'indemnité conventionnelle
                 var discount3 = model.irppDiscount.multipleOfActualCompensation * brutReel
                 discount3 = min(discount3, model.irppDiscount.maxDiscount)
                 // maximum des 3
@@ -194,10 +199,11 @@ struct LayoffCompensation: Codable {
         taxable = brutReel - irppDiscount
         
         // indemnité nette de charges sociales
-        let net = Fiscal.model.layOffTaxes.net(compensationConventional : brutConventionnel,
-                                               compensationBrut         : brutReel,
-                                               compensationTaxable      : &taxable,
-                                               irppDiscount             : irppDiscount)
+        let net = LayoffCompensation.fiscalModel.layOffTaxes.net(
+            compensationConventional : brutConventionnel,
+            compensationBrut         : brutReel,
+            compensationTaxable      : &taxable,
+            irppDiscount             : irppDiscount)
         return (nbMonth : nbMonth,
                 brut    : brutReel,
                 net     : net,

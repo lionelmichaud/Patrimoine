@@ -192,6 +192,12 @@
             "coef"               : 0.78
         }
     ],
+    "majorationPourEnfant" : {
+        "majorPourEnfantsNes"   : 10.0,
+        "nbEnafntNesMin"        : 3,
+        "majorParEnfantACharge" : 5.0,
+        "plafondMajoEnfantNe"   : 2071.58
+    },
     "valeurDuPoint" : 1.2714,
     "ageMinimum"    : 57
 }

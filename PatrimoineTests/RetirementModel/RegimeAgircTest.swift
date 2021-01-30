@@ -544,12 +544,80 @@ class RegimeAgircTest: XCTestCase { // swiftlint:disable:this type_body_length
         coefTheory = 0.855 // décote maximale 14.5% = 0.855
         XCTAssertEqual(coefTheory, coefMinoration)    }
     
-    func test_calcul_coef_majoration_pour_enfant() {
-        XCTAssertEqual(1.0, RegimeAgircTest.regimeAgirc.coefMajorationPourEnfant(nbEnfantACharge: -1))
-        XCTAssertEqual(1.05, RegimeAgircTest.regimeAgirc.coefMajorationPourEnfant(nbEnfantACharge: 1))
-        XCTAssertEqual(1.1, RegimeAgircTest.regimeAgirc.coefMajorationPourEnfant(nbEnfantACharge: 2))
+    func test_calcul_coef_majoration_pour_enfant_ne() {
+        var nbEnfantNe      : Int
+        var coef            : Double
+
+        nbEnfantNe      = -1
+        coef = RegimeAgircTest.regimeAgirc.coefMajorationPourEnfantNe(
+            nbEnfantNe: nbEnfantNe)
+        XCTAssertEqual(1.0, coef)
+
+        nbEnfantNe      = 2
+        coef = RegimeAgircTest.regimeAgirc.coefMajorationPourEnfantNe(
+            nbEnfantNe: nbEnfantNe)
+        XCTAssertEqual(1.0, coef)
+
+        nbEnfantNe      = 3
+        coef = RegimeAgircTest.regimeAgirc.coefMajorationPourEnfantNe(
+            nbEnfantNe: nbEnfantNe)
+        XCTAssertEqual(1.1, coef)
+
+        nbEnfantNe      = 10
+        coef = RegimeAgircTest.regimeAgirc.coefMajorationPourEnfantNe(
+            nbEnfantNe: nbEnfantNe)
+        XCTAssertEqual(1.1, coef)
     }
-    
+
+    func test_calcul_majoration_pour_enfant_ne() {
+        var pensionBrute : Double
+        var majoration   : Double
+        var nbEnfantNe   : Int
+
+        nbEnfantNe = 0
+        pensionBrute = 10_000
+        majoration = RegimeAgircTest.regimeAgirc.majorationPourEnfantNe(
+            pensionBrute: pensionBrute, nbEnfantNe: nbEnfantNe)
+        XCTAssertEqual(0, majoration)
+
+        nbEnfantNe = 3
+        pensionBrute = 10_000
+        majoration = RegimeAgircTest.regimeAgirc.majorationPourEnfantNe(
+            pensionBrute: pensionBrute, nbEnfantNe: nbEnfantNe)
+        XCTAssert(majoration.isApproximatelyEqual(to: 1000))
+
+        nbEnfantNe = 3
+        pensionBrute = 30_000
+        majoration = RegimeAgircTest.regimeAgirc.majorationPourEnfantNe(
+            pensionBrute: pensionBrute, nbEnfantNe: nbEnfantNe)
+        XCTAssertEqual(2071.58, majoration)
+    }
+
+    func test_calcul_coef_majoration_pour_enfant_a_charge() {
+        var nbEnfantACharge : Int
+        var coef            : Double
+
+        nbEnfantACharge = -1
+        coef = RegimeAgircTest.regimeAgirc.coefMajorationPourEnfantACharge(
+            nbEnfantACharge : nbEnfantACharge)
+        XCTAssertEqual(1.0, coef)
+
+        nbEnfantACharge = 1
+        coef = RegimeAgircTest.regimeAgirc.coefMajorationPourEnfantACharge(
+            nbEnfantACharge : nbEnfantACharge)
+        XCTAssertEqual(1.05, coef)
+
+        nbEnfantACharge = 2
+        coef = RegimeAgircTest.regimeAgirc.coefMajorationPourEnfantACharge(
+            nbEnfantACharge : nbEnfantACharge)
+        XCTAssertEqual(1.1, coef)
+
+        nbEnfantACharge = 3
+        coef = RegimeAgircTest.regimeAgirc.coefMajorationPourEnfantACharge(
+            nbEnfantACharge : nbEnfantACharge)
+        XCTAssertEqual(1.15, coef)
+    }
+
     func test_calcul_pension() throws {
         var lastAgircKnownSituation  : RegimeAgircSituation
         var birthDate                : Date
@@ -557,15 +625,15 @@ class RegimeAgircTest: XCTestCase { // swiftlint:disable:this type_body_length
         var dateOfRetirement         : Date
         var dateOfEndOfUnemployAlloc : Date?
         var dateOfPensionLiquid      : Date
+        var nbEnfantNe               : Int
         var nbEnfantACharge          : Int
         var during                   : Int?
-        let sam = 36698.0
         var nbPointTheory            : Int
-        var coefMajEnfantsTheory     : Double
         var coefMinorationTheory     : Double
         var pensionBruteTheory       : Double
 
         birthDate          = date(year: 1964, month: 9, day: 22)
+        let sam            = 36698.0
         lastKnownSituation = RegimeGeneralSituation(atEndOf           : 2019,
                                                     nbTrimestreAcquis : 135,
                                                     sam               : sam)
@@ -579,6 +647,7 @@ class RegimeAgircTest: XCTestCase { // swiftlint:disable:this type_body_length
         dateOfRetirement = date(year : 2022, month : 1, day : 1) // fin d'activité salarié
         dateOfEndOfUnemployAlloc = 3.years.from(dateOfRetirement) // fin d'indemnisation chomage 3 ans plus tard
         dateOfPensionLiquid      = 62.years.from(birthDate)! // liquidation à 62 ans
+        nbEnfantNe               = 3
         nbEnfantACharge          = 2
         during = dateOfPensionLiquid.year
         let pension = try XCTUnwrap(RegimeAgircTest.regimeAgirc.pension(
@@ -588,21 +657,22 @@ class RegimeAgircTest: XCTestCase { // swiftlint:disable:this type_body_length
                                         dateOfRetirement         : dateOfRetirement,
                                         dateOfEndOfUnemployAlloc : dateOfEndOfUnemployAlloc,
                                         dateOfPensionLiquid      : dateOfPensionLiquid,
+                                        nbEnfantNe               : nbEnfantNe,
                                         nbEnfantACharge          : nbEnfantACharge,
                                         during                   : during))
         coefMinorationTheory = 0.92  // voir autre test
         XCTAssertEqual(coefMinorationTheory, pension.coefMinoration)
-        
-        coefMajEnfantsTheory = 1.0 + Double(nbEnfantACharge) * 5.0/100.0
-        XCTAssertEqual(coefMajEnfantsTheory , pension.coefMajorationEnfants)
-        
-        nbPointTheory = lastAgircKnownSituation.nbPoints +
+
+       nbPointTheory = lastAgircKnownSituation.nbPoints +
             (2021 - 2018) * lastAgircKnownSituation.pointsParAn +
             (3) * lastAgircKnownSituation.pointsParAn // voir autre test
         XCTAssertEqual(nbPointTheory, pension.projectedNbOfPoints)
         
-        // Pension = Nombre de points X Valeurs du point X Coefficient de minoration X Coefficient de majoration enfants
-        pensionBruteTheory = Double(nbPointTheory) * 1.2714 * coefMinorationTheory * coefMajEnfantsTheory
+        let majoration = max(2071.58, 0.05 * Double(nbEnfantACharge) * Double(nbPointTheory) * 1.2714 * coefMinorationTheory)
+        XCTAssert(majoration.isApproximatelyEqual(to: pension.majorationPourEnfant))
+
+        // Pension = Nombre de points X Valeurs du point X Coefficient de minoration + majoration pour enfants
+        pensionBruteTheory = Double(nbPointTheory) * 1.2714 * coefMinorationTheory + majoration
         XCTAssertEqual(pensionBruteTheory, pension.pensionBrute)
     }
 }  // swiftlint:disable:this file_length

@@ -20,6 +20,8 @@ extension RegimeAgirc {
     ///   - dateOfRetirement: date de cessation d'activité
     ///   - dateOfEndOfUnemployAlloc: date de fin de perception des allocations chomage
     ///   - dateOfPensionLiquid: date de demande de liquidation de la pension
+    ///   - nbEnfantNe: nombre d'enfants nés
+    ///   - nbEnfantACharge: nombre d'enfants à charge au début de l'année
     ///   - year: année de calcul. si nil alors calcul réalisé  la date de liquidation de la pension
     /// - Returns: pension Agirc
     /// - Waring:
@@ -30,13 +32,14 @@ extension RegimeAgirc {
                  dateOfRetirement         : Date,
                  dateOfEndOfUnemployAlloc : Date?,
                  dateOfPensionLiquid      : Date,
+                 nbEnfantNe               : Int,
                  nbEnfantACharge          : Int,
                  during year              : Int? = nil) ->
-    (coefMinoration        : Double,
-     coefMajorationEnfants : Double,
-     projectedNbOfPoints   : Int,
-     pensionBrute          : Double,
-     pensionNette          : Double)? {
+    (coefMinoration       : Double,
+     majorationPourEnfant : Double,
+     projectedNbOfPoints  : Int,
+     pensionBrute         : Double,
+     pensionNette         : Double)? {
         
         // Vérifier que l'on a atteint l'age minimum de liquidation de la pension Agirc
         guard let dateOfAgeMinimumAgirc = dateAgeMinimumAgirc(birthDate:birthDate) else {
@@ -48,27 +51,13 @@ extension RegimeAgirc {
         
         guard dateOfPensionLiquid >= dateOfAgeMinimumAgirc else {
             // pas de pension avant cet age minimum
-            return (coefMinoration        : 0,
-                    coefMajorationEnfants : 0,
-                    projectedNbOfPoints   : 0,
-                    pensionBrute          : 0,
-                    pensionNette          : 0)
+            return (coefMinoration       : 0,
+                    majorationPourEnfant : 0,
+                    projectedNbOfPoints  : 0,
+                    pensionBrute         : 0,
+                    pensionNette         : 0)
         }
         //customLog.log(level: .info, "date Of Pension Liquid = \(dateOfPensionLiquid, privacy: .public)")
-        
-        // Calcul du coefficient de minoration / majoration
-        guard let coefMinoration = coefMinorationMajoration(birthDate                : birthDate,
-                                                            lastKnownSituation       : lastKnownSituation,
-                                                            dateOfRetirement         : dateOfRetirement,
-                                                            dateOfEndOfUnemployAlloc : dateOfEndOfUnemployAlloc,
-                                                            dateOfPensionLiquid      : dateOfPensionLiquid,
-                                                            during                   : year ?? dateOfPensionLiquid.year) else {
-            customLog.log(level: .default, "pension:coefMinoration = nil")
-            return nil
-        }
-        
-        // Calcul du coefficient de majoration pour enfant
-        let coefMajorationEnfant = coefMajorationPourEnfant(nbEnfantACharge: nbEnfantACharge)
         
         // Projection du nb de points au moment de la demande de liquidation de la pension
         guard let projectedNumberOfPoints = self.projectedNumberOfPoints(
@@ -80,12 +69,36 @@ extension RegimeAgirc {
         }
         //customLog.log(level: .info, "projected Number Of Points = \(projectedNumberOfPoints, privacy: .public)")
         
+        // Calcul du coefficient de minoration / majoration
+        guard let coefMinoration = coefMinorationMajoration(
+                birthDate                : birthDate,
+                lastKnownSituation       : lastKnownSituation,
+                dateOfRetirement         : dateOfRetirement,
+                dateOfEndOfUnemployAlloc : dateOfEndOfUnemployAlloc,
+                dateOfPensionLiquid      : dateOfPensionLiquid,
+                during                   : year ?? dateOfPensionLiquid.year) else {
+            customLog.log(level: .default, "pension:coefMinoration = nil")
+            return nil
+        }
+        
+        let pensionAvantMajorationPourEnfant = projectedNumberOfPoints.double() * valeurDuPoint * coefMinoration
+        
+        // Calcul de la majoration pour enfant nés
+        let majorPourEnfantNe = majorationPourEnfantNe(
+            pensionBrute : pensionAvantMajorationPourEnfant,
+            nbEnfantNe   : nbEnfantNe)
+        
+        // Calcul de la majoration pour enfant à charge (non plafonnée)
+        let coefMajorationEnfantACharge = coefMajorationPourEnfantACharge(
+            nbEnfantACharge : nbEnfantACharge)
+        let majorPourEnfantACharge =
+            pensionAvantMajorationPourEnfant * (coefMajorationEnfantACharge - 1.0)
+        
+        // on retient la plus favorable des deux majorations
+        let majorationPourEnfant = max(majorPourEnfantNe, majorPourEnfantACharge)
+        
         // Pension = Nombre de points X Valeurs du point X Coefficient de minoration X Coefficient de majoration enfants
-        var pensionBrute =
-            projectedNumberOfPoints.double()
-            * valeurDuPoint
-            * coefMinoration
-            * coefMajorationEnfant
+        var pensionBrute = pensionAvantMajorationPourEnfant + majorationPourEnfant
         //customLog.log(level: .info, "pension Brute = \(pensionBrute, privacy: .public)")
         
         if let yearEval = year {
@@ -102,13 +115,13 @@ extension RegimeAgirc {
             pensionBrute *= coefReavluation
         }
         
-        let pensionNette = Fiscal.model.pensionTaxes.netRegimeAgirc(pensionBrute)
+        let pensionNette = RegimeAgirc.fiscalModel.pensionTaxes.netRegimeAgirc(pensionBrute)
         //customLog.log(level: .info, "pension Nette = \(pensionNette, privacy: .public)")
         
-        return (coefMinoration        : coefMinoration,
-                coefMajorationEnfants : coefMajorationEnfant,
-                projectedNbOfPoints   : projectedNumberOfPoints,
-                pensionBrute          : pensionBrute,
-                pensionNette          : pensionNette)
+        return (coefMinoration       : coefMinoration,
+                majorationPourEnfant : majorationPourEnfant,
+                projectedNbOfPoints  : projectedNumberOfPoints,
+                pensionBrute         : pensionBrute,
+                pensionNette         : pensionNette)
     }
 }
