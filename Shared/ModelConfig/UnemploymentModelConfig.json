@@ -3,6 +3,12 @@
     {
         "model" :
         {
+            "version" :
+            {
+                "version" : "0.1",
+                "date"    : "2021-01-28T23:00:00+01:00",
+                "comment" : null
+            },
             "legalGrid" : [
                 {
                     "nbYears" : 10,
@@ -94,6 +100,12 @@
     {
         "model" :
         {
+            "version" :
+            {
+                "version" : "0.1",
+                "date"    : "2021-01-28T23:00:00+01:00",
+                "comment" : null
+            },
             "durationGrid" : [
                 {
                     "fromAge"             : 0,

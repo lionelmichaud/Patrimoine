@@ -3,6 +3,12 @@
     {
         "model" :
         {
+            "version" :
+            {
+                "version" : "0.1",
+                "date"    : "2021-01-28T23:00:00+01:00",
+                "comment" : null
+            },
             "ageMinimumLegal"      : 62,
             "nbOfYearForSAM"       : 25,
             "maxReversionRate"     : 50.0,
@@ -73,6 +79,12 @@
     {
         "model" :
         {
+            "version" :
+            {
+                "version" : "0.1",
+                "date"    : "2021-01-28T23:00:00+01:00",
+                "comment" : null
+            },
             "gridAvant62" : [
                 {
                     "ndTrimAvantAgeLegal" : 0,
@@ -281,6 +293,12 @@
     {
         "model" :
         {
+            "version" :
+            {
+                "version" : "0.1",
+                "date"    : "2021-01-28T23:00:00+01:00",
+                "comment" : null
+            },
             "tauxReversion" : 70.0
         }
     }

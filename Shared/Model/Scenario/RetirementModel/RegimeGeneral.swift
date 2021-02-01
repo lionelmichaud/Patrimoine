@@ -43,8 +43,10 @@ struct RegimeGeneral: Codable {
         var nbTrimNonIndemnise : Int
     }
     
-    struct Model: BundleCodable {
+    struct Model: BundleCodable, Versionable {
         static var defaultFileName : String = "RegimeGeneralModel.json"
+
+        var version                : Version
         let dureeDeReferenceGrid   : [SliceRegimeLegal]
         let nbTrimNonIndemniseGrid : [SliceUnemployement]
         let ageMinimumLegal        : Int    // 62

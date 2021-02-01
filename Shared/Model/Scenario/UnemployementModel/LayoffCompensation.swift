@@ -43,9 +43,10 @@ struct LayoffCompensation: Codable {
         var maxDiscount                        : Double = 246_816 // €
     }
     
-    struct Model: BundleCodable {
+    struct Model: BundleCodable, Versionable {
         static var defaultFileName : String = "LayoffCompensationModel.json"
         
+        var version           : Version
         let legalGrid         : [SliceBase]
         let metallurgieGrid   : [SliceBase]
         let correctionAgeGrid : [SliceCorrection]

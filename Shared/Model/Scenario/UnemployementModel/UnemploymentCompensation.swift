@@ -48,9 +48,10 @@ struct UnemploymentCompensation: Codable {
         let maxAllocationEuro  : Double // 253.14 // en €
     }
     
-    struct Model: BundleCodable {
+    struct Model: BundleCodable, Versionable {
         static var defaultFileName: String = "UnemploymentCompensationModel.json"
         
+        var version      : Version
         let durationGrid : [DurationSlice]
         let delayModel   : DelayModel
         let amountModel  : AmountModel

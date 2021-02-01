@@ -41,8 +41,10 @@ struct RegimeAgirc: Codable {
         var plafondMajoEnfantNe   : Double // €
     }
     
-    struct Model: BundleCodable {
+    struct Model: BundleCodable, Versionable {
         static var defaultFileName : String = "RegimeAgircModel.json"
+
+        var version              : Version
         let gridAvant62          : [SliceAvantAgeLegal]
         let gridApres62          : [SliceApresAgeLegal]
         let valeurDuPoint        : Double // 1.2714
