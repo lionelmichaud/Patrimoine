@@ -18,7 +18,7 @@ class HumanLifeTests: XCTestCase {
     func test_saving_to_test_bundle() throws {
         let model = HumanLife.Model().initialized()
         model.saveToBundle(for: HumanLifeTests.self,
-                             to: "HumanLifeModelConfig.json",
+                             to: nil,
                              dateEncodingStrategy: .iso8601,
                              keyEncodingStrategy: .useDefaultKeys)
     }

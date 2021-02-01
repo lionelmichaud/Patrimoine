@@ -48,12 +48,20 @@ struct Fiscal {
             } catch {
                 fatalError("Failed to initialize Fiscal.model.isf\n" + convertErrorToString(error))
             }
-            model.inheritanceDonation.initialize()
-            model.lifeInsuranceInheritance.initialize()
+            do {
+                try model.inheritanceDonation.initialize()
+            } catch {
+                fatalError("Failed to initialize Fiscal.model.inheritanceDonation\n" + convertErrorToString(error))
+            }
+            do {
+                try model.lifeInsuranceInheritance.initialize()
+            } catch {
+                fatalError("Failed to initialize Fiscal.model.lifeInsuranceInheritance\n" + convertErrorToString(error))
+            }
             return model
         }
     }
-        
+    
     // MARK: - Static Properties
 
     static var model: Model = Model().initialized()

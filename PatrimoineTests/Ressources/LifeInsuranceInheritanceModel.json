@@ -1,0 +1,26 @@
+{
+    "version" :
+    {
+        "version" : "0.1",
+        "date"    : "2020-11-27T23:00:00+01:00",
+        "comment" : null
+    },
+    "grid" : [
+        {
+            "floor" : 0,
+            "rate"  : 0.0,
+            "disc"  : 0
+        },
+        {
+            "floor" : 152500.0,
+            "rate"  : 0.20,
+            "disc"  : 0
+        },
+        {
+            "floor" : 852500.0,
+            "rate"  : 0.3125,
+            "disc"  : 0
+        }
+    ]
+}
+

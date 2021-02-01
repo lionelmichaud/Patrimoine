@@ -18,7 +18,7 @@ class CompanyProfitTaxesModelTests: XCTestCase {
     override class func setUp() {
         super.setUp()
         let model = CompanyProfitTaxesModel.Model(for: CompanyProfitTaxesModelTests.self,
-                                                  from                 : "CompanyProfitTaxesModelTest.json",
+                                                  from                 : nil,
                                                   dateDecodingStrategy : .iso8601,
                                                   keyDecodingStrategy  : .useDefaultKeys)
         CompanyProfitTaxesModelTests.companyProfitTaxes = CompanyProfitTaxesModel(model: model)

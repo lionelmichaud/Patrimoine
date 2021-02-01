@@ -17,7 +17,7 @@ class AllocationChomageTaxesModelTests: XCTestCase {
     override class func setUp() {
         super.setUp()
         let model = AllocationChomageTaxesModel.Model(for: AllocationChomageTaxesModelTests.self,
-                                                      from                 : "AllocationChomageTaxesModelTest.json",
+                                                      from                 : nil,
                                                       dateDecodingStrategy : .iso8601,
                                                       keyDecodingStrategy  : .useDefaultKeys)
         AllocationChomageTaxesModelTests.allocationChomageTaxes = AllocationChomageTaxesModel(model: model)

@@ -13,7 +13,9 @@ struct LifeInsuranceTaxes: Codable {
     
     // MARK: Nested types
     
-    struct Model: Codable, Versionable {
+    struct Model: BundleCodable, Versionable {
+        static var defaultFileName : String = "LifeInsuranceTaxesModel.json"
+        
         var version        : Version
         let rebatePerPerson: Double // 4800.0 // euros
     }

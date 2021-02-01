@@ -18,7 +18,7 @@ class SocioEconomyModelTest: XCTestCase {
     func test_saving_to_test_bundle() throws {
         let model = SocioEconomy.Model().initialized()
         model.saveToBundle(for: SocioEconomyModelTest.self,
-                           to: "SocioEconomyModelConfig.json",
+                           to: nil,
                            dateEncodingStrategy: .iso8601,
                            keyEncodingStrategy: .useDefaultKeys)
     }

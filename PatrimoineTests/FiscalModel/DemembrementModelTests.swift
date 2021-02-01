@@ -18,7 +18,7 @@ class DemembrementModelTests: XCTestCase {
     override class func setUp() {
         super.setUp()
         let model = DemembrementModel.Model(for: DemembrementModelTests.self,
-                                            from                 : "DemembrementModelTest.json",
+                                            from                 : nil,
                                             dateDecodingStrategy : .iso8601,
                                             keyDecodingStrategy  : .useDefaultKeys)
         DemembrementModelTests.demembrement = DemembrementModel(model: model)

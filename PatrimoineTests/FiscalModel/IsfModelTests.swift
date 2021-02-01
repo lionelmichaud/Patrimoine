@@ -18,7 +18,7 @@ class IsfModelTests: XCTestCase {
     override class func setUp() {
         super.setUp()
         let model = IsfModel.Model(for: IsfModelTests.self,
-                                   from: "IsfModelTest.json",
+                                   from: nil,
                                    dateDecodingStrategy : .iso8601,
                                    keyDecodingStrategy  : .useDefaultKeys)
         IsfModelTests.isfTaxes = IsfModel(model: model)

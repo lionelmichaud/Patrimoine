@@ -18,7 +18,7 @@ class IncomeTaxesModelTests: XCTestCase {
     override class func setUp() {
         super.setUp()
         let model = IncomeTaxesModel.Model(for: IncomeTaxesModelTests.self,
-                                           from                 : "IncomeTaxesModelTest.json",
+                                           from                 : nil,
                                            dateDecodingStrategy : .iso8601,
                                            keyDecodingStrategy  : .useDefaultKeys)
         IncomeTaxesModelTests.incomeTaxes = IncomeTaxesModel(model: model)

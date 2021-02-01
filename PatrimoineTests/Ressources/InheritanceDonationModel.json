@@ -1,0 +1,86 @@
+{
+    "version" :
+    {
+        "version" : "0.1",
+        "date"    : "2020-11-27T23:00:00+01:00",
+        "comment" : null
+    },
+    "fraisFunéraires" :   1500.0,
+    "abatLigneDirecte": 100000.0,
+    "abatConjoint"    :  80724.0,
+    "decoteResidence" : 20.0,
+    "gridDonationConjoint" : [
+        {
+            "floor" : 0,
+            "rate"  : 0.05,
+            "disc"  : 0
+        },
+        {
+            "floor" : 8072,
+            "rate"  : 0.10,
+            "disc"  : 0
+        },
+        {
+            "floor" : 15932,
+            "rate"  : 0.15,
+            "disc"  : 0
+        },
+        {
+            "floor" : 31865,
+            "rate"  : 0.20,
+            "disc"  : 0
+        },
+        {
+            "floor" : 552324,
+            "rate"  : 0.30,
+            "disc"  : 0
+        },
+        {
+            "floor" : 902838,
+            "rate"  : 0.40,
+            "disc"  : 0
+        },
+        {
+            "floor" : 1805677,
+            "rate"  : 0.45,
+            "disc"  : 0
+        }
+    ],
+    "gridLigneDirecte" : [
+        {
+            "floor" : 0,
+            "rate"  : 0.05,
+            "disc"  : 0
+        },
+        {
+            "floor" : 8072,
+            "rate"  : 0.10,
+            "disc"  : 0
+        },
+        {
+            "floor" : 12109,
+            "rate"  : 0.15,
+            "disc"  : 0
+        },
+        {
+            "floor" : 15932,
+            "rate"  : 0.20,
+            "disc"  : 0
+        },
+        {
+            "floor" : 552324,
+            "rate"  : 0.30,
+            "disc"  : 0
+        },
+        {
+            "floor" : 902838,
+            "rate"  : 0.40,
+            "disc"  : 0
+        },
+        {
+            "floor" : 1805677,
+            "rate"  : 0.45,
+            "disc"  : 0
+        }
+    ]
+}

@@ -52,7 +52,7 @@ struct DemembrementModel: Codable {
             throw ModelError.outOfBounds
         }
         
-        if let slice = model.grid.last(where: { $0.floor < usufructuaryAge }) {
+        if let slice = model.grid.last(where: \.floor, < , usufructuaryAge) {
             return (usufructValue : assetValue * slice.usuFruit,
                     bareValue     : assetValue * slice.nueProp)
         } else {

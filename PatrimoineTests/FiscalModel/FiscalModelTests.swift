@@ -18,7 +18,7 @@ class FiscalModelTests: XCTestCase {
     func test_saving_to_test_bundle() throws {
         let model = Fiscal.Model()
         model.saveToBundle(for: FiscalModelTests.self,
-                             to: "FiscalModelConfig.json",
+                             to: nil,
                              dateEncodingStrategy: .iso8601,
                              keyEncodingStrategy: .useDefaultKeys)
     }

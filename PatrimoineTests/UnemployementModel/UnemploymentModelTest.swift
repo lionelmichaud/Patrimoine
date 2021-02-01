@@ -18,7 +18,7 @@ class UnemploymentModelTest: XCTestCase {
     func test_saving_to_test_bundle() throws {
         let model = Unemployment.Model()
         model.saveToBundle(for: UnemploymentModelTest.self,
-                           to: "UnemploymentModelConfig.json",
+                           to: nil,
                            dateEncodingStrategy: .iso8601,
                            keyEncodingStrategy: .useDefaultKeys)
     }

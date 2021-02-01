@@ -19,13 +19,13 @@ class UnemploymentCompensationTests: XCTestCase {
         super.setUp()
         let model = UnemploymentCompensation.Model(
             for                  : UnemploymentCompensationTests.self,
-            from                 : "UnemploymentCompensationConfigTest.json",
+            from                 : nil,
             dateDecodingStrategy : .iso8601,
             keyDecodingStrategy  : .useDefaultKeys)
         UnemploymentCompensationTests.unemploymentCompensation = UnemploymentCompensation(model: model)
         UnemploymentCompensation.fiscalModel =
             Fiscal.Model(for: FiscalModelTests.self,
-                         from                 : "FiscalModelConfig.json",
+                         from                 : nil,
                          dateDecodingStrategy : .iso8601,
                          keyDecodingStrategy  : .useDefaultKeys)
             .initialized()

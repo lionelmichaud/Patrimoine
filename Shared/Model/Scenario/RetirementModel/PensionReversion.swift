@@ -14,7 +14,7 @@ struct PensionReversion: Codable {
     
     // https://www.retraite.com/dossier-retraite/pension-de-reversion/evolution-de-la-pension-de-reversion-dans-la-reforme-des-retraites.html
     struct Model: BundleCodable {
-        static var defaultFileName : String = "RetirementReversionModelConfig.json"
+        static var defaultFileName : String = "PensionReversionModel.json"
         let tauxReversion: Double // [0, 100] // 70% de la somme des deux pensions
     }
     
@@ -32,7 +32,7 @@ struct PensionReversion: Codable {
     
     /// Encode l'objet dans un fichier stocké dans le Bundle de contenant la définition de la classe aClass
     func saveToBundle(for aClass           : AnyClass,
-                      to file              : String,
+                      to file              : String?,
                       dateEncodingStrategy : JSONEncoder.DateEncodingStrategy,
                       keyEncodingStrategy  : JSONEncoder.KeyEncodingStrategy) {
         model.saveToBundle(for                  : aClass,

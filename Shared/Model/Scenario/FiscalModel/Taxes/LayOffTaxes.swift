@@ -30,6 +30,7 @@ struct LayOffTaxes: Codable {
     }
     struct Model: BundleCodable, Versionable {
         static var defaultFileName : String = "LayOffTaxesModel.json"
+        
         var version     : Version
         let socialTaxes : SocialTaxes
         let csgCrds     : CsgCrds

@@ -18,7 +18,7 @@ class PensionTaxesModelTests: XCTestCase {
     override class func setUp() {
         super.setUp()
         let model = PensionTaxesModel.Model(for: PensionTaxesModelTests.self,
-                                            from                 : "PensionTaxesModelTest.json",
+                                            from                 : nil,
                                             dateDecodingStrategy : .iso8601,
                                             keyDecodingStrategy  : .useDefaultKeys)
         PensionTaxesModelTests.pensionTaxes = PensionTaxesModel(model: model)

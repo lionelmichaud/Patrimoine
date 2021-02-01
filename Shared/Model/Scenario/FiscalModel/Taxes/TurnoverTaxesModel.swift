@@ -14,7 +14,7 @@ struct TurnoverTaxesModel: Codable {
     // MARK: Nested types
     
     struct Model: BundleCodable, Versionable {
-        static var defaultFileName : String = "TurnoverTaxesModelTests.json"
+        static var defaultFileName : String = "TurnoverTaxesModel.json"
         var version: Version
         let URSSAF : Double // 24 // %
         var total  : Double {

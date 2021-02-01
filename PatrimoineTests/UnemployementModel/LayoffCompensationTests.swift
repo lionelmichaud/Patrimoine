@@ -19,7 +19,7 @@ class LayoffCompensationTests: XCTestCase {
         super.setUp()
         let model = LayoffCompensation.Model(
             for                  : LayoffCompensationTests.self,
-            from                 : "LayoffCompensationModelConfigTest.json",
+            from                 : nil,
             dateDecodingStrategy : .iso8601,
             keyDecodingStrategy  : .useDefaultKeys)
         LayoffCompensationTests.layoffCompensation = LayoffCompensation(model: model)

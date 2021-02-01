@@ -68,34 +68,3 @@ extension Sequence {
         }
     }
 }
-
-extension Array {
-    /// Usage:
-    ///
-    ///     let found = articles.first(\.price, <=, 10.0)
-    ///
-    func first<T: Comparable>(_ keyPath: KeyPath<Element, T>, _ f: (T, T) -> Bool, _ value: T) -> Element? {
-        return first(where: { f($0[keyPath: keyPath], value) })
-    }
-    
-    /// Usage:
-    ///
-    ///     let found = articles.first(\.price, <=, 10.0)
-    ///
-    func last<T: Comparable>(where keyPath: KeyPath<Element, T>, _ f: (T, T) -> Bool, _ value: T) -> Element? {
-        return last(where: { f($0[keyPath: keyPath], value) })
-    }
-    
-    /// Usage:
-    ///
-    ///     let found = articles.first(\.item, where: \.price, <=, 10.0)
-    ///
-    func last<T: Comparable, U>(_ keyPath1: KeyPath<Element, U>, where keyPath: KeyPath<Element, T>, _ f: (T, T) -> Bool, _ value: T) -> U? {
-        if let last = last(where: { f($0[keyPath: keyPath], value) }) {
-            return last[keyPath: keyPath1]
-        } else {
-            return nil
-        }
-    }
-    
-}

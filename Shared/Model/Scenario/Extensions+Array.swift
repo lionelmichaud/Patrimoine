@@ -66,3 +66,45 @@ extension Array {
         return true
     }
 }
+
+extension Array {
+    /// Usage:
+    ///
+    ///     let foundItem = articles.first(\.price, <=, 10.0)
+    ///
+    func first<T: Comparable>(_ keyPath: KeyPath<Element, T>, _ f: (T, T) -> Bool, _ value: T) -> Element? {
+        return first(where: { f($0[keyPath: keyPath], value) })
+    }
+    
+    /// Usage:
+    ///
+    ///     let foundItem = articles.last(\.price, <=, 10.0)
+    ///
+    func last<T: Comparable>(where keyPath: KeyPath<Element, T>, _ f: (T, T) -> Bool, _ value: T) -> Element? {
+        return last(where: { f($0[keyPath: keyPath], value) })
+    }
+    
+    /// Usage:
+    ///
+    ///     let nameOfFoundItem = articles.last(\.name, where: \.price, <=, 10.0)
+    ///
+    func last<T: Comparable, U>(_ keyPath1: KeyPath<Element, U>, where keyPath: KeyPath<Element, T>, _ f: (T, T) -> Bool, _ value: T) -> U? {
+        if let lastFound = last(where: { f($0[keyPath: keyPath], value) }) {
+            return lastFound[keyPath: keyPath1]
+        } else {
+            return nil
+        }
+    }
+
+    /// Usage:
+    ///
+    ///     let nameOfFoundItem = articles.first(\.name, where: \.price, <=, 10.0)
+    ///
+    func first<T: Comparable, U>(_ keyPath1: KeyPath<Element, U>, where keyPath: KeyPath<Element, T>, _ f: (T, T) -> Bool, _ value: T) -> U? {
+        if let firstFound = last(where: { f($0[keyPath: keyPath], value) }) {
+            return firstFound[keyPath: keyPath1]
+        } else {
+            return nil
+        }
+    }
+}

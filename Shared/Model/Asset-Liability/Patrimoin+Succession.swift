@@ -205,7 +205,7 @@ extension Patrimoin {
                     heritage = Fiscal.model.lifeInsuranceInheritance.heritageToConjoint(partSuccession: masse)
                 } else {
                     // les enfants
-                    heritage = Fiscal.model.lifeInsuranceInheritance.heritageToChild(partSuccession: masse)
+                    heritage = try! Fiscal.model.lifeInsuranceInheritance.heritageOfChild(partSuccession: masse)
                 }
 //                print("  Part d'héritage de \(member.displayName) = \(masse.rounded())")
 //                print("    Taxe = \(heritage.taxe.rounded())")
@@ -298,7 +298,7 @@ extension Patrimoin {
                     let brut  = totalTaxableInheritance * share
                     
                     // caluler les droits de succession du conjoint
-                    let inheritance = Fiscal.model.inheritanceDonation.heritageOfChild(partSuccession: brut)
+                    let inheritance = try! Fiscal.model.inheritanceDonation.heritageOfChild(partSuccession: brut)
                     
 //                    print("  Part d'héritage de \(child.displayName) = \(brut.rounded())")
 //                    print("    Taxe = \(inheritance.taxe.rounded())")

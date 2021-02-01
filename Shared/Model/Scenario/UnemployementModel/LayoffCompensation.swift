@@ -44,7 +44,7 @@ struct LayoffCompensation: Codable {
     }
     
     struct Model: BundleCodable {
-        static var defaultFileName : String = "LayoffCompensationConfig.json"
+        static var defaultFileName : String = "LayoffCompensationModel.json"
         
         let legalGrid         : [SliceBase]
         let metallurgieGrid   : [SliceBase]
@@ -109,7 +109,6 @@ struct LayoffCompensation: Codable {
                                                          grid: model.metallurgieGrid)
         // majoration fonction de l'age
         guard let correctionAncienneteGrid = model.correctionAgeGrid.last(\.correctionAncienneteGrid, where: \.age, <=, age) else {
-        //guard let sliceAge = model.correctionAgeGrid.last(where: { $0.age <= age }) else {
             customLog.log(level: .error, "layoffCompensationConventionInMonth:correctionAncienneteGrid = nil")
             return nil
         }

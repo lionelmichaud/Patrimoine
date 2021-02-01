@@ -42,7 +42,7 @@ struct RegimeAgirc: Codable {
     }
     
     struct Model: BundleCodable {
-        static var defaultFileName : String = "RetirementRegimeAgircModelConfig.json"
+        static var defaultFileName : String = "RegimeAgircModel.json"
         let gridAvant62          : [SliceAvantAgeLegal]
         let gridApres62          : [SliceApresAgeLegal]
         let valeurDuPoint        : Double // 1.2714
@@ -108,7 +108,7 @@ struct RegimeAgirc: Codable {
     
     /// Encode l'objet dans un fichier stocké dans le Bundle de contenant la définition de la classe aClass
     func saveToBundle(for aClass           : AnyClass,
-                      to file              : String,
+                      to file              : String?,
                       dateEncodingStrategy : JSONEncoder.DateEncodingStrategy,
                       keyEncodingStrategy  : JSONEncoder.KeyEncodingStrategy) {
         model.saveToBundle(for                  : aClass,

@@ -65,7 +65,7 @@ struct RealEstateCapitalGainTaxesModel: Codable {
                       detentionDuration : Int) -> Double {
         // exoneration partielle ou totale de charges sociales en fonction de la durée de détention
         var discount = 0.0
-        if let slice = model.exoGrid.last(where: { $0.floor < detentionDuration}) {
+        if let slice = model.exoGrid.last(where: \.floor, <, detentionDuration) {
             discount = min(slice.prevDiscount + slice.discountRate * Double(detentionDuration - slice.floor), 100.0)
         }
         var discountTravaux = 0.0

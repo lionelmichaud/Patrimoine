@@ -22,7 +22,7 @@ struct RealEstateCapitalGainIrppModel: Codable {
     }
     
     struct Model: BundleCodable, Versionable {
-        static var defaultFileName : String = "RealEstateCapitalGainTaxesModelTest.json"
+        static var defaultFileName : String = "RealEstateCapitalGainIrppModel.json"
         var version         : Version
         let exoGrid         : [ExonerationSlice]
         let irpp            : Double // 19.0 // %
@@ -62,7 +62,7 @@ struct RealEstateCapitalGainIrppModel: Codable {
                detentionDuration : Int) -> Double {
         // exoneration partielle ou totale de l'impôt en fonction de la durée de détention
         var discount = 0.0
-        if let slice = model.exoGrid.last(where: { $0.floor < detentionDuration}) {
+        if let slice = model.exoGrid.last(where: \.floor, <, detentionDuration) {
             discount = min(slice.prevDiscount + slice.discountRate * Double(detentionDuration - slice.floor), 100.0)
         }
         var discountTravaux = 0.0

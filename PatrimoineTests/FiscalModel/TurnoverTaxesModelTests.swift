@@ -17,7 +17,7 @@ class TurnoverTaxesModelTests: XCTestCase {
     override class func setUp() {
         super.setUp()
         let model = TurnoverTaxesModel.Model(for: TurnoverTaxesModelTests.self,
-                                             from                 : "TurnoverTaxesModelTests.json",
+                                             from                 : nil,
                                              dateDecodingStrategy : .iso8601,
                                              keyDecodingStrategy  : .useDefaultKeys)
         TurnoverTaxesModelTests.turnoverTaxes = TurnoverTaxesModel(model: model)

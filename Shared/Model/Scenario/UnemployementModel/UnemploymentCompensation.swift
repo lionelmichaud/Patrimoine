@@ -49,7 +49,7 @@ struct UnemploymentCompensation: Codable {
     }
     
     struct Model: BundleCodable {
-        static var defaultFileName: String = "UnemploymentCompensationConfig.json"
+        static var defaultFileName: String = "UnemploymentCompensationModel.json"
         
         let durationGrid : [DurationSlice]
         let delayModel   : DelayModel

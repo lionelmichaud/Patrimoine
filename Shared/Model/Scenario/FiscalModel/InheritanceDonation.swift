@@ -21,6 +21,11 @@ struct InheritanceDonation: Codable {
     
     // MARK: - Nested types
 
+    enum ModelError: Error {
+        case heritageOfChildSlicesIssue
+        case donationToSpouseSlicesIssue
+    }
+    
     // options fiscale du conjoint à la succession
     enum FiscalOption: String, PickableEnum, Codable {
         case fullUsufruct      = "100% Usufruit"
@@ -33,31 +38,37 @@ struct InheritanceDonation: Codable {
         
         /// Calcule les valeurs respectives en % des parts d'un héritage
         /// - Parameters:
-        ///   - nbChildren: nd d'enfantss héritiers survivants
+        ///   - nbChildren: nombre d'enfantss héritiers survivants
         ///   - spouseAge: age du conjoint survivant
         /// - Returns: valeurs respectives en % des parts d'un héritage [0, 1]
         func sharedValues(nbChildren : Int,
                           spouseAge  : Int)
         -> (forChild  : Double,
             forSpouse : Double) {
-            switch self {
-                case .fullUsufruct:
-                    let demembrement = try! Fiscal.model.demembrement.demembrement(of: 1.0, usufructuaryAge : spouseAge)
-                    return (forChild : demembrement.bareValue / nbChildren.double(),
-                            forSpouse: demembrement.usufructValue)
-                    
-                case .quotiteDisponible:
-                    let spouseShare = 1.0 / (nbChildren + 1).double()
-                    let childShare  = (1.0 - spouseShare) / nbChildren.double()
-                    return (forChild : childShare,
-                            forSpouse: spouseShare)
-                    
-                case .usufructPlusBare:
-                    let demembrement = try! Fiscal.model.demembrement.demembrement(of: 1.0, usufructuaryAge : spouseAge)
-                    // Conjoint = 1/4 PP + 3/4 UF
-                    let spouseShare  = 0.25 + 0.75 * demembrement.usufructValue
-                    return (forChild : (1.0 - spouseShare) / nbChildren.double(),
-                            forSpouse: spouseShare)
+            if nbChildren == 0 {
+                // sans enfant le conjoint hérite de tout
+                return (forChild: 0.0, forSpouse: 1.0)
+                
+            } else {
+                switch self {
+                    case .fullUsufruct:
+                        let demembrement = try! Fiscal.model.demembrement.demembrement(of: 1.0, usufructuaryAge : spouseAge)
+                        return (forChild : demembrement.bareValue / nbChildren.double(),
+                                forSpouse: demembrement.usufructValue)
+                        
+                    case .quotiteDisponible:
+                        let spouseShare = 1.0 / (nbChildren + 1).double()
+                        let childShare  = (1.0 - spouseShare) / nbChildren.double()
+                        return (forChild : childShare,
+                                forSpouse: spouseShare)
+                        
+                    case .usufructPlusBare:
+                        let demembrement = try! Fiscal.model.demembrement.demembrement(of: 1.0, usufructuaryAge : spouseAge)
+                        // Conjoint = 1/4 PP + 3/4 UF
+                        let spouseShare  = 0.25 + 0.75 * demembrement.usufructValue
+                        return (forChild : (1.0 - spouseShare) / nbChildren.double(),
+                                forSpouse: spouseShare)
+                }
             }
         }
         
@@ -81,18 +92,13 @@ struct InheritanceDonation: Codable {
         }
     }
     
-    // tranche de barême
-    struct Slice: Codable {
-        let floor : Double // €
-        let rate  : Double // %
-        var disc  : Double // euro
-    }
-    
-    struct Model: Codable, Versionable {
+    struct Model: BundleCodable, Versionable {
+        static var defaultFileName: String = "InheritanceDonationModel.json"
+        
         var version              : Version
-        var gridDonationConjoint : [Slice]
+        var gridDonationConjoint : RateGrid
         var abatConjoint         : Double //  80_724€
-        var gridLigneDirecte     : [Slice]
+        var gridLigneDirecte     : RateGrid
         var abatLigneDirecte     : Double // 100_000€
         let fraisFunéraires      : Double //   1_500€
         let decoteResidence      : Double // 20% // %
@@ -112,58 +118,47 @@ struct InheritanceDonation: Codable {
     }
     
     /// Initializer les paramètres calculés pour les tranches d'imposition à partir des seuils et des taux
-    mutating func initialize() {
-        for idx in model.gridLigneDirecte.startIndex ..< model.gridLigneDirecte.endIndex {
-            if idx == 0 {
-                model.gridLigneDirecte[idx].disc = model.gridLigneDirecte[idx].floor * (model.gridLigneDirecte[idx].rate - 0)
-            } else {
-                model.gridLigneDirecte[idx].disc =
-                    model.gridLigneDirecte[idx-1].disc +
-                    model.gridLigneDirecte[idx].floor * (model.gridLigneDirecte[idx].rate - model.gridLigneDirecte[idx-1].rate)
-            }
-        }
-        for idx in model.gridDonationConjoint.startIndex ..< model.gridDonationConjoint.endIndex {
-            if idx == 0 {
-                model.gridDonationConjoint[idx].disc = model.gridDonationConjoint[idx].floor * (model.gridDonationConjoint[idx].rate - 0)
-            } else {
-                model.gridDonationConjoint[idx].disc =
-                    model.gridDonationConjoint[idx-1].disc +
-                    model.gridDonationConjoint[idx].floor * (model.gridDonationConjoint[idx].rate - model.gridDonationConjoint[idx-1].rate)
-            }
-        }
+    mutating func initialize() throws {
+        try model.gridLigneDirecte.initialize()
+        try model.gridDonationConjoint.initialize()
     }
     
-    func heritageOfChild(partSuccession: Double)
+    /// Calcul des droits de succession sur l'héritage par un enfant
+    /// - Parameter partSuccession: part successorale de l'enfant
+    /// - Returns: taxe et montant net
+    /// - Note: le conjoint est exonéré de droit de succession
+    func heritageOfChild(partSuccession: Double) throws
     -> (netAmount : Double,
         taxe      : Double) {
         // abattement avant application du barême
         let taxable = zeroOrPositive(partSuccession - model.abatLigneDirecte)
         
         // application du barême
-        if let slice = model.gridLigneDirecte.last(where: { $0.floor <= taxable }) {
-            let taxe = taxable * slice.rate - slice.disc
+        if let taxe = model.gridLigneDirecte.tax(for: taxable) {
             let net  = partSuccession - taxe
             return (netAmount : net,
                     taxe      : taxe)
         } else {
-            fatalError()
+            throw ModelError.heritageOfChildSlicesIssue
         }
     }
     
-    func donationToSpouse(donation: Double)
+    /// Calcul des droits de donation d'un conjoint marié
+    /// - Parameter partSuccession: part successorale du conjoint
+    /// - Returns: taxe et montant net
+    func donationToSpouse(donation: Double) throws
     -> (netAmount : Double,
         taxe      : Double) {
         // abattement avant application du barême
         let taxable = zeroOrPositive(donation - model.abatConjoint)
         
         // application du barême
-        if let slice = model.gridLigneDirecte.last(where: { $0.floor <= taxable }) {
-            let taxe = taxable * slice.rate - slice.disc
+        if let taxe = model.gridLigneDirecte.tax(for: taxable) {
             let net  = donation - taxe
             return (netAmount : net,
                     taxe      : taxe)
         } else {
-            fatalError()
+            throw ModelError.donationToSpouseSlicesIssue
         }
     }
 }
@@ -174,16 +169,15 @@ struct LifeInsuranceInheritance: Codable {
 
     // MARK: - Nested types
 
-    // tranche de barême
-    struct Slice: Codable {
-        let floor : Double // €
-        let rate  : Double // %
-        var disc  : Double // euro
+    enum ModelError: Error {
+        case heritageOfChildSlicesIssue
     }
     
-    struct Model: Codable, Versionable {
-        var version    : Version
-        var grid       : [Slice]
+    struct Model: BundleCodable, Versionable, RateGridable {
+        static var defaultFileName: String = "LifeInsuranceInheritanceModel.json"
+        
+        var version : Version
+        var grid    : RateGrid
     }
     
     // MARK: - Properties
@@ -193,31 +187,22 @@ struct LifeInsuranceInheritance: Codable {
     // MARK: - Methods
 
     /// Initializer les paramètres calculés pour les tranches d'imposition à partir des seuils et des taux
-    mutating func initialize() {
-        for idx in model.grid.startIndex ..< model.grid.endIndex {
-            if idx == 0 {
-                model.grid[idx].disc = model.grid[idx].floor * (model.grid[idx].rate - 0)
-            } else {
-                model.grid[idx].disc =
-                    model.grid[idx-1].disc +
-                    model.grid[idx].floor * (model.grid[idx].rate - model.grid[idx-1].rate)
-            }
-        }
+    mutating func initialize() throws {
+        try model.initializeGrid()
     }
     
     /// Calcul les taxes sur la transmission de l'assurance vie vers un enfant
     /// - Parameter partSuccession: masse transmise vers un enfant
-    func heritageToChild(partSuccession: Double)
+    func heritageOfChild(partSuccession: Double) throws
     -> (netAmount : Double,
         taxe      : Double) {
         // application du barême
-        if let slice = model.grid.last(where: { $0.floor < partSuccession }) {
-            let taxe = partSuccession * slice.rate - slice.disc
+        if let taxe = model.tax(for: partSuccession) {
             let net  = partSuccession - taxe
             return (netAmount : net,
                     taxe      : taxe)
         } else {
-            fatalError()
+            throw ModelError.heritageOfChildSlicesIssue
         }
     }
     

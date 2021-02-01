@@ -18,7 +18,7 @@ class RegimeGeneralTest: XCTestCase { // swiftlint:disable:this type_body_length
     override class func setUp() {
         super.setUp()
         let model = RegimeGeneral.Model(for                  : RegimeGeneralTest.self,
-                                        from                 : "RetirementRegimeGeneralModelConfigTest.json",
+                                        from                 : nil,
                                         dateDecodingStrategy : .iso8601,
                                         keyDecodingStrategy  : .useDefaultKeys)
         RegimeGeneralTest.regimeGeneral = RegimeGeneral(model: model)
@@ -26,13 +26,13 @@ class RegimeGeneralTest: XCTestCase { // swiftlint:disable:this type_body_length
         // inject dependency for tests
         RegimeGeneral.socioEconomyModel =
             SocioEconomy.Model(for: SocioEconomyModelTest.self,
-                               from                 : "SocioEconomyModelConfig.json",
+                               from                 : nil,
                                dateDecodingStrategy : .iso8601,
                                keyDecodingStrategy  : .useDefaultKeys)
             .initialized()
         RegimeGeneral.fiscalModel =
             Fiscal.Model(for: FiscalModelTests.self,
-                         from                 : "FiscalModelConfig.json",
+                         from                 : nil,
                          dateDecodingStrategy : .iso8601,
                          keyDecodingStrategy  : .useDefaultKeys)
             .initialized()
@@ -50,7 +50,7 @@ class RegimeGeneralTest: XCTestCase { // swiftlint:disable:this type_body_length
     
     func test_saving_to_test_bundle() throws {
         RegimeGeneralTest.regimeGeneral.saveToBundle(for                  : RegimeGeneralTest.self,
-                                                     to                   : "RetirementRegimeGeneralModelConfigTest.json",
+                                                     to                   : nil,
                                                      dateEncodingStrategy : .iso8601,
                                                      keyEncodingStrategy  : .useDefaultKeys)
     }

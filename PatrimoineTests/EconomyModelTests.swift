@@ -18,7 +18,7 @@ class EconomyModelTests: XCTestCase {
     func test_saving_to_test_bundle() throws {
         let model = Economy.RandomizersModel()
         model.saveToBundle(for: EconomyModelTests.self,
-                           to: "EconomyModelConfig.json",
+                           to: nil,
                            dateEncodingStrategy: .iso8601,
                            keyEncodingStrategy: .useDefaultKeys)
     }

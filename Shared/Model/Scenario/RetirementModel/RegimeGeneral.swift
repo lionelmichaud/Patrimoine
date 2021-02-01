@@ -44,7 +44,7 @@ struct RegimeGeneral: Codable {
     }
     
     struct Model: BundleCodable {
-        static var defaultFileName : String = "RetirementRegimeGeneralModelConfig.json"
+        static var defaultFileName : String = "RegimeGeneralModel.json"
         let dureeDeReferenceGrid   : [SliceRegimeLegal]
         let nbTrimNonIndemniseGrid : [SliceUnemployement]
         let ageMinimumLegal        : Int    // 62
@@ -113,7 +113,7 @@ struct RegimeGeneral: Codable {
 
     /// Encode l'objet dans un fichier stocké dans le Bundle de contenant la définition de la classe aClass
     func saveToBundle(for aClass           : AnyClass,
-                      to file              : String,
+                      to file              : String?,
                       dateEncodingStrategy : JSONEncoder.DateEncodingStrategy,
                       keyEncodingStrategy  : JSONEncoder.KeyEncodingStrategy) {
         model.saveToBundle(for                  : aClass,
@@ -121,6 +121,7 @@ struct RegimeGeneral: Codable {
                            dateEncodingStrategy : dateEncodingStrategy,
                            keyEncodingStrategy  : keyEncodingStrategy)
     }
+    
     /// Calcul du taux de reversion en tenant compte d'une décote ou d'une surcote éventuelle
     /// - Parameters:
     ///   - birthDate: date de naissance

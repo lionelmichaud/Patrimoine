@@ -18,7 +18,7 @@ class RealEstateCapitalGainTaxesModelTests: XCTestCase {
     override class func setUp() { 
         super.setUp()
         let model = RealEstateCapitalGainTaxesModel.Model(for: RealEstateCapitalGainTaxesModelTests.self,
-                                                          from                 : "RealEstateCapitalGainTaxesModelTest.json",
+                                                          from                 : nil,
                                                           dateDecodingStrategy : .iso8601,
                                                           keyDecodingStrategy  : .useDefaultKeys)
         RealEstateCapitalGainTaxesModelTests.estateCapitalGainTaxes = RealEstateCapitalGainTaxesModel(model: model)

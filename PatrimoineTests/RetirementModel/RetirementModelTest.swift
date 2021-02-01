@@ -18,7 +18,7 @@ class RetirementModelTest: XCTestCase {
     func test_saving_to_test_bundle() throws {
         let model = Retirement.Model()
         model.saveToBundle(for: RetirementModelTest.self,
-                           to: "RetirementModelConfig.json",
+                           to: nil,
                            dateEncodingStrategy: .iso8601,
                            keyEncodingStrategy: .useDefaultKeys)
     }

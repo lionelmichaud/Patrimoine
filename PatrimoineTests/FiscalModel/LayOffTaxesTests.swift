@@ -18,7 +18,7 @@ class LayOffTaxesTests: XCTestCase {
     override class func setUp() {
         super.setUp()
         let model = LayOffTaxes.Model(for: LayOffTaxesTests.self,
-                                      from                 : "LayOffTaxesModelTest.json",
+                                      from                 : nil,
                                       dateDecodingStrategy : .iso8601,
                                       keyDecodingStrategy  : .useDefaultKeys)
         LayOffTaxesTests.layOffTaxes = LayOffTaxes(model: model)

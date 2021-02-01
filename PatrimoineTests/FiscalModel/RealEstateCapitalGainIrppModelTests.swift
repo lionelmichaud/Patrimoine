@@ -18,7 +18,7 @@ class RealEstateCapitalGainIrppModelTests: XCTestCase {
     override class func setUp() {
         super.setUp()
         let model = RealEstateCapitalGainIrppModel.Model(for: RealEstateCapitalGainIrppModelTests.self,
-                                                         from                 : "RealEstateCapitalGainIrppModelTest.json",
+                                                         from                 : nil,
                                                          dateDecodingStrategy : .iso8601,
                                                          keyDecodingStrategy  : .useDefaultKeys)
         RealEstateCapitalGainIrppModelTests.estateCapitalGainIrpp = RealEstateCapitalGainIrppModel(model: model)

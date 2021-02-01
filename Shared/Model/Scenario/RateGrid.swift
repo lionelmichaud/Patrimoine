@@ -64,14 +64,14 @@ extension RateGrid {
     /// - Parameter taxableValue: valeur recherchée
     /// - Returns: tranche du barême dans laquelle se trouve une valeur recherchée (nil si non trouvée)
     func slice(containing taxableValue: Double) -> RateSlice? {
-        last(where: { $0.floor < taxableValue})
+        last(where: { $0.floor <= taxableValue})
     }
     
     /// Retrourne l'index de la tranche du barême dans laquelle se trouve une valeur recherchée
     /// - Parameter taxableValue: valeur recherchée
     /// - Returns: index de la tranche du barême dans laquelle se trouve une valeur recherchée (nil si non trouvée)
     func sliceIndex(containing taxableValue: Double) -> Int? {
-        lastIndex(where: { $0.floor < taxableValue})
+        lastIndex(where: { $0.floor <= taxableValue})
     }
     
     /// Retourne la taxe ou l'impôt pour un montant taxable donné selon le barême

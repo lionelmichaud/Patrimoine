@@ -18,7 +18,7 @@ class PensionReversionTest: XCTestCase {
     override class func setUp() {
         super.setUp()
         let model = PensionReversion.Model(for                  : PensionReversionTest.self,
-                                           from                 : "RetirementReversionModelConfigTest.json",
+                                           from                 : nil,
                                            dateDecodingStrategy : .iso8601,
                                            keyDecodingStrategy  : .useDefaultKeys)
         PensionReversionTest.reversion = PensionReversion(model: model)
@@ -28,7 +28,7 @@ class PensionReversionTest: XCTestCase {
     
     func test_saving_to_test_bundle() throws {
         PensionReversionTest.reversion.saveToBundle(for                  : RegimeGeneralTest.self,
-                                                    to                   : "RetirementReversionModelConfigTest.json",
+                                                    to                   : nil,
                                                     dateEncodingStrategy : .iso8601,
                                                     keyEncodingStrategy  : .useDefaultKeys)
     }

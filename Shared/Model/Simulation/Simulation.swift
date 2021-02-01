@@ -11,17 +11,6 @@ import AVFoundation
 
 // MARK: - Enumération des modes de simulation
 
-enum SimulationModeEnum: String, PickableEnum, Codable, Hashable {
-    case deterministic = "Déterministe"
-    case random        = "Aléatoire"
-    
-    // properties
-    
-    var pickerString: String {
-        return self.rawValue
-    }
-}
-
 // MARK: - Enumération des KPI
 
 enum SimulationKPIEnum: Int, PickableEnum, Codable, Hashable {
