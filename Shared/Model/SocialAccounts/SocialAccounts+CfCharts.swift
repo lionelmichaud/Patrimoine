@@ -97,13 +97,13 @@ extension SocialAccounts {
                 let taxesLegend    = firstLine.taxes.summary.namedValues.map({(label: $0.name,
                                                                                selected: true)})
                 // Résumé seulement
-                let expenseLegend = (label    : firstLine.lifeExpenses.summary.name,
+                let expenseLegend = (label    : firstLine.lifeExpenses.tableName,
                                      selected : true)
                 // Résumé seulement
-                let debtsLegend = (label    : firstLine.debtPayements.summary.name,
+                let debtsLegend = (label    : firstLine.debtPayements.tableName,
                                    selected : true)
                 // Résumé seulement
-                let investsLegend = (label    : firstLine.investPayements.summary.name,
+                let investsLegend = (label    : firstLine.investPayements.tableName,
                                      selected : true)
                 return [expenseLegend] + taxesLegend + [debtsLegend, investsLegend]
                 
@@ -332,11 +332,11 @@ extension SocialAccounts {
             dataSet.stackLabels = labelsInCategory
             dataSet.colors      = ChartThemes.negativeColors(number : dataSet.stackLabels.count)
             
-        } else if categoryName == firstLine.lifeExpenses.summary.name {
+        } else if categoryName == firstLine.lifeExpenses.tableName {
             // rechercher les dépenses
             dataSet = getExpensesDataSet()
             
-        } else if categoryName == firstLine.debtPayements.summary.name {
+        } else if categoryName == firstLine.debtPayements.tableName {
             /// rechercher les valeurs des debtPayements
             // customLog.log(level: .info, "Catégorie trouvée dans debtPayements : \(categoryName)")
             let labelsInCategory = firstLine.debtPayements.namesArray
@@ -353,7 +353,7 @@ extension SocialAccounts {
             dataSet.stackLabels = labelsInCategory
             dataSet.colors      = ChartThemes.negativeColors(number : dataSet.stackLabels.count)
             
-        } else if categoryName == firstLine.investPayements.summary.name {
+        } else if categoryName == firstLine.investPayements.tableName {
             /// rechercher les valeurs des investPayements
             // customLog.log(level: .info, "Catégorie trouvée dans investPayements : \(categoryName)")
             let labelsInCategory = firstLine.investPayements.namesArray

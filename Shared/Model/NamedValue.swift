@@ -20,7 +20,6 @@ protocol HasNamedValuedTable {
     var tableName   : String { get set }
     var namedValues : NamedValueArray { get set }
     var total       : Double { get }
-    var summary     : NamedValue { get }
     var namesArray  : [String] { get }
     var valuesArray : [Double] { get }
     var headerCSV   : String { get }
@@ -39,11 +38,6 @@ extension HasNamedValuedTable {
     var total: Double {
         namedValues.reduce(.zero, {result, element in result + element.value})
     }
-    var summary: NamedValue {
-        (name  : tableName,
-         value : total)
-    }
-    
     /// tableau des noms
     var namesArray: [String] {
         namedValues.map(\.name)
@@ -82,7 +76,7 @@ extension HasNamedValuedTable {
     
     func filtredTableValue(with itemSelectionList: ItemSelectionList) -> [Double] {
         if itemSelectionList.selectionContains(tableName) {
-            return [summary.value]
+            return [total]
         } else {
             return [Double]()
         }
