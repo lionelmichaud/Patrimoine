@@ -14,9 +14,9 @@ struct Owner : Codable, Hashable {
     
     // MARK: - Properties
     
-    var name       : String = ""
-    var fraction   : Double = 0.0 // % [0, 100]
-    var isValid    : Bool {
+    var name     : String = ""
+    var fraction : Double = 0.0 // % [0, 100] part de propriété
+    var isValid  : Bool {
         name != ""
     }
     
@@ -27,7 +27,6 @@ struct Owner : Codable, Hashable {
     func ownedValue(from totalValue: Double) -> Double {
         return totalValue * fraction / 100.0
     }
-    
 }
 
 // MARK: - Un tableau de Owner
@@ -119,8 +118,6 @@ struct Ownership: Codable {
             if isDismembered {
                 usufructOwners = fullOwners
                 bareOwners     = fullOwners
-//            } else {
-//                fullOwners = usufructOwners
             }
         }
     }
