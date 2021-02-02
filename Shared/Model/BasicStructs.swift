@@ -12,7 +12,6 @@ import SwiftUI
 
 private let customLog = Logger(subsystem: "me.michaud.lionel.Patrimoine", category: "BasicStructs")
 
-
 // MARK: - Liste des items affichés sur un Graph et sélectionnables individuellement
 
 typealias ItemSelection = (label: String, selected: Bool)

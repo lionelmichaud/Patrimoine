@@ -13,13 +13,26 @@ import Foundation
 typealias NamedValue = (name: String, value: Double)
 typealias NamedValueArray = [NamedValue]
 
-struct NamedValueTable {
-    
+protocol HasNamedValuedTable {
+
     // MARK: - Properties
     
-    var name: String
-    var namedValues = NamedValueArray()
+    var name: String { get set }
+    var namedValues: NamedValueArray { get set }
+    var total: Double { get }
+    var namesArray: [String] { get }
+    var valuesArray: [Double] { get }
+    var headerCSV: String { get }
+    var valuesCSV: String { get }
     
+    // MARK: - Methods
+    
+    func filtredNames(with itemSelectionList: ItemSelectionList) -> [String]
+    func filtredValues(with itemSelectionList: ItemSelectionList) -> [Double]
+    func print(level: Int)
+}
+
+extension HasNamedValuedTable {
     var total: Double {
         namedValues.reduce(.zero, {result, element in result + element.value})
     }
@@ -58,44 +71,40 @@ struct NamedValueTable {
     }
 }
 
-// MARK: - NamedValueTable avec résumé global
-struct NamedValueTableWithSummary {
+struct NamedValueTable: HasNamedValuedTable {
     
     // MARK: - Properties
     
-    let name              : String
-    var namedValueTable   : NamedValueTable
+    var name: String
+    var namedValues = NamedValueArray()
+}
+
+// MARK: - NamedValueTable avec résumé global
+struct NamedValueTableWithSummary: HasNamedValuedTable {
     
-    var summary           : NamedValueTable { // un seul élément
-        var table = NamedValueTable(name: name)
-        table.namedValues.append((name  : name,
-                                  value : namedValueTable.total))
-        return table
-    }
+    // MARK: - Properties
     
-    // MARK: - Initializers
+    var name: String
+    var namedValues = NamedValueArray()
     
-    internal init(name: String) {
-        self.name = name
-        self.namedValueTable = NamedValueTable(name: name)
-    }
-    
-    // MARK: - Methods
-    
-    /// liste des noms CSV
-    var headerCSV: String {
-        namedValueTable.headerCSV
-    }
-    /// liste des valeurs CSV
-    var valuesCSV: String {
-        namedValueTable.valuesCSV
+    var summary: NamedValue { // un seul élément
+        (name  : name,
+         value : total)
     }
     
     func summaryFiltredNames(with itemSelectionList: ItemSelectionList) -> [String] {
-        summary.filtredNames(with: itemSelectionList)
+        if itemSelectionList.selectionContains(name) {
+            return [name]
+        } else {
+            return [String]()
+        }
     }
     
     func summaryFiltredValues(with itemSelectionList: ItemSelectionList) -> [Double] {
-        summary.filtredValues(with: itemSelectionList)
+        if itemSelectionList.selectionContains(name) {
+            return [summary.value]
+        } else {
+            return [Double]()
+        }
     }
 }

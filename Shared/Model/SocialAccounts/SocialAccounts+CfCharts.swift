@@ -80,27 +80,32 @@ extension SocialAccounts {
     /// Construction de la légende du graphique
     /// - Parameter combination: sélection de la catégories de séries à afficher
     /// - Returns: tableau des libéllés des sries des catégories sélectionnées
-    func getCashFlowLegend(_ combination: CashCombination = .both)
-    -> ItemSelectionList {
+    func getCashFlowLegend(_ combination: CashCombination = .both) -> ItemSelectionList {
         let firstLine   = cashFlowArray.first!
         switch combination {
             case .revenues:
                 // libellés des revenus famille + revenus SCI
-                let revenuesLegend = firstLine.revenues.summary.namedValues.map({($0.name, true)})
+                let revenuesLegend = firstLine.revenues.summary.namedValues.map({(label    : $0.name,
+                                                                                  selected : true)})
                 // Résumé seulement
-                let sciLegend      = firstLine.sciCashFlowLine.summary.namedValues.map({($0.name, true)})
+                let sciLegend = firstLine.sciCashFlowLine.summary.namedValues.map({(label    : $0.name,
+                                                                                    selected : true)})
                 return revenuesLegend + sciLegend
                 
             case .expenses:
                 // à plat
-                let taxesLegend    = firstLine.taxes.summary.namedValues.map({($0.name, true)})
+                let taxesLegend    = firstLine.taxes.summary.namedValues.map({(label: $0.name,
+                                                                               selected: true)})
                 // Résumé seulement
-                let expenseLegend  = firstLine.lifeExpenses.summary.namedValues.map({($0.name, true)})
+                let expenseLegend = (label    : firstLine.lifeExpenses.summary.name,
+                                     selected : true)
                 // Résumé seulement
-                let debtsLegend    = firstLine.debtPayements.summary.namedValues.map({($0.name, true)})
+                let debtsLegend = (label    : firstLine.debtPayements.summary.name,
+                                   selected : true)
                 // Résumé seulement
-                let investsLegend  = firstLine.investPayements.summary.namedValues.map({($0.name, true)})
-                return expenseLegend + taxesLegend + debtsLegend + investsLegend
+                let investsLegend = (label    : firstLine.investPayements.summary.name,
+                                     selected : true)
+                return [expenseLegend] + taxesLegend + [debtsLegend, investsLegend]
                 
             case .both:
                 return getCashFlowLegend(.revenues) + getCashFlowLegend(.expenses)
@@ -242,13 +247,13 @@ extension SocialAccounts {
             if let expenseCategory = selectedExpenseCategory {
                 /// rechercher les valeurs de la seule catégorie de dépenses sélectionnée
                 let selectedExpensesNameArray = expenses.expensesNameArray(of: expenseCategory)
-                labelsInCategory = firstLine.lifeExpenses.namedValueTable.namesArray.filter { name in
+                labelsInCategory = firstLine.lifeExpenses.namesArray.filter { name in
                     selectedExpensesNameArray.contains(name)
                 }
                 
                 // valeurs des dépenses
                 dataEntries = cashFlowArray.map { cashFlowLine in// pour chaque année
-                    let selectedNamedValues = cashFlowLine.lifeExpenses.namedValueTable.namedValues
+                    let selectedNamedValues = cashFlowLine.lifeExpenses.namedValues
                         .filter({ (name, _) in
                             selectedExpensesNameArray.contains(name)
                         })
@@ -260,11 +265,11 @@ extension SocialAccounts {
             } else {
                 /// rechercher les valeurs de toutes les dépenses
                 // customLog.log(level: .info, "Catégorie trouvée dans lifeExpenses : \(categoryName)")
-                labelsInCategory = firstLine.lifeExpenses.namedValueTable.namesArray
+                labelsInCategory = firstLine.lifeExpenses.namesArray
                 
                 // valeurs des dépenses
                 dataEntries = cashFlowArray.map { // pour chaque année
-                    let y = $0.lifeExpenses.namedValueTable.valuesArray
+                    let y = $0.lifeExpenses.valuesArray
                     return BarChartDataEntry(x       : $0.year.double(),
                                              yValues : -y)
                 }
@@ -334,11 +339,11 @@ extension SocialAccounts {
         } else if categoryName == firstLine.debtPayements.summary.name {
             /// rechercher les valeurs des debtPayements
             // customLog.log(level: .info, "Catégorie trouvée dans debtPayements : \(categoryName)")
-            let labelsInCategory = firstLine.debtPayements.namedValueTable.namesArray
+            let labelsInCategory = firstLine.debtPayements.namesArray
             
             // valeurs des dettes
             dataEntries = cashFlowArray.map { // pour chaque année
-                let y = $0.debtPayements.namedValueTable.valuesArray
+                let y = $0.debtPayements.valuesArray
                 return BarChartDataEntry(x       : $0.year.double(),
                                          yValues : -y)
             }
@@ -351,11 +356,11 @@ extension SocialAccounts {
         } else if categoryName == firstLine.investPayements.summary.name {
             /// rechercher les valeurs des investPayements
             // customLog.log(level: .info, "Catégorie trouvée dans investPayements : \(categoryName)")
-            let labelsInCategory = firstLine.investPayements.namedValueTable.namesArray
+            let labelsInCategory = firstLine.investPayements.namesArray
             
             // valeurs des investissements
             dataEntries = cashFlowArray.map { // pour chaque année
-                let y = $0.investPayements.namedValueTable.valuesArray
+                let y = $0.investPayements.valuesArray
                 return BarChartDataEntry(x       : $0.year.double(),
                                          yValues : -y)
             }

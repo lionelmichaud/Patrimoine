@@ -47,9 +47,9 @@ struct CashFlowLine {
     var investPayements = NamedValueTableWithSummary(name: "Investissements")
     var sumOfExpenses: Double {
         taxes.total +
-            lifeExpenses.namedValueTable.total +
-            debtPayements.namedValueTable.total +
-            investPayements.namedValueTable.total
+            lifeExpenses.total +
+            debtPayements.total +
+            investPayements.total
     }
     // les comptes annuels de la SCI
     let sciCashFlowLine : SciCashFlowLine
@@ -112,7 +112,7 @@ struct CashFlowLine {
                         with : patrimoine,
                         for  : year)
             /// EXPENSES: compute and populate family expenses
-            lifeExpenses.namedValueTable.namedValues = family.expenses.namedValueTable(atEndOf: year)
+            lifeExpenses.namedValues = family.expenses.namedValueTable(atEndOf: year)
             
             /// LOAN: populate remboursement d'emprunts
             populateLoanCashFlow(of: patrimoine)
@@ -348,7 +348,7 @@ struct CashFlowLine {
                  value: liquidatedValue.socialTaxes.rounded()))
             
             // populate versements
-            investPayements.namedValueTable.namedValues.append(
+            investPayements.namedValues.append(
                 (name : name,
                  value: yearlyPayement.rounded()))
             
@@ -361,7 +361,7 @@ struct CashFlowLine {
         for loan in patrimoine.liabilities.loans.items.sorted(by:<) {
             let yearlyPayement = -loan.yearlyPayement(year)
             let name           = loan.name
-            debtPayements.namedValueTable.namedValues.append((name : name,
+            debtPayements.namedValues.append((name : name,
                                                               value: yearlyPayement.rounded()))
         }
     }
@@ -405,11 +405,11 @@ struct CashFlowLine {
         // taxes
         taxes.print(level: 1)
         // expenses
-        lifeExpenses.namedValueTable.print(level: 1)
+        lifeExpenses.print(level: 1)
         // remboursements d'emprunts
-        debtPayements.namedValueTable.print(level: 1)
+        debtPayements.print(level: 1)
         // versement investissements
-        investPayements.namedValueTable.print(level: 1)
+        investPayements.print(level: 1)
         // net cash flow
         Swift.print(StringCst.header + "NET CASH FLOW:", netCashFlow)
         // revenu imposable à l'IRPP reporté à l'année suivante
