@@ -42,9 +42,9 @@ struct CashFlowLine {
     }
     // dépenses
     var taxes           = ValuedTaxes(name: "Taxes")
-    var lifeExpenses    = NamedValueTableWithSummary(name: "Dépenses de vie")
-    var debtPayements   = NamedValueTableWithSummary(name: "Remb. dette")
-    var investPayements = NamedValueTableWithSummary(name: "Investissements")
+    var lifeExpenses    = NamedValueTable(tableName: "Dépenses de vie")
+    var debtPayements   = NamedValueTable(tableName: "Remb. dette")
+    var investPayements = NamedValueTable(tableName: "Investissements")
     var sumOfExpenses: Double {
         taxes.total +
             lifeExpenses.total +

@@ -33,7 +33,7 @@ struct ValuedRevenues {
     
     /// tableau des noms de catégories et valeurs total des revenus de cette catégorie
     var summary: NamedValueTable {
-        var table = NamedValueTable(name: name)
+        var table = NamedValueTable(tableName: name)
         
         // itérer sur l'enum pour préserver l'ordre
         for category in RevenueCategory.allCases {
@@ -133,8 +133,8 @@ struct RevenuesInCategory {
 
     init(name: String) {
         self.name         = name
-        self.credits      = NamedValueTable(name: name + " PERCU")
-        self.taxablesIrpp = NamedValueTable(name: name + " TAXABLE")
+        self.credits      = NamedValueTable(tableName: name + " PERCU")
+        self.taxablesIrpp = NamedValueTable(tableName: name + " TAXABLE")
     }
     
     // MARK: - Methods

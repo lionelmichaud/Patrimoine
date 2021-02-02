@@ -151,17 +151,17 @@ extension SocialAccounts {
             case .expenses:
                 // valeurs des taxes + valeurs des dépenses + valeurs des dettes
                 dataEntries = cashFlowArray.map { // pour chaque année
-                    let yExpenses = -$0.lifeExpenses.summaryFiltredValues(with: itemSelectionList)
+                    let yExpenses = -$0.lifeExpenses.filtredTableValue(with: itemSelectionList)
                     let yTaxes    = -$0.taxes.summaryFiltredValues(with: itemSelectionList)
-                    let yDebt     = -$0.debtPayements.summaryFiltredValues(with: itemSelectionList)
-                    let yInvest   = -$0.investPayements.summaryFiltredValues(with: itemSelectionList)
+                    let yDebt     = -$0.debtPayements.filtredTableValue(with: itemSelectionList)
+                    let yInvest   = -$0.investPayements.filtredTableValue(with: itemSelectionList)
                     return BarChartDataEntry(x       : $0.year.double(),
                                              yValues : yExpenses + yTaxes + yDebt + yInvest)
                 }
-                let labelExpenses = firstLine.lifeExpenses.summaryFiltredNames(with: itemSelectionList)
+                let labelExpenses = firstLine.lifeExpenses.filtredTableName(with: itemSelectionList)
                 let labelTaxes    = firstLine.taxes.summaryFiltredNames(with: itemSelectionList)
-                let labelDebt     = firstLine.debtPayements.summaryFiltredNames(with: itemSelectionList)
-                let labelInvest   = firstLine.investPayements.summaryFiltredNames(with: itemSelectionList)
+                let labelDebt     = firstLine.debtPayements.filtredTableName(with: itemSelectionList)
+                let labelInvest   = firstLine.investPayements.filtredTableName(with: itemSelectionList)
                 let labels        = labelExpenses + labelTaxes + labelDebt + labelInvest
                 dataSet = BarChartDataSet(entries : dataEntries,
                                           label   : (labels.count == 1 ? labels.first : nil))
@@ -174,10 +174,10 @@ extension SocialAccounts {
                 dataEntries = cashFlowArray.map {
                     let yRevenues = $0.revenues.summaryFiltredValues(with: itemSelectionList)
                     let ySCI      = $0.sciCashFlowLine.summaryFiltredValues(with: itemSelectionList)
-                    let yExpenses = -$0.lifeExpenses.summaryFiltredValues(with: itemSelectionList)
+                    let yExpenses = -$0.lifeExpenses.filtredTableValue(with: itemSelectionList)
                     let yTaxes    = -$0.taxes.summaryFiltredValues(with: itemSelectionList)
-                    let yDebt     = -$0.debtPayements.summaryFiltredValues(with: itemSelectionList)
-                    let yInvest   = -$0.investPayements.summaryFiltredValues(with: itemSelectionList)
+                    let yDebt     = -$0.debtPayements.filtredTableValue(with: itemSelectionList)
+                    let yInvest   = -$0.investPayements.filtredTableValue(with: itemSelectionList)
                     return BarChartDataEntry(x       : $0.year.double(),
                                              yValues : yRevenues + ySCI + yExpenses + yTaxes + yDebt + yInvest)
                 }
@@ -186,10 +186,10 @@ extension SocialAccounts {
                 let labelsPositive  = labelRevenues + labelSCI
                 let numberPositive  = labelsPositive.count
                 
-                let labelExpenses   = firstLine.lifeExpenses.summaryFiltredNames(with: itemSelectionList)
+                let labelExpenses   = firstLine.lifeExpenses.filtredTableName(with: itemSelectionList)
                 let labelTaxes      = firstLine.taxes.summaryFiltredNames(with: itemSelectionList)
-                let labelDebt       = firstLine.debtPayements.summaryFiltredNames(with: itemSelectionList)
-                let labelInvest     = firstLine.investPayements.summaryFiltredNames(with: itemSelectionList)
+                let labelDebt       = firstLine.debtPayements.filtredTableName(with: itemSelectionList)
+                let labelInvest     = firstLine.investPayements.filtredTableName(with: itemSelectionList)
                 let labelsNegative  = labelExpenses + labelTaxes + labelDebt + labelInvest
                 let numberNegative  = labelsNegative.count
                 

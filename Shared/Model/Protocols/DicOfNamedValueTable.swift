@@ -71,12 +71,12 @@ extension DictionaryOfNamedValueTable {
     
     /// tableau des noms de catégories et valeurs total des actifs:  un élément par catégorie
     var summary: NamedValueTable {
-        var table = NamedValueTable(name: name)
+        var table = NamedValueTable(tableName: name)
         
         // itérer sur l'enum pour préserver l'ordre
         for category in Category.allCases {
             if let element = perCategory[category] {
-                table.namedValues.append((name  : element.name,
+                table.namedValues.append((name  : element.tableName,
                                           value : element.total))
             }
         }
@@ -107,7 +107,7 @@ extension DictionaryOfNamedValueTable {
         self.init()
         self.name = name
         for category in Category.allCases {
-            perCategory[category] = NamedValueTable(name: category.displayString)
+            perCategory[category] = NamedValueTable(tableName: category.displayString)
         }
     }
     
