@@ -98,6 +98,7 @@ extension Ownable {
             }
             
         } else {
+            // valeur en pleine propriété
             for owner in ownership.fullOwners {
                 dico[owner.name] = ownedValue(by               : owner.name,
                                               atEndOf          : year,

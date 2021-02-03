@@ -34,11 +34,14 @@ struct CashFlowLine {
     
     let year            : Int
     var ages            = AgeTable()
+    // les comptes annuels de la SCI
+    let sciCashFlowLine : SciCashFlowLine
     // revenus
     var taxableIrppRevenueDelayedToNextYear = Debt(name: "REVENU IMPOSABLE REPORTE A L'ANNEE SUIVANTE", note: "", value: 0)
     var revenues        = ValuedRevenues(name: "REVENUS HORS SCI")
     var sumOfrevenues   : Double {
-        revenues.totalCredited + sciCashFlowLine.netCashFlow
+        revenues.totalCredited +
+            sciCashFlowLine.netCashFlow
     }
     // dépenses
     var taxes           = ValuedTaxes(name: "Taxes")
@@ -51,11 +54,9 @@ struct CashFlowLine {
             debtPayements.total +
             investPayements.total
     }
-    // les comptes annuels de la SCI
-    let sciCashFlowLine : SciCashFlowLine
-    // les successions légales
+    // les successions légales survenues dans l'année
     var successions     : [Succession] = []
-    // les transmissions d'assurances vie
+    // les transmissions d'assurances vie survenues dans l'année
     var lifeInsSuccessions : [Succession] = []
 
     // solde net

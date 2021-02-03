@@ -23,10 +23,4 @@ extension PickableEnum {
 
 // MARK: - Protocol PickableEnum & Identifiable pour Picker d'un Enum
 
-protocol PickableIdentifiableEnum: PickableEnum, Identifiable { }
-
-// MARK: - Protocol Versionable pour versionner des données
-
-protocol Versionable {
-    var version : Version { get set }
-}
+typealias PickableIdentifiableEnum = PickableEnum & Identifiable
