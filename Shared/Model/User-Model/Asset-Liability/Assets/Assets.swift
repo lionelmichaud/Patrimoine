@@ -51,7 +51,7 @@ struct Assets {
         self.realEstates     = RealEstateArray(family: family)
         self.scpis           = ScpiArray(family: family) // SCPI hors de la SCI
         self.sci             = SCI(family: family)
-
+        
         // initialiser le vetcuer d'état de chaque FreeInvestement à la date courante
         resetFreeInvestementCurrentValue()
     }
@@ -100,7 +100,7 @@ struct Assets {
         try scpis.items.forEach(body)
         try sci.forEachOwnable(body)
     }
-
+    
     /// Transférer la propriété d'un bien d'un défunt vers ses héritiers en fonction de l'option
     ///  fiscale du conjoint survivant éventuel
     /// - Parameters:
@@ -117,16 +117,16 @@ struct Assets {
                 case .lifeInsurance(_, let clause):
                     // régles de transmission particulières pour l'Assurance Vie
                     // TODO: - ne transférer que ce qui n'est pas de l'assurance vie, sinon utiliser d'autres règles de transmission
-                    periodicInvests.items[idx].ownership.transferLifeInsuranceOfDecedent(of          : decedentName,
-                                                                                         toSpouse    : spouseName,
-                                                                                         toChildren  : chidrenNames,
-                                                                                         accordingTo : clause)
+                    try! periodicInvests.items[idx].ownership.transferLifeInsuranceOfDecedent(
+                        of          : decedentName,
+                        accordingTo : clause)
                     
                 default:
-                    periodicInvests.items[idx].ownership.transferOwnershipOf(decedentName       : decedentName,
-                                                                                     chidrenNames       : chidrenNames,
-                                                                                     spouseName         : spouseName,
-                                                                                     spouseFiscalOption : spouseFiscalOption)
+                    try! periodicInvests.items[idx].ownership.transferOwnershipOf(
+                        decedentName       : decedentName,
+                        chidrenNames       : chidrenNames,
+                        spouseName         : spouseName,
+                        spouseFiscalOption : spouseFiscalOption)
             }
         }
         for idx in 0..<freeInvests.items.count {
@@ -134,34 +134,36 @@ struct Assets {
                 case .lifeInsurance(_, let clause):
                     // régles de transmission particulières pour l'Assurance Vie
                     // TODO: - ne transférer que ce qui n'est pas de l'assurance vie, sinon utiliser d'autres règles de transmission
-                    freeInvests.items[idx].ownership.transferLifeInsuranceOfDecedent(of          : decedentName,
-                                                                                     toSpouse    : spouseName,
-                                                                                     toChildren  : chidrenNames,
-                                                                                     accordingTo : clause)
+                    try! freeInvests.items[idx].ownership.transferLifeInsuranceOfDecedent(
+                        of          : decedentName,
+                        accordingTo : clause)
                     
                 default:
-                    freeInvests.items[idx].ownership.transferOwnershipOf(decedentName       : decedentName,
-                                                                                 chidrenNames       : chidrenNames,
-                                                                                 spouseName         : spouseName,
-                                                                                 spouseFiscalOption : spouseFiscalOption)
+                    try! freeInvests.items[idx].ownership.transferOwnershipOf(
+                        decedentName       : decedentName,
+                        chidrenNames       : chidrenNames,
+                        spouseName         : spouseName,
+                        spouseFiscalOption : spouseFiscalOption)
             }
         }
         for idx in 0..<realEstates.items.count {
-            realEstates.items[idx].ownership.transferOwnershipOf(decedentName       : decedentName,
-                                                                         chidrenNames       : chidrenNames,
-                                                                         spouseName         : spouseName,
-                                                                         spouseFiscalOption : spouseFiscalOption)
+            try! realEstates.items[idx].ownership.transferOwnershipOf(
+                decedentName       : decedentName,
+                chidrenNames       : chidrenNames,
+                spouseName         : spouseName,
+                spouseFiscalOption : spouseFiscalOption)
         }
         for idx in 0..<scpis.items.count {
-            scpis.items[idx].ownership.transferOwnershipOf(decedentName       : decedentName,
-                                                                   chidrenNames       : chidrenNames,
-                                                                   spouseName         : spouseName,
-                                                                   spouseFiscalOption : spouseFiscalOption)
+            try! scpis.items[idx].ownership.transferOwnershipOf(
+                decedentName       : decedentName,
+                chidrenNames       : chidrenNames,
+                spouseName         : spouseName,
+                spouseFiscalOption : spouseFiscalOption)
         }
         sci.transferOwnershipOf(decedentName       : decedentName,
-                                        chidrenNames       : chidrenNames,
-                                        spouseName         : spouseName,
-                                        spouseFiscalOption : spouseFiscalOption)
+                                chidrenNames       : chidrenNames,
+                                spouseName         : spouseName,
+                                spouseFiscalOption : spouseFiscalOption)
     }
     
     /// Calcule  la valeur nette taxable du patrimoine immobilier de la famille selon la méthode de calcul choisie
@@ -203,7 +205,7 @@ struct Assets {
                                              atEndOf          : year,
                                              evaluationMethod : evaluationMethod)
                 }
-
+                
             case .legalSuccession, .patrimoine:
                 /// on prend la valeure totale de tous les biens immobiliers
                 return

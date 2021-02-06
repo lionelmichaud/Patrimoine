@@ -48,10 +48,12 @@ extension InvestementType: Codable {
     private enum CodingKeys: String, CodingKey {
         case lifeInsurance_taxes, lifeInsurance_clause, PEA, other
     }
+    
     // error type
     enum InvestementTypeCodingError: Error {
         case decoding(String)
     }
+    
     // decode
     init(from decoder: Decoder) throws {
         let values = try decoder.container(keyedBy: CodingKeys.self)
@@ -77,6 +79,7 @@ extension InvestementType: Codable {
         
         throw InvestementTypeCodingError.decoding("Error decoding 'InvestementType' ! \(dump(values))")
     }
+    
     // encode
     func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
@@ -99,10 +102,13 @@ extension InvestementType: Codable {
 ///   - le cas de plusieurs usufruitiers n'est pas traité
 ///   - le cas de parts non égales entre nue-propriétaires n'est pas traité
 ///   - le cas de parts non égales entre bénéficiaires en PP n'est pas traité
-struct LifeInsuranceClause: Codable, Hashable {
+struct LifeInsuranceClause: Codable, Hashable, CustomStringConvertible {
     var isDismembered     : Bool     = false
+    // bénéficiaire en PP
     var fullRecipients    : [String] = [ ] // PP si la clause n'est pas démembrée
+    // bénéficiaire en UF
     var usufructRecipient : String   = ""
+    // bénéficiaire en NP
     var bareRecipients    : [String] = [ ]
     
     var isValid: Bool {
@@ -111,5 +117,21 @@ struct LifeInsuranceClause: Codable, Hashable {
         } else {
             return fullRecipients.isNotEmpty
         }
+    }
+    
+    var description: String {
+        let header = """
+        CLAUSE BENEFICIAIRE:
+         - Valide:    \(isValid)
+         - Démembrée: \(isDismembered)
+
+        """
+        let fr =
+            !isDismembered ? " - Bénéficiaire en PP:\n    \(fullRecipients)" : ""
+        let ur =
+            isDismembered ? " - Bénéficiaire en UF:\n    \(usufructRecipient) \n" : ""
+        let br =
+            isDismembered ? " - Bénéficiaire en NP:\n    \(bareRecipients)" : ""
+        return header + fr + ur + br + "\n"
     }
 }

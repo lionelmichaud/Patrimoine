@@ -29,7 +29,7 @@ struct OwnerGroupBox: View {
                         },
                         label: {
                             Text("Fraction détenue: ") +
-                                Text((owner.fraction).percentStringRounded)
+                                Text(String(owner.fraction) + "%")
                                 .bold()
                                 .foregroundColor(owners.percentageOk ? .blue : .red)
                         })
@@ -159,10 +159,10 @@ struct OwnershipView: View {
                 Group {
                     NavigationLink(destination: OwnersListView(title  : usufruitierStr,
                                                                owners : $ownership.usufructOwners).environmentObject(family)) {
-                        if ownership.isvalid {
+                        if ownership.isValid {
                             AmountView(label   : usufruitierStr+"s",
-                                       amount  : (ownership.demembrementPercentage(atEndOf : Date.now.year).usufructPercent / 100.0) * totalValue,
-                                       comment : ownership.demembrementPercentage(atEndOf : Date.now.year).usufructPercent.percentString(digit : 2)+"%")
+                                       amount  : (try! ownership.demembrementPercentage(atEndOf : Date.now.year).usufructPercent / 100.0) * totalValue,
+                                       comment : try! ownership.demembrementPercentage(atEndOf : Date.now.year).usufructPercent.percentString(digit : 2)+"%")
                                 .foregroundColor(.blue)
                         } else {
                             if !ownership.usufructOwners.isEmpty && ownership.usufructOwners.isvalid {
@@ -174,10 +174,10 @@ struct OwnershipView: View {
                     }
                     NavigationLink(destination: OwnersListView(title  : nuPropStr,
                                                                owners : $ownership.bareOwners).environmentObject(family)) {
-                        if ownership.isvalid {
+                        if ownership.isValid {
                             AmountView(label   : nuPropStr+"s",
-                                       amount  : (ownership.demembrementPercentage(atEndOf : Date.now.year).bareValuePercent / 100.0) * totalValue,
-                                       comment : ownership.demembrementPercentage(atEndOf : Date.now.year).bareValuePercent.percentString(digit : 2)+"%")
+                                       amount  : (try! ownership.demembrementPercentage(atEndOf : Date.now.year).bareValuePercent / 100.0) * totalValue,
+                                       comment : try! ownership.demembrementPercentage(atEndOf : Date.now.year).bareValuePercent.percentString(digit : 2)+"%")
                                 .foregroundColor(.blue)
                         } else {
                             if !ownership.bareOwners.isEmpty && ownership.bareOwners.isvalid {
@@ -194,7 +194,7 @@ struct OwnershipView: View {
                 NavigationLink(destination: OwnersListView(title  : proprietaireStr,
                                                            owners : $ownership.fullOwners).environmentObject(family)) {
                     Text(proprietaireStr+"s")
-                        .foregroundColor(ownership.isvalid ? .blue : .red)
+                        .foregroundColor(ownership.isValid ? .blue : .red)
                 }.padding(.leading)
             }
         }

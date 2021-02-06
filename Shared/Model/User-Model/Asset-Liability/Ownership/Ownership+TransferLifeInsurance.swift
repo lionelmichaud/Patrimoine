@@ -11,11 +11,7 @@ import Foundation
 extension Ownership {
     
     /// Transférer l'usufruit qui rejoint la nue-propriété
-    ///
-    /// - Parameters:
-    ///   - clause: la clause bénéficiare de l'assurance vie
-    ///
-    mutating func transfertLifeInsuranceUsufruct(clause: LifeInsuranceClause) {
+    mutating func transfertLifeInsuranceUsufruct() {
         guard bareOwners.isNotEmpty else {
             fatalError("transfertLifeInsuranceUsufruct: Aucun nue-propriétaire à qui transmettre l'usufruit de l'assurance vie")
         }

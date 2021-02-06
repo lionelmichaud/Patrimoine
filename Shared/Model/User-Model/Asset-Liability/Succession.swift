@@ -8,19 +8,6 @@
 
 import Foundation
 
-// MARK: - Méthode d'évaluation d'un Patrmoine (régles fiscales à appliquer)
-enum EvaluationMethod: String, PickableEnum {
-    case ifi                     = "IFI"
-    case isf                     = "ISF"
-    case legalSuccession         = "Succession Légale"
-    case lifeInsuranceSuccession = "Succession Assurance Vie"
-    case patrimoine              = "Patrimoniale"
-    
-    var pickerString: String {
-        return self.rawValue
-    }
-}
-
 // MARK: - Succession d'une personne
 
 struct Succession: Identifiable {

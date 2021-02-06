@@ -164,7 +164,7 @@ struct PeriodicInvestDetailedView: View {
         }
         
         /// vérifier que les propriétaires sont correctements définis
-        guard localItem.ownership.isvalid else {
+        guard localItem.ownership.isValid else {
             self.alertItem = AlertItem(title         : Text("Les propriétaires ne sont pas correctements définis"),
                                        dismissButton : .default(Text("OK")))
             return false

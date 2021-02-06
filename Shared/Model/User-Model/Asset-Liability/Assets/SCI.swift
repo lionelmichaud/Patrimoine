@@ -174,10 +174,11 @@ struct SCI {
                                       spouseName         : String?,
                                       spouseFiscalOption : InheritanceDonation.FiscalOption?) {
         for idx in 0..<scpis.items.count {
-            scpis.items[idx].ownership.transferOwnershipOf(decedentName       : decedentName,
-                                                                   chidrenNames       : chidrenNames,
-                                                                   spouseName         : spouseName,
-                                                                   spouseFiscalOption : spouseFiscalOption)
+            try! scpis.items[idx].ownership.transferOwnershipOf(
+                decedentName       : decedentName,
+                chidrenNames       : chidrenNames,
+                spouseName         : spouseName,
+                spouseFiscalOption : spouseFiscalOption)
         }
     }
     
