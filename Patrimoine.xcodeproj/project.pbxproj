@@ -64,6 +64,7 @@
 		7946A48824D712A100B86BAD /* ValuedTaxes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7946A48724D712A100B86BAD /* ValuedTaxes.swift */; };
 		794D701225CF08450055E93C /* OwnershipTransferLifeInsuranceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 794D701125CF08450055E93C /* OwnershipTransferLifeInsuranceTests.swift */; };
 		794D701625CF0EDD0055E93C /* LifeInsuranceClauseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 794D701525CF0EDD0055E93C /* LifeInsuranceClauseTests.swift */; };
+		794D701C25CF20140055E93C /* LifeInsuranceClause.swift in Sources */ = {isa = PBXBuildFile; fileRef = 794D701B25CF20140055E93C /* LifeInsuranceClause.swift */; };
 		7950B9572520D03F007EC0F8 /* StatisticsChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7950B9562520D03F007EC0F8 /* StatisticsChartView.swift */; };
 		7951A5082520F10E001ED840 /* SpecialFunctions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7951A5072520F10E001ED840 /* SpecialFunctions.swift */; };
 		7956C6252538FA0F00C92A28 /* ScenarioSummaryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7956C6242538FA0F00C92A28 /* ScenarioSummaryView.swift */; };
@@ -380,6 +381,7 @@
 		7946A48724D712A100B86BAD /* ValuedTaxes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ValuedTaxes.swift; sourceTree = "<group>"; };
 		794D701125CF08450055E93C /* OwnershipTransferLifeInsuranceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OwnershipTransferLifeInsuranceTests.swift; sourceTree = "<group>"; };
 		794D701525CF0EDD0055E93C /* LifeInsuranceClauseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LifeInsuranceClauseTests.swift; sourceTree = "<group>"; };
+		794D701B25CF20140055E93C /* LifeInsuranceClause.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LifeInsuranceClause.swift; sourceTree = "<group>"; };
 		7950B9562520D03F007EC0F8 /* StatisticsChartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatisticsChartView.swift; sourceTree = "<group>"; };
 		7951A5072520F10E001ED840 /* SpecialFunctions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpecialFunctions.swift; sourceTree = "<group>"; };
 		7956C6242538FA0F00C92A28 /* ScenarioSummaryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScenarioSummaryView.swift; sourceTree = "<group>"; };
@@ -936,6 +938,7 @@
 		7988807B258790230098E30C /* Ownership */ = {
 			isa = PBXGroup;
 			children = (
+				794D701B25CF20140055E93C /* LifeInsuranceClause.swift */,
 				79D909D125CB180C00970DAF /* Owners.swift */,
 				79BF6FAE25740CE200F19A81 /* Ownership.swift */,
 				7988807C258790550098E30C /* Ownership+TransferFullOwnership.swift */,
@@ -1273,10 +1276,10 @@
 				7994893C249E4FC200DAFF1E /* FreeInvestment.swift */,
 				7994893D249E4FC200DAFF1E /* RealEstate.swift */,
 				7994893E249E4FC200DAFF1E /* SCPI.swift */,
+				79948940249E4FC200DAFF1E /* SCI.swift */,
 				793D189A25B253BD005D5A4E /* FinancialEnvelop.swift */,
 				7994893F249E4FC200DAFF1E /* InvestmentType.swift */,
 				79B46F9D25378CF300D6FFEF /* InterestRateType.swift */,
-				79948940249E4FC200DAFF1E /* SCI.swift */,
 				79D2BF85251A8CEC009028A0 /* ValuedAssets.swift */,
 			);
 			path = Assets;
@@ -1897,6 +1900,7 @@
 				799489AA249E4FC200DAFF1E /* Extensions+Published-Codable.swift in Sources */,
 				7975E4E6252E20400036C1F5 /* HumanLifeModel.swift in Sources */,
 				7994896F249E4FC200DAFF1E /* ExpenseView.swift in Sources */,
+				794D701C25CF20140055E93C /* LifeInsuranceClause.swift in Sources */,
 				7940694724D33E62002FD72E /* SwiftUIconditional.swift in Sources */,
 				7946511325ADB11500BC9F99 /* LayOffTaxes.swift in Sources */,
 				7994898A249E4FC200DAFF1E /* Simulation.swift in Sources */,
