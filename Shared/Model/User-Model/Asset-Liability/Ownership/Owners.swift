@@ -10,7 +10,7 @@ import Foundation
 
 // MARK: - Les droits de propriété d'un Owner
 
-struct Owner : Codable, Hashable, CustomStringConvertible {
+struct Owner : Codable, Hashable {
     
     // MARK: - Properties
     
@@ -19,9 +19,6 @@ struct Owner : Codable, Hashable, CustomStringConvertible {
     var isValid  : Bool {
         name != ""
     }
-    var description: String {
-        "(\(name), \(fraction) %) "
-    }
     
     // MARK: - Methods
     
@@ -29,6 +26,12 @@ struct Owner : Codable, Hashable, CustomStringConvertible {
     /// - Parameter totalValue: Valeure totale du bien
     func ownedValue(from totalValue: Double) -> Double {
         return totalValue * fraction / 100.0
+    }
+}
+
+extension Owner: CustomStringConvertible {
+    var description: String {
+        "(\(name), \(fraction) %) "
     }
 }
 

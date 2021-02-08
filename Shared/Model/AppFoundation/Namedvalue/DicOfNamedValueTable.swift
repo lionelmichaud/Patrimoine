@@ -19,35 +19,46 @@ protocol DictionaryOfNamedValueTable {
     var perCategory: [Category: NamedValueTable] { get set }
     subscript(category: Category) -> NamedValueTable? { get set }
     
-    /// total de tous les actifs
+    /// Valeur totale de tous les items
     var total: Double { get }
     
-    /// tableau des noms de catégories et valeurs total des actifs:  un élément par catégorie
+    /// Tableau des noms de catégorie et valeurs total des items de cette catégorie. Un élément par catégorie:
+    /// [Nom de la catégorie, Valeur cumulée]
     var summary: NamedValueTable { get }
     
-    /// tableau détaillé des noms des actifs: concaténation à plat des catégories
+    /// Tableau détaillé des noms des actifs: concaténation à plat des catégories
     var namesFlatArray: [String] { get }
     
-    /// tableau détaillé des valeurs des actifs: concaténation à plat des catégories
+    /// Tableau détaillé des valeurs des actifs: concaténation à plat des catégories
     var valuesFlatArray: [Double] { get }
     
     // MARK: - Initializers
     
     init()
     
-    /// Initializer toutes les catéogires (avec des tables vides de revenu)
+    /// Initialiser toutes les catéogires (avec des tables vides de revenu)
     init(name: String)
     
     // MARK: - Methods
     
-    /// tableau  des noms des actifs: pour une seule catégorie
+    /// Tableau  des noms des actifs: pour une seule catégorie
+    /// - Parameter inCategory: la catégorie sélectionnée
     func namesArray(_ inCategory: Category) -> [String]?
     
-    /// tableau  des valeurs des actifs: pour une seule catégorie
+    /// Tableau  des valeurs des actifs: pour une seule catégorie
+    /// - Parameter inCategory: la catégorie sélectionnée
     func valuesArray(_ inCategory: Category) -> [Double]?
     
+    func headersCSV(_ inCategory: Category) -> String?
+    
+    func valuesCSV(_ inCategory: Category) -> String?
+        
+    /// Noms des catégories sélectionnées dans le menu
+    /// - Parameter itemSelectionList: menu
     func summaryFiltredNames(with itemSelectionList: ItemSelectionList) -> [String]
     
+    /// Valeurs cumulées de chacune des catégories sélectionnées dans le menu
+    /// - Parameter itemSelectionList: menu
     func summaryFiltredValues(with itemSelectionList: ItemSelectionList) -> [Double]
     
     func print(level: Int)
@@ -64,12 +75,13 @@ extension DictionaryOfNamedValueTable {
         }
     }
     
-    /// total de tous les actifs
+    /// Valeur totale de tous les items
     var total: Double {
         perCategory.reduce(.zero, { result, element in result + element.value.total })
     }
     
-    /// tableau des noms de catégories et valeurs total des actifs:  un élément par catégorie
+    /// Tableau des noms de catégorie et valeurs total des items de cette catégorie. Un élément par catégorie:
+    /// [Nom de la catégorie, Valeur cumulée]
     var summary: NamedValueTable {
         var table = NamedValueTable(tableName: name)
         

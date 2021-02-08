@@ -75,6 +75,8 @@ class OwnershipTests: XCTestCase {
         OwnershipTests.ownership.setDelegateForAgeOf(delegate: OwnershipTests.ageOf)
     }
     
+    // MARK: - Tests
+
     func test_isValid() {
         XCTAssertTrue(OwnershipTests.ownership.isValid)
         

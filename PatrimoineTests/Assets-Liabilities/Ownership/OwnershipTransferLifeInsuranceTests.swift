@@ -182,9 +182,9 @@ class OwnershipTransferLifeInsuranceTests: XCTestCase {
         
         XCTAssertTrue(ownership.isValid)
         XCTAssertFalse(ownership.isDismembered)
-        XCTAssertEqual(ownership.fullOwners, [Owner(name: "Conjoint", fraction : 50),
-                                              Owner(name: "Enfant 1", fraction : 30),
-                                              Owner(name: "Enfant 2", fraction : 20)])
+        XCTAssert(ownership.fullOwners == [Owner(name: "Conjoint", fraction : 50),
+                                           Owner(name: "Enfant 1", fraction : 30),
+                                           Owner(name: "Enfant 2", fraction : 20)])
         XCTAssertEqual(ownership.bareOwners, [])
         XCTAssertEqual(ownership.usufructOwners, [])
         print("APRES : " + ownership.description)

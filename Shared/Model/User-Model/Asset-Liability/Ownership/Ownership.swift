@@ -31,16 +31,7 @@ enum OwnershipError: Error {
     case invalidOwnership
 }
 
-struct Ownership: Codable, CustomStringConvertible {
-    
-    // MARK: - Nested Types
-
-    enum CodingKeys: String, CodingKey {
-        case fullOwners     = "plein_propriétaires"
-        case bareOwners     = "nue_propriétaires"
-        case usufructOwners = "usufruitiers"
-        case isDismembered  = "est_démembré"
-    }
+struct Ownership {
     
     // MARK: - Static Properties
     
@@ -68,21 +59,6 @@ struct Ownership: Codable, CustomStringConvertible {
         } else {
             return !fullOwners.isEmpty && fullOwners.isvalid
         }
-    }
-    var description: String {
-        let header = """
-        OWNERSHIP:
-         - Valide:   \(isValid)
-         - Démembré: \(isDismembered)
-
-        """
-        let pp =
-            !isDismembered ? " - Plein Propriétaires:\n    \(fullOwners.description)" : ""
-        let uf =
-            isDismembered ? " - Usufruitiers:\n    \(usufructOwners.description) \n" : ""
-        let np =
-        isDismembered ? " - Nu-Propriétaires:\n    \(bareOwners.description)" : ""
-        return header + pp + uf + np + "\n"
     }
 
     // MARK: - Initializers
@@ -527,6 +503,38 @@ struct Ownership: Codable, CustomStringConvertible {
     }
 }
 
+// MARK: - Extensions
+
+extension Ownership: CustomStringConvertible {
+    var description: String {
+        let header = """
+        OWNERSHIP:
+         - Valide:   \(isValid)
+         - Démembré: \(isDismembered)
+
+        """
+        let pp =
+            !isDismembered ? " - Plein Propriétaires:\n    \(fullOwners.description)" : ""
+        let uf =
+            isDismembered ? " - Usufruitiers:\n    \(usufructOwners.description) \n" : ""
+        let np =
+            isDismembered ? " - Nu-Propriétaires:\n    \(bareOwners.description)" : ""
+        return header + pp + uf + np + "\n"
+    }
+}
+
+extension Ownership: Codable {
+    
+    // MARK: - Nested Types
+    
+    enum CodingKeys: String, CodingKey {
+        case fullOwners     = "plein_propriétaires"
+        case bareOwners     = "nue_propriétaires"
+        case usufructOwners = "usufruitiers"
+        case isDismembered  = "est_démembré"
+    }
+}
+
 extension Ownership: Equatable {
     static func == (lhs: Ownership, rhs: Ownership) -> Bool {
         lhs.isDismembered  == rhs.isDismembered &&
@@ -535,5 +543,4 @@ extension Ownership: Equatable {
             lhs.usufructOwners == rhs.usufructOwners &&
             lhs.isValid        == rhs.isValid
     }
-    
 }

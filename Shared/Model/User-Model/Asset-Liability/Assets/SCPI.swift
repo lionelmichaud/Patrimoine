@@ -12,7 +12,7 @@ typealias ScpiArray = ItemArray<SCPI>
 
 // MARK: - SCPI à revenus périodiques, annuels et fixes
 
-struct SCPI: Identifiable, Codable, Equatable, NameableValuable, Ownable {
+struct SCPI: Identifiable, Codable, Ownable {
     
     // MARK: - Static Properties
     
@@ -49,7 +49,7 @@ struct SCPI: Identifiable, Codable, Equatable, NameableValuable, Ownable {
 
     /// Valeur capitalisée à la date spécifiée
     /// - Parameter year: fin de l'année
-    func value (atEndOf year: Int) -> Double {
+    func value(atEndOf year: Int) -> Double {
         if isOwned(before: year) {
             return try! futurValue(payement     : 0,
                               interestRate : (revaluatRate - SCPI.inflation) / 100.0,
@@ -64,7 +64,7 @@ struct SCPI: Identifiable, Codable, Equatable, NameableValuable, Ownable {
     /// - Parameter year: fin de l'année
     /// - Parameter revenue: revenus inscrit en compte courant avant prélèvements sociaux et IRPP
     /// - Parameter taxableIrpp: part des revenus inscrit en compte courant imposable à l'IRPP (après charges sociales)
-    func yearlyRevenue (atEndOf year: Int)
+    func yearlyRevenue(atEndOf year: Int)
     -> (revenue    : Double,
         taxableIrpp: Double,
         socialTaxes: Double) {

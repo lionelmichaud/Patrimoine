@@ -10,7 +10,7 @@ import Foundation
 
 // MARK: - Revenus du travail
 /// revenus du travail
-public enum WorkIncomeType: PickableIdentifiableEnum {
+public enum WorkIncomeType {
     case salary (brutSalary: Double, taxableSalary: Double, netSalary: Double, fromDate: Date, healthInsurance: Double)
     case turnOver (BNC: Double, incomeLossInsurance: Double)
     
@@ -49,13 +49,13 @@ public enum WorkIncomeType: PickableIdentifiableEnum {
 //            })!
 //        }
     }
-    
+}
+
+// MARK: - Extensions
+
+extension WorkIncomeType: PickableIdentifiableEnum {
     public var id: Int {
         return self.rawValue
-    }
-    
-    var displayString: String {
-        pickerString
     }
     
     var pickerString: String {

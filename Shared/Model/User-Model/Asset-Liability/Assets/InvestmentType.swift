@@ -10,7 +10,7 @@ import Foundation
 
 // MARK: - Type d'investissement
 
-enum InvestementType: PickableIdentifiableEnum {
+enum InvestementType {
     case lifeInsurance (periodicSocialTaxes: Bool = true,
                         clause: LifeInsuranceClause = LifeInsuranceClause())
     case pea
@@ -26,7 +26,42 @@ enum InvestementType: PickableIdentifiableEnum {
     var rawValue: Int {
         rawValueGeneric(of: self)
     }
-    
+}
+
+// MARK: - Extensions
+
+extension InvestementType: CustomStringConvertible {
+    var description: String {
+        switch self {
+            case .lifeInsurance(let periodicSocialTaxes, let clause):
+                return
+                    """
+                    TYPE D'INVESTISSEMENT:
+                      Assurance Vie:
+                      - Prélèvement périodique des contributions sociales: \(periodicSocialTaxes)
+                      - \(clause)
+                    """
+                
+            case .pea:
+                return
+                    """
+                    TYPE D'INVESTISSEMENT:
+                      PEA
+
+                    """
+                
+            case .other:
+                return
+                    """
+                    TYPE D'INVESTISSEMENT:
+                      Autre
+
+                    """
+        }
+    }
+}
+
+extension InvestementType: PickableIdentifiableEnum {
     var id: Int {
         return self.rawValue
     }

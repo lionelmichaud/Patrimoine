@@ -11,7 +11,7 @@ import Foundation
 typealias RealEstateArray = ItemArray<RealEstateAsset>
 
 // MARK: - Actif immobilier physique
-struct RealEstateAsset: Identifiable, Codable, Equatable, NameableValuable, Ownable {
+struct RealEstateAsset: Identifiable, Codable, Ownable {
     
     // MARK: - Static Properties
     

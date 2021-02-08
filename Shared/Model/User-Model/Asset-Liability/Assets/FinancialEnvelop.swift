@@ -19,18 +19,18 @@ protocol FinancialEnvelop: Ownable {
 extension FinancialEnvelop {
     var isLifeInsurance: Bool {
         switch type {
-        case .lifeInsurance:
-            return true
-        case .other, .pea:
-            return false
+            case .lifeInsurance:
+                return true
+            default:
+                return false
         }
     }
     var clause: LifeInsuranceClause? {
         switch type {
-        case .lifeInsurance(_, let clause):
-            return clause
-        case .other, .pea:
-            return nil
+            case .lifeInsurance(_, let clause):
+                return clause
+            default:
+                return nil
         }
     }
 }

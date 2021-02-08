@@ -40,6 +40,11 @@ protocol Ownable: NameableValuable {
                     atEndOf year     : Int,
                     evaluationMethod : EvaluationMethod) -> Double
     
+    /// Rend un dictionnaire [Owner, Valeur possédée] en appelalnt la méthode ownedValue()
+    /// - Parameters:
+    ///   - year: date d'évaluation
+    ///   - evaluationMethod: méthode d'évaluation de la valeure des bien
+    /// - Returns: dictionnaire [Owner, Valeur possédée]
     func ownedValues(atEndOf year     : Int,
                      evaluationMethod : EvaluationMethod) -> [String : Double]
     
@@ -50,25 +55,23 @@ extension Ownable {
     func ownedValue(by ownerName     : String,
                     atEndOf year     : Int,
                     evaluationMethod : EvaluationMethod) -> Double {
-        //        Swift.print("  Actif: \(name)")
         switch evaluationMethod {
-        case .legalSuccession:
-            // cas particulier d'une succession:
-            //   le défunt est-il usufruitier ?
-            if ownership.isAnUsufructOwner(ownerName: ownerName) {
-                // si oui alors l'usufruit rejoint la nu-propriété sans droit de succession
-                // l'usufruit n'est donc pas intégré à la masse successorale du défunt
-                //                    Swift.print("  valeur: 0")
+            case .legalSuccession:
+                // cas particulier d'une succession:
+                //   le défunt est-il usufruitier ?
+                if ownership.isAnUsufructOwner(ownerName: ownerName) {
+                    // si oui alors l'usufruit rejoint la nu-propriété sans droit de succession
+                    // l'usufruit n'est donc pas intégré à la masse successorale du défunt
+                    return 0
+                }
+                
+            case .lifeInsuranceSuccession:
+                // cas particulier d'une succession:
+                // on recherche uniquement les assurances vies
                 return 0
-            }
-            
-        case .lifeInsuranceSuccession:
-            // cas particulier d'une succession:
-            // on recherche uniquement les assurances vies
-            return 0
-            
-        case .ifi, .isf, .patrimoine:
-            ()
+                
+            case .ifi, .isf, .patrimoine:
+                ()
         }
         // prendre la valeur totale du bien sans aucune décote (par défaut)
         let evaluatedValue = value(atEndOf: year)
@@ -77,7 +80,6 @@ extension Ownable {
                                                                    ofValue          : evaluatedValue,
                                                                    atEndOf          : year,
                                                                    evaluationMethod : evaluationMethod)
-        //        Swift.print("  valeur: \(value)")
         return value
     }
     

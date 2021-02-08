@@ -9,7 +9,8 @@
 import Foundation
 
 // MARK: - Type d'investissement
-enum InterestRateType: PickableIdentifiableEnum {    
+
+enum InterestRateType {
     case contractualRate (fixedRate: Double)
     case marketRate (stockRatio: Double)
     
@@ -26,7 +27,11 @@ enum InterestRateType: PickableIdentifiableEnum {
     var rawValue: Int {
         rawValueGeneric(of: self)
     }
-    
+}
+
+// MARK: - Extensions
+
+extension InterestRateType: PickableIdentifiableEnum {
     var id: Int {
         return self.rawValue
     }
@@ -38,6 +43,19 @@ enum InterestRateType: PickableIdentifiableEnum {
                 
             case .marketRate:
                 return "Taux de Marché"
+        }
+    }
+
+}
+
+extension InterestRateType: CustomStringConvertible {
+    var description: String {
+        switch self {
+            case .contractualRate(let fixedRate):
+                return "Taux Contractuel = \(fixedRate) %\n"
+                
+            case .marketRate(let stockRatio):
+                return "Taux de Marché = \(stockRatio) %\n"
         }
     }
 }

@@ -13,7 +13,7 @@ private let customLog = Logger(subsystem: "me.michaud.lionel.Patrimoine", catego
 
 // MARK: - Elongation temporelle du poste de dépense
 
-enum TimeSpan: PickableIdentifiableEnum, Hashable {
+enum TimeSpan: Hashable {
     // les années de début et de fin sont inclues
     case permanent
     case periodic (from: DateBoundary, period: Int, to: DateBoundary)
@@ -49,27 +49,6 @@ enum TimeSpan: PickableIdentifiableEnum, Hashable {
                 return 5
             case .exceptional:
                 return 6
-        }
-    }
-    
-    var id: Int {
-        return self.rawValue
-    }
-    
-    var pickerString: String {
-        switch self {
-            case .permanent:
-                return "Permanent"
-            case .periodic:
-                return "Periodique"
-            case .starting:
-                return "Depuis..."
-            case .ending:
-                return "Jusqu'à..."
-            case .spanning:
-                return "De...à..."
-            case .exceptional:
-                return "Ponctuelle"
         }
     }
     
@@ -180,7 +159,30 @@ enum TimeSpan: PickableIdentifiableEnum, Hashable {
     }
 }
 
-// MARK: - Extension: Codable
+// MARK: - Extensions
+
+extension TimeSpan: PickableIdentifiableEnum {
+    var id: Int {
+        return self.rawValue
+    }
+    
+    var pickerString: String {
+        switch self {
+            case .permanent:
+                return "Permanent"
+            case .periodic:
+                return "Periodique"
+            case .starting:
+                return "Depuis..."
+            case .ending:
+                return "Jusqu'à..."
+            case .spanning:
+                return "De...à..."
+            case .exceptional:
+                return "Ponctuelle"
+        }
+    }
+}
 
 extension TimeSpan: Codable {
     // coding keys
