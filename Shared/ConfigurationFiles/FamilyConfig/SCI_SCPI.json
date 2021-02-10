@@ -1,5 +1,11 @@
 {
     "fileNamePrefix" : "SCI_",
+    "version" :
+    {
+        "version" : "0.1",
+        "date"    : "2020-10-12T23:00:00+01:00",
+        "comment" : null
+    },
     "items" : [
         {
             "id"           : "282CC28F-0BC2-4323-AEA3-1FD3FD6E0EBF",

@@ -26,8 +26,8 @@ final class Patrimoin: ObservableObject {
     
     // MARK: - Properties
     
-    @Published var assets      = Assets(family: Patrimoin.family)
-    @Published var liabilities = Liabilities(family: Patrimoin.family)
+    @Published var assets      = Assets(personAgeProvider: Patrimoin.family)
+    @Published var liabilities = Liabilities(personAgeProvider: Patrimoin.family)
     
     // MARK: - Methods
     
@@ -47,8 +47,8 @@ final class Patrimoin: ObservableObject {
     /// Recharger les actifs et passifs à partir des fichiers pour repartir d'une situation initiale sans aucune modification
     /// - Warning: Doit être appelée après toute simulation ayant affectée le Patrimoine (succession)
     func reLoad() {
-        assets.reLoad()
-        liabilities.reLoad()
+        assets.reLoad(personAgeProvider: Patrimoin.family)
+        liabilities.reLoad(personAgeProvider: Patrimoin.family)
     }
     
     /// Capitaliser les intérêts des investissements financiers libres

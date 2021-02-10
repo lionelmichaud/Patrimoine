@@ -1,10 +1,16 @@
 import Foundation
 import TypePreservingCodingAdapter // https://github.com/IgorMuzyka/Type-Preserving-Coding-Adapter.git
 
+// MARK: - DI: Protocol de service de calcul de l'age
+
+protocol PersonAgeProvider {
+    func ageOf(_ name: String, _ year: Int) -> Int
+}
+
 // MARK: - Class Family: la Famille, ses membres, leurs actifs et leurs revenus
 
 /// la Famille, ses membres, leurs actifs et leurs revenus
-final class Family: ObservableObject, CustomStringConvertible {
+final class Family: ObservableObject {
     
     // MARK: - Properties
     
@@ -35,10 +41,7 @@ final class Family: ObservableObject, CustomStringConvertible {
     var irpp             : Double { // computed
         try! Fiscal.model.incomeTaxes.irpp(taxableIncome: workTaxableIncome, nbAdults: nbOfAdults, nbChildren: nbOfChildren).amount
     }
-    var description      : String {
-        return members.debugDescription + "\n"
-    }
-    
+
     var nbOfChildren     : Int { // computed
         var nb = 0
         for person in members where person is Child {nb += 1}
@@ -191,12 +194,7 @@ final class Family: ObservableObject, CustomStringConvertible {
     func member(withName name: String) -> Person? {
         self.members.first(where: { $0.displayName == name })
     }
-    
-    func ageOf(_ name: String, _ year: Int) -> Int {
-        let person = member(withName: name)
-        return person?.age(atEndOf: Date.now.year) ?? -1
-    }
-    
+
     /// Ajouter un membre à la famille
     /// - Parameter person: personne à ajouter
     func addMember(_ person: Person) {
@@ -356,5 +354,18 @@ final class Family: ObservableObject, CustomStringConvertible {
         //        // Dépenses
         //        Swift.print("  Expenses: \(listOfexpenses.expenses.count)")
         //        for expense in listOfexpenses.expenses { expense.print() }
+    }
+}
+
+extension Family: CustomStringConvertible {
+    var description      : String {
+        return members.debugDescription + "\n"
+    }
+}
+
+extension Family: PersonAgeProvider {
+    func ageOf(_ name: String, _ year: Int) -> Int {
+        let person = member(withName: name)
+        return person?.age(atEndOf: Date.now.year) ?? -1
     }
 }

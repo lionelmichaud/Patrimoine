@@ -12,6 +12,12 @@ import os
 
 private let customLog = Logger(subsystem: "me.michaud.lionel.Patrimoine", category: "Model.Economy")
 
+// MARK: - DI: Protocol Economy
+
+protocol InflationProviderProtocol {
+    func inflation(withMode simulationMode: SimulationModeEnum) -> Double
+}
+
 // MARK: - SINGLETON: Economy Model
 
 struct Economy {
@@ -103,7 +109,7 @@ struct Economy {
     }
     
     // MARK: - Modèles statistiques de générateurs aléatoires + échantillons tirés pour une simulation
-    struct Model {
+    struct Model: InflationProviderProtocol {
         
         // MARK: - Properties
         
@@ -208,8 +214,12 @@ struct Economy {
                                       firstYear : firstYear,
                                       lastYear  : lastYear)
         }
+
+        func inflation(withMode simulationMode: SimulationModeEnum) -> Double {
+            randomizers.inflation.value(withMode: simulationMode)
+        }
     }
-    
+
     // MARK: - Static Properties
     
     static var model: Model = Model()

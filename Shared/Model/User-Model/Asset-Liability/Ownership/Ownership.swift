@@ -35,8 +35,14 @@ struct Ownership {
     
     // MARK: - Static Properties
     
-    static var fiscalModel : Fiscal.Model = Fiscal.model
+    // dependencies
+    private static var fiscalModel : Fiscal.Model = Fiscal.model
     
+    /// Dependency Injection: Setter Injection
+    static func setFiscalModelProvider(_ fiscalModel : Fiscal.Model) {
+        Ownership.fiscalModel = fiscalModel
+    }
+
     // MARK: - Properties
 
     var fullOwners     : Owners = []

@@ -13,6 +13,7 @@ import Foundation
 //typealias Assets = DictionaryOfItemArray<AssetsCategory,
 
 struct Assets {
+
     // MARK: - Static Methods
     
     /// Définir le mode de simulation à utiliser pour tous les calculs futurs
@@ -20,7 +21,7 @@ struct Assets {
     static func setSimulationMode(to simulationMode : SimulationModeEnum) {
         // injecter l'inflation dans les Types d'investissements procurant
         // un rendement non réévalué de l'inflation chaque année
-        SCPI.simulationMode                = simulationMode
+        SCPI.setSimulationMode(to: simulationMode)
         PeriodicInvestement.simulationMode = simulationMode
         FreeInvestement.simulationMode     = simulationMode
         // on suppose que les loyers des biens immobiliers physiques sont réévalués de l'inflation
@@ -45,12 +46,12 @@ struct Assets {
     /// - Parameter family: famille à laquelle associer le patrimoine
     /// - Note: family est utilisée pour injecter dans chaque actif un délégué family.ageOf
     ///         permettant de calculer les valeurs respectives des Usufruits et Nu-Propriétés
-    internal init(family: Family?) {
-        self.periodicInvests = PeriodicInvestementArray(family: family)
-        self.freeInvests     = FreeInvestmentArray(family: family)
-        self.realEstates     = RealEstateArray(family: family)
-        self.scpis           = ScpiArray(family: family) // SCPI hors de la SCI
-        self.sci             = SCI(family: family)
+    internal init(personAgeProvider: PersonAgeProvider?) {
+        self.periodicInvests = PeriodicInvestementArray(personAgeProvider: personAgeProvider)
+        self.freeInvests     = FreeInvestmentArray(personAgeProvider: personAgeProvider)
+        self.realEstates     = RealEstateArray(personAgeProvider: personAgeProvider)
+        self.scpis           = ScpiArray(personAgeProvider: personAgeProvider) // SCPI hors de la SCI
+        self.sci             = SCI(personAgeProvider: personAgeProvider)
         
         // initialiser le vetcuer d'état de chaque FreeInvestement à la date courante
         resetFreeInvestementCurrentValue()
@@ -72,12 +73,12 @@ struct Assets {
     /// - Note: Doit être appelé avant de lancer un nouveau run de simulation
     ///         susceptible de modifier le patrimoin en cours de simulation (tel que
     ///         les propriétaire des biens à l'issue des successions.
-    mutating func reLoad() {
-        periodicInvests = PeriodicInvestementArray(family: Patrimoin.family)
-        freeInvests     = FreeInvestmentArray(family: Patrimoin.family)
-        realEstates     = RealEstateArray(family: Patrimoin.family)
-        scpis           = ScpiArray(family: Patrimoin.family) // SCPI hors de la SCI
-        sci             = SCI(family: Patrimoin.family)
+    mutating func reLoad(personAgeProvider: PersonAgeProvider?) {
+        periodicInvests = PeriodicInvestementArray(personAgeProvider: personAgeProvider)
+        freeInvests     = FreeInvestmentArray(personAgeProvider: personAgeProvider)
+        realEstates     = RealEstateArray(personAgeProvider: personAgeProvider)
+        scpis           = ScpiArray(personAgeProvider: personAgeProvider) // SCPI hors de la SCI
+        sci             = SCI(personAgeProvider: personAgeProvider)
         
         // initialiser le vetcuer d'état de chaque FreeInvestement à la date courante
         resetFreeInvestementCurrentValue()

@@ -39,12 +39,12 @@ class OwnershipTransferLifeInsuranceTests: XCTestCase {
     
     override class func setUp() {
         super.setUp()
-        Ownership.fiscalModel =
+        Ownership.setFiscalModelProvider(
             Fiscal.Model(for: FiscalModelTests.self,
                          from                 : nil,
                          dateDecodingStrategy : .iso8601,
                          keyDecodingStrategy  : .useDefaultKeys)
-            .initialized()
+                .initialized())
     }
     
     func test_transfer_Life_Insurance_non_demembrée () throws {

@@ -149,9 +149,9 @@ struct SCI {
     
     // MARK: - Initializers
     
-    internal init(family: Family?) {
-        self.scpis       = ScpiArray(fileNamePrefix : "SCI_",
-                                     family         : family)
+    internal init(personAgeProvider: PersonAgeProvider?) {
+        self.scpis = ScpiArray(fileNamePrefix    : "SCI_",
+                               personAgeProvider : personAgeProvider)
         self.bankAccount = 0
     }
     

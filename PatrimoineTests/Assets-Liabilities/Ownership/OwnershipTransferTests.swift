@@ -38,12 +38,12 @@ class OwnershipTransferTests: XCTestCase {
     
     override class func setUp() {
         super.setUp()
-        Ownership.fiscalModel =
+        Ownership.setFiscalModelProvider(
             Fiscal.Model(for: FiscalModelTests.self,
                          from                 : nil,
                          dateDecodingStrategy : .iso8601,
                          keyDecodingStrategy  : .useDefaultKeys)
-            .initialized()
+                .initialized())
     }
     
     override func setUpWithError() throws {

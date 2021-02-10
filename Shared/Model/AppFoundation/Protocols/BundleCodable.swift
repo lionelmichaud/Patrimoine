@@ -21,7 +21,7 @@ protocol BundleCodable: Codable {
          dateDecodingStrategy : JSONDecoder.DateDecodingStrategy,
          keyDecodingStrategy  : JSONDecoder.KeyDecodingStrategy)
     
-    /// Encode l'objet dans un fichier stocké dans le Bundle de contenant la définition de la classe aClass
+    /// Lit l'objet depuis un fichier stocké dans le Bundle de contenant la définition de la classe aClass
     init(for aClass           : AnyClass,
          from file            : String?,
          dateDecodingStrategy : JSONDecoder.DateDecodingStrategy,

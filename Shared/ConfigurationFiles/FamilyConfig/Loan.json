@@ -1,4 +1,11 @@
 {
+    "fileNamePrefix" : "",
+    "version" :
+    {
+        "version" : "0.1",
+        "date"    : "2020-10-12T23:00:00+01:00",
+        "comment" : null
+    },
     "items" : [
         {
             "id"               : "EF5C7C12-6283-492B-BFF7-0F1903D31E98",
@@ -62,6 +69,5 @@
             "interestRate"     : 0.87,
             "monthlyInsurance" : 8.13
         }
-    ],
-    "fileNamePrefix" : ""
+    ]
 }

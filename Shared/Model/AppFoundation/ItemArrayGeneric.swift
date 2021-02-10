@@ -10,12 +10,13 @@ import Foundation
 
 // MARK: - Table d'Item Generic Valuable and Namable
 
-struct ItemArray<E>: Codable where E: Codable, E: Identifiable, E: NameableValuable {
+struct ItemArray<E>: Codable, Versionable where E: Codable, E: Identifiable, E: NameableValuable {
 
     // MARK: - Properties
     
     var items          = [E]()
     var fileNamePrefix : String
+    var version        : Version
     var currentValue   : Double {
         items.sumOfValues(atEndOf: Date.now.year)
     } // computed
@@ -39,7 +40,16 @@ struct ItemArray<E>: Codable where E: Codable, E: Identifiable, E: NameableValua
                                   dateDecodingStrategy : .iso8601,
                                   keyDecodingStrategy  : .useDefaultKeys)
     }
-    
+
+    init(for aClass     : AnyClass,
+         fileNamePrefix : String = "") {
+        let testBundle = Bundle(for: aClass)
+        self = testBundle.decode(ItemArray.self,
+                                 from                 : fileNamePrefix + String(describing: E.self) + ".json",
+                                 dateDecodingStrategy : .iso8601,
+                                 keyDecodingStrategy  : .useDefaultKeys)
+    }
+
     // MARK: - Methods
     
     func storeItemsToFile(fileNamePrefix: String = "") {
@@ -49,7 +59,17 @@ struct ItemArray<E>: Codable where E: Codable, E: Identifiable, E: NameableValua
                            dateEncodingStrategy : .iso8601,
                            keyEncodingStrategy  : .useDefaultKeys)
     }
-    
+
+    func storeItemsToFile(for aClass     : AnyClass,
+                          fileNamePrefix : String = "") {
+        let testBundle = Bundle(for: aClass)
+        // encode to JSON file
+        testBundle.encode(self,
+                           to                   : fileNamePrefix + self.fileNamePrefix + String(describing: E.self) + ".json",
+                           dateEncodingStrategy : .iso8601,
+                           keyEncodingStrategy  : .useDefaultKeys)
+    }
+
     mutating func move(from indexes   : IndexSet,
                        to destination : Int,
                        fileNamePrefix : String = "") {
@@ -98,20 +118,30 @@ struct ItemArray<E>: Codable where E: Codable, E: Identifiable, E: NameableValua
 extension ItemArray where E: Ownable {
     // MARK: - Initializers
     
-    init(fileNamePrefix: String = "",
-         family        : Family?) {
-        self = Bundle.main.decode(ItemArray.self,
-                                  from                 : fileNamePrefix + String(describing: E.self) + ".json",
-                                  dateDecodingStrategy : .iso8601,
-                                  keyDecodingStrategy  : .useDefaultKeys)
+    init(fileNamePrefix    : String = "",
+         personAgeProvider : PersonAgeProvider?) {
+        self.init(fileNamePrefix: fileNamePrefix)
         // injecter le délégué pour la méthode family.ageOf qui par défaut est nil à la création de l'objet
         for idx in 0..<items.count {
-            if let family = family {
-                items[idx].ownership.setDelegateForAgeOf(delegate: family.ageOf)
+            if let personAgeProvider = personAgeProvider {
+                items[idx].ownership.setDelegateForAgeOf(delegate: personAgeProvider.ageOf)
             }
         }
     }
-    
+
+    init(for aClass        : AnyClass,
+         fileNamePrefix    : String = "",
+         personAgeProvider : PersonAgeProvider?) {
+        self.init(for            : aClass,
+                  fileNamePrefix : fileNamePrefix)
+        // injecter le délégué pour la méthode family.ageOf qui par défaut est nil à la création de l'objet
+        for idx in 0..<items.count {
+            if let personAgeProvider = personAgeProvider {
+                items[idx].ownership.setDelegateForAgeOf(delegate: personAgeProvider.ageOf)
+            }
+        }
+    }
+
     /// Calcule la valeur d'un bien possédée par un personne donnée à une date donnée
     /// selon la régle générale ou selon la règle de l'IFI, de l'ISF, de la succession...
     ///  - Note:

@@ -16,14 +16,31 @@ struct SCPI: Identifiable, Codable, Ownable {
     
     // MARK: - Static Properties
     
-    static var saleCommission : Double = 10.0 // %
-    static var simulationMode : SimulationModeEnum = .deterministic
-    
+    private static var saleCommission    : Double                    = 10.0 // %
+    private static var simulationMode    : SimulationModeEnum        = .deterministic
+    // dependencies
+    private static var inflationProvider : InflationProviderProtocol = Economy.model
+    private static var fiscalModel       : Fiscal.Model              = Fiscal.model
+
     // MARK: - Static Methods
     
+    /// Dependency Injection: Setter Injection
+    static func setInflationProvider(_ inflationProvider : InflationProviderProtocol) {
+        SCPI.inflationProvider = inflationProvider
+    }
+
+    /// Dependency Injection: Setter Injection
+    static func setFiscalModelProvider(_ fiscalModel : Fiscal.Model) {
+        SCPI.fiscalModel = fiscalModel
+    }
+
+    static func setSimulationMode(to simulationMode: SimulationModeEnum) {
+        SCPI.simulationMode = simulationMode
+    }
+
     // tous ces actifs sont dépréciés de l'inflation
-    static var inflation: Double { // %
-        Economy.model.randomizers.inflation.value(withMode: simulationMode)
+    private static var inflation: Double { // %
+        SCPI.inflationProvider.inflation(withMode: simulationMode)
     }
     
     // MARK: - Properties
@@ -52,9 +69,9 @@ struct SCPI: Identifiable, Codable, Ownable {
     func value(atEndOf year: Int) -> Double {
         if isOwned(before: year) {
             return try! futurValue(payement     : 0,
-                              interestRate : (revaluatRate - SCPI.inflation) / 100.0,
-                              nbPeriod     : year - buyingDate.year,
-                              initialValue : buyingPrice) * (1.0 - SCPI.saleCommission / 100.0)
+                                   interestRate : (revaluatRate - SCPI.inflation) / 100.0,
+                                   nbPeriod     : year - buyingDate.year,
+                                   initialValue : buyingPrice) * (1.0 - SCPI.saleCommission / 100.0)
         } else {
             return 0.0
         }
@@ -68,8 +85,10 @@ struct SCPI: Identifiable, Codable, Ownable {
     -> (revenue    : Double,
         taxableIrpp: Double,
         socialTaxes: Double) {
-        let revenue     = (isOwned(before: year) ? buyingPrice * (interestRate - SCPI.inflation) / 100.0 : 0.0)
-        let taxableIrpp = Fiscal.model.financialRevenuTaxes.net(revenue)
+        let revenue     = (isOwned(before: year) ?
+                            buyingPrice * (interestRate - SCPI.inflation) / 100.0 :
+                            0.0)
+        let taxableIrpp = SCPI.fiscalModel.financialRevenuTaxes.net(revenue)
         return (revenue    : revenue,
                 taxableIrpp: taxableIrpp,
                 socialTaxes: revenue - taxableIrpp)
@@ -119,10 +138,14 @@ struct SCPI: Identifiable, Codable, Ownable {
         let detentionDuration = sellingDate.year - buyingDate.year
         let currentValue      = value(atEndOf: sellingDate.year)
         let capitalGain       = currentValue - buyingPrice
-        let socialTaxes       = Fiscal.model.estateCapitalGainTaxes.socialTaxes(capitalGain      : max(capitalGain, 0.0),
-                                                                                detentionDuration: detentionDuration)
-        let irpp              = Fiscal.model.estateCapitalGainIrpp.irpp(capitalGain      : max(capitalGain, 0.0),
-                                                                          detentionDuration: detentionDuration)
+        let socialTaxes       =
+            SCPI.fiscalModel.estateCapitalGainTaxes.socialTaxes(
+                capitalGain      : max(capitalGain, 0.0),
+                detentionDuration: detentionDuration)
+        let irpp              =
+            SCPI.fiscalModel.estateCapitalGainIrpp.irpp(
+                capitalGain      : max(capitalGain, 0.0),
+                detentionDuration: detentionDuration)
         return (revenue     : currentValue,
                 capitalGain : capitalGain,
                 netRevenue  : currentValue - socialTaxes - irpp,

@@ -1,5 +1,11 @@
 {
     "fileNamePrefix" : "",
+    "version" :
+    {
+        "version" : "0.1",
+        "date"    : "2020-10-12T23:00:00+01:00",
+        "comment" : null
+    },
     "items" : [
         {
             "id"                      : "3AB17EE6-0D8D-4CE9-AB86-A2B40943CB38",
