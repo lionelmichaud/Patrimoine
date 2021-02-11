@@ -181,13 +181,5 @@ struct SCI {
                 spouseFiscalOption : spouseFiscalOption)
         }
     }
-    
-    func print() {
-        Swift.print("  SCI:")
-        // investissement SCPI
-        Swift.print("    SCPI:")
-        for scpi in scpis.items { scpi.print() }
-        // compte courant
-        Swift.print("    compte courant:", bankAccount, "€")
-    }
+
 }

@@ -1,0 +1,29 @@
+{
+    "id"           : "282CC28F-0BC2-4323-AEA3-1FD3FD6E0EBF",
+    "name"         : "Selectipierre2",
+    "note"         : "Actualisé le 11/09/2020",
+    "ownership"               :
+    {
+        "est_démembré"        : false,
+        "plein_propriétaires" :
+        [
+            {
+                "name"     : "M. Lionel MICHAUD",
+                "fraction" : 100
+            }
+        ],
+        "nue_propriétaires"   :
+        [
+        ],
+        "usufruitiers"        :
+        [
+        ]
+    },
+    "buyingDate"   : "2019-12-31T21  :53  :04Z",
+    "buyingPrice"  : 1000,
+    "willBeSold"   : true,
+    "sellingDate"  : "2022-12-31T21 :53 :04Z",
+    "revaluatRate" : 10.0,
+    "interestRate" : 3.56
+}
+

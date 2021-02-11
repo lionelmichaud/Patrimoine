@@ -54,15 +54,29 @@ struct RegimeAgirc: Codable {
     
     // MARK: - Static Properties
     
-    static var simulationMode : SimulationModeEnum = .deterministic
+    private static var simulationMode: SimulationModeEnum = .deterministic
     // dependencies to other Models
-    static var socioEconomyModel : SocioEconomy.Model = SocioEconomy.model
-    static var fiscalModel       : Fiscal.Model       = Fiscal.model
+    private static var pensionDevaluationRateProvider: PensionDevaluationRateProviderProtocol = SocioEconomy.model
+    static var fiscalModel: Fiscal.Model = Fiscal.model
 
     // MARK: - Static Methods
-    
+
+    static func setPensionDevaluationRateProvider(_ provider : PensionDevaluationRateProviderProtocol) {
+        pensionDevaluationRateProvider = provider
+    }
+
+    static func setFiscalModel(_ model: Fiscal.Model) {
+        fiscalModel = model
+    }
+
+    /// Définir le mode de simulation à utiliser pour tous les calculs futurs
+    /// - Parameter simulationMode: mode de simulation à utiliser
+    static func setSimulationMode(to simulationMode : SimulationModeEnum) {
+        RegimeAgirc.simulationMode = simulationMode
+    }
+
     static var devaluationRate: Double { // %
-        socioEconomyModel.pensionDevaluationRate.value(withMode: simulationMode)
+        pensionDevaluationRateProvider.pensionDevaluationRate(withMode: simulationMode)
     }
     
     static var yearlyRevaluationRate: Double { // %

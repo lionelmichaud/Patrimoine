@@ -24,8 +24,8 @@ struct ModelSociologyView: View {
                 case .nbTrimTauxPlein:
                     DiscreteRandomizerView(randomizer: SocioEconomy.model.nbTrimTauxPlein)
                     
-                case .expensesUnderEvaluationrate:
-                    BetaRandomizerView(randomizer: SocioEconomy.model.expensesUnderEvaluationrate)
+                case .expensesUnderEvaluationRate:
+                    BetaRandomizerView(randomizer: SocioEconomy.model.expensesUnderEvaluationRate)
             }
         }
         .navigationTitle("Fonctions de Distribution")

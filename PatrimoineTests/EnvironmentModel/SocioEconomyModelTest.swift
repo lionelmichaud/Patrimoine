@@ -27,7 +27,7 @@ class SocioEconomyModelTest: XCTestCase {
         var model = SocioEconomy.Model().initialized()
         let dico = model.next()
         
-        XCTAssertNotNil(dico[.expensesUnderEvaluationrate])
+        XCTAssertNotNil(dico[.expensesUnderEvaluationRate])
         XCTAssertNotNil(dico[.nbTrimTauxPlein])
         XCTAssertNotNil(dico[.pensionDevaluationRate])
     }

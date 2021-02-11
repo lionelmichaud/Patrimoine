@@ -13,7 +13,6 @@ import Foundation
 protocol NameableValuable {
     var name: String { get }
     func value(atEndOf year: Int) -> Double
-    func print()
 }
 
 // MARK: - Extensions de Array
@@ -74,8 +73,6 @@ protocol NameableValuableArray: Codable {
     func value(atEndOf: Int) -> Double
     
     func namedValueTable(atEndOf: Int) -> NamedValueArray
-    
-    func print()
 }
 
 // implémntation par défaut
@@ -139,12 +136,5 @@ extension NameableValuableArray {
                           value : item.value(atEndOf : atEndOf)))
         }
         return table
-    }
-    
-    func print() {
-        for item in items {
-            item.print()
-        }
-    }
-    
+    }    
 }

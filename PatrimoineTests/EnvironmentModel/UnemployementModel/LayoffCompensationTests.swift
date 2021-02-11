@@ -23,14 +23,14 @@ class LayoffCompensationTests: XCTestCase {
             dateDecodingStrategy : .iso8601,
             keyDecodingStrategy  : .useDefaultKeys)
         LayoffCompensationTests.layoffCompensation = LayoffCompensation(model: model)
-        LayoffCompensation.fiscalModel =
+        LayoffCompensation.setFiscalModel(
             Fiscal.Model(for: FiscalModelTests.self,
                          from                 : "FiscalModelConfig.json",
                          dateDecodingStrategy : .iso8601,
                          keyDecodingStrategy  : .useDefaultKeys)
-            .initialized()
+                .initialized())
     }
-
+    
     func date(year: Int, month: Int, day: Int) -> Date {
         let dateRefComp = DateComponents(calendar : Date.calendar,
                                          year     : year,

@@ -59,17 +59,17 @@ struct RegimeGeneral: Codable {
     
     // MARK: - Static Properties
     
-    static var simulationMode    : SimulationModeEnum = .deterministic
+    private static var simulationMode: SimulationModeEnum = .deterministic
     // dependencies to other Models
-    static var socioEconomyModel : SocioEconomy.Model = SocioEconomy.model
-    static var fiscalModel       : Fiscal.Model       = Fiscal.model
+    private static var socioEconomyModel: SocioEconomyModelProvider = SocioEconomy.model
+    static var fiscalModel: Fiscal.Model = Fiscal.model
     
     static var devaluationRate: Double { // %
-        socioEconomyModel.pensionDevaluationRate.value(withMode: simulationMode)
+        socioEconomyModel.pensionDevaluationRate(withMode: simulationMode)
     }
     
     static var nbTrimAdditional: Double { // %
-        socioEconomyModel.nbTrimTauxPlein.value(withMode: simulationMode)
+        socioEconomyModel.nbTrimTauxPlein(withMode: simulationMode)
     }
     
     static var yearlyRevaluationRate: Double { // %
@@ -81,6 +81,20 @@ struct RegimeGeneral: Codable {
     
     // MARK: - Static Methods
     
+    /// Définir le mode de simulation à utiliser pour tous les calculs futurs
+    /// - Parameter simulationMode: mode de simulation à utiliser
+    static func setSimulationMode(to simulationMode : SimulationModeEnum) {
+        RegimeGeneral.simulationMode = simulationMode
+    }
+
+    static func setSocioEconomyModel(_ model: SocioEconomyModelProvider) {
+        socioEconomyModel = model
+    }
+
+    static func setFiscalModel(_ model: Fiscal.Model) {
+        fiscalModel = model
+    }
+
     /// Coefficient de réévaluation de la pension en prenant comme base 1.0
     ///  la valeur à la date de liquidation de la pension.
     /// - Parameters:

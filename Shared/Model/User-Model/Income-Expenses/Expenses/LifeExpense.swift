@@ -120,7 +120,7 @@ struct LifeExpense: Identifiable, Codable, Hashable, NameableValuable {
     /// Calcule le facteur aléatoire de correction à appliquer
     /// - Note: valeur > 1.0
     static var correctionFactor: Double {
-        1.0 + SocioEconomy.model.expensesUnderEvaluationrate.value(withMode: simulationMode) / 100.0
+        1.0 + SocioEconomy.model.expensesUnderEvaluationRate.value(withMode: simulationMode) / 100.0
     }
     
     // MARK: - Properties

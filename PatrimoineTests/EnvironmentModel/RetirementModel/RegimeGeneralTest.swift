@@ -24,18 +24,18 @@ class RegimeGeneralTest: XCTestCase { // swiftlint:disable:this type_body_length
         RegimeGeneralTest.regimeGeneral = RegimeGeneral(model: model)
         
         // inject dependency for tests
-        RegimeGeneral.socioEconomyModel =
+        RegimeGeneral.setSocioEconomyModel(
             SocioEconomy.Model(for: SocioEconomyModelTest.self,
                                from                 : nil,
                                dateDecodingStrategy : .iso8601,
                                keyDecodingStrategy  : .useDefaultKeys)
-            .initialized()
-        RegimeGeneral.fiscalModel =
+                .initialized())
+        RegimeGeneral.setFiscalModel(
             Fiscal.Model(for: FiscalModelTests.self,
                          from                 : nil,
                          dateDecodingStrategy : .iso8601,
                          keyDecodingStrategy  : .useDefaultKeys)
-            .initialized()
+                .initialized())
     }
     
     func date(year: Int, month: Int, day: Int) -> Date {

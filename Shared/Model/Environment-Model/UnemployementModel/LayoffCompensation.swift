@@ -55,7 +55,13 @@ struct LayoffCompensation: Codable {
     
     // MARK: - Static Properties
 
-    static var fiscalModel: Fiscal.Model = Fiscal.model
+    private static var fiscalModel: Fiscal.Model = Fiscal.model
+
+    // MARK: - Static Methods
+
+    static func setFiscalModel(_ model: Fiscal.Model) {
+        fiscalModel = model
+    }
 
     // MARK: - Properties
 

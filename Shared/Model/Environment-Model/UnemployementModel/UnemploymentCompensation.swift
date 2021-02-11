@@ -59,12 +59,18 @@ struct UnemploymentCompensation: Codable {
     
     // MARK: - Static Properties
 
-    static var fiscalModel: Fiscal.Model = Fiscal.model
+    private static var fiscalModel: Fiscal.Model = Fiscal.model
 
     // MARK: - Properties
 
     var model: Model
     
+    // MARK: - Static Methods
+
+    static func setFiscalModel(_ model: Fiscal.Model) {
+        fiscalModel = model
+    }
+
     // MARK: - Methods
 
     /// Durée d'indemnisation en mois

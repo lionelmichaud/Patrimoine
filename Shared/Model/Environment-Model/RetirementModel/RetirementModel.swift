@@ -30,8 +30,8 @@ struct Retirement {
     static func setSimulationMode(to simulationMode : SimulationModeEnum) {
         // injecter l'inflation dans les Types d'investissements procurant
         // un rendement non réévalué de l'inflation chaque année
-        RegimeGeneral.simulationMode = simulationMode
-        RegimeAgirc.simulationMode   = simulationMode
+        RegimeGeneral.setSimulationMode(to: simulationMode)
+        RegimeAgirc.setSimulationMode(to: simulationMode)
     }
     
     // MARK: - Static properties

@@ -23,12 +23,12 @@ class UnemploymentCompensationTests: XCTestCase {
             dateDecodingStrategy : .iso8601,
             keyDecodingStrategy  : .useDefaultKeys)
         UnemploymentCompensationTests.unemploymentCompensation = UnemploymentCompensation(model: model)
-        UnemploymentCompensation.fiscalModel =
+        UnemploymentCompensation.setFiscalModel(
             Fiscal.Model(for: FiscalModelTests.self,
                          from                 : nil,
                          dateDecodingStrategy : .iso8601,
                          keyDecodingStrategy  : .useDefaultKeys)
-            .initialized()
+                .initialized())
     }
     
     func date(year: Int, month: Int, day: Int) -> Date {

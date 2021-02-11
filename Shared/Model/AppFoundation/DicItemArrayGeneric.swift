@@ -86,10 +86,4 @@ where ItemCategory: PickableEnum, ItemCategory: Codable {
             return []
         }
     }
-    
-    func print() {
-        for category in ItemCategory.allCases {
-            perCategory[category]?.print()
-        }
-    }
 }

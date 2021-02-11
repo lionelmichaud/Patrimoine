@@ -24,18 +24,18 @@ class RegimeAgircTest: XCTestCase { // swiftlint:disable:this type_body_length
         RegimeAgircTest.regimeAgirc = RegimeAgirc(model: model)
         
         // inject dependency for tests
-        RegimeAgirc.socioEconomyModel =
+        RegimeAgirc.setPensionDevaluationRateProvider(
             SocioEconomy.Model(for: SocioEconomyModelTest.self,
                                from                 : nil,
                                dateDecodingStrategy : .iso8601,
                                keyDecodingStrategy  : .useDefaultKeys)
-            .initialized()
-        RegimeAgirc.fiscalModel =
+                .initialized())
+        RegimeAgirc.setFiscalModel(
             Fiscal.Model(for: FiscalModelTests.self,
                          from                 : nil,
                          dateDecodingStrategy : .iso8601,
                          keyDecodingStrategy  : .useDefaultKeys)
-            .initialized()
+                .initialized())
     }
     
     func date(year: Int, month: Int, day: Int) -> Date {
@@ -407,12 +407,12 @@ class RegimeAgircTest: XCTestCase { // swiftlint:disable:this type_body_length
         during = dateOfPensionLiquid.year
 
         XCTAssertNil(RegimeAgircTest.regimeAgirc.coefMinorationMajoration(
-                                        birthDate                : birthDate,
-                                        lastKnownSituation       : lastKnownSituation,
-                                        dateOfRetirement         : dateOfRetirement,
-                                        dateOfEndOfUnemployAlloc : nil,
-                                        dateOfPensionLiquid      : dateOfPensionLiquid,
-                                        during                   : during))
+                        birthDate                : birthDate,
+                        lastKnownSituation       : lastKnownSituation,
+                        dateOfRetirement         : dateOfRetirement,
+                        dateOfEndOfUnemployAlloc : nil,
+                        dateOfPensionLiquid      : dateOfPensionLiquid,
+                        during                   : during))
 
         // (1) Liquidation à l'age minimul de liquidation de la pension AGIRC
         //     => coef de réduction permanent
@@ -663,7 +663,7 @@ class RegimeAgircTest: XCTestCase { // swiftlint:disable:this type_body_length
         coefMinorationTheory = 0.92  // voir autre test
         XCTAssertEqual(coefMinorationTheory, pension.coefMinoration)
 
-       nbPointTheory = lastAgircKnownSituation.nbPoints +
+        nbPointTheory = lastAgircKnownSituation.nbPoints +
             (2021 - 2018) * lastAgircKnownSituation.pointsParAn +
             (3) * lastAgircKnownSituation.pointsParAn // voir autre test
         XCTAssertEqual(nbPointTheory, pension.projectedNbOfPoints)

@@ -12,7 +12,7 @@ import os
 
 private let customLog = Logger(subsystem: "me.michaud.lionel.Patrimoine", category: "Model.Economy")
 
-// MARK: - DI: Protocol Economy
+// MARK: - DI: Protocol InflationProviderProtocol
 
 protocol InflationProviderProtocol {
     func inflation(withMode simulationMode: SimulationModeEnum) -> Double

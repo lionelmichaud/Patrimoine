@@ -107,12 +107,6 @@ struct ItemArray<E>: Codable, Versionable where E: Codable, E: Identifiable, E: 
         }
         return table
     }
-    
-    func print() {
-        for item in items {
-            item.print()
-        }
-    }
 }
 
 extension ItemArray where E: Ownable {

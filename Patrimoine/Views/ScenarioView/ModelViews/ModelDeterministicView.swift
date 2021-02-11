@@ -35,7 +35,7 @@ struct ModelDeterministicView: View {
                     IntegerView(label   : "Nombre de trimestres additionels pour obtenir le taux plein",
                                 integer : Int(SocioEconomy.model.nbTrimTauxPlein.value(withMode: .deterministic)))
                     PercentView(label   : "Pénalisation des dépenses",
-                                percent : SocioEconomy.model.expensesUnderEvaluationrate.value(withMode: .deterministic)/100.0)
+                                percent : SocioEconomy.model.expensesUnderEvaluationRate.value(withMode: .deterministic)/100.0)
                 }
             }
             .navigationTitle("Résumé")

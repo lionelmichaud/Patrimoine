@@ -44,7 +44,7 @@
         "randomValue"  : 0.0
     },
     
-    "expensesUnderEvaluationrate" :
+    "expensesUnderEvaluationRate" :
     {
         "name"    : "Taux de sévérisation des dépenses",
         "version" :

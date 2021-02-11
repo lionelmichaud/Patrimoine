@@ -54,7 +54,7 @@ struct ScenarioSummaryView: View {
                     IntegerView(label   : "Nombre de trimestres additionels pour obtenir le taux plein",
                                 integer : Int(SocioEconomy.model.nbTrimTauxPlein.value(withMode: simulation.mode)))
                     PercentView(label   : "Pénalisation des dépenses",
-                                percent : SocioEconomy.model.expensesUnderEvaluationrate.value(withMode: simulation.mode)/100.0)
+                                percent : SocioEconomy.model.expensesUnderEvaluationRate.value(withMode: simulation.mode)/100.0)
                 }
             }
             .navigationTitle("Résumé")
