@@ -57,16 +57,10 @@ struct Loan: Codable, Identifiable, NameableValuable, Ownable {
     }
     /// Montant des remboursements restants dûs
     /// - Parameter year: année courante
-    func value (atEndOf year: Int) -> Double {
+    func value(atEndOf year: Int) -> Double {
         ((firstYear...lastYear).contains(year) ?
             yearlyPayement * (lastYear - year).double() :
             0.0)
-    }
-    func print() {
-        Swift.print("    ", name)
-        Swift.print("       first year:        ", firstYear, "last year: ", lastYear)
-        Swift.print("       loaned Value:      ", loanedValue, "final Value:", value(atEndOf: lastYear).rounded())
-        Swift.print("       yearly Payement:   ", yearlyPayement.rounded(), "interest Rate: ", interestRate, "%")
     }
 }
 
@@ -80,13 +74,13 @@ extension Loan: Comparable {
 extension Loan: CustomStringConvertible {
     var description: String {
         return """
-        \(name)
-        valeur:           \(value(atEndOf: Date.now.year).€String)
-        first year:       \(firstYear) last year: \(lastYear)
-        loaned Value:     \(loanedValue) final Value: \(value(atEndOf: lastYear).€String)
-        yearly Payement:  \(yearlyPayement.€String)
-        interest Rate:    \(interestRate) %
-        monthly Insurance:\(monthlyInsurance) %
+        Emprunt: \(name)
+         - valeur:           \(value(atEndOf: Date.now.year).€String)
+         - first year:       \(firstYear) last year: \(lastYear)
+         - loaned Value:     \(loanedValue) final Value: \(value(atEndOf: lastYear).€String)
+         - yearly Payement:  \(yearlyPayement.€String)
+         - interest Rate:    \(interestRate) %
+         - monthly Insurance:\(monthlyInsurance) %
 
         """
     }

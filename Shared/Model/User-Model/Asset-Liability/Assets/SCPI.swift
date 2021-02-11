@@ -24,6 +24,11 @@ struct SCPI: Identifiable, BundleCodable, Ownable {
     private static var inflationProvider : InflationProviderProtocol = Economy.model
     private static var fiscalModel       : Fiscal.Model              = Fiscal.model
 
+    // tous ces actifs sont dépréciés de l'inflation
+    private static var inflation: Double { // %
+        SCPI.inflationProvider.inflation(withMode: simulationMode)
+    }
+    
     // MARK: - Static Methods
     
     /// Dependency Injection: Setter Injection
@@ -36,15 +41,10 @@ struct SCPI: Identifiable, BundleCodable, Ownable {
         SCPI.fiscalModel = fiscalModel
     }
 
-    static func setSimulationMode(to simulationMode: SimulationModeEnum) {
-        SCPI.simulationMode = simulationMode
+    static func setSimulationMode(to thisMode: SimulationModeEnum) {
+        SCPI.simulationMode = thisMode
     }
 
-    // tous ces actifs sont dépréciés de l'inflation
-    private static var inflation: Double { // %
-        SCPI.inflationProvider.inflation(withMode: simulationMode)
-    }
-    
     // MARK: - Properties
     
     var id           = UUID()
@@ -83,7 +83,7 @@ struct SCPI: Identifiable, BundleCodable, Ownable {
     /// - Parameter year: fin de l'année
     /// - Parameter revenue: revenus inscrit en compte courant avant prélèvements sociaux et IRPP
     /// - Parameter taxableIrpp: part des revenus inscrit en compte courant imposable à l'IRPP (après charges sociales)
-    func yearlyRevenue(atEndOf year: Int)
+    func yearlyRevenue(during year: Int)
     -> (revenue    : Double,
         taxableIrpp: Double,
         socialTaxes: Double) {

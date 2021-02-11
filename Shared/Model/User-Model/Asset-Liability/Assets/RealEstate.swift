@@ -11,18 +11,27 @@ import Foundation
 typealias RealEstateArray = ItemArray<RealEstateAsset>
 
 // MARK: - Actif immobilier physique
-struct RealEstateAsset: Identifiable, Codable, Ownable {
+
+struct RealEstateAsset: Identifiable, BundleCodable, Ownable {
     
     // MARK: - Static Properties
     
-//    static var simulationMode : SimulationModeEnum = .deterministic
+    static var defaultFileName : String = "RealEstateAsset.json"
+    // dependencies
+    private static var fiscalModel: Fiscal.Model = Fiscal.model
+    //    static var simulationMode : SimulationModeEnum = .deterministic
     
     // MARK: - Static Methods
+    
+    /// Dependency Injection: Setter Injection
+    static func setFiscalModelProvider(_ fiscalModel : Fiscal.Model) {
+        RealEstateAsset.fiscalModel = fiscalModel
+    }
     
     // pas utilisé
     // on suppose que les loyers des biens immobiliers physiques sont réévalués de l'inflation
     // on suppose que les valeurs de vente des biens immobiliers physiques et papier sont réévalués de l'inflation
-//    static var inflation: Double { Economy.model.inflation.value(withMode: simulationMode) }
+    //    static var inflation: Double { Economy.model.inflation.value(withMode: simulationMode) }
     
     // MARK: - Properties
     
@@ -48,8 +57,12 @@ struct RealEstateAsset: Identifiable, Codable, Ownable {
         guard let sellingDate = sellingYear.year, let buyingDate = buyingYear.year else { return 0 }
         let detentionDuration = sellingDate - buyingDate
         let capitalGain       = self.sellingNetPrice - buyingPrice
-        let socialTaxes       = Fiscal.model.estateCapitalGainTaxes.socialTaxes(capitalGain: max(capitalGain, 0.0), detentionDuration: detentionDuration)
-        let irpp              = Fiscal.model.estateCapitalGainIrpp.irpp(capitalGain: max(capitalGain, 0.0), detentionDuration: detentionDuration)
+        let socialTaxes       = RealEstateAsset.fiscalModel.estateCapitalGainTaxes.socialTaxes(
+            capitalGain      : zeroOrPositive(capitalGain),
+            detentionDuration: detentionDuration)
+        let irpp              = RealEstateAsset.fiscalModel.estateCapitalGainIrpp.irpp(
+            capitalGain      : zeroOrPositive(capitalGain),
+            detentionDuration: detentionDuration)
         return self.sellingNetPrice - socialTaxes - irpp
     }
     // habitation
@@ -70,7 +83,7 @@ struct RealEstateAsset: Identifiable, Codable, Ownable {
     }
     // même base que pour le calcul de l'IRPP
     var yearlyRentSocialTaxes   : Double {
-        return Fiscal.model.financialRevenuTaxes.socialTaxes(yearlyRentAfterCharges)
+        return RealEstateAsset.fiscalModel.financialRevenuTaxes.socialTaxes(yearlyRentAfterCharges)
     }
     // profitabilité nette de charges (frais agence, taxe foncière et assurance)
     var profitability           : Double {
@@ -84,7 +97,7 @@ struct RealEstateAsset: Identifiable, Codable, Ownable {
     /// Valeur à la date spécifiée
     /// - Parameter year: fin de l'année
     func value(atEndOf year: Int) -> Double {
-        if isOwned(before: year) {
+        if isOwned(during: year) {
             return (estimatedValue == 0 ? buyingPrice : estimatedValue)
         } else {
             return 0.0
@@ -100,12 +113,12 @@ struct RealEstateAsset: Identifiable, Codable, Ownable {
     func ifiValue(atEndOf year: Int) -> Double {
         if self.isInhabited(during: year) {
             // decote de la résidence principale
-            return value(atEndOf: year) * (1.0 - Fiscal.model.isf.model.decoteResidence/100.0)
-
+            return value(atEndOf: year) * (1.0 - RealEstateAsset.fiscalModel.isf.model.decoteResidence/100.0)
+            
         } else if self.isRented(during: year) {
             // decote d'un bien en location
-            return value(atEndOf: year) * (1.0 - Fiscal.model.isf.model.decoteLocation/100.0)
-
+            return value(atEndOf: year) * (1.0 - RealEstateAsset.fiscalModel.isf.model.decoteLocation/100.0)
+            
         } else {
             // pas de décote
             return value(atEndOf: year)
@@ -129,7 +142,7 @@ struct RealEstateAsset: Identifiable, Codable, Ownable {
     func inheritanceValue(atEndOf year: Int) -> Double {
         if self.isInhabited(during: year) {
             // decote de la résidence principale
-            return value(atEndOf: year) * (1.0 - Fiscal.model.inheritanceDonation.model.decoteResidence/100.0)
+            return value(atEndOf: year) * (1.0 - RealEstateAsset.fiscalModel.inheritanceDonation.model.decoteResidence/100.0)
             
         } else {
             // pas de décote
@@ -148,8 +161,7 @@ struct RealEstateAsset: Identifiable, Codable, Ownable {
                     atEndOf year     : Int,
                     evaluationMethod : EvaluationMethod) -> Double {
         var evaluatedValue : Double
-//        Swift.print("  Actif: \(name)")
-
+        
         switch evaluationMethod {
             case .ifi, .isf:
                 // appliquer la décote IFI
@@ -160,7 +172,6 @@ struct RealEstateAsset: Identifiable, Codable, Ownable {
                 if ownership.isAnUsufructOwner(ownerName: ownerName) {
                     // si oui alors l'usufruit rejoint la nu-propriété sans droit de succession
                     // l'usufruit n'est donc pas intégré à la masse successorale du défunt
-//                    Swift.print("  valeur: 0")
                     return 0
                 }
                 // appliquer la décote succession
@@ -169,21 +180,21 @@ struct RealEstateAsset: Identifiable, Codable, Ownable {
             case .lifeInsuranceSuccession:
                 // on recherche uniquement les assurances vies
                 return 0
-
+                
             case .patrimoine:
                 // pas de décote
                 evaluatedValue = value(atEndOf: year)
         }
         // calculer la part de propriété
-        let value = evaluatedValue == 0 ? 0 : ownership.ownedValue(by               : ownerName,
-                                                                   ofValue          : evaluatedValue,
-                                                                   atEndOf          : year,
-                                                                   evaluationMethod : evaluationMethod)
-//        Swift.print("  valeur: \(value)")
+        let value = evaluatedValue == 0 ? 0 :
+            ownership.ownedValue(by               : ownerName,
+                                 ofValue          : evaluatedValue,
+                                 atEndOf          : year,
+                                 evaluationMethod : evaluationMethod)
         return value
     }
     
-    /// true si year est dans la période d'habitation
+    /// True si year est dans la période d'habitation
     /// - Parameter year: année
     func isInhabited(during year: Int) -> Bool {
         guard willBeInhabited && !isSold(before: year) else {
@@ -230,7 +241,7 @@ struct RealEstateAsset: Identifiable, Codable, Ownable {
         }
     }
     
-    /// true si l'année est postérieure à l'année de vente
+    /// True si l'année est postérieure à l'année de vente
     /// - Parameter year: année
     func isSold(before year: Int) -> Bool {
         guard willBeSold, let sellingDate = sellingYear.year else {
@@ -239,9 +250,9 @@ struct RealEstateAsset: Identifiable, Codable, Ownable {
         return year > sellingDate
     }
     
-    /// true si le bien est en possession
+    /// True si le bien est en possession au moins un jour pendant l'année demandée
     /// - Parameter year: année
-    func isOwned(before year: Int) -> Bool {
+    func isOwned(during year: Int) -> Bool {
         guard let buyingDate = buyingYear.year else {
             return false
         }
@@ -276,37 +287,17 @@ struct RealEstateAsset: Identifiable, Codable, Ownable {
         }
         let detentionDuration = sellingYear.year! - buyingYear.year!
         let capitalGain       = self.sellingNetPrice - buyingPrice
-        let socialTaxes       = Fiscal.model.estateCapitalGainTaxes.socialTaxes(capitalGain      : max(capitalGain, 0.0),
-                                                                                detentionDuration: detentionDuration)
-        let irpp              = Fiscal.model.estateCapitalGainIrpp.irpp(capitalGain: max(capitalGain, 0.0),
-                                                                          detentionDuration: detentionDuration)
+        let socialTaxes       = RealEstateAsset.fiscalModel.estateCapitalGainTaxes.socialTaxes(
+            capitalGain      : zeroOrPositive(capitalGain),
+            detentionDuration: detentionDuration)
+        let irpp              = RealEstateAsset.fiscalModel.estateCapitalGainIrpp.irpp(
+            capitalGain: zeroOrPositive(capitalGain),
+            detentionDuration: detentionDuration)
         return (revenue     : self.sellingNetPrice,
                 capitalGain : capitalGain,
                 netRevenue  : self.sellingNetPrice - socialTaxes - irpp,
                 socialTaxes : socialTaxes,
                 irpp        : irpp)
-    }
-    
-    func print() {
-        Swift.print("    ", name)
-        Swift.print("       buying price: ", buyingPrice, "euro - année: ", buyingYear)
-        if willBeInhabited {
-            Swift.print("       inhabited:")
-            Swift.print("         from:", inhabitedFrom)
-            Swift.print("         to:  ", inhabitedTo)
-            Swift.print("         local taxes: ", yearlyLocalTaxes, "euro")
-        }
-        if willBeRented {
-            Swift.print("       rented:")
-            Swift.print("         from:", rentalFrom)
-            Swift.print("         to:  ", rentalTo)
-            Swift.print("         monthly rental:        ", monthlyRentAfterCharges, "euro",
-                        "         yearly rental:         ", yearlyRentAfterCharges, "euro",
-                        "         yearly rental taxable: ", yearlyRentTaxableIrpp, "euro")
-        }
-        if willBeSold {
-            Swift.print("       selling price: \(sellingNetPrice) euro - année: \(sellingYear)")
-        }
     }
 }
 

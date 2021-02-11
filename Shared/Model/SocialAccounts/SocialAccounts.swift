@@ -289,14 +289,5 @@ struct SocialAccounts {
             line.print()
         }
     }
-    
-    func printCashFlowTable() {
-        Swift.print("================================================")
-        Swift.print(" CASH FLOW")
-        Swift.print("================================================")
-        print(cashFlowArray)
-        for line in cashFlowArray {
-            line.print()
-        }
-    }
+
 }

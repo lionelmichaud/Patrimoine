@@ -97,21 +97,6 @@ struct ValuedRevenues {
     func summaryFiltredValues(with itemSelectionList: ItemSelectionList) -> [Double] {
         summary.filtredValues(with : itemSelectionList)
     }
-    
-    func print(level: Int = 0) {
-        let h = String(repeating: StringCst.header, count: level)
-        Swift.print(h + name + ":    ")
-        
-        for category in RevenueCategory.allCases {
-            perCategory[category]?.print(level: level)
-        }
-        
-        // revenus imposable de l'année précédente et reporté à l'année courante
-        taxableIrppRevenueDelayedFromLastYear.print()
-        
-        // total des revenus
-        Swift.print(h + StringCst.header + "TOTAL NET:", totalCredited, "TOTAL TAXABLE:", totalTaxableIrpp)
-    }
 }
 
 // MARK: Agrégat de tables des revenus (perçu, taxable) pour une catégorie nommée donnée

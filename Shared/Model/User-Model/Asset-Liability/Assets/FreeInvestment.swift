@@ -31,24 +31,46 @@ struct FreeInvestement: Identifiable, Codable, FinancialEnvelop {
     
     // MARK: - Static Properties
     
-    static var simulationMode : SimulationModeEnum = .deterministic
+    private static var simulationMode: SimulationModeEnum = .deterministic
+    // dependencies
+    private static var economyModel : EconomyModelProviderProtocol = Economy.model
+    private static var fiscalModel  : Fiscal.Model                 = Fiscal.model
+
+    // tous ces actifs sont dépréciés de l'inflation
+    private static var inflation: Double { // %
+        FreeInvestement.economyModel.inflation(withMode: simulationMode)
+    }
+    
+    /// taux à long terme - rendem
+    /// rendement des actions - en moyenne
+    private static var rates: (averageSecuredRate: Double, averageStockRate: Double) { // %
+        let rates = FreeInvestement.economyModel.rates(withMode: simulationMode)
+        return (rates.securedRate, rates.stockRate)
+    }
     
     // MARK: - Static Methods
     
-    private static var inflation: Double { // %
-        Economy.model.randomizers.inflation.value(withMode: simulationMode)
+    /// Dependency Injection: Setter Injection
+    static func seteEonomyModelProvider(_ economyModel : EconomyModelProviderProtocol) {
+        FreeInvestement.economyModel = economyModel
     }
     
-    /// taux à long terme - rendement d'un fond en euro - en moyenne
-    private static var averageSecuredRate: Double { // %
-        Economy.model.randomizers.securedRate.value(withMode: simulationMode)
+    /// Dependency Injection: Setter Injection
+    static func setFiscalModelProvider(_ fiscalModel : Fiscal.Model) {
+        FreeInvestement.fiscalModel = fiscalModel
     }
     
-    /// rendement des actions - en moyenne
-    private static var averageStockRate: Double { // %
-        Economy.model.randomizers.stockRate.value(withMode: simulationMode)
+    static func setSimulationMode(to thisMode: SimulationModeEnum) {
+        FreeInvestement.simulationMode = thisMode
     }
     
+    private static func rates(in year : Int)
+    -> (securedRate : Double,
+        stockRate   : Double) {
+        FreeInvestement.economyModel.rates(in       : year,
+                                           withMode : simulationMode)
+    }
+
     // MARK: - Properties
 
     var id                   = UUID()
@@ -70,7 +92,7 @@ struct FreeInvestement: Identifiable, Codable, FinancialEnvelop {
                 // taux de marché variable
                 let stock = stockRatio / 100.0
                 // taux d'intérêt composite fonction de la composition du portefeuille
-                let rate = stock * FreeInvestement.averageStockRate + (1.0 - stock) * FreeInvestement.averageSecuredRate
+                let rate = stock * FreeInvestement.rates.averageStockRate + (1.0 - stock) * FreeInvestement.rates.averageSecuredRate
                 return rate - FreeInvestement.inflation
         }
     }
@@ -79,7 +101,7 @@ struct FreeInvestement: Identifiable, Codable, FinancialEnvelop {
             case .lifeInsurance(let periodicSocialTaxes, _):
                 // si assurance vie: le taux net est le taux brut - charges sociales si celles-ci sont prélèvées à la source anuellement
                 return (periodicSocialTaxes ?
-                            Fiscal.model.financialRevenuTaxes.net(averageInterestRate) :
+                            FreeInvestement.fiscalModel.financialRevenuTaxes.net(averageInterestRate) :
                             averageInterestRate)
             default:
                 // dans tous les autres cas: pas de charges sociales prélevées à la source anuellement (capitalisation et taxation à la sortie)
@@ -129,8 +151,8 @@ struct FreeInvestement: Identifiable, Codable, FinancialEnvelop {
             case .marketRate(let stockRatio):
                 // taux de marché variable
                 let stock = stockRatio / 100.0
-                let rates = Economy.model.rates(in       : year,
-                                                withMode : PeriodicInvestement.simulationMode)
+                let rates = FreeInvestement.economyModel.rates(in       : year,
+                                                withMode : FreeInvestement.simulationMode)
                 // taux d'intérêt composite fonction de la composition du portefeuille
                 let rate = stock * rates.stockRate + (1.0 - stock) * rates.securedRate
                 return rate - FreeInvestement.inflation
@@ -256,11 +278,11 @@ struct FreeInvestement: Identifiable, Codable, FinancialEnvelop {
         switch type {
             case .lifeInsurance(let periodicSocialTaxes, _):
                 // montant brut à retirer pour obtenir le montant net souhaité
-                brutAmount = (periodicSocialTaxes ? netAmount : Fiscal.model.financialRevenuTaxes.brut(netAmount))
+                brutAmount = (periodicSocialTaxes ? netAmount : FreeInvestement.fiscalModel.financialRevenuTaxes.brut(netAmount))
                 // on ne peut pas retirer plus que la capital présent
                 if brutAmount > currentState.value {
                     brutAmount = currentState.value
-                    revenue    = (periodicSocialTaxes ? brutAmount : Fiscal.model.financialRevenuTaxes.net(brutAmount))
+                    revenue    = (periodicSocialTaxes ? brutAmount : FreeInvestement.fiscalModel.financialRevenuTaxes.net(brutAmount))
                 }
                 // parts d'intérêt et de capital contenues dans le brut retiré
                 brutAmountSplit = split(removal: brutAmount)
@@ -269,39 +291,39 @@ struct FreeInvestement: Identifiable, Codable, FinancialEnvelop {
                     netInterests = brutAmountSplit.interest
                     socialTaxes  = 0.0
                 } else {
-                    netInterests = Fiscal.model.financialRevenuTaxes.net(brutAmountSplit.interest)
-                    socialTaxes  = Fiscal.model.financialRevenuTaxes.socialTaxes(brutAmountSplit.interest)
+                    netInterests = FreeInvestement.fiscalModel.financialRevenuTaxes.net(brutAmountSplit.interest)
+                    socialTaxes  = FreeInvestement.fiscalModel.financialRevenuTaxes.socialTaxes(brutAmountSplit.interest)
                 }
                 // Assurance vie: les plus values sont imposables à l'IRPP (mais avec une franchise applicable à la totalité des interets retirés dans l'année: calculé ailleurs)
                 taxableInterests = netInterests
             case .pea:
                 // montant brut à retirer pour obtenir le montant net souhaité
-                brutAmount = Fiscal.model.financialRevenuTaxes.brut(netAmount)
+                brutAmount = FreeInvestement.fiscalModel.financialRevenuTaxes.brut(netAmount)
                 // on ne peut pas retirer plus que la capital présent
                 if brutAmount > currentState.value {
                     brutAmount = currentState.value
-                    revenue    = Fiscal.model.financialRevenuTaxes.net(brutAmount)
+                    revenue    = FreeInvestement.fiscalModel.financialRevenuTaxes.net(brutAmount)
                 }
                 // parts d'intérêt et de capital contenues dans le brut retiré
                 brutAmountSplit = split(removal: brutAmount)
                 // intérêts nets de charges sociales
-                netInterests = Fiscal.model.financialRevenuTaxes.net(brutAmountSplit.interest)
-                socialTaxes  = Fiscal.model.financialRevenuTaxes.socialTaxes(brutAmountSplit.interest)
+                netInterests = FreeInvestement.fiscalModel.financialRevenuTaxes.net(brutAmountSplit.interest)
+                socialTaxes  = FreeInvestement.fiscalModel.financialRevenuTaxes.socialTaxes(brutAmountSplit.interest)
                 // PEA: les plus values ne sont pas imposables à l'IRPP
                 taxableInterests = 0.0
             case .other:
                 // montant brut à retirer pour obtenir le montant net souhaité
-                brutAmount = Fiscal.model.financialRevenuTaxes.brut(netAmount)
+                brutAmount = FreeInvestement.fiscalModel.financialRevenuTaxes.brut(netAmount)
                 // on ne peut pas retirer plus que la capital présent
                 if brutAmount > currentState.value {
                     brutAmount = currentState.value
-                    revenue    = Fiscal.model.financialRevenuTaxes.net(brutAmount)
+                    revenue    = FreeInvestement.fiscalModel.financialRevenuTaxes.net(brutAmount)
                 }
                 // parts d'intérêt et de capital contenues dans le brut retiré
                 brutAmountSplit = split(removal: brutAmount)
                 // intérêts nets de charges sociales
-                netInterests = Fiscal.model.financialRevenuTaxes.net(brutAmountSplit.interest)
-                socialTaxes  = Fiscal.model.financialRevenuTaxes.socialTaxes(brutAmountSplit.interest)
+                netInterests = FreeInvestement.fiscalModel.financialRevenuTaxes.net(brutAmountSplit.interest)
+                socialTaxes  = FreeInvestement.fiscalModel.financialRevenuTaxes.socialTaxes(brutAmountSplit.interest)
                 // autre cas: les plus values sont totalement imposables à l'IRPP
                 taxableInterests = netInterests
         }
@@ -359,14 +381,6 @@ struct FreeInvestement: Identifiable, Codable, FinancialEnvelop {
             }
             
         }
-    }
-    
-    func print() {
-        Swift.print("    ", name)
-        Swift.print("       type", type)
-        Swift.print("       interest Rate: ", averageInterestRate, "%")
-        Swift.print("       year:     ", currentState.year, "value: ", currentState.value)
-        Swift.print("       investement: ", currentState.investment, "interest: ", currentState.interest)
     }
 }
 

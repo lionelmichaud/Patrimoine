@@ -18,6 +18,19 @@ protocol InflationProviderProtocol {
     func inflation(withMode simulationMode: SimulationModeEnum) -> Double
 }
 
+protocol FinancialRatesProviderProtocol {
+    func rates(in year       : Int,
+               withMode mode : SimulationModeEnum)
+    -> (securedRate : Double,
+        stockRate   : Double)
+    
+    func rates(withMode mode : SimulationModeEnum)
+    -> (securedRate : Double,
+        stockRate   : Double)
+}
+
+typealias EconomyModelProviderProtocol = InflationProviderProtocol & FinancialRatesProviderProtocol
+
 // MARK: - SINGLETON: Economy Model
 
 struct Economy {
@@ -109,7 +122,7 @@ struct Economy {
     }
     
     // MARK: - Modèles statistiques de générateurs aléatoires + échantillons tirés pour une simulation
-    struct Model: InflationProviderProtocol {
+    struct Model: EconomyModelProviderProtocol {
         
         // MARK: - Properties
         
@@ -142,6 +155,17 @@ struct Economy {
                 return (securedRate : randomizers.securedRate.value(withMode: mode),
                         stockRate   : randomizers.stockRate.value(withMode: mode))
             }
+        }
+        
+        /// Retourne les taux moyen pour toute la durée de la simulation
+        /// - Parameters:
+        ///   - mode: mode de simulation : Monté-Carlo ou Détermnisite
+        /// - Returns: Taux Oblig / Taux Action
+        func rates(withMode mode : SimulationModeEnum)
+        -> (securedRate : Double,
+            stockRate   : Double) {
+            (securedRate : randomizers.securedRate.value(withMode: mode),
+             stockRate   : randomizers.stockRate.value(withMode: mode))
         }
         
         /// Tirer au hazard les taux pour chaque année

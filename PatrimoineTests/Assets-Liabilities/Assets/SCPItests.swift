@@ -55,13 +55,13 @@ class SCPItests: XCTestCase {
     }
 
     func test_revenue() {
-        var revenue = SCPItests.scpi.yearlyRevenue(atEndOf: 2020)
+        var revenue = SCPItests.scpi.yearlyRevenue(during: 2020)
         XCTAssertEqual(1000.0 * (3.56 - 10.0) / 100.0, revenue.revenue)
 
-        revenue = SCPItests.scpi.yearlyRevenue(atEndOf: 2022)
+        revenue = SCPItests.scpi.yearlyRevenue(during: 2022)
         XCTAssertEqual(1000.0 * (3.56 - 10.0) / 100.0, revenue.revenue)
 
-        revenue = SCPItests.scpi.yearlyRevenue(atEndOf: 2023)
+        revenue = SCPItests.scpi.yearlyRevenue(during: 2023)
         XCTAssertEqual(0.0, revenue.revenue)
     }
 

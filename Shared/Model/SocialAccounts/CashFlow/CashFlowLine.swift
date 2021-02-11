@@ -284,7 +284,7 @@ struct CashFlowLine {
     fileprivate mutating func populateScpiCashFlow(of patrimoine: Patrimoin) {
         for scpi in patrimoine.assets.scpis.items.sorted(by:<) {
             // populate SCPI revenues and social taxes
-            let yearlyRevenue = scpi.yearlyRevenue(atEndOf: year)
+            let yearlyRevenue = scpi.yearlyRevenue(during: year)
             let name          = scpi.name
             // dividendes inscrit en compte courant avant prélèvements sociaux et IRPP
             revenues.perCategory[.scpis]?.credits.namedValues.append((name: name,
@@ -388,34 +388,10 @@ struct CashFlowLine {
             let totalTaxableInterests = try patrimoine.removeFromInvestement(thisAmount          : -netCashFlow,
                                                                              atEndOf             : year,
                                                                              lifeInsuranceRebate : &lifeInsuranceRebate)
-            taxableIrppRevenueDelayedToNextYear.add(amount: totalTaxableInterests.rounded())
+            taxableIrppRevenueDelayedToNextYear.increase(by: totalTaxableInterests.rounded())
             
             // capitaliser les intérêts des investissements libres
             patrimoine.capitalizeFreeInvestments(atEndOf: year)
         }
-    }
-    
-    func print() {
-        Swift.print("YEAR:", year)
-        // ages
-        ages.print(level: 1)
-        // revenues hors SCI
-        revenues.print(level: 1)
-        // SCI
-        sciCashFlowLine.print(level: 1)
-        // taxes
-        taxes.print(level: 1)
-        // expenses
-        lifeExpenses.print(level: 1)
-        // remboursements d'emprunts
-        debtPayements.print(level: 1)
-        // versement investissements
-        investPayements.print(level: 1)
-        // net cash flow
-        Swift.print(StringCst.header + "NET CASH FLOW:", netCashFlow)
-        // revenu imposable à l'IRPP reporté à l'année suivante
-        // (issu des retraits de fin d'année pour équilibrer le budget de l'année courante)
-        taxableIrppRevenueDelayedToNextYear.print()
-        Swift.print("-----------------------------------------")
     }
 }

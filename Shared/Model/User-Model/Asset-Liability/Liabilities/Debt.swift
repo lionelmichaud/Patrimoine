@@ -37,15 +37,11 @@ struct Debt: Codable, Identifiable, NameableValuable, Ownable {
     mutating func setValue(to value: Double) {
         self.value = value
     }
-    mutating func add(amount: Double) {
-        value += amount
+    mutating func increase(by thisAmount: Double) {
+        value += thisAmount
     }
-    mutating func remove(amount: Double) {
-        value -= amount
-    }
-    func print() {
-        Swift.print("    ", name)
-        Swift.print("       current value: \(value) €")
+    mutating func decrease(by thisAmount: Double) {
+        value -= thisAmount
     }
 }
 
@@ -59,8 +55,8 @@ extension Debt: Comparable {
 extension Debt: CustomStringConvertible {
     var description: String {
         return """
-        \(name)
-        valeur: \(value.€String)
+        Dette: \(name)
+          valeur: \(value.€String)
         
         """
     }

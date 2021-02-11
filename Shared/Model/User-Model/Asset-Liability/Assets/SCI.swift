@@ -100,7 +100,7 @@ struct SciCashFlowLine {
         // pour chaque SCPI
         for scpi in sci.scpis.items.sorted(by:<) {
             // populate SCPI revenues de la SCI, nets de charges sociales et avant IS
-            let yearlyRevenue = scpi.yearlyRevenue(atEndOf: year)
+            let yearlyRevenue = scpi.yearlyRevenue(during: year)
             let name          = scpi.name
             // revenus inscrit en compte courant après prélèvements sociaux et avant IS
             // car dans le cas d'une SCI, le revenu remboursable aux actionnaires c'est le net de charges sociales

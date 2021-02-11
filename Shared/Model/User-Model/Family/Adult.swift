@@ -411,7 +411,7 @@ final class Adult: Person { // swiftlint:disable:this type_body_length
         try super.init(from: decoder)
 
         // pas de dépendance avant l'âge de 65 ans
-        nbOfYearOfDependency = min(nbOfYearOfDependency, max(ageOfDeath - 65, 0))
+        nbOfYearOfDependency = min(nbOfYearOfDependency, zeroOrPositive(ageOfDeath - 65))
     }
     
     override init(sexe       : Sexe,
@@ -530,7 +530,7 @@ final class Adult: Person { // swiftlint:disable:this type_body_length
         nbOfYearOfDependency = Int(HumanLife.model.nbOfYearsOfdependency.next())
         
         // pas de dépendance avant l'âge de 65 ans
-        nbOfYearOfDependency = min(nbOfYearOfDependency, max(ageOfDeath - 65, 0))
+        nbOfYearOfDependency = min(nbOfYearOfDependency, zeroOrPositive(ageOfDeath - 65))
     }
 
     override func print() {

@@ -18,12 +18,12 @@ struct Assets {
     
     /// Définir le mode de simulation à utiliser pour tous les calculs futurs
     /// - Parameter simulationMode: mode de simulation à utiliser
-    static func setSimulationMode(to simulationMode : SimulationModeEnum) {
+    static func setSimulationMode(to thisMode : SimulationModeEnum) {
         // injecter l'inflation dans les Types d'investissements procurant
         // un rendement non réévalué de l'inflation chaque année
-        SCPI.setSimulationMode(to: simulationMode)
-        PeriodicInvestement.simulationMode = simulationMode
-        FreeInvestement.simulationMode     = simulationMode
+        SCPI.setSimulationMode(to: thisMode)
+        PeriodicInvestement.setSimulationMode(to: thisMode)
+        FreeInvestement.setSimulationMode(to: thisMode)
         // on suppose que les loyers des biens immobiliers physiques sont réévalués de l'inflation
         ()
         // on suppose que les valeurs de vente des biens immobiliers physiques et papier sont réévalués de l'inflation
