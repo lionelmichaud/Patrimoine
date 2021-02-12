@@ -1,0 +1,62 @@
+{
+    "id"                      : "232D1AB2-D9B3-4D0A-A857-4153B3DCD6DA",
+    "name"                    : "Maison Chatel",
+    "note"                    : "Actualisé le 11/09/2020",
+    "ownership"               :
+    {
+        "est_démembré"        : false,
+        "plein_propriétaires" :
+        [
+            {
+                "name"     : "M. Lionel MICHAUD",
+                "fraction" : 70
+            },
+            {
+                "name"     : "Mme. Vanessa MICHAUD",
+                "fraction" : 30
+            }
+        ],
+        "nue_propriétaires"   :
+        [
+        ],
+        "usufruitiers"        :
+        [
+        ]
+    },
+    "buyingYear"              :
+    {
+        "fixedYear": 2005
+    },
+    "buyingPrice"        : 135000,
+    "yearlyTaxeFonciere" : 650,
+
+    "willBeInhabited" : true,
+    "inhabitedFrom" :
+    {
+        "fixedYear" : 2010
+    },
+    "inhabitedTo"   :
+    {
+        "fixedYear" : 2016
+    },
+    "yearlyTaxeHabitation" : 500,
+
+    "willBeRented" : true,
+    "rentalFrom"   :
+    {
+        "fixedYear": 2016
+    },
+    "rentalTo"     :
+    {
+        "fixedYear": 2020
+    },
+    "monthlyRentAfterCharges" : 710,
+
+    "willBeSold"    : true,
+    "sellingYear"   :
+    {
+        "fixedYear": 2030
+    },
+    "sellingNetPrice" : 100000,
+    "estimatedValue"  : 100000
+}

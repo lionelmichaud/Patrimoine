@@ -25,20 +25,18 @@ class SCPItests: XCTestCase {
     override class func setUp() {
         super.setUp()
         SCPItests.scpi = SCPI(for: SCPItests.self,
-                        from                 : nil,
-                        dateDecodingStrategy : .iso8601,
-                        keyDecodingStrategy  : .useDefaultKeys)
+                              from                 : nil,
+                              dateDecodingStrategy : .iso8601,
+                              keyDecodingStrategy  : .useDefaultKeys)
         SCPI.setSimulationMode(to: .deterministic)
         SCPI.setInflationProvider(SCPItests.inflationProvider)
-        SCPI.setFiscalModelProvider(Fiscal.Model(for: FiscalModelTests.self,
-                                                 from                 : nil,
-                                                 dateDecodingStrategy : .iso8601,
-                                                 keyDecodingStrategy  : .useDefaultKeys)
-                                        .initialized())
+        SCPI.setFiscalModelProvider(
+            Fiscal.Model(for: FiscalModelTests.self,
+                         from                 : nil,
+                         dateDecodingStrategy : .iso8601,
+                         keyDecodingStrategy  : .useDefaultKeys)
+                .initialized())
         print(SCPItests.scpi!)
-    }
-
-    override func setUp() {
     }
 
     // MARK: Tests

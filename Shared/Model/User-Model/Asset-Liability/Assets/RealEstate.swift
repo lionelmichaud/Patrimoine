@@ -54,14 +54,15 @@ struct RealEstateAsset: Identifiable, BundleCodable, Ownable {
     var sellingYear             : DateBoundary = DateBoundary.empty // dernière année de possession (inclue)
     var sellingNetPrice         : Double = 0.0
     var sellingPriceAfterTaxes  : Double {
+        guard willBeSold else { return 0 }
         guard let sellingDate = sellingYear.year, let buyingDate = buyingYear.year else { return 0 }
-        let detentionDuration = sellingDate - buyingDate
+        let detentionDuration = zeroOrPositive(sellingDate - buyingDate)
         let capitalGain       = self.sellingNetPrice - buyingPrice
         let socialTaxes       = RealEstateAsset.fiscalModel.estateCapitalGainTaxes.socialTaxes(
-            capitalGain      : zeroOrPositive(capitalGain),
+            capitalGain      : capitalGain,
             detentionDuration: detentionDuration)
         let irpp              = RealEstateAsset.fiscalModel.estateCapitalGainIrpp.irpp(
-            capitalGain      : zeroOrPositive(capitalGain),
+            capitalGain      : capitalGain,
             detentionDuration: detentionDuration)
         return self.sellingNetPrice - socialTaxes - irpp
     }
@@ -111,7 +112,10 @@ struct RealEstateAsset: Identifiable, BundleCodable, Ownable {
     ///  - les immeubles que vous donnez en location peuvent faire l’objet d’une décote de 10 % à 30 % environ
     ///  - en indivision : dans ce cas, ils sont imposables à hauteur de votre quote-part minorée d’une décote de l’ordre de 30 % pour tenir compte des contraintes liées à l’indivision)
     func ifiValue(atEndOf year: Int) -> Double {
-        if self.isInhabited(during: year) {
+        if !isOwned(during: year) {
+            return 0.0
+
+        } else if self.isInhabited(during: year) {
             // decote de la résidence principale
             return value(atEndOf: year) * (1.0 - RealEstateAsset.fiscalModel.isf.model.decoteResidence/100.0)
             
@@ -140,7 +144,10 @@ struct RealEstateAsset: Identifiable, BundleCodable, Ownable {
     ///  - les immeubles que vous donnez en location peuvent faire l’objet d’une décote de 10 % à 30 % environ
     ///  - en indivision : dans ce cas, ils sont imposables à hauteur de votre quote-part minorée d’une décote de l’ordre de 30 % pour tenir compte des contraintes liées à l’indivision)
     func inheritanceValue(atEndOf year: Int) -> Double {
-        if self.isInhabited(during: year) {
+        if !isOwned(during: year) {
+            return 0.0
+
+        } else if self.isInhabited(during: year) {
             // decote de la résidence principale
             return value(atEndOf: year) * (1.0 - RealEstateAsset.fiscalModel.inheritanceDonation.model.decoteResidence/100.0)
             
@@ -196,16 +203,19 @@ struct RealEstateAsset: Identifiable, BundleCodable, Ownable {
     
     /// True si year est dans la période d'habitation
     /// - Parameter year: année
+    /// - Note:
+    ///   - la premièe année est inclue
+    ///   - la dernière année est exclue
     func isInhabited(during year: Int) -> Bool {
         guard willBeInhabited && !isSold(before: year) else {
             return false
         }
-        return (inhabitedFrom.year! ..< inhabitedTo.year!).contains(year) // (inhabitedFromYear.year <= year) && (year <= inhabitedToYear.year)
+        return (inhabitedFrom.year! ..< inhabitedTo.year!).contains(year)
     }
     
     /// Impôts locaux
     /// - Parameter year: année
-    func yearlyLocalTaxes (during year: Int) -> Double {
+    func yearlyLocalTaxes(during year: Int) -> Double {
         guard !isSold(before: year) else {
             return 0.0 // la maison est vendue
         }
@@ -217,13 +227,16 @@ struct RealEstateAsset: Identifiable, BundleCodable, Ownable {
         }
     }
     
-    /// true si year est dans la période de location
+    /// True si year est dans la période de location
     /// - Parameter year: année
+    /// - Note:
+    ///   - la premièe année est inclue
+    ///   - la dernière année est exclue
     func isRented(during year: Int) -> Bool {
         guard willBeRented && !isSold(before: year) else {
             return false
         }
-        return (rentalFrom.year! ..< rentalTo.year!).contains(year) // (rentalFromYear.year <= year) && (year <= rentalToYear.year)
+        return (rentalFrom.year! ..< rentalTo.year!).contains(year)
     }
     
     /// Revenus de location si year est dans la période de location
@@ -310,37 +323,44 @@ extension RealEstateAsset: Comparable {
 
 extension RealEstateAsset: CustomStringConvertible {
     var description: String {
-        let s1 = """
-        \(name)
-        buying price: \(buyingPrice.€String) année: \(buyingYear) /n
+        let s1 =
+        """
+        IMMOBILIER: \(name)
+         - Acheté en \(buyingYear) au prix de \(buyingPrice.€String)
+         - Note: \(note)
+         - Valeur vénale estimée: \(estimatedValue.€String)\n
         """
         var s2: String = ""
         if willBeInhabited {
-            s2 = """
-                inhabited:
-            from:" \(inhabitedFrom)
-            to:  " \(inhabitedTo)
-                    local taxes: \(yearlyLocalTaxes(during: Date.now.year).€String) \n
+            s2 =
+            """
+             - Habité de \(inhabitedFrom) à \(inhabitedTo)
+               - Taxe d'habitation: \(yearlyTaxeHabitation.€String)
+               - Taxe fonçière:     \(yearlyTaxeFonciere.€String) \n
             """
         }
         
         var s3: String = ""
         if willBeRented {
-            s3 = """
-                rented:
-            from: \(rentalFrom)
-            to:   \(rentalTo)
-                    monthly rental:        \(monthlyRentAfterCharges.€String)
-                    yearly rental:         \(yearlyRentAfterCharges.€String)
-                    yearly rental taxable: \(yearlyRentTaxableIrpp.€String) \n
-            """
+            s3 =
+                """
+                 - Loué de \(rentalFrom) à \(rentalTo)
+                   - Loyer mensuel:        \(monthlyRentAfterCharges.€String)
+                   - Loyer annuel:         \(yearlyRentAfterCharges.€String)
+                   - Loyer annuel taxable: \(yearlyRentTaxableIrpp.€String)
+                   - Profitabilité:        \((profitability*100.0).percentString(digit: 1)) % \n
+                """
         }
         
         var s4: String = ""
         if willBeSold {
-            s4 = "    selling price: \(sellingNetPrice.€String) année: \(sellingYear) \n"
+            s4 =
+                """
+                 - Vendu en \(sellingYear) au prix de \(sellingNetPrice.€String)
+                   - Produit de la vente net de taxes \(sellingPriceAfterTaxes.€String)\n
+                """
         }
-        
+
         return s1 + s2 + s3 + s4
     }
 }

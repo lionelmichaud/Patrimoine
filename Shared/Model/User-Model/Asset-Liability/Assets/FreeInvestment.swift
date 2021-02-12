@@ -393,13 +393,13 @@ extension FreeInvestement: Comparable {
 
 extension FreeInvestement: CustomStringConvertible {
     var description: String {
-        return """
-        \(name)
-          type:          \(type)
-          valeur:        \(value(atEndOf: Date.now.year).€String)
-          initial state: (year: \(initialState.year), interest: \(initialState.interest.€String), invest: \(initialState.investment.€String), Value: \(initialState.value.€String))
-          current state: (year: \(currentState.year), interest: \(currentState.interest.€String), invest: \(currentState.investment.€String), Value: \(currentState.value.€String))
-          interest Rate: \(averageInterestRate) %
+        """
+        INVEST LIBRE: \(name)
+         - Type:          \(type)
+         - Valeur (\(Date.now.year): \(value(atEndOf: Date.now.year).€String)
+         - Etat initial: (year: \(initialState.year), interest: \(initialState.interest.€String), invest: \(initialState.investment.€String), Value: \(initialState.value.€String))
+         - Etat courant: (year: \(currentState.year), interest: \(currentState.interest.€String), invest: \(currentState.investment.€String), Value: \(currentState.value.€String))
+         - Taux d'intérêt: \(averageInterestRate) %
 
         """
     }
