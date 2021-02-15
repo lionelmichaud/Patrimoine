@@ -55,7 +55,7 @@ extension InterestRateType: CustomStringConvertible {
                 return "Taux Contractuel = \(fixedRate) %\n"
                 
             case .marketRate(let stockRatio):
-                return "Taux de Marché = \(stockRatio) %\n"
+                return "Taux de Marché avec \(stockRatio) % d'actions et \(100 - stockRatio) % d'obligations\n"
         }
     }
 }

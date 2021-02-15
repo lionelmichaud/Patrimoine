@@ -1,0 +1,44 @@
+{
+    "id"           : "4A6940AE-3D5B-4F3E-BB23-CF076F9CA5B1",
+    "name"         : "AV Lionel Bourso",
+    "note"         : "Ouvert le 04/03/2012\nFonds actions",
+    "ownership"               :
+    {
+        "est_démembré"        : false,
+        "plein_propriétaires" :
+        [
+            {
+                "name"     : "M. Lionel MICHAUD",
+                "fraction" : 100
+            }
+        ],
+        "nue_propriétaires"   : [ ],
+        "usufruitiers"        : [ ]
+    },
+    "initialState" : {
+        "year"       : 2020,
+        "interest"   : 0,
+        "investment" : 100
+    },
+    "type" : {
+        "lifeInsurance_taxes"  : true,
+        "lifeInsurance_clause" : {
+            "isDismembered"     : true,
+            "fullRecipients"    : [ ],
+            "usufructRecipient" : "Mme. Vanessa MICHAUD",
+            "bareRecipients"    :
+            [
+                "Mme Lou-Ann MICHAUD",
+                "M. Arthur MICHAUD"
+            ]
+        }
+    },
+    "interestRateType" : {
+        "marketRate_stockRatio" : 75.0
+    },
+    "currentState" : {
+        "year"       : 0,
+        "interest"   : 0,
+        "investment" : 0
+    }
+}

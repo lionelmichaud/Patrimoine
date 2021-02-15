@@ -33,9 +33,6 @@ struct FinancialRevenuTaxesModel: Codable {
     /// revenus financiers nets de charges sociales
     /// - Parameter brut: revenus financiers bruts
     func net(_ brut: Double) -> Double {
-        guard brut >= 0.0 else {
-            return 0.0
-        }
         return brut - socialTaxes(brut)
     }
     
@@ -52,7 +49,7 @@ struct FinancialRevenuTaxesModel: Codable {
     /// - Parameter net: revenus financiers nets
     func brut(_ net: Double) -> Double {
         guard net >= 0.0 else {
-            return 0.0
+            return net
         }
         return net / (1.0 - model.total / 100.0)
     }

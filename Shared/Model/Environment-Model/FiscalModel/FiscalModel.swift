@@ -13,9 +13,14 @@ struct Fiscal {
     
     // MARK: - Nested types
 
-    struct Model: BundleCodable, Versionable {
+    struct Model: BundleCodable {
+        
+        // MARK: - Static Properties
+        
         static var defaultFileName   : String = "FiscalModelConfig.json"
-        var version                  : Version
+        
+        // MARK: - Properties
+        
         var PASS                     : Double // Plafond Annuel de la Sécurité Sociale en €
         // impôts
         var incomeTaxes              : IncomeTaxesModel

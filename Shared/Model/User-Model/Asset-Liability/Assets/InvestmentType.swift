@@ -36,27 +36,12 @@ extension InvestementType: CustomStringConvertible {
             case .lifeInsurance(let periodicSocialTaxes, let clause):
                 return
                     """
-                    TYPE D'INVESTISSEMENT:
                       Assurance Vie:
                       - Prélèvement périodique des contributions sociales: \(periodicSocialTaxes)
                       - \(clause)
                     """
-                
-            case .pea:
-                return
-                    """
-                    TYPE D'INVESTISSEMENT:
-                      PEA
-
-                    """
-                
-            case .other:
-                return
-                    """
-                    TYPE D'INVESTISSEMENT:
-                      Autre
-
-                    """
+            default:
+                return pickerString
         }
     }
 }

@@ -56,7 +56,7 @@ final class Patrimoin: ObservableObject {
     ///   - year: à la fin de cette année
     func capitalizeFreeInvestments(atEndOf year: Int) {
         for idx in 0..<assets.freeInvests.items.count {
-            assets.freeInvests.items[idx].capitalize(atEndOf: year)
+            try! assets.freeInvests.items[idx].capitalize(atEndOf: year)
         }
     }
     

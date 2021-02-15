@@ -36,15 +36,21 @@ class FinancialRevenuTaxesModelTests: XCTestCase {
     func test_calcul_net() {
         XCTAssertEqual(100.0 - (0.5 + 9.5 + 7.5),
                        FinancialRevenuTaxesModelTests.financialRevenuTaxes.net(100.0))
+        XCTAssertEqual(-100.0,
+                       FinancialRevenuTaxesModelTests.financialRevenuTaxes.net(-100.0))
     }
     
     func test_calcul_brut() {
         XCTAssertEqual(100.0,
                        FinancialRevenuTaxesModelTests.financialRevenuTaxes.brut(100.0 - (0.5 + 9.5 + 7.5)))
+        XCTAssertEqual(-100.0,
+                       FinancialRevenuTaxesModelTests.financialRevenuTaxes.brut(-100.0))
     }
     
     func test_calcul_social_taxes() {
         XCTAssertEqual((0.5 + 9.5 + 7.5),
                        FinancialRevenuTaxesModelTests.financialRevenuTaxes.socialTaxes(100.0))
+        XCTAssertEqual(0.0,
+                       FinancialRevenuTaxesModelTests.financialRevenuTaxes.socialTaxes(-100.0))
     }
 }

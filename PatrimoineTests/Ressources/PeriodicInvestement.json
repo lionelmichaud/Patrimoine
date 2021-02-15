@@ -1,0 +1,40 @@
+{
+    "id"                      : "3AB17EE6-0D8D-4CE9-AB86-A2B40943CB38",
+    "name"                    : "Tontine vanessa périod",
+    "note"                    : "Ouvert le 01/04/2013\nActualisé le 18/09/2020",
+    "ownership"               :
+    {
+        "est_démembré"        : false,
+        "plein_propriétaires" :
+        [
+            {
+                "name"     : "Mme. Vanessa MICHAUD",
+                "fraction" : 100
+            }
+        ],
+        "nue_propriétaires"   : [ ],
+        "usufruitiers"        : [ ]
+    },
+    "firstYear"               : 2013,
+    "initialInterest"         : 0,
+    "initialValue"            : 5000,
+    "yearlyPayement"          : 4800,
+    "yearlyCost"              : 480,
+    "interestRateType" : {
+        "contractualRate_fixedRate" : 4.0
+    },
+    "type" : {
+        "lifeInsurance_taxes"  : false,
+        "lifeInsurance_clause" : {
+            "isDismembered"     : false,
+            "fullRecipients"    :
+            [
+                "Mme Lou-Ann MICHAUD",
+                "M. Arthur MICHAUD"
+            ],
+            "usufructRecipient" : "",
+            "bareRecipients"    : [ ]
+        }
+    },
+    "lastYear"                : 2080
+}

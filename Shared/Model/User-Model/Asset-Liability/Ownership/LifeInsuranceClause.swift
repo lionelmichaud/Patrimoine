@@ -36,16 +36,16 @@ extension LifeInsuranceClause: CustomStringConvertible {
     var description: String {
         let header = """
         CLAUSE BENEFICIAIRE:
-         - Valide:    \(isValid)
-         - Démembrée: \(isDismembered)
+           - Valide:    \(isValid)
+           - Démembrée: \(isDismembered)
 
         """
         let fr =
-            !isDismembered ? " - Bénéficiaire en PP:\n    \(fullRecipients)" : ""
+            !isDismembered ? "   - Bénéficiaire en PP:\n      \(fullRecipients)" : ""
         let ur =
-            isDismembered ? " - Bénéficiaire en UF:\n    \(usufructRecipient) \n" : ""
+            isDismembered ? "   - Bénéficiaire en UF:\n      \(usufructRecipient) \n" : ""
         let br =
-            isDismembered ? " - Bénéficiaire en NP:\n    \(bareRecipients)" : ""
-        return header + fr + ur + br + "\n"
+            isDismembered ? "   - Bénéficiaire en NP:\n      \(bareRecipients)" : ""
+        return header + fr + ur + br
     }
 }

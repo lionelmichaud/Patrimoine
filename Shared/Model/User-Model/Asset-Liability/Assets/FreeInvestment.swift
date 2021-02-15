@@ -11,13 +11,17 @@ import os
 
 private let customLog = Logger(subsystem: "me.michaud.lionel.Patrimoine", category: "Model.FreeInvestement")
 
+enum FreeInvestementError: Error {
+    case IlegalOperation
+}
+
 typealias FreeInvestmentArray = ItemArray<FreeInvestement>
 
 // MARK: - Placement à versement et retrait variable et à taux fixe
 
 /// Placement à versement et retrait libres et à taux fixe
 /// Les intérêts sont capitalisés lors de l'appel à capitalize()
-struct FreeInvestement: Identifiable, Codable, FinancialEnvelop {
+struct FreeInvestement: Identifiable, BundleCodable, FinancialEnvelop {
     
     // nested types
     
@@ -30,6 +34,8 @@ struct FreeInvestement: Identifiable, Codable, FinancialEnvelop {
     }
     
     // MARK: - Static Properties
+    
+    static var defaultFileName : String = "FreeInvestement.json"
     
     private static var simulationMode: SimulationModeEnum = .deterministic
     // dependencies
@@ -51,7 +57,7 @@ struct FreeInvestement: Identifiable, Codable, FinancialEnvelop {
     // MARK: - Static Methods
     
     /// Dependency Injection: Setter Injection
-    static func seteEonomyModelProvider(_ economyModel : EconomyModelProviderProtocol) {
+    static func setEconomyModelProvider(_ economyModel : EconomyModelProviderProtocol) {
         FreeInvestement.economyModel = economyModel
     }
     
@@ -82,7 +88,7 @@ struct FreeInvestement: Identifiable, Codable, FinancialEnvelop {
     var ownership            : Ownership = Ownership()
     var type                 : InvestementType // type de l'investissement
     var interestRateType     : InterestRateType // type de taux de rendement
-    var averageInterestRate  : Double {// % avant charges sociales si prélevées à la source annuellement
+    var averageInterestRate  : Double {// % avant charges sociales si prélevées à la source annuellement [0, 100%]
         switch interestRateType {
             case .contractualRate(let fixedRate):
                 // taux contractuel fixe
@@ -96,7 +102,7 @@ struct FreeInvestement: Identifiable, Codable, FinancialEnvelop {
                 return rate - FreeInvestement.inflation
         }
     }
-    var averageInterestRateNet: Double { // % fixe après charges sociales si prélevées à la source annuellement
+    var averageInterestRateNet: Double { // % après charges sociales si prélevées à la source annuellement [0, 100%]
         switch type {
             case .lifeInsurance(let periodicSocialTaxes, _):
                 // si assurance vie: le taux net est le taux brut - charges sociales si celles-ci sont prélèvées à la source anuellement
@@ -151,8 +157,9 @@ struct FreeInvestement: Identifiable, Codable, FinancialEnvelop {
             case .marketRate(let stockRatio):
                 // taux de marché variable
                 let stock = stockRatio / 100.0
-                let rates = FreeInvestement.economyModel.rates(in       : year,
-                                                withMode : FreeInvestement.simulationMode)
+                let rates = FreeInvestement.economyModel.rates(
+                    in       : year,
+                    withMode : FreeInvestement.simulationMode)
                 // taux d'intérêt composite fonction de la composition du portefeuille
                 let rate = stock * rates.stockRate + (1.0 - stock) * rates.securedRate
                 return rate - FreeInvestement.inflation
@@ -265,6 +272,7 @@ struct FreeInvestement: Identifiable, Codable, FinancialEnvelop {
         netInterests: Double,
         taxableInterests: Double,
         socialTaxes: Double) {
+
         guard currentState.value != 0.0 else {
             // le compte est vide: on ne retire rien
             return (revenue: 0, interests: 0, netInterests: 0, taxableInterests: 0, socialTaxes: 0)
@@ -275,6 +283,7 @@ struct FreeInvestement: Identifiable, Codable, FinancialEnvelop {
         var netInterests     : Double // intérêts nets de charges sociales
         var taxableInterests : Double // part imposable à l'IRPP des intérêts nets de charges sociales
         var socialTaxes      : Double // charges sociales sur les intérêts
+
         switch type {
             case .lifeInsurance(let periodicSocialTaxes, _):
                 // montant brut à retirer pour obtenir le montant net souhaité
@@ -296,6 +305,7 @@ struct FreeInvestement: Identifiable, Codable, FinancialEnvelop {
                 }
                 // Assurance vie: les plus values sont imposables à l'IRPP (mais avec une franchise applicable à la totalité des interets retirés dans l'année: calculé ailleurs)
                 taxableInterests = netInterests
+
             case .pea:
                 // montant brut à retirer pour obtenir le montant net souhaité
                 brutAmount = FreeInvestement.fiscalModel.financialRevenuTaxes.brut(netAmount)
@@ -311,6 +321,7 @@ struct FreeInvestement: Identifiable, Codable, FinancialEnvelop {
                 socialTaxes  = FreeInvestement.fiscalModel.financialRevenuTaxes.socialTaxes(brutAmountSplit.interest)
                 // PEA: les plus values ne sont pas imposables à l'IRPP
                 taxableInterests = 0.0
+
             case .other:
                 // montant brut à retirer pour obtenir le montant net souhaité
                 brutAmount = FreeInvestement.fiscalModel.financialRevenuTaxes.brut(netAmount)
@@ -327,6 +338,7 @@ struct FreeInvestement: Identifiable, Codable, FinancialEnvelop {
                 // autre cas: les plus values sont totalement imposables à l'IRPP
                 taxableInterests = netInterests
         }
+
         // décrémenter les intérêts et le capital
         if brutAmount == currentState.value {
             // On a vidé le compte: mettre précisémemnt le compte à 0.0 (attention à l'arrondi sinon)
@@ -334,7 +346,7 @@ struct FreeInvestement: Identifiable, Codable, FinancialEnvelop {
             currentState.investment = 0
         } else {
             // décrémenter le capital (versement et intérêts) du montant brut retiré pour obtenir le net (de charges sociales) souhaité
-            currentState.interest -= brutAmountSplit.interest
+            currentState.interest   -= brutAmountSplit.interest
             currentState.investment -= brutAmountSplit.investement
         }
         
@@ -347,7 +359,12 @@ struct FreeInvestement: Identifiable, Codable, FinancialEnvelop {
     
     /// Capitaliser les intérêts d'une année: à faire une fois par an et apparaissent dans l'année courante
     /// - Note: Si la volatilité est prise en compte dans le modèle économique alors le taux change chaque année
-    mutating func capitalize(atEndOf year: Int) {
+    mutating func capitalize(atEndOf year: Int) throws {
+        guard year == currentState.year + 1 else {
+            customLog.log(level: .error,
+                          "FreeInvestementError.capitalize: capitalisation sur un nombre d'année différent de 1")
+            throw FreeInvestementError.IlegalOperation
+        }
         currentState.interest += yearlyInterest(in: year)
         currentState.year = year
     }
@@ -395,11 +412,12 @@ extension FreeInvestement: CustomStringConvertible {
     var description: String {
         """
         INVEST LIBRE: \(name)
-         - Type:          \(type)
-         - Valeur (\(Date.now.year): \(value(atEndOf: Date.now.year).€String)
+         - Type: \(type)
+         - Valeur (\(Date.now.year)): \(value(atEndOf: Date.now.year).€String)
          - Etat initial: (year: \(initialState.year), interest: \(initialState.interest.€String), invest: \(initialState.investment.€String), Value: \(initialState.value.€String))
          - Etat courant: (year: \(currentState.year), interest: \(currentState.interest.€String), invest: \(currentState.investment.€String), Value: \(currentState.value.€String))
-         - Taux d'intérêt: \(averageInterestRate) %
+         - Taux d'intérêt brut: \(averageInterestRate) %
+         - Taux d'intérêt net : \(averageInterestRateNet) %
 
         """
     }
