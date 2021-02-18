@@ -79,16 +79,17 @@ extension Adult {
     /// Indemnité de licenciement perçue dans l'année
     /// - Parameter year: année
     /// - Returns: Indemnité de licenciement perçue dans l'année brute, nette de charges sociales, taxable à l'IRPP
+    /// - Note: L'indemnité de licenciement est due m^me si le licencié est décédé pendant le préavis
     func layoffCompensation(during year: Int) -> BrutNetTaxable {
-        // la personne est décédée
-        guard !isAlive(atEndOf: year) else {
-            // la personne est vivante => pas de pension de réversion
-            return BrutNetTaxable(brut: 0, net: 0, taxable: 0)
-        }
         guard year == dateOfRetirement.year else {
             return BrutNetTaxable(brut: 0, net: 0, taxable: 0)
         }
         // on est bien dans l'année de cessation d'activité
+        guard isAlive(atEndOf: year-1) else {
+            // la personne n'était plus vivante l'année précédent son licenciement
+            return BrutNetTaxable(brut: 0, net: 0, taxable: 0)
+        }
+        // la personne était encore vivante l'année précédent son licenciement
         if let layoffCompensation = layoffCompensation {
             return BrutNetTaxable(brut    : layoffCompensation.brut,
                                   net     : layoffCompensation.net,

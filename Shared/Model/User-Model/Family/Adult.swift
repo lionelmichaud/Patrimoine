@@ -192,7 +192,7 @@ final class Adult: Person { // swiftlint:disable:this type_body_length
         guard let compensationSupralegal = layoffCompensation?.brut - layoffCompensationBrutLegal else {
             return nil
         }
-        Swift.print("supralégal = \(compensationSupralegal)")
+        //Swift.print("supralégal = \(compensationSupralegal)")
         return Unemployment.model.allocationChomage.differeSpecifique(
             compensationSupralegal : compensationSupralegal,
             causeOfUnemployement   : causeOfRetirement)
