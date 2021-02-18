@@ -1,101 +1,211 @@
 {
     "items" : [
         {
-            "id" : "15325B0E-331D-481F-9C34-57C088289751",
-            "value" : 0,
+            "id" : "15325B0E-331D-481F-9C34-57C088289740",
+            "value" : 60000,
             "proportional" : false,
-            "name" : "Achats véhicules",
-            "note" : "Actualisé le ",
+            "name" : "Achat Berline",
+            "note" : "Actualisé le 16/02/2021",
             "timeSpan" : {
-                "starting_from" :
+                "periodic_period" : 10,
+                "periodic_from" :
                 {
-                    "fixedYear": 2028,
-                    "event"    : "Fin d'activité profesionelle",
+                    "fixedYear": 2024,
+                    "event"    : null,
+                    "group"    : null,
+                    "name"     : ""
+                },
+                "periodic_to" :
+                {
+                    "fixedYear": 0,
+                    "event"    : "Dépendance",
                     "group"    : null,
                     "name"     : "M. Lionel MICHAUD"
                 }
             }
         },
+        
+        {
+            "id" : "15325B0E-331D-481F-9C34-57C088289741",
+            "value" : 15000,
+            "proportional" : false,
+            "name" : "Achat Moto",
+            "note" : "Actualisé le 16/02/2021",
+            "timeSpan" : {
+                "periodic_period" : 10,
+                "periodic_from" :
+                {
+                    "fixedYear": 2025,
+                    "event"    : null,
+                    "group"    : null,
+                    "name"     : ""
+                },
+                "periodic_to" :
+                {
+                    "fixedYear": 0,
+                    "event"    : "Dépendance",
+                    "group"    : null,
+                    "name"     : "M. Lionel MICHAUD"
+                }
+            }
+        },
+        
+        {
+            "id" : "15325B0E-331D-481F-9C34-57C088289742",
+            "value" : 18000,
+            "proportional" : false,
+            "name" : "Achat Citadine",
+            "note" : "Actualisé le 16/02/2021",
+            "timeSpan" : {
+                "periodic_period" : 10,
+                "periodic_from" :
+                {
+                    "fixedYear": 2027,
+                    "event"    : null,
+                    "group"    : null,
+                    "name"     : ""
+                },
+                "periodic_to" :
+                {
+                    "fixedYear": 0,
+                    "event"    : "Dépendance",
+                    "group"    : null,
+                    "name"     : "Mme. Vanessa MICHAUD"
+                }
+            }
+        },
+        
+        {
+            "id" : "15325B0E-331D-481F-9C34-57C088289743",
+            "value" : 8000,
+            "proportional" : false,
+            "name" : "Achat véh Lou-Ann",
+            "note" : "Actualisé le 16/02/2021",
+            "timeSpan" : {
+                "exceptional_in" : 2023
+            }
+        },
+        
+        {
+            "id" : "15325B0E-331D-481F-9C34-57C088289744",
+            "value" : 8000,
+            "proportional" : false,
+            "name" : "Achat véh Arthur",
+            "note" : "Actualisé le 16/02/2021",
+            "timeSpan" : {
+                "exceptional_in" : 2024
+            }
+        },
+        
         {
             "id" : "15325B0E-331D-481F-9C34-57C088289752",
-            "value" : 0,
+            "value" : 904,
             "proportional" : false,
-            "name" : "Assurances",
-            "note" : "Actualisé le ",
+            "name" : "Assurances véh Lionel",
+            "note" : "Actualisé le 16/02/2021\nBMW 370€, Moto 534€",
             "timeSpan" : {
-                "starting_from" :
+                "ending_to" :
                 {
-                    "fixedYear": 2028,
-                    "event"    : "Fin d'activité profesionelle",
+                    "fixedYear": 0,
+                    "event"    : "Dépendance",
                     "group"    : null,
                     "name"     : "M. Lionel MICHAUD"
                 }
             }
         },
+        
         {
             "id" : "15325B0E-331D-481F-9C34-57C088289753",
-            "value" : 0,
+            "value" : 597,
             "proportional" : false,
-            "name" : "Carburants",
-            "note" : "Actualisé le ",
+            "name" : "Assurances véh Vanessa",
+            "note" : "Actualisé le 16/02/2021\nVW 573€, Mutuelle 24€",
             "timeSpan" : {
-                "starting_from" :
+                "ending_to" :
                 {
-                    "fixedYear": 2028,
-                    "event"    : "Fin d'activité profesionelle",
+                    "fixedYear": 0,
+                    "event"    : "Dépendance",
                     "group"    : null,
-                    "name"     : "M. Lionel MICHAUD"
+                    "name"     : "Mme. Vanessa MICHAUD"
                 }
             }
         },
+        
         {
             "id" : "15325B0E-331D-481F-9C34-57C088289754",
-            "value" : 0,
+            "value" : 1200,
             "proportional" : false,
-            "name" : "Entretien, réparation",
-            "note" : "Actualisé le ",
+            "name" : "Assurances véh Enfants",
+            "note" : "Actualisé le 16/02/2021",
             "timeSpan" : {
-                "starting_from" :
+                "spanning_from" :
                 {
-                    "fixedYear": 2028,
-                    "event"    : "Fin d'activité profesionelle",
-                    "group"    : null,
-                    "name"     : "M. Lionel MICHAUD"
+                    "fixedYear": 0,
+                    "event"    : "Début des études supérieurs",
+                    "group"    : "Tous les Enfants",
+                    "order"    : "Date au plus tard"
+                },
+                "spanning_to" :
+                {
+                    "fixedYear": 0,
+                    "event"    : "Indépendance financière",
+                    "group"    : "Tous les Enfants",
+                    "order"    : "Date au plus tard"
                 }
             }
         },
+        
         {
             "id" : "15325B0E-331D-481F-9C34-57C088289755",
-            "value" : 0,
+            "value" : 740,
             "proportional" : false,
-            "name" : "Parking, péages",
-            "note" : "Actualisé le ",
+            "name" : "Carburants",
+            "note" : "Actualisé le 16/02/2021",
             "timeSpan" : {
-                "starting_from" :
+                "ending_to" :
                 {
-                    "fixedYear": 2028,
-                    "event"    : "Fin d'activité profesionelle",
+                    "fixedYear": 0,
+                    "event"    : "Dépendance",
                     "group"    : null,
-                    "name"     : "M. Lionel MICHAUD"
+                    "name"     : "Mme. Vanessa MICHAUD"
                 }
             }
         },
+        
         {
             "id" : "15325B0E-331D-481F-9C34-57C088289756",
-            "value" : 0,
+            "value" : 350,
+            "proportional" : false,
+            "name" : "Entretien, réparation",
+            "note" : "Actualisé le 16/02/2021",
+            "timeSpan" : {
+                "ending_to" :
+                {
+                    "fixedYear": 0,
+                    "event"    : "Dépendance",
+                    "group"    : null,
+                    "name"     : "Mme. Vanessa MICHAUD"
+                }
+            }
+        },
+        
+        {
+            "id" : "15325B0E-331D-481F-9C34-57C088289757",
+            "value" : 50,
             "proportional" : false,
             "name" : "Véhicule Autres",
             "note" : "Actualisé le ",
             "timeSpan" : {
-                "starting_from" :
+                "ending_to" :
                 {
-                    "fixedYear": 2028,
-                    "event"    : "Fin d'activité profesionelle",
+                    "fixedYear": 0,
+                    "event"    : "Dépendance",
                     "group"    : null,
-                    "name"     : "M. Lionel MICHAUD"
+                    "name"     : "Mme. Vanessa MICHAUD"
                 }
             }
         }
+        
     ],
     "fileNamePrefix" : ""
 }

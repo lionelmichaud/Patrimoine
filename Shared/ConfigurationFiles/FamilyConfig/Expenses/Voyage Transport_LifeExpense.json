@@ -5,7 +5,7 @@
             "value" : 1000,
             "proportional" : true,
             "name" : "Petit voyage d'été",
-            "note" : "Actualisé le ",
+            "note" : "Actualisé le 16/12/2021",
             "timeSpan" : {
                 "periodic_period" : 2,
                 "periodic_from" :
@@ -17,19 +17,20 @@
                 },
                 "periodic_to" :
                 {
-                    "fixedYear": 0,
-                    "event"    : "Dépendance",
-                    "group"    : null,
-                    "name"     : "M. Lionel MICHAUD"
+                    "fixedYear" : 0,
+                    "event"     : "Dépendance",
+                    "group"     : "Tous les Adultes",
+                    "order"     : "Date au plus tôt"
                 }
             }
         },
+        
         {
             "id" : "45325B0F-331C-481F-9C34-57C088289752",
             "value" : 3000,
             "proportional" : true,
             "name" : "Grand voyage d'été",
-            "note" : "Actualisé le ",
+            "note" : "Actualisé le 16/12/2021",
             "timeSpan" : {
                 "periodic_period" : 2,
                 "periodic_from" :
@@ -41,151 +42,126 @@
                 },
                 "periodic_to" :
                 {
-                    "fixedYear": 0,
-                    "event"    : "Dépendance",
-                    "group"    : null,
-                    "name"     : "M. Lionel MICHAUD"
+                    "fixedYear" : 0,
+                    "event"     : "Dépendance",
+                    "group"     : "Tous les Adultes",
+                    "order"     : "Date au plus tôt"
                 }
             }
         },
+        
         {
             "id" : "45325B0F-331C-481F-9C34-57C088289753",
-            "value" : 800,
+            "value" : 750,
             "proportional" : true,
             "name" : "Vacances ski",
-            "note" : "Actualisé le ",
+            "note" : "Actualisé le 16/12/2021",
             "timeSpan" : {
-                "spanning_from" :
-                {
-                    "fixedYear": 2020,
-                    "event"    : null,
-                    "group"    : null,
-                    "name"     : ""
-                },
-                "spanning_to" :
-                {
-                    "fixedYear": 0,
-                    "event"    : "Dépendance",
-                    "group"    : null,
-                    "name"     : "M. Lionel MICHAUD"
+                "ending_to" : {
+                    "fixedYear" : 0,
+                    "event"     : "Dépendance",
+                    "group"     : "Tous les Adultes",
+                    "order"     : "Date au plus tôt"
                 }
             }
         },
+        
         {
             "id" : "45325B0F-331C-481F-9C34-57C088289754",
-            "value" : 100,
-            "proportional" : true,
+            "value" : 400,
+            "proportional" : false,
             "name" : "Week Ends",
-            "note" : "Actualisé le ",
+            "note" : "Actualisé le 16/12/2021",
             "timeSpan" : {
-                "spanning_from" :
-                {
-                    "fixedYear": 2020,
-                    "event"    : null,
-                    "group"    : null,
-                    "name"     : ""
-                },
-                "spanning_to" :
-                {
-                    "fixedYear": 0,
-                    "event"    : "Dépendance",
-                    "group"    : null,
-                    "name"     : "M. Lionel MICHAUD"
+                "ending_to" : {
+                    "fixedYear" : 0,
+                    "event"     : "Dépendance",
+                    "group"     : "Tous les Adultes",
+                    "order"     : "Date au plus tôt"
                 }
             }
         },
+        
         {
             "id" : "45325B0F-331C-481F-9C34-57C088289755",
             "value" : 0,
             "proportional" : false,
             "name" : "Location de véhicule",
-            "note" : "Actualisé le ",
+            "note" : "Actualisé le 16/12/2021",
             "timeSpan" : {
-                "spanning_from" :
-                {
-                    "fixedYear": 2020,
-                    "event"    : null,
-                    "group"    : null,
-                    "name"     : ""
-                },
-                "spanning_to" :
-                {
-                    "fixedYear": 0,
-                    "event"    : "Dépendance",
-                    "group"    : null,
-                    "name"     : "M. Lionel MICHAUD"
+                "ending_to" : {
+                    "fixedYear" : 0,
+                    "event"     : "Dépendance",
+                    "group"     : "Tous les Adultes",
+                    "order"     : "Date au plus tôt"
                 }
             }
         },
+        
         {
             "id" : "45325B0F-331C-481F-9C34-57C088289756",
             "value" : 0,
             "proportional" : true,
             "name" : "Transport longue distance (avion, train)",
-            "note" : "Actualisé le ",
+            "note" : "Actualisé le 16/12/2021",
             "timeSpan" : {
-                "spanning_from" :
-                {
-                    "fixedYear": 2020,
-                    "event"    : null,
-                    "group"    : null,
-                    "name"     : ""
-                },
-                "spanning_to" :
-                {
-                    "fixedYear": 0,
-                    "event"    : "Dépendance",
-                    "group"    : null,
-                    "name"     : "M. Lionel MICHAUD"
+                "ending_to" : {
+                    "fixedYear" : 0,
+                    "event"     : "Dépendance",
+                    "group"     : "Tous les Adultes",
+                    "order"     : "Date au plus tôt"
                 }
             }
         },
+        
         {
             "id" : "45325B0F-331C-481F-9C34-57C088289757",
-            "value" : 0,
-            "proportional" : true,
+            "value" : 267,
+            "proportional" : false,
             "name" : "Transport quotidien (métro, bus, taxi)",
-            "note" : "Actualisé le ",
+            "note" : "Actualisé le 16/12/2021",
             "timeSpan" : {
-                "spanning_from" :
-                {
-                    "fixedYear": 2020,
-                    "event"    : null,
-                    "group"    : null,
-                    "name"     : ""
-                },
-                "spanning_to" :
-                {
+                "ending_to" : {
                     "fixedYear": 0,
-                    "event"    : "Dépendance",
-                    "group"    : null,
-                    "name"     : "M. Lionel MICHAUD"
+                    "event"    : "Indépendance financière",
+                    "group"    : "Tous les Enfants",
+                    "order"    : "Date au plus tard"
                 }
             }
         },
+        
+        {
+            "id" : "15325B0E-331D-481F-9C34-57C088289755",
+            "value" : 400,
+            "proportional" : false,
+            "name" : "Parking, péages",
+            "note" : "Actualisé le 16/02/2021",
+            "timeSpan" : {
+                "ending_to" : {
+                    "fixedYear" : 0,
+                    "event"     : "Dépendance",
+                    "group"     : "Tous les Adultes",
+                    "order"     : "Date au plus tôt"
+                }
+            }
+        },
+        
         {
             "id" : "45325B0F-331C-481F-9C34-57C088289758",
             "value" : 0,
             "proportional" : false,
             "name" : "Voyage Autres",
-            "note" : "Actualisé le ",
+            "note" : "Actualisé le 16/12/2021",
             "timeSpan" : {
-                "spanning_from" :
-                {
-                    "fixedYear": 2020,
-                    "event"    : null,
-                    "group"    : null,
-                    "name"     : ""
-                },
-                "spanning_to" :
-                {
-                    "fixedYear": 0,
-                    "event"    : "Dépendance",
-                    "group"    : null,
-                    "name"     : "M. Lionel MICHAUD"
+                "ending_to" : {
+                    "fixedYear" : 0,
+                    "event"     : "Dépendance",
+                    "group"     : "Tous les Adultes",
+                    "order"     : "Date au plus tôt"
                 }
             }
         }
+        
     ],
     "fileNamePrefix" : ""
 }

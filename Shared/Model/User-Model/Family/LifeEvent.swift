@@ -116,9 +116,9 @@ extension DateBoundary: CustomStringConvertible {
 // MARK: - Evénement de vie
 
 enum LifeEvent: String, PickableEnum, Codable, CustomStringConvertible {
-    case debutEtude         = "Début étude"
+    case debutEtude         = "Début des études supérieurs"
     case independance       = "Indépendance financière"
-    case cessationActivite  = "Fin d'activité profesionelle"
+    case cessationActivite  = "Fin d'activité professionnelle"
     case liquidationPension = "Liquidation de pension"
     case dependence         = "Dépendance"
     case deces              = "Décès"

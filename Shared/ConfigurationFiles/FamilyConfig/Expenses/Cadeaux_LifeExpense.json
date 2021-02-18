@@ -2,10 +2,10 @@
     "items" : [
         {
             "id" : "B4EFF395-7A51-47AF-AD29-E7461ECB9ADA",
-            "value" : 555,
+            "value" : 1000,
             "proportional" : false,
             "name" : "Cadeaux - Dons",
-            "note" : "Actualisé le ",
+            "note" : "Actualisé le 16/02/2021",
             "timeSpan" : {
                 "ending_to" :
                 {

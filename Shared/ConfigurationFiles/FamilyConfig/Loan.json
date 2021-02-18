@@ -38,6 +38,7 @@
             "interestRate"     : 1.0,
             "monthlyInsurance" : 35.36
         },
+        
         {
             "id"               : "0F5011DB-C627-4390-BD09-3A53C6193583",
             "name"             : "Emprunt immo 2",
@@ -68,6 +69,39 @@
             "loanedValue"      : -25000,
             "interestRate"     : 0.87,
             "monthlyInsurance" : 8.13
+        }
+        ,
+        
+        {
+            "id"               : "0F5011DB-C627-4390-BD09-2A53C6193582",
+            "name"             : "Emprunt Panneaux PV",
+            "note"             : "Actualisé le 16/02/2021",
+            "ownership"               :
+            {
+                "est_démembré"        : false,
+                "plein_propriétaires" :
+                [
+                    {
+                        "name"     : "M. Lionel MICHAUD",
+                        "fraction" : 50
+                    },
+                    {
+                        "name"     : "Mme. Vanessa MICHAUD",
+                        "fraction" : 50
+                    }
+                ],
+                "nue_propriétaires"   :
+                [
+                ],
+                "usufruitiers"        :
+                [
+                ]
+            },
+            "firstYear"        : 2018,
+            "lastYear"         : 2027,
+            "loanedValue"      : -5900,
+            "interestRate"     : 1.0,
+            "monthlyInsurance" : 0.0
         }
     ]
 }

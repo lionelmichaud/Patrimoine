@@ -1,98 +1,130 @@
 {
     "items" : [
         {
-            "id" : "45325B0E-331D-480F-9C34-57C088289751",
-            "value" : 0,
+            "id" : "45325B0E-331D-480F-9C34-57C088289750",
+            "value" : 1500,
             "proportional" : false,
-            "name" : "Nettoyage et services à domicile",
-            "note" : "Actualisé le ",
+            "name" : "Nettoyage et services à domicile (avt dép)",
+            "note" : "Actualisé le 16/02/2021",
             "timeSpan" : {
                 "ending_to" :
                 {
-                    "fixedYear": 0,
-                    "event"    : "Dépendance",
-                    "group"    : null,
-                    "name"     : "M. Lionel MICHAUD"
+                    "fixedYear" : 0,
+                    "event"     : "Dépendance",
+                    "group"     : "Tous les Adultes",
+                    "order"     : "Date au plus tôt"
                 }
             }
         },
         {
-            "id" : "45325B0E-331D-480F-9C34-57C088289752",
-            "value" : 0,
+            "id" : "45325B0E-331D-480F-9C34-57C088289751",
+            "value" : 750,
             "proportional" : false,
-            "name" : "Assurances habitation",
-            "note" : "Actualisé le ",
+            "name" : "Nettoyage et services à domicile (apr dép)",
+            "note" : "Actualisé le 16/02/2021",
+            "timeSpan" : {
+                "spanning_from" :
+                {
+                    "fixedYear": 0,
+                    "event"     : "Dépendance",
+                    "group"     : "Tous les Adultes",
+                    "order"     : "Date au plus tôt"
+                },
+                "spanning_to" :
+                {
+                    "fixedYear": 0,
+                    "event"    : "Décès",
+                    "group"     : "Tous les Adultes",
+                    "order"     : "Date au plus tard"
+                }
+            }
+        },
+
+        {
+            "id" : "45325B0E-331D-480F-9C34-57C088289752",
+            "value" : 625,
+            "proportional" : false,
+            "name" : "Assurances habitation (maison)",
+            "note" : "Actualisé le 16/02/2021",
             "timeSpan" : {
                 "ending_to" :
                 {
-                    "fixedYear": 0,
-                    "event"    : "Dépendance",
-                    "group"    : null,
-                    "name"     : "M. Lionel MICHAUD"
+                    "fixedYear" : 0,
+                    "event"     : "Dépendance",
+                    "group"     : "Tous les Adultes",
+                    "order"     : "Date au plus tôt"
                 }
             }
         },
         {
             "id" : "45325B0E-331D-480F-9C34-57C088289753",
-            "value" : 0,
+            "value" : 300,
             "proportional" : false,
-            "name" : "Eau",
-            "note" : "Actualisé le ",
+            "name" : "Assurances habitation (appart)",
+            "note" : "Actualisé le 16/02/2021",
             "timeSpan" : {
-                "ending_to" :
+                "spanning_from" :
                 {
                     "fixedYear": 0,
-                    "event"    : "Dépendance",
-                    "group"    : null,
-                    "name"     : "M. Lionel MICHAUD"
+                    "event"     : "Dépendance",
+                    "group"     : "Tous les Adultes",
+                    "order"     : "Date au plus tôt"
+                },
+                "spanning_to" :
+                {
+                    "fixedYear": 0,
+                    "event"    : "Décès",
+                    "group"     : "Tous les Adultes",
+                    "order"     : "Date au plus tard"
                 }
             }
         },
+
         {
             "id" : "45325B0E-331D-480F-9C34-57C088289754",
-            "value" : 0,
-            "proportional" : false,
-            "name" : "Gaz",
-            "note" : "Actualisé le ",
+            "value" : 75,
+            "proportional" : true,
+            "name" : "Eau",
+            "note" : "Actualisé le 16/02/2021",
             "timeSpan" : {
                 "ending_to" :
                 {
-                    "fixedYear": 0,
-                    "event"    : "Dépendance",
-                    "group"    : null,
-                    "name"     : "M. Lionel MICHAUD"
+                    "fixedYear" : 0,
+                    "event"     : "Décès",
+                    "group"     : "Tous les Adultes",
+                    "order"     : "Date au plus tard"
                 }
             }
         },
         {
             "id" : "45325B0E-331D-480F-9C34-57C088289755",
-            "value" : 0,
-            "proportional" : false,
-            "name" : "Electricité",
-            "note" : "Actualisé le ",
+            "value" : 400,
+            "proportional" : true,
+            "name" : "Energies",
+            "note" : "Actualisé le 16/02/2021",
             "timeSpan" : {
                 "ending_to" :
                 {
-                    "fixedYear": 0,
-                    "event"    : "Dépendance",
-                    "group"    : null,
-                    "name"     : "M. Lionel MICHAUD"
+                    "fixedYear" : 0,
+                    "event"     : "Décès",
+                    "group"     : "Tous les Adultes",
+                    "order"     : "Date au plus tard"
                 }
             }
         },
         {
             "id" : "45325B0E-331D-480F-9C34-57C088289756",
-            "value" : 0,
+            "value" : 4500,
             "proportional" : false,
             "name" : "Travaux, réparation, entretien, aménagement...",
             "note" : "Actualisé le ",
             "timeSpan" : {
                 "ending_to" :
                 {
-                    "fixedYear": 0,
-                    "event"    : "Dépendance",
-                    "group"    : null,
-                    "name"     : "M. Lionel MICHAUD"
+                    "fixedYear" : 0,
+                    "event"     : "Dépendance",
+                    "group"     : "Tous les Adultes",
+                    "order"     : "Date au plus tôt"
                 }
             }
         },
@@ -100,7 +132,7 @@
             "id" : "45325B0E-331D-480F-9C34-57C088289757",
             "value" : 0,
             "proportional" : false,
-            "name" : "Logement Autres",
+            "name" : "Logement - Autres",
             "note" : "Actualisé le ",
             "timeSpan" : {
                 "ending_to" :

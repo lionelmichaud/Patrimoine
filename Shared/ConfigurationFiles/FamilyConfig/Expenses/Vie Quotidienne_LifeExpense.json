@@ -2,277 +2,204 @@
     "items" : [
         {
             "id" : "562EE2A1-4EF5-450D-8BAE-3E8B803928D1",
-            "value" : 0,
+            "value" : 3000,
             "proportional" : true,
             "name" : "Alimentation",
-            "note" : "Actualisé le ",
+            "note" : "Actualisé le 16/02/2021",
             "timeSpan" : {
-                "spanning_from" :
+                "ending_to" :
                 {
-                    "fixedYear": 2020,
-                    "event"    : null,
-                    "group"    : null,
-                    "name"     : ""
-                },
-                "spanning_to" :
-                {
-                    "fixedYear": 2025,
-                    "event"    : "Dépendance",
-                    "group"    : null,
-                    "name"     : "M. Lionel MICHAUD"
+                    "fixedYear": 0,
+                    "event"     : "Décès",
+                    "group"     : "Tous les Adultes",
+                    "order"     : "Date au plus tard"
                 }
             }
         },
+        
         {
             "id" : "562EE2A1-4EF5-450D-8BAE-3E8B803928D2",
-            "value" : 0,
+            "value" : 334,
             "proportional" : false,
             "name" : "Animaux domestiques",
-            "note" : "Actualisé le ",
+            "note" : "Actualisé le 16/02/2021",
             "timeSpan" : {
-                "spanning_from" :
+                "ending_to" :
                 {
-                    "fixedYear": 2020,
-                    "event"    : null,
-                    "group"    : null,
-                    "name"     : ""
-                },
-                "spanning_to" :
-                {
-                    "fixedYear": 2025,
-                    "event"    : "Dépendance",
-                    "group"    : null,
-                    "name"     : "M. Lionel MICHAUD"
+                    "fixedYear": 0,
+                    "event"     : "Dépendance",
+                    "group"     : "Tous les Adultes",
+                    "order"     : "Date au plus tard"
                 }
             }
         },
+        
         {
             "id" : "562EE2A1-4EF5-450D-8BAE-3E8B803928D3",
-            "value" : 0,
+            "value" : 300,
             "proportional" : true,
-            "name" : "Bien-être et soins (coiffeur, parfum...)",
-            "note" : "Actualisé le ",
+            "name" : "Bien-être & soins (coiffeur, parfum...)",
+            "note" : "Actualisé le 16/02/2021",
             "timeSpan" : {
-                "spanning_from" :
+                "ending_to" :
                 {
-                    "fixedYear": 2020,
-                    "event"    : null,
-                    "group"    : null,
-                    "name"     : ""
-                },
-                "spanning_to" :
-                {
-                    "fixedYear": 2025,
-                    "event"    : "Dépendance",
-                    "group"    : null,
-                    "name"     : "M. Lionel MICHAUD"
+                    "fixedYear": 0,
+                    "event"     : "Dépendance",
+                    "group"     : "Tous les Adultes",
+                    "order"     : "Date au plus tard"
                 }
             }
         },
+        
         {
             "id" : "562EE2A1-4EF5-450D-8BAE-3E8B803928D4",
-            "value" : 0,
+            "value" : 1670,
             "proportional" : false,
             "name" : "Bricolage & Jardinage",
-            "note" : "Actualisé le ",
+            "note" : "Actualisé le 16/02/2021",
             "timeSpan" : {
-                "spanning_from" :
+                "ending_to" :
                 {
-                    "fixedYear": 2020,
-                    "event"    : null,
-                    "group"    : null,
-                    "name"     : ""
-                },
-                "spanning_to" :
-                {
-                    "fixedYear": 2025,
+                    "fixedYear": 0,
                     "event"    : "Dépendance",
                     "group"    : null,
                     "name"     : "M. Lionel MICHAUD"
                 }
             }
         },
+        
         {
             "id" : "562EE2A1-4EF5-450D-8BAE-3E8B803928D5",
-            "value" : 0,
-            "proportional" : false,
-            "name" : "Electronique et informatique",
-            "note" : "Actualisé le ",
+            "value" : 750,
+            "proportional" : true,
+            "name" : "Electronique & informatique",
+            "note" : "Actualisé le 16/02/2021",
             "timeSpan" : {
-                "spanning_from" :
+                "ending_to" :
                 {
-                    "fixedYear": 2020,
-                    "event"    : null,
-                    "group"    : null,
-                    "name"     : ""
-                },
-                "spanning_to" :
-                {
-                    "fixedYear": 2025,
-                    "event"    : "Dépendance",
-                    "group"    : null,
-                    "name"     : "M. Lionel MICHAUD"
+                    "fixedYear" : 0,
+                    "event"     : "Dépendance",
+                    "group"     : "Tous les Adultes",
+                    "order"     : "Date au plus tôt"
                 }
             }
         },
+        
         {
             "id" : "562EE2A1-4EF5-450D-8BAE-3E8B803928D6",
-            "value" : 0,
-            "proportional" : false,
+            "value" : 100,
+            "proportional" : true,
             "name" : "Equipements sportifs",
-            "note" : "Actualisé le ",
+            "note" : "Actualisé le 16/02/2021",
             "timeSpan" : {
-                "spanning_from" :
+                "ending_to" :
                 {
-                    "fixedYear": 2020,
-                    "event"    : null,
-                    "group"    : null,
-                    "name"     : ""
-                },
-                "spanning_to" :
-                {
-                    "fixedYear": 2025,
-                    "event"    : "Dépendance",
-                    "group"    : null,
-                    "name"     : "M. Lionel MICHAUD"
+                    "fixedYear" : 0,
+                    "event"     : "Dépendance",
+                    "group"     : "Tous les Adultes",
+                    "order"     : "Date au plus tôt"
                 }
             }
         },
+        
         {
             "id" : "562EE2A1-4EF5-450D-8BAE-3E8B803928D7",
             "value" : 0,
-            "proportional" : false,
+            "proportional" : true,
             "name" : "Pressing, repassage",
-            "note" : "Actualisé le ",
+            "note" : "Actualisé le 16/02/2021",
             "timeSpan" : {
-                "spanning_from" :
+                "ending_to" :
                 {
-                    "fixedYear": 2020,
-                    "event"    : null,
-                    "group"    : null,
-                    "name"     : ""
-                },
-                "spanning_to" :
-                {
-                    "fixedYear": 2025,
-                    "event"    : "Dépendance",
-                    "group"    : null,
-                    "name"     : "M. Lionel MICHAUD"
+                    "fixedYear" : 0,
+                    "event"     : "Dépendance",
+                    "group"     : "Tous les Adultes",
+                    "order"     : "Date au plus tard"
                 }
             }
         },
+        
         {
             "id" : "562EE2A1-4EF5-450D-8BAE-3E8B803928D8",
-            "value" : 0,
-            "proportional" : false,
+            "value" : 350,
+            "proportional" : true,
             "name" : "Livres, musique, jouets, bijous",
-            "note" : "Actualisé le ",
+            "note" : "Actualisé le 16/02/2021",
             "timeSpan" : {
-                "spanning_from" :
+                "ending_to" :
                 {
-                    "fixedYear": 2020,
-                    "event"    : null,
-                    "group"    : null,
-                    "name"     : ""
-                },
-                "spanning_to" :
-                {
-                    "fixedYear": 2025,
-                    "event"    : "Dépendance",
-                    "group"    : null,
-                    "name"     : "M. Lionel MICHAUD"
+                    "fixedYear" : 0,
+                    "event"     : "Dépendance",
+                    "group"     : "Tous les Adultes",
+                    "order"     : "Date au plus tard"
                 }
             }
         },
+        
         {
             "id" : "562EE2A1-4EF5-450D-8BAE-3E8B803928D9",
-            "value" : 0,
+            "value" : 2000,
             "proportional" : false,
-            "name" : "Mobiliers, électroménager, décoraion",
-            "note" : "Actualisé le ",
+            "name" : "Mobiliers, électroménager, décoration",
+            "note" : "Actualisé le 16/02/2021",
             "timeSpan" : {
-                "spanning_from" :
+                "ending_to" :
                 {
-                    "fixedYear": 2020,
-                    "event"    : null,
-                    "group"    : null,
-                    "name"     : ""
-                },
-                "spanning_to" :
-                {
-                    "fixedYear": 2025,
-                    "event"    : "Dépendance",
-                    "group"    : null,
-                    "name"     : "M. Lionel MICHAUD"
+                    "fixedYear" : 0,
+                    "event"     : "Dépendance",
+                    "group"     : "Tous les Adultes",
+                    "order"     : "Date au plus tôt"
                 }
             }
         },
+        
         {
             "id" : "562EE2A1-4EF5-450D-8BAE-3E8B803928DA",
-            "value" : 0,
+            "value" : 300,
             "proportional" : false,
-            "name" : "tabac",
-            "note" : "Actualisé le ",
+            "name" : "Tabac",
+            "note" : "Actualisé le 16/02/2021",
             "timeSpan" : {
-                "spanning_from" :
+                "ending_to" :
                 {
-                    "fixedYear": 2020,
-                    "event"    : null,
-                    "group"    : null,
-                    "name"     : ""
-                },
-                "spanning_to" :
-                {
-                    "fixedYear": 2025,
+                    "fixedYear": 0,
                     "event"    : "Dépendance",
                     "group"    : null,
                     "name"     : "M. Lionel MICHAUD"
                 }
             }
         },
+        
         {
             "id" : "562EE2A1-4EF5-450D-8BAE-3E8B803928DB",
-            "value" : 0,
-            "proportional" : false,
-            "name" : "Vêtements et accéssoires",
-            "note" : "Actualisé le ",
+            "value" : 500,
+            "proportional" : true,
+            "name" : "Vêtements & accessoires",
+            "note" : "Actualisé le 16/02/2021",
             "timeSpan" : {
-                "spanning_from" :
+                "ending_to" :
                 {
-                    "fixedYear": 2020,
-                    "event"    : null,
-                    "group"    : null,
-                    "name"     : ""
-                },
-                "spanning_to" :
-                {
-                    "fixedYear": 2025,
-                    "event"    : "Dépendance",
-                    "group"    : null,
-                    "name"     : "M. Lionel MICHAUD"
+                    "fixedYear" : 0,
+                    "event"     : "Dépendance",
+                    "group"     : "Tous les Adultes",
+                    "order"     : "Date au plus tard"
                 }
             }
         },
+        
         {
             "id" : "562EE2A1-4EF5-450D-8BAE-3E8B803928DC",
-            "value" : 0,
-            "proportional" : false,
-            "name" : "Vie Autres",
-            "note" : "Actualisé le ",
+            "value" : 150,
+            "proportional" : true,
+            "name" : "Vie - Autres",
+            "note" : "Actualisé le 16/02/2021",
             "timeSpan" : {
-                "spanning_from" :
+                "ending_to" :
                 {
-                    "fixedYear": 2020,
-                    "event"    : null,
-                    "group"    : null,
-                    "name"     : ""
-                },
-                "spanning_to" :
-                {
-                    "fixedYear": 2025,
-                    "event"    : "Dépendance",
-                    "group"    : null,
-                    "name"     : "M. Lionel MICHAUD"
+                    "fixedYear" : 0,
+                    "event"     : "Décès",
+                    "group"     : "Tous les Adultes",
+                    "order"     : "Date au plus tard"
                 }
             }
         }

@@ -53,8 +53,10 @@ enum TimeSpan: Hashable {
     }
     
     // MARK: - Methods
-
+    
+    /// True si l'année demandée est inclue dans la plage de validité
     func contains (_ year: Int) -> Bool { // swiftlint:disable:this cyclomatic_complexity
+        // la dernière année est exclue
         switch self {
             case .permanent:
                 return true

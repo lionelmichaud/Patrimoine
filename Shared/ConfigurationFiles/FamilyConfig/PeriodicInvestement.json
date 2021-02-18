@@ -33,7 +33,7 @@
                 "contractualRate_fixedRate" : 4.0
             },
             "type" : {
-                "lifeInsurance_taxes"  : false,
+                "lifeInsurance_taxes" : false,
                 "lifeInsurance_clause" : {
                     "isDismembered"     : false,
                     "fullRecipients"    :
@@ -45,7 +45,352 @@
                     "bareRecipients"    : [ ]
                 }
             },
-            "lastYear"                : 2080
+            "lastYear"                : 2032
+        },
+        
+        {
+            "id"                      : "3AB17EE6-0D8D-4CE9-AB86-A2B41943CB38",
+            "name"                    : "Tontine vanessa 2",
+            "note"                    : "Ouvert le 01/04/2010\nActualisé le 18/09/2020",
+            "ownership"               :
+            {
+                "est_démembré"        : false,
+                "plein_propriétaires" :
+                [
+                    {
+                        "name"     : "Mme. Vanessa MICHAUD",
+                        "fraction" : 100
+                    }
+                ],
+                "nue_propriétaires"   :
+                [ ],
+                "usufruitiers"        :
+                [ ]
+            },
+            "firstYear"               : 2010,
+            "initialInterest"         : 0,
+            "initialValue"            : 14000,
+            "yearlyPayement"          : 0,
+            "yearlyCost"              : 0,
+            "interestRateType" : {
+                "contractualRate_fixedRate" : 4.0
+            },
+            "type" : {
+                "lifeInsurance_taxes" : false,
+                "lifeInsurance_clause" : {
+                    "isDismembered"     : false,
+                    "fullRecipients"    :
+                    [
+                        "Mme Lou-Ann MICHAUD",
+                        "M. Arthur MICHAUD"
+                    ],
+                    "usufructRecipient" : "",
+                    "bareRecipients"    : [ ]
+                }
+            },
+            "lastYear"                : 2024
+        },
+        
+        {
+            "id"                      : "3AB17EE6-0D8D-4CE9-AB86-A2540943CB38",
+            "name"                    : "Tontine vanessa 3",
+            "note"                    : "Ouvert le 01/04/2010\nActualisé le 18/09/2020",
+            "ownership"               :
+            {
+                "est_démembré"        : false,
+                "plein_propriétaires" :
+                [
+                    {
+                        "name"     : "Mme. Vanessa MICHAUD",
+                        "fraction" : 100
+                    }
+                ],
+                "nue_propriétaires"   :
+                [ ],
+                "usufruitiers"        :
+                [ ]
+            },
+            "firstYear"               : 2010,
+            "initialInterest"         : 0,
+            "initialValue"            : 4626,
+            "yearlyPayement"          : 0,
+            "yearlyCost"              : 0,
+            "interestRateType" : {
+                "contractualRate_fixedRate" : 4.0
+            },
+            "type" : {
+                "lifeInsurance_taxes" : false,
+                "lifeInsurance_clause" : {
+                    "isDismembered"     : false,
+                    "fullRecipients"    :
+                    [
+                        "Mme Lou-Ann MICHAUD",
+                        "M. Arthur MICHAUD"
+                    ],
+                    "usufructRecipient" : "",
+                    "bareRecipients"    : [ ]
+                }
+            },
+            "lastYear"                : 2025
+        },
+        
+       {
+           "id"           : "4A6940AE-3D5B-4F3E-BB23-CF076F9CB5B7",
+           "name"         : "Tontine Lionel 1",
+           "note"         : "Ouvert le 01/04/2010\nActualisé le 18/09/2020",
+           "ownership"               :
+           {
+               "est_démembré"        : false,
+               "plein_propriétaires" :
+               [
+                   {
+                       "name"     : "M. Lionel MICHAUD",
+                       "fraction" : 100
+                   }
+               ],
+               "nue_propriétaires"   :
+               [ ],
+               "usufruitiers"        :
+               [ ]
+           },
+           "firstYear"               : 2010,
+           "initialInterest"         : 0,
+           "initialValue"            : 27321,
+           "interestRateType" : {
+               "contractualRate_fixedRate" : 4.0
+           },
+           "yearlyPayement"          : 0,
+           "yearlyCost"              : 0,
+           "type" : {
+               "lifeInsurance_taxes" : false,
+               "lifeInsurance_clause" : {
+                   "isDismembered"     : false,
+                   "fullRecipients"    :
+                   [
+                       "Mme Lou-Ann MICHAUD",
+                       "M. Arthur MICHAUD"
+                   ],
+                   "usufructRecipient" : "",
+                   "bareRecipients"    : [ ]
+               }
+            },
+            "lastYear"                : 2022
+        },
+       
+        {
+            "id"           : "4A6940AE-3D5B-4F3E-BB23-CF076F9CB5B8",
+            "name"         : "Tontine Lionel 2",
+            "note"         : "Ouvert le 01/04/2010\nActualisé le 18/09/2020",
+            "ownership"               :
+            {
+                "est_démembré"        : false,
+                "plein_propriétaires" :
+                [
+                    {
+                        "name"     : "M. Lionel MICHAUD",
+                        "fraction" : 100
+                    }
+                ],
+                "nue_propriétaires"   :
+                [ ],
+                "usufruitiers"        :
+                [ ]
+            },
+            "firstYear"               : 2010,
+            "initialInterest"         : 0,
+            "initialValue"            : 27636,
+            "interestRateType" : {
+                "contractualRate_fixedRate" : 4.0
+            },
+            "yearlyPayement"          : 0,
+            "yearlyCost"              : 0,
+            "type" : {
+                "lifeInsurance_taxes" : false,
+                "lifeInsurance_clause" : {
+                    "isDismembered"     : false,
+                    "fullRecipients"    :
+                    [
+                        "Mme Lou-Ann MICHAUD",
+                        "M. Arthur MICHAUD"
+                    ],
+                    "usufructRecipient" : "",
+                    "bareRecipients"    : [ ]
+                }
+            },
+            "lastYear"                : 2023
+        },
+        
+        {
+            "id"           : "4A6940AE-3D5B-4F3E-BB23-CF076F9CB5B9",
+            "name"         : "Tontine Lionel 3",
+            "note"         : "Ouvert le 01/04/2010\nActualisé le 18/09/2020",
+            "ownership"               :
+            {
+                "est_démembré"        : false,
+                "plein_propriétaires" :
+                [
+                    {
+                        "name"     : "M. Lionel MICHAUD",
+                        "fraction" : 100
+                    }
+                ],
+                "nue_propriétaires"   :
+                [ ],
+                "usufruitiers"        :
+                [ ]
+            },
+            "firstYear"               : 2010,
+            "initialInterest"         : 0,
+            "initialValue"            : 27924,
+            "interestRateType" : {
+                "contractualRate_fixedRate" : 4.0
+            },
+            "yearlyPayement"          : 0,
+            "yearlyCost"              : 0,
+            "type" : {
+                "lifeInsurance_taxes" : false,
+                "lifeInsurance_clause" : {
+                    "isDismembered"     : false,
+                    "fullRecipients"    :
+                    [
+                        "Mme Lou-Ann MICHAUD",
+                        "M. Arthur MICHAUD"
+                    ],
+                    "usufructRecipient" : "",
+                    "bareRecipients"    : [ ]
+                }
+            },
+            "lastYear"                : 2024
+        },
+        
+        {
+            "id"           : "4A6940AE-3D5B-4F3E-BB23-CF176F9CB5B6",
+            "name"         : "Tontine Lionel 4",
+            "note"         : "Ouvert le 01/06/2013\nActualisé le 18/09/2020",
+            "ownership"               :
+            {
+                "est_démembré"        : false,
+                "plein_propriétaires" :
+                [
+                    {
+                        "name"     : "M. Lionel MICHAUD",
+                        "fraction" : 100
+                    }
+                ],
+                "nue_propriétaires"   :
+                [ ],
+                "usufruitiers"        :
+                [ ]
+            },
+            "firstYear"               : 2013,
+            "initialInterest"         : 0,
+            "initialValue"            : 8848,
+            "interestRateType" : {
+                "contractualRate_fixedRate" : 4.0
+            },
+            "yearlyPayement"          : 0,
+            "yearlyCost"              : 0,
+            "type" : {
+                "lifeInsurance_taxes" : false,
+                "lifeInsurance_clause" : {
+                    "isDismembered"     : false,
+                    "fullRecipients"    :
+                    [
+                        "Mme Lou-Ann MICHAUD",
+                        "M. Arthur MICHAUD"
+                    ],
+                    "usufructRecipient" : "",
+                    "bareRecipients"    : [ ]
+                }
+            },
+            "lastYear"                : 2027
+        },
+        
+        {
+            "id"           : "4A6940AE-3D5B-4F3E-BB23-CF276F9CB5B6",
+            "name"         : "Tontine Lionel 5",
+            "note"         : "Ouvert le 01/06/2013\nActualisé le 18/09/2020",
+            "ownership"               :
+            {
+                "est_démembré"        : false,
+                "plein_propriétaires" :
+                [
+                    {
+                        "name"     : "M. Lionel MICHAUD",
+                        "fraction" : 100
+                    }
+                ],
+                "nue_propriétaires"   :
+                [ ],
+                "usufruitiers"        :
+                [ ]
+            },
+            "firstYear"               : 2013,
+            "initialInterest"         : 0,
+            "initialValue"            : 8699,
+            "interestRateType" : {
+                "contractualRate_fixedRate" : 4.0
+            },
+            "yearlyPayement"          : 0,
+            "yearlyCost"              : 0,
+            "type" : {
+                "lifeInsurance_taxes" : false,
+                "lifeInsurance_clause" : {
+                    "isDismembered"     : false,
+                    "fullRecipients"    :
+                    [
+                        "Mme Lou-Ann MICHAUD",
+                        "M. Arthur MICHAUD"
+                    ],
+                    "usufructRecipient" : "",
+                    "bareRecipients"    : [ ]
+                }
+            },
+            "lastYear"                : 2028
+        },
+        
+        {
+            "id"           : "4A6940AE-3D5B-4F3E-BB23-CF376F9CB5B6",
+            "name"         : "Tontine Lionel 6",
+            "note"         : "Ouvert le 01/06/2013\nActualisé le 18/09/2020",
+            "ownership"               :
+            {
+                "est_démembré"        : false,
+                "plein_propriétaires" :
+                [
+                    {
+                        "name"     : "M. Lionel MICHAUD",
+                        "fraction" : 100
+                    }
+                ],
+                "nue_propriétaires"   :
+                [ ],
+                "usufruitiers"        :
+                [ ]
+            },
+            "firstYear"               : 2013,
+            "initialInterest"         : 0,
+            "initialValue"            : 8536,
+            "interestRateType" : {
+                "contractualRate_fixedRate" : 4.0
+            },
+            "yearlyPayement"          : 0,
+            "yearlyCost"              : 0,
+            "type" : {
+                "lifeInsurance_taxes" : false,
+                "lifeInsurance_clause" : {
+                    "isDismembered"     : false,
+                    "fullRecipients"    :
+                    [
+                        "Mme Lou-Ann MICHAUD",
+                        "M. Arthur MICHAUD"
+                    ],
+                    "usufructRecipient" : "",
+                    "bareRecipients"    : [ ]
+                }
+            },
+            "lastYear"                : 2029
         }
+        
     ]
 }

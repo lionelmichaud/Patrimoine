@@ -1,69 +1,43 @@
 {
     "items" : [
         {
-            "id" : "B4EFF395-7A51-07AB-AD27-E7461ECB9ADA",
-            "value" : 380,
-            "proportional" : true,
-            "name" : "Services financiers",
-            "note" : "Actualisé le ",
-            "timeSpan" : {
-                "ending_to" :
-                {
-                    "fixedYear": 0,
-                    "event"    : "Décès",
-                    "group"    : null,
-                    "name"     : "Mme. Vanessa MICHAUD"
-                }
-            }
-        },
-        {
-            "id" : "B4EFF395-7A51-07AB-AD27-E7461ECB9ADB",
-            "value" : 968,
+            "id" : "B4EFF395-7A51-07AB-AD27-E7461ECB9AD0",
+            "value" : 132,
             "proportional" : true,
             "name" : "Frais bancaires et de gestion",
-            "note" : "Actualisé le ",
+            "note" : "Actualisé le 16/02/2021 \nSCI - Frais Bancaires QONTO 11€/mois",
             "timeSpan" : {
-                "ending_to" :
-                {
-                    "fixedYear": 0,
-                    "event"    : "Décès",
-                    "group"    : null,
-                    "name"     : "Mme. Vanessa MICHAUD"
-                }
+                "permanent" : true
             }
         },
+        
         {
-            "id" : "B4EFF395-7A51-07AB-AD27-E7461ECB9ADC",
-            "value" : 210,
-            "proportional" : true,
-            "name" : "Services pro (avocat, notaire, compatble...)",
-            "note" : "Actualisé le ",
+            "id" : "B4EFF395-7A51-07AB-AD27-E7461ECB9AD1",
+            "value" : 1430,
+            "proportional" : false,
+            "name" : "Services pro (avocat, notaire, comptable...)",
+            "note" : "Actualisé le 16/02/2021 \nSCI - Expert Comptable 600€/an \nSCI - Conseil en Gestion de Patrimoine 720€/an\nAssurance protection juridique 110€/an",
             "timeSpan" : {
-                "ending_to" :
-                {
-                    "fixedYear": 0,
-                    "event"    : "Décès",
-                    "group"    : null,
-                    "name"     : "Mme. Vanessa MICHAUD"
-                }
+                "permanent" : true
             }
         },
+        
         {
-            "id" : "B4EFF395-7A51-07AB-AD27-E7461ECB9ADD",
-            "value" : 210,
+            "id" : "B4EFF395-7A51-07AB-AD27-E7461ECB9AD2",
+            "value" : 0,
             "proportional" : true,
-            "name" : "Services Autres",
+            "name" : "Services - Autres",
             "note" : "Actualisé le ",
             "timeSpan" : {
-                "ending_to" :
-                {
-                    "fixedYear": 0,
-                    "event"    : "Décès",
-                    "group"    : null,
-                    "name"     : "Mme. Vanessa MICHAUD"
+                "ending_to" : {
+                    "fixedYear" : 0,
+                    "event"     : "Dépendance",
+                    "group"     : "Tous les Adultes",
+                    "order"     : "Date au plus tard",
                 }
             }
         }
+        
     ],
     "fileNamePrefix" : ""
 }

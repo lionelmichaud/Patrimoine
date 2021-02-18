@@ -9,12 +9,13 @@
             "timeSpan" : {
                 "starting_from" :
                 {
-                    "fixedYear": 2028,
-                    "event"    : "Fin d'activité profesionelle",
+                    "fixedYear": 0,
+                    "event"    : "Fin d'activité professionnelle",
                     "name"     : "M. Lionel MICHAUD"
                 }
             }
         },
+        
         {
             "id" : "B4EFF395-7A51-47AB-AD29-E7461ECB9ADA",
             "value" : 0,
@@ -24,12 +25,13 @@
             "timeSpan" : {
                 "ending_to" :
                 {
-                    "fixedYear": 2022,
-                    "event"    : "Fin d'activité profesionelle",
+                    "fixedYear": 0,
+                    "event"    : "Fin d'activité professionnelle",
                     "name"     : "Mme. Vanessa MICHAUD"
                 }
             }
         },
+        
         {
             "id" : "562EE2A1-4FF5-450D-8BAE-3E8B803928DA",
             "value" : 0,
@@ -40,7 +42,7 @@
                 "spanning_from" :
                 {
                     "fixedYear" : 0,
-                    "event"     : "Fin d'activité profesionelle",
+                    "event"     : "Fin d'activité professionnelle",
                     "group"     : "Tous les Adultes",
                     "order"     : "Date au plus tôt",
                 },
@@ -52,6 +54,7 @@
                 }
             }
         },
+        
         {
             "id" : "662EE2A1-4FF5-450D-8BAE-3E8B803928DA",
             "value" : 0,
@@ -62,6 +65,7 @@
                 "exceptional_in" : 2026
             }
         },
+        
         {
             "id" : "680924FC-ABD5-4587-BA4B-4DDD6F7F04D5",
             "value" : 0,
@@ -80,16 +84,39 @@
                 }
             }
         },
+        
         {
-            "id" : "29C6B93B-3A68-4963-AF77-775E65451189",
-            "value" : 1500,
+            "id" : "29C6B93B-3A68-4963-AF88-775E65451189",
+            "value" : 150,
             "proportional" : true,
-            "name" : "Adultes",
-            "note" : "Actualisé le ",
+            "name" : "Retrait cash CB",
+            "note" : "Actualisé le 16/02/2021",
             "timeSpan" : {
-                "permanent" : true
+                "ending_to" : {
+                    "fixedYear" : 0,
+                    "event"     : "Dépendance",
+                    "group"     : "Tous les Adultes",
+                    "order"     : "Date au plus tard",
+                }
+            }
+        },
+        
+        {
+            "id" : "29C6B93B-3A68-4963-AF88-775E65451190",
+            "value" : 150,
+            "proportional" : true,
+            "name" : "Non catégorisé",
+            "note" : "Actualisé le 16/02/2021",
+            "timeSpan" : {
+                "ending_to" : {
+                    "fixedYear" : 0,
+                    "event"     : "Dépendance",
+                    "group"     : "Tous les Adultes",
+                    "order"     : "Date au plus tard",
+                }
             }
         }
+        
     ],
     "fileNamePrefix" : ""
 }

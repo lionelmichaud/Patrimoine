@@ -1,98 +1,163 @@
 {
     "items" : [
         {
-            "id" : "562EE2A1-4FF5-450D-7BAE-3E8B803928DA",
-            "value" : 0,
+            "id" : "562EE2A1-4FF5-450D-7BAE-3E8B803928D0",
+            "value" : 2880,
             "proportional" : false,
             "name" : "Argent de poche",
-            "note" : "Actualisé le ",
+            "note" : "Actualisé le 16/02/2021\n120€/mois/enfant",
             "timeSpan" : {
-                "spanning_from" :
-                {
-                    "fixedYear": 2024,
-                    "event"    : "Liquidation de pension",
-                    "group"    : null,
-                    "name"     : "M. Lionel MICHAUD"
+                "spanning_from" : {
+                    "fixedYear" : 0,
+                    "event" : "Début des études supérieurs",
+                    "group" : "Tous les Enfants",
+                    "order" : "Date au plus tôt",
                 },
-                "spanning_to" :
-                {
-                    "fixedYear": 2025,
-                    "event"    : "Dépendance",
-                    "group"    : null,
-                    "name"     : "M. Lionel MICHAUD"
+                "spanning_to" : {
+                    "fixedYear" : 0,
+                    "event" : "Indépendance financière",
+                    "group" : "Tous les Enfants",
+                    "order" : "Date au plus tard",
                 }
             }
         },
+        
         {
-            "id" : "562EE2A1-4FF5-450D-7BAE-3E8B803928DB",
-            "value" : 0,
+            "id" : "562EE2A1-4FF5-450D-7BAE-3E8B803928D1",
+            "value" : 1870,
             "proportional" : false,
-            "name" : "Etudes (formation, fournitures, cantine...)",
-            "note" : "Actualisé le ",
+            "name" : "Etudes Lycée+CP Lou-Ann (formation, fournitures...)",
+            "note" : "Actualisé le 16/02/2021\nJusqu'à l'entrée dans l'ensignement supérieur",
             "timeSpan" : {
-                "spanning_from" :
-                {
-                    "fixedYear": 2024,
-                    "event"    : "Liquidation de pension",
-                    "group"    : null,
-                    "name"     : "M. Lionel MICHAUD"
-                },
-                "spanning_to" :
-                {
-                    "fixedYear": 2025,
-                    "event"    : "Dépendance",
-                    "group"    : null,
-                    "name"     : "M. Lionel MICHAUD"
+                "ending_to" : {
+                    "fixedYear" : 0,
+                    "event"     : "Début des études supérieurs",
+                    "group"     : null,
+                    "name"      : "Mme Lou-Ann MICHAUD"
                 }
             }
         },
+        
         {
-            "id" : "562EE2A1-4FF5-450D-7BAE-3E8B803928DC",
-            "value" : 0,
+            "id" : "562EE2A1-4FF5-450D-7BAE-3E8B803928D2",
+            "value" : 1870,
             "proportional" : false,
-            "name" : "Pension",
-            "note" : "Actualisé le ",
+            "name" : "Etudes Lycée+CP Arthur (formation, fournitures...)",
+            "note" : "Actualisé le 16/02/2021\nJusqu'à l'entrée dans l'ensignement supérieur",
             "timeSpan" : {
-                "spanning_from" :
-                {
-                    "fixedYear": 2024,
-                    "event"    : "Liquidation de pension",
-                    "group"    : null,
-                    "name"     : "M. Lionel MICHAUD"
-                },
-                "spanning_to" :
-                {
-                    "fixedYear": 2025,
-                    "event"    : "Dépendance",
-                    "group"    : null,
-                    "name"     : "M. Lionel MICHAUD"
+                "ending_to" : {
+                    "fixedYear" : 0,
+                    "event"     : "Début des études supérieurs",
+                    "group"     : null,
+                    "name"      : "M. Arthur MICHAUD"
                 }
             }
         },
+        
         {
-            "id" : "562EE2A1-4FF5-450D-7BAE-3E8B803928DD",
+            "id" : "562EE2A1-4FF5-450D-7BAE-3E8B803928D3",
+            "value" : 12000,
+            "proportional" : false,
+            "name" : "Etudes Université Lou-Ann (formation, fournitures...)",
+            "note" : "Actualisé le 16/02/2021",
+            "timeSpan" : {
+                "spanning_from" : {
+                    "fixedYear" : 0,
+                    "event"     : "Début des études supérieurs",
+                    "group"     : null,
+                    "name"      : "Mme Lou-Ann MICHAUD"
+                },
+                "spanning_to" : {
+                    "fixedYear" : 0,
+                    "event"     : "Indépendance financière",
+                    "group"     : null,
+                    "name"      : "Mme Lou-Ann MICHAUD"
+                }
+            }
+        },
+        
+        {
+            "id" : "562EE2A1-4FF5-450D-7BAE-3E8B803928D4",
+            "value" : 12000,
+            "proportional" : false,
+            "name" : "Etudes Université Arthur (formation, fournitures...)",
+            "note" : "Actualisé le 16/02/2021",
+            "timeSpan" : {
+                "spanning_from" : {
+                    "fixedYear" : 0,
+                    "event"     : "Début des études supérieurs",
+                    "group"     : null,
+                    "name"      : "M. Arthur MICHAUD"
+                },
+                "spanning_to" : {
+                    "fixedYear" : 0,
+                    "event"     : "Indépendance financière",
+                    "group"     : null,
+                    "name"      : "M. Arthur MICHAUD"
+                }
+            }
+        },
+        
+        {
+            "id" : "562EE2A1-4FF5-450D-7BAE-3E8B803928D5",
+            "value" : 6400,
+            "proportional" : false,
+            "name" : "Pension post-bac Lou-Ann",
+            "note" : "Actualisé le 16/02/2021\n Loyer studio 500€/mois\nEau, Gaz & Electricité 400€/an\nNourriture 10€/jour",
+            "timeSpan" : {
+                "spanning_from" : {
+                    "fixedYear" : 2023,
+                },
+                "spanning_to" : {
+                    "fixedYear" : 0,
+                    "event"     : "Indépendance financière",
+                    "group"     : null,
+                    "name"      : "Mme Lou-Ann MICHAUD"
+                }
+            }
+        },
+        
+        {
+            "id" : "562EE2A1-4FF5-450D-7BAE-3E8B803928D6",
+            "value" : 6400,
+            "proportional" : false,
+            "name" : "Pension post-bac Arthur",
+            "note" : "Actualisé le 16/02/2021\nLoyer studio 500€/mois\nEau, Gaz & Electricité 400€/an\nNourriture comptée dans Dépense de Vie",
+            "timeSpan" : {
+                "spanning_from" : {
+                    "fixedYear" : 2024,
+                },
+                "spanning_to" : {
+                    "fixedYear" : 0,
+                    "event"     : "Indépendance financière",
+                    "group"     : null,
+                    "name"      : "M. Arthur MICHAUD"
+                }
+            }
+        },
+        
+        {
+            "id" : "562EE2A1-4FF5-450D-7BAE-3E8B803928D7",
             "value" : 0,
             "proportional" : false,
-            "name" : "Famille Autres",
-            "note" : "Actualisé le ",
+            "name" : "Education & Famille - Autres",
+            "note" : "Actualisé le 16/02/2021",
             "timeSpan" : {
-                "spanning_from" :
-                {
-                    "fixedYear": 2024,
-                    "event"    : "Liquidation de pension",
-                    "group"    : null,
-                    "name"     : "M. Lionel MICHAUD"
+                "spanning_from" : {
+                    "fixedYear" : 0,
+                    "event" : "Début des études supérieurs",
+                    "group" : "Tous les Enfants",
+                    "order" : "Date au plus tôt",
                 },
-                "spanning_to" :
-                {
-                    "fixedYear": 2025,
-                    "event"    : "Dépendance",
-                    "group"    : null,
-                    "name"     : "M. Lionel MICHAUD"
+                "spanning_to" : {
+                    "fixedYear" : 0,
+                    "event" : "Indépendance financière",
+                    "group" : "Tous les Enfants",
+                    "order" : "Date au plus tard",
                 }
             }
         }
-   ],
+    ],
     "fileNamePrefix" : ""
 }
 

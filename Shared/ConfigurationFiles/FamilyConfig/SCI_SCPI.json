@@ -10,7 +10,7 @@
         {
             "id"           : "282CC28F-0BC2-4323-AEA3-1FD3FD6E0EBF",
             "name"         : "EPARGNE PIERRE-Voisin",
-            "note"         : "Actualisé le 11/09/2020",
+            "note"         : "Actualisé le 15/02/2021",
             "ownership"               :
             {
                 "est_démembré"        : false,
@@ -37,12 +37,13 @@
             "willBeSold"   : false,
             "sellingDate"  : "2100-04-23T21 :53 :04Z",
             "revaluatRate" : 0,
-            "interestRate" : 5.35
+            "interestRate" : 5.36
         },
+        
         {
             "id"           : "282CC28F-0BC2-4323-AEA3-1FD3FD6E0EBA",
             "name"         : "PIERVAL SANTE-Euryale",
-            "note"         : "Actualisé le 05/12/2020",
+            "note"         : "Actualisé le 15/02/2021",
             "ownership"               :
             {
                 "est_démembré"        : false,
@@ -69,12 +70,13 @@
             "willBeSold"   : false,
             "sellingDate"  : "2100-04-23T21 :53 :04Z",
             "revaluatRate" : 0,
-            "interestRate" : 5.0
+            "interestRate" : 4.95
         },
+        
         {
             "id"           : "282CC28F-0BC2-4323-AEA3-1FD3FD6E0EBB",
             "name"         : "EFIMMO 1-Sofidy",
-            "note"         : "Actualisé le 11/09/2020",
+            "note"         : "Actualisé le 15/02/2021",
             "ownership"               :
             {
                 "est_démembré"        : false,
@@ -101,12 +103,13 @@
             "willBeSold"   : false,
             "sellingDate"  : "2100-04-23T21 :53 :04Z",
             "revaluatRate" : 0,
-            "interestRate" : 4.5
+            "interestRate" : 4.8
         },
+        
         {
             "id"           : "282CC28F-0BC2-4323-AEA3-1FD3FD6E0ECB",
             "name"         : "IMMORENTE-Sofidy",
-            "note"         : "Actualisé le 11/09/2020",
+            "note"         : "Actualisé le 15/02/2021",
             "ownership"               :
             {
                 "est_démembré"        : false,
@@ -133,12 +136,13 @@
             "willBeSold"   : false,
             "sellingDate"  : "2100-04-23T21 :53 :04Z",
             "revaluatRate" : 0,
-            "interestRate" : 4.5
+            "interestRate" : 4.31
         },
+        
         {
             "id"           : "282CC28F-0BC2-4323-AEA3-1FD3FD6E0EDB",
             "name"         : "PATRIMMO COMMERCE-Primonial",
-            "note"         : "Actualisé le 11/09/2020",
+            "note"         : "Actualisé le 15/02/2021",
             "ownership"               :
             {
                 "est_démembré"        : false,
@@ -165,12 +169,12 @@
             "willBeSold"   : false,
             "sellingDate"  : "2100-04-23T21 :53 :04Z",
             "revaluatRate" : 0,
-            "interestRate" : 4.5
+            "interestRate" : 4.4
         },
         {
             "id"           : "282CC28F-0BC2-4323-AEA3-0FD3FD6E0EAB",
             "name"         : "FONCIÈRE DES PRATICIENS",
-            "note"         : "Actualisé le 05/12/2020",
+            "note"         : "Actualisé le 15/02/2021",
             "ownership"               :
             {
                 "est_démembré"        : false,
@@ -197,7 +201,7 @@
             "willBeSold"   : false,
             "sellingDate"  : "2100-04-23T21 :53 :04Z",
             "revaluatRate" : 0,
-            "interestRate" : 5.0
+            "interestRate" : 5.1
         }
 
 

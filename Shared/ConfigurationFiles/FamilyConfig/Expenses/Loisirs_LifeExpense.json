@@ -2,61 +2,61 @@
     "items" : [
         {
             "id" : "45325B0E-331D-481F-9C34-57C088289751",
-            "value" : 0,
+            "value" : 70,
             "proportional" : true,
             "name" : "Divertissement - culture",
             "note" : "Actualisé le ",
             "timeSpan" : {
                 "ending_to" : {
-                    "fixedYear" : 170,
+                    "fixedYear" : 0,
                     "event"     : "Dépendance",
-                    "group"    : null,
-                    "name"      : "M. Lionel MICHAUD"
+                    "group"     : "Tous les Adultes",
+                    "order"     : "Date au plus tard",
                 }
             }
         },
         {
             "id" : "45325B0E-331D-481F-9C34-57C088289753",
-            "value" : 547,
+            "value" : 350,
             "proportional" : true,
             "name" : "Club / association (sport, hobby, art...)",
-            "note" : "Actualisé le ",
+            "note" : "Actualisé le 16/02/2021\nTennis, Piscine, Pelote, Surf, Yoga...",
             "timeSpan" : {
                 "ending_to" : {
                     "fixedYear" : 0,
                     "event"     : "Dépendance",
-                    "group"    : null,
-                    "name"      : "M. Lionel MICHAUD"
+                    "group"     : "Tous les Adultes",
+                    "order"     : "Date au plus tard",
                 }
             }
         },
         {
             "id" : "45325B0E-331D-481F-9C34-57C088289752",
-            "value" : 0,
+            "value" : 250,
             "proportional" : true,
             "name" : "Restaurants, bars...",
-            "note" : "Actualisé le ",
+            "note" : "Actualisé le 16/02/2021",
             "timeSpan" : {
                 "ending_to" : {
-                    "fixedYear" : 250,
+                    "fixedYear" : 0,
                     "event"     : "Dépendance",
-                    "group"    : null,
-                    "name"      : "M. Lionel MICHAUD"
+                    "group"     : "Tous les Adultes",
+                    "order"     : "Date au plus tard",
                 }
             }
         },
         {
             "id" : "45325B0E-331D-481F-9C34-57C088289754",
-            "value" : 0,
-            "proportional" : true,
-            "name" : "Loisres Autres",
-            "note" : "Actualisé le ",
+            "value" : 120,
+            "proportional" : false,
+            "name" : "Loisirs - Autres",
+            "note" : "Actualisé le 16/02/2021",
             "timeSpan" : {
                 "ending_to" : {
                     "fixedYear" : 0,
                     "event"     : "Dépendance",
-                    "group"    : null,
-                    "name"      : "M. Lionel MICHAUD"
+                    "group"     : "Tous les Adultes",
+                    "order"     : "Date au plus tard",
                 }
             }
         }
