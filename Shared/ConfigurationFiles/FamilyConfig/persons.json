@@ -33,7 +33,6 @@
                 "minimumDaysInFirstWeek" : 4,
                 "firstWeekday" : 2
             },
-            "month" : 0
         },
         "regime_General_Situation" : {
             "atEndOf"           : 2019,
@@ -55,7 +54,6 @@
                 "minimumDaysInFirstWeek" : 4,
                 "firstWeekday" : 2
             },
-            "month" : 0
         },
         "regime_Agirc_Situation" : {
             "atEndOf"     : 2018,
@@ -63,7 +61,7 @@
             "pointsParAn" : 788
         },
         "date_Of_Retirement"           : "2022-01-01T23:00:00+01:00",
-        "cause_Retirement"             : "Démission",
+        "cause_Retirement"             : "PSE",
         "layoff_Compensation_Bonified" : null
     },
     
@@ -127,7 +125,7 @@
             "nbPoints"    : 4428,
             "pointsParAn" : 0
         },
-        "date_Of_Retirement"           : "2027-01-01T23:00:00+01:00",
+        "date_Of_Retirement"           : "2031-01-01T22:00:00Z",
         "cause_Retirement"             : "Démission",
         "layoff_Compensation_Bonified" : null
     },
@@ -142,7 +140,7 @@
         },
         "sexe" : 1,
         "birth_Date" : "2004-02-04T23:00:00+01:00",
-        "age_Of_University"   : 18,
+        "age_Of_University"   : 21,
         "age_Of_Independence" : 24
     },
     
@@ -156,7 +154,7 @@
         },
         "sexe" : 0,
         "birth_Date" : "2005-09-30T23:00:00+01:00",
-        "age_Of_University"   : 18,
+        "age_Of_University"   : 21,
         "age_Of_Independence" : 24
     }
 ]
