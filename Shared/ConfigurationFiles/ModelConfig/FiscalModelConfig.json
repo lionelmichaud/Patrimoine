@@ -123,7 +123,7 @@
                 "date"    : "2020-09-12T23:00:00+01:00",
                 "comment" : null
             },
-            "URSSAF" : 22
+            "URSSAF" : 23
         }
     },
     
@@ -193,7 +193,7 @@
                 "date"    : "2021-01-12T23:00:00+01:00",
                 "comment" : "Impôt 2021 sur le revenu 2020"
             },
-            "turnOverRebate"    : 32.0,
+            "turnOverRebate"    : 34.0,
             "minTurnOverRebate" :   305.0,
             "salaryRebate"      : 10.0,
             "minSalaryRebate"   :   442.0,

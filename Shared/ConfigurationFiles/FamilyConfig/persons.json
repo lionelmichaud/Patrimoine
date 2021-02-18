@@ -80,7 +80,7 @@
         "fiscal_option" : "Quotité disponible",
         "work_Income"   : {
             "turnOver_BNC" : 48000,
-            "turnOver_incomeLossInsurance" : 1680
+            "turnOver_incomeLossInsurance" : 4046
         },
         "nb_Of_Child_Birth"       : 2,
         "age_Of_Pension_Liquid" : {

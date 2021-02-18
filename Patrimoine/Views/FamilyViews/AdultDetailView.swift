@@ -147,6 +147,7 @@ private struct RevenuSectionView: View {
                 content: {
                     if viewModel.income?.pickerString == "Salaire" {
                         AmountView(label : "Salaire brut", amount : viewModel.revenueBrut)
+                        AmountView(label : "Prélèvements sociaux", amount : viewModel.revenueBrut - viewModel.revenueNet)
                         AmountView(label : "Salaire net de feuille de paye", amount : viewModel.revenueNet)
                         AmountView(label : "Coût de la mutuelle (protec. sup.)", amount : viewModel.insurance)
                         AmountView(label : "Salaire net moins mutuelle facultative (à vivre)", amount : viewModel.revenueLiving)
@@ -158,10 +159,11 @@ private struct RevenuSectionView: View {
                         }
                     } else {
                         AmountView(label : "BNC", amount : viewModel.revenueBrut)
-                        AmountView(label : "BNC net de charges sociales", amount : viewModel.revenueNet)
-                        AmountView(label : "Coût des assurances", amount : viewModel.insurance)
-                        AmountView(label : "BNC net de charges sociales et d'assurances (à vivre)", amount : viewModel.revenueLiving)
-                        AmountView(label : "BNC imposable (après abattement)", amount : viewModel.revenueTaxable)
+                        AmountView(label : "Prélèvements sociaux", amount : viewModel.revenueBrut - viewModel.revenueNet)
+                        AmountView(label : "BNC net de prélèvements sociaux", amount : viewModel.revenueNet)
+                        AmountView(label : "Charges (assurance, frais bancaires, services, CFE)", amount : viewModel.insurance)
+                        AmountView(label : "BNC net de prélèvements sociaux et de charges (à vivre)", amount : viewModel.revenueLiving)
+                        AmountView(label : "BNC net imposable (après abattement)", amount : viewModel.revenueTaxable)
                         
                     }
                     // allocation chomage

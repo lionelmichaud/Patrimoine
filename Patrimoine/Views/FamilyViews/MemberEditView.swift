@@ -214,7 +214,7 @@ private struct RevenueEditView : View {
                            label               : { HStack {Text("Date d'embauche"); Spacer() } })
             } else {
                 AmountEditView(label: "BNC", amount: $adultViewModel.revenueBrut)
-                AmountEditView(label: "Charges sociales", amount: $adultViewModel.insurance)
+                AmountEditView(label: "Charges (assurance, frais bancaires, services, CFE)", amount: $adultViewModel.insurance)
             }
         }
     }
