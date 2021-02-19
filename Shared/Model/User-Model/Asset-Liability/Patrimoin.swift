@@ -168,3 +168,13 @@ final class Patrimoin: ObservableObject {
         return totalTaxableInterests
     }
 }
+
+extension Patrimoin: CustomStringConvertible {
+    var description: String {
+        """
+        PATRIMOINE:
+        \(assets.description.withPrefixedSplittedLines("  "))
+        \(liabilities.description.withPrefixedSplittedLines("  "))
+        """
+    }
+}
