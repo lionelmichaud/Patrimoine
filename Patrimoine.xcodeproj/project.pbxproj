@@ -22,6 +22,7 @@
 		7907C28F25E04256005499CC /* AssetsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7907C28E25E04256005499CC /* AssetsTests.swift */; };
 		7907C29425E04473005499CC /* LiabilitiesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7907C29325E04473005499CC /* LiabilitiesTests.swift */; };
 		7907C29A25E0468A005499CC /* PatrimoinTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7907C29925E0468A005499CC /* PatrimoinTests.swift */; };
+		7907C2A025E047A5005499CC /* LifeExpensesDic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7907C29F25E047A5005499CC /* LifeExpensesDic.swift */; };
 		790AECC82533443900CD1C76 /* AdultDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 790AECC72533443900CD1C76 /* AdultDetailView.swift */; };
 		790AECCD2533454C00CD1C76 /* ChildDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 790AECCC2533454C00CD1C76 /* ChildDetailView.swift */; };
 		791027BA2549F37700016A62 /* SimulationResultTable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 791027B92549F37700016A62 /* SimulationResultTable.swift */; };
@@ -359,6 +360,7 @@
 		7907C28E25E04256005499CC /* AssetsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssetsTests.swift; sourceTree = "<group>"; };
 		7907C29325E04473005499CC /* LiabilitiesTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiabilitiesTests.swift; sourceTree = "<group>"; };
 		7907C29925E0468A005499CC /* PatrimoinTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PatrimoinTests.swift; sourceTree = "<group>"; };
+		7907C29F25E047A5005499CC /* LifeExpensesDic.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LifeExpensesDic.swift; sourceTree = "<group>"; };
 		790AECC72533443900CD1C76 /* AdultDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdultDetailView.swift; sourceTree = "<group>"; };
 		790AECCC2533454C00CD1C76 /* ChildDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChildDetailView.swift; sourceTree = "<group>"; };
 		791027B92549F37700016A62 /* SimulationResultTable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimulationResultTable.swift; sourceTree = "<group>"; };
@@ -1367,6 +1369,7 @@
 			isa = PBXGroup;
 			children = (
 				79948947249E4FC200DAFF1E /* LifeExpense.swift */,
+				7907C29F25E047A5005499CC /* LifeExpensesDic.swift */,
 				79948945249E4FC200DAFF1E /* LifeExpenseCategory.swift */,
 				79948944249E4FC200DAFF1E /* TimeSpan.swift */,
 			);
@@ -2011,6 +2014,7 @@
 				791027BA2549F37700016A62 /* SimulationResultTable.swift in Sources */,
 				796135CC25B21B1400C64230 /* AllocationChomageTaxesModel.swift in Sources */,
 				793D188D25B25141005D5A4E /* Ownable.swift in Sources */,
+				7907C2A025E047A5005499CC /* LifeExpensesDic.swift in Sources */,
 				79B46F9E25378CF300D6FFEF /* InterestRateType.swift in Sources */,
 				79948990249E4FC200DAFF1E /* Assets.swift in Sources */,
 				7944602A25C1BD1D00E3CEF1 /* RegimeGeneral+Pension.swift in Sources */,
