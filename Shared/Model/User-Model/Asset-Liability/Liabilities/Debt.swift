@@ -54,10 +54,13 @@ extension Debt: Comparable {
 
 extension Debt: CustomStringConvertible {
     var description: String {
-        return """
-        Dette: \(name)
+        """
+        DETTE: \(name)
+        - Note:
+        \(note.withPrefixedSplittedLines("    "))
+        - Droits de propriété:
+        \(ownership.description.withPrefixedSplittedLines("  "))
           valeur: \(value.€String)
-        
         """
     }
 }

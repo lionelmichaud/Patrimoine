@@ -109,3 +109,13 @@ struct Liabilities {
         loans.value(atEndOf: year)
     }
 }
+
+extension Liabilities: CustomStringConvertible {
+    var description: String {
+        """
+        PASSIF:
+        \(debts.description.withPrefixedSplittedLines("  "))
+        \(loans.description.withPrefixedSplittedLines("  "))
+        """
+    }
+}

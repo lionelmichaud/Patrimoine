@@ -51,7 +51,9 @@ struct Assets {
         self.freeInvests     = FreeInvestmentArray(personAgeProvider: personAgeProvider)
         self.realEstates     = RealEstateArray(personAgeProvider: personAgeProvider)
         self.scpis           = ScpiArray(personAgeProvider: personAgeProvider) // SCPI hors de la SCI
-        self.sci             = SCI(personAgeProvider: personAgeProvider)
+        self.sci             = SCI(name              : "LVLA",
+                                   note              : "Crée en 2019",
+                                   personAgeProvider : personAgeProvider)
         
         // initialiser le vetcuer d'état de chaque FreeInvestement à la date courante
         resetFreeInvestementCurrentValue()
@@ -78,7 +80,9 @@ struct Assets {
         freeInvests     = FreeInvestmentArray(personAgeProvider: personAgeProvider)
         realEstates     = RealEstateArray(personAgeProvider: personAgeProvider)
         scpis           = ScpiArray(personAgeProvider: personAgeProvider) // SCPI hors de la SCI
-        sci             = SCI(personAgeProvider: personAgeProvider)
+        sci             = SCI(name              : "LVLA",
+                              note              : "Crée en 2019",
+                              personAgeProvider : personAgeProvider)
         
         // initialiser le vetcuer d'état de chaque FreeInvestement à la date courante
         resetFreeInvestementCurrentValue()
@@ -219,5 +223,17 @@ struct Assets {
                 return 0
         }
     }
-    
+}
+
+extension Assets: CustomStringConvertible {
+    var description: String {
+        """
+        ACTIF:
+        \(periodicInvests.description.withPrefixedSplittedLines("  "))
+        \(freeInvests.description.withPrefixedSplittedLines("  "))
+        \(realEstates.description.withPrefixedSplittedLines("  "))
+        \(scpis.description.withPrefixedSplittedLines("  "))
+        \(sci.description.withPrefixedSplittedLines("  "))
+        """
+    }
 }

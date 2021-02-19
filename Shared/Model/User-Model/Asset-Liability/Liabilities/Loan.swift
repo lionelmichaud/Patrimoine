@@ -73,15 +73,18 @@ extension Loan: Comparable {
 
 extension Loan: CustomStringConvertible {
     var description: String {
-        return """
-        Emprunt: \(name)
-         - valeur:           \(value(atEndOf: Date.now.year).€String)
-         - first year:       \(firstYear) last year: \(lastYear)
-         - loaned Value:     \(loanedValue) final Value: \(value(atEndOf: lastYear).€String)
-         - yearly Payement:  \(yearlyPayement.€String)
-         - interest Rate:    \(interestRate) %
-         - monthly Insurance:\(monthlyInsurance) %
-
+        """
+        EMPRUNT: \(name)
+        - Note:
+        \(note.withPrefixedSplittedLines("    "))
+        - Droits de propriété:
+        \(ownership.description.withPrefixedSplittedLines("  "))
+        - valeur(\(Date.now.year): \(value(atEndOf: Date.now.year).€String)
+        - first year:       \(firstYear) last year: \(lastYear)
+        - loaned Value:     \(loanedValue) final Value: \(value(atEndOf: lastYear).€String)
+        - yearly Payement:  \(yearlyPayement.€String)
+        - interest Rate:    \(interestRate) %
+        - monthly Insurance:\(monthlyInsurance) %
         """
     }
 }

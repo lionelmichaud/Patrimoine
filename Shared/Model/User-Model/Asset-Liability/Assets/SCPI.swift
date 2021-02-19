@@ -170,11 +170,14 @@ extension SCPI: CustomStringConvertible {
     var description: String {
         """
         SCPI: \(name)
-         - Note: \(note)
-         - Acheté le \(buyingDate.stringShortDate) au prix d'achat de: \(buyingPrice) €
-         - Rapporte \(interestRate - SCPI.inflation) % par an
-         - Sa valeur augmente de \(revaluatRate - SCPI.inflation) % par an
-         - \(willBeSold ? "Sera vendue le \(sellingDate.stringShortDate) au prix de \(value(atEndOf: sellingDate.year)) €" : "Ne sera pas vendu")
+        - Note:
+        \(note.withPrefixedSplittedLines("    "))
+        - Droits de propriété:
+        \(ownership.description.withPrefixedSplittedLines("  "))
+        - Acheté le \(buyingDate.stringShortDate) au prix d'achat de: \(buyingPrice) €
+        - Rapporte \(interestRate - SCPI.inflation) % par an net d'inflation
+        - Sa valeur augmente de \(revaluatRate - SCPI.inflation) % par an net d'inflation
+        - \(willBeSold ? "Sera vendue le \(sellingDate.stringShortDate) au prix de \(value(atEndOf: sellingDate.year)) €" : "Ne sera pas vendu")
         """
     }
 }

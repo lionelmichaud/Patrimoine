@@ -10,7 +10,7 @@ import Foundation
 
 // MARK: - Table d'Item Generic Valuable and Namable
 
-struct ItemArray<E>: Codable, Versionable where E: Codable, E: Identifiable, E: NameableValuable {
+struct ItemArray<E>: Codable, Versionable where E: Codable, E: Identifiable, E: NameableValuable, E: CustomStringConvertible {
 
     // MARK: - Properties
     
@@ -167,5 +167,12 @@ extension ItemArray where E: Ownable {
                                atEndOf          : year,
                                evaluationMethod : evaluationMethod)
     }
+}
 
+extension ItemArray: CustomStringConvertible {
+    var description: String {
+        items.reduce("") { r, item in
+            r + item.description + "\n\n"
+        }
+    }
 }
