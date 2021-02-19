@@ -4,8 +4,6 @@
 //
 //  Created by Lionel MICHAUD on 29/11/2020.
 //  Copyright © 2020 Lionel MICHAUD. All rights reserved.
-//
-
 import Foundation
 import os
 
@@ -514,9 +512,8 @@ struct Ownership {
 extension Ownership: CustomStringConvertible {
     var description: String {
         let header = """
-        OWNERSHIP:
-         - Valide:   \(isValid)
-         - Démembré: \(isDismembered)
+         - Valide:   \(isValid.frenchString)
+         - Démembré: \(isDismembered.frenchString)
 
         """
         let pp =
@@ -525,7 +522,7 @@ extension Ownership: CustomStringConvertible {
             isDismembered ? " - Usufruitiers:\n    \(usufructOwners.description) \n" : ""
         let np =
             isDismembered ? " - Nu-Propriétaires:\n    \(bareOwners.description)" : ""
-        return header + pp + uf + np + "\n"
+        return header + pp + uf + np
     }
 }
 

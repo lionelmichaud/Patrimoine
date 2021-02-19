@@ -7,27 +7,65 @@
 //
 
 import XCTest
+@testable import Patrimoine
 
-class PeriodicInvestmentTests: XCTestCase {
+class PeriodicInvestementTests: XCTestCase {
 
-    override func setUpWithError() throws {
-        // Put setup code here. This method is called before the invocation of each test method in the class.
-    }
-
-    override func tearDownWithError() throws {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
-    }
-
-    func testExample() throws {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
-    }
-
-    func testPerformanceExample() throws {
-        // This is an example of a performance test case.
-        self.measure {
-            // Put the code you want to measure the time of here.
+    struct EconomyModelProvider: EconomyModelProviderProtocol {
+        func rates(in year: Int,
+                   withMode mode: SimulationModeEnum) -> (securedRate: Double, stockRate: Double) {
+            (securedRate: Double(year) + 5.0, stockRate: Double(year) + 10.0)
+        }
+        
+        func rates(withMode mode: SimulationModeEnum) -> (securedRate: Double, stockRate: Double) {
+            (securedRate: 5.0, stockRate: 10.0)
+        }
+        
+        func inflation(withMode simulationMode: SimulationModeEnum) -> Double {
+            2.5
         }
     }
+    
+    static var economyModelProvider = EconomyModelProvider()
+    static var fi                : PeriodicInvestement!
+    static var inflation         : Double = 0.0
+    static var rates = (securedRate: 0.0, stockRate: 0.0)
+    static var rates2021 = (securedRate: 0.0, stockRate: 0.0)
+    static var averageRateTheory : Double = 0.0
+    static var averageRate2021Theory : Double = 0.0
 
+    override class func setUp() {
+        super.setUp()
+        PeriodicInvestement.setSimulationMode(to: .deterministic)
+        PeriodicInvestement.setEconomyModelProvider(economyModelProvider)
+        PeriodicInvestement.setFiscalModelProvider(
+            Fiscal.Model(for: FiscalModelTests.self,
+                         from                 : nil,
+                         dateDecodingStrategy : .iso8601,
+                         keyDecodingStrategy  : .useDefaultKeys)
+                .initialized())
+        
+        PeriodicInvestementTests.fi = PeriodicInvestement(for: PeriodicInvestementTests.self,
+                                                  from                 : nil,
+                                                  dateDecodingStrategy : .iso8601,
+                                                  keyDecodingStrategy  : .useDefaultKeys)
+        print(PeriodicInvestementTests.fi!)
+        
+        PeriodicInvestementTests.inflation = PeriodicInvestementTests.economyModelProvider.inflation(withMode: .deterministic)
+        
+        PeriodicInvestementTests.rates     = PeriodicInvestementTests.economyModelProvider.rates(withMode: .deterministic)
+        PeriodicInvestementTests.averageRateTheory =
+            (0.75 * PeriodicInvestementTests.rates.stockRate + 0.25 * PeriodicInvestementTests.rates.securedRate)
+            - PeriodicInvestementTests.inflation
+        
+        PeriodicInvestementTests.rates2021 = PeriodicInvestementTests.economyModelProvider.rates(in: 2021, withMode: .deterministic)
+        PeriodicInvestementTests.averageRate2021Theory =
+            (0.75 * PeriodicInvestementTests.rates2021.stockRate + 0.25 * PeriodicInvestementTests.rates2021.securedRate)
+            - PeriodicInvestementTests.inflation
+    }
+    
+    func test() {
+        
+    }
+    
 }

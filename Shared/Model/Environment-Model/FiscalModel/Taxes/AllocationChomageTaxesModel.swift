@@ -57,7 +57,7 @@ struct AllocationChomageTaxesModel: Codable {
     ///   - [pôle emploi](https://www.pole-emploi.fr/candidat/mes-droits-aux-aides-et-allocati/lessentiel-a-savoir-sur-lallocat/quelle-somme-vais-je-recevoir/quelles-retenues-sociales-sont-a.html)
     ///   - [service-public](https://www.service-public.fr/particuliers/vosdroits/F2971)
     func socialTaxes(brut: Double, SJR: Double) throws -> Double {
-        guard brut >= 0.0 else {
+        guard brut > 0.0 else {
             return 0.0
         }
         guard SJR >= 0.0 else {

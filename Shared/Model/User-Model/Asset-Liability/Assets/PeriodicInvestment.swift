@@ -14,9 +14,11 @@ typealias PeriodicInvestementArray = ItemArray<PeriodicInvestement>
 
 /// Placement à versements périodiques, fixes, annuels et à taux fixe
 /// Tous les intérêts sont capitalisés
-struct PeriodicInvestement: Identifiable, Codable, FinancialEnvelop {
+struct PeriodicInvestement: Identifiable, BundleCodable, FinancialEnvelop {
     
     // MARK: - Static Properties
+    
+    static var defaultFileName: String = "PeriodicInvestement.json"
     
     private static var simulationMode: SimulationModeEnum = .deterministic
     // dependencies
@@ -38,7 +40,7 @@ struct PeriodicInvestement: Identifiable, Codable, FinancialEnvelop {
     // MARK: - Static Methods
     
     /// Dependency Injection: Setter Injection
-    static func seteEonomyModelProvider(_ economyModel : EconomyModelProviderProtocol) {
+    static func setEconomyModelProvider(_ economyModel : EconomyModelProviderProtocol) {
         PeriodicInvestement.economyModel = economyModel
     }
     
@@ -75,8 +77,8 @@ struct PeriodicInvestement: Identifiable, Codable, FinancialEnvelop {
     var initialValue    : Double = 0.0
     var initialInterest : Double = 0.0 // portion of interests included in the initialValue
     // rendement
-    var interestRateType    : InterestRateType // type de taux de rendement
-    var averageInterestRate : Double {// % avant charges sociales si prélevées à la source annuellement
+    var interestRateType       : InterestRateType // type de taux de rendement
+    var averageInterestRate    : Double {// % avant charges sociales si prélevées à la source annuellement
         switch interestRateType {
             case .contractualRate( let fixedRate):
                 // taux contractuel fixe
@@ -131,17 +133,20 @@ struct PeriodicInvestement: Identifiable, Codable, FinancialEnvelop {
     
     // MARK: - Methods
     
-    /// Versement annuel
+    /// Versement annuel, frais de versement inclus
     /// - Parameter year: année
-    /// - Returns: versement, frais de souscription inclus
+    /// - Returns: versement, frais de versement inclus
+    /// - Note: Les première et dernière années sont inclues
     func yearlyTotalPayement(atEndOf year: Int) -> Double {
         guard (firstYear...lastYear).contains(year) else {
             return 0
         }
         return yearlyPayement + yearlyCost
     }
+    
     /// Valeur capitalisée à la date spécifiée
     /// - Parameter year: fin de l'année
+    /// - Note: Les première et dernière années sont inclues
     func value (atEndOf year: Int) -> Double {
         guard (firstYear...lastYear).contains(year) else {
             return 0.0
@@ -160,6 +165,7 @@ struct PeriodicInvestement: Identifiable, Codable, FinancialEnvelop {
     ///   - evaluationMethod: méthode d'évaluation de la valeure des bien
     /// - Returns: valeur du bien possédée (part d'usufruit + part de nue-prop)
     /// - Warning: les assurance vie ne sont pas inclues car hors succession
+    /// - Note: Les première et dernière années sont inclues
     func ownedValue(by ownerName     : String,
                     atEndOf year     : Int,
                     evaluationMethod : EvaluationMethod) -> Double {
@@ -210,6 +216,7 @@ struct PeriodicInvestement: Identifiable, Codable, FinancialEnvelop {
     
     /// Intérêts capitalisés à la date spécifiée
     /// - Parameter year: fin de l'année
+    /// - Note: Les première et dernière années sont inclues
     func cumulatedInterests(atEndOf year: Int) -> Double {
         guard (firstYear...lastYear).contains(year) else {
             return 0.0
@@ -220,11 +227,12 @@ struct PeriodicInvestement: Identifiable, Codable, FinancialEnvelop {
     /// valeur liquidative à la date de liquidation
     /// - Parameter year: fin de l'année
     /// - Returns:
-    /// revenue : produit de la vente
-    /// interests : intérêts bruts avant prélèvements sociaux et IRPP
-    /// netInterests : intérêts nets de prélèvements sociaux
-    /// taxableInterests : intérêts nets de prélèvements sociaux et taxables à l'IRPP
-    /// socialTaxes : prélèvements sociaux
+    ///   - revenue : produit de la vente
+    ///   - interests : intérêts bruts avant prélèvements sociaux et IRPP
+    ///   - netInterests : intérêts nets de prélèvements sociaux
+    ///   - taxableInterests : intérêts nets de prélèvements sociaux et taxables à l'IRPP
+    ///   - socialTaxes : prélèvements sociaux
+    /// - Note: Les première et dernière années sont inclues
     func liquidatedValue (atEndOf year: Int)
     -> (revenue              : Double,
         interests            : Double,
@@ -267,16 +275,21 @@ extension PeriodicInvestement: Comparable {
 
 extension PeriodicInvestement: CustomStringConvertible {
     var description: String {
-        return """
-        \(name)
-        valeur:            \(value(atEndOf: Date.now.year).€String)
-        type:              \(type)
-        first year:        \(firstYear) last year: \(lastYear)
-        initial Value:     \(initialValue.€String) initial Interests: \(initialInterest.€String)
-        yearly Payement:   \(yearlyPayement.€String)
-        liquidation value: \(value(atEndOf: lastYear).€String) cumulated interests: \(cumulatedInterests(atEndOf: lastYear).€String)
-        interest Rate Brut:\(averageInterestRate) % interest Rate Net:\(averageInterestRateNet) %
-        
+        """
+        INVESTISSEMENT PERIODIQUE: \(name)
+        - Note:
+        \(note.withPrefixedSplittedLines("    "))
+        - Type:\(type.description.withPrefixedSplittedLines("  "))
+        - Droits de propriété:
+        \(ownership.description.withPrefixedSplittedLines("  "))
+        - Valeur:            \(value(atEndOf: Date.now.year).€String)
+        - Première année:    \(firstYear) dernière année: \(lastYear)
+        - Valeur initiale:   \(initialValue.€String) dont intérêts: \(initialInterest.€String)
+        - Versement annuel net de frais:  \(yearlyPayement.€String) Frais sur versements annuels: \(yearlyCost.€String)
+        - Valeur liquidative: \(value(atEndOf: lastYear).€String) Intérêts cumulés: \(cumulatedInterests(atEndOf: lastYear).€String)
+        - \(interestRateType)
+        - Taux d'intérêt net d'inflation avant prélèvements sociaux:   \(averageInterestRate) %
+        - Taux d'intérêt net d'inflation, net de prélèvements sociaux: \(averageInterestRateNet) %
         """
     }
 }

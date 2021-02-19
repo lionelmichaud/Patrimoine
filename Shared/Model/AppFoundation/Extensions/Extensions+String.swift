@@ -169,3 +169,22 @@ extension String {
         return self[startIndex..<end]
     }
 }
+
+extension String {
+    var splittedLines: [String] {
+        split(separator: "\n", omittingEmptySubsequences: false).map {String($0)}
+    }
+    func withPrefixedSplittedLines(_ prefix: String) -> [String] {
+        splittedLines.withPrefix(prefix)
+    }
+    func withPrefixedSplittedLines(_ prefix: String) -> String {
+        let string = splittedLines.withPrefix(prefix).reduce("", { r, s in r + s + "\n" })
+        return String(string.dropLast(1))
+    }
+}
+
+extension Array where Element == String {
+    func withPrefix(_ prefix: String) -> [String] {
+        self.map { prefix + $0 }
+    }
+}

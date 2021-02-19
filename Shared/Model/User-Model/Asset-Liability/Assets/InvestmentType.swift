@@ -36,9 +36,10 @@ extension InvestementType: CustomStringConvertible {
             case .lifeInsurance(let periodicSocialTaxes, let clause):
                 return
                     """
-                      Assurance Vie:
-                      - Prélèvement périodique des contributions sociales: \(periodicSocialTaxes)
-                      - \(clause)
+                    Assurance Vie:
+                    - Prélèvement périodique des contributions sociales: \(periodicSocialTaxes)
+                    - Clause bénéficiaire:
+                    \(clause.description.withPrefixedSplittedLines("  "))
                     """
             default:
                 return pickerString

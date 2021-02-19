@@ -71,7 +71,7 @@ struct PensionTaxesModel: Codable {
     /// charges sociales sur une pension brute du régime général
     /// - Parameter brut: pension brute du régime général
     func socialTaxesRegimeGeneral(_ brut: Double) -> Double {
-        guard brut >= 0.0 else {
+        guard brut > 0.0 else {
             return 0.0
         }
         return brut * model.totalRegimeGeneral / 100.0
@@ -80,7 +80,7 @@ struct PensionTaxesModel: Codable {
     /// charges sociales sur une pension brute du régime général
     /// - Parameter brut: pension brute du régime général
     func socialTaxesRegimeAgirc(_ brut: Double) -> Double {
-        guard brut >= 0.0 else {
+        guard brut > 0.0 else {
             return 0.0
         }
         return brut * model.totalRegimeAgirc / 100.0

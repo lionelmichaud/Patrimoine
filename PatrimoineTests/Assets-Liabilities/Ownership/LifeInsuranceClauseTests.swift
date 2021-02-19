@@ -11,6 +11,14 @@ import XCTest
 
 class LifeInsuranceClauseTests: XCTestCase {
 
+    func test_description() {
+        let clause = LifeInsuranceClause()
+        print(clause)
+        print("\n")
+        let prefixed: String = clause.description.withPrefixedSplittedLines("12")
+        print(prefixed)
+    }
+
     func test_clause_npn_valide() {
         var clause = LifeInsuranceClause()
         

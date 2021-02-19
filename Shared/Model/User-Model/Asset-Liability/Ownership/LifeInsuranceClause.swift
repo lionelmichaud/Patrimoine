@@ -35,9 +35,8 @@ struct LifeInsuranceClause: Codable, Hashable {
 extension LifeInsuranceClause: CustomStringConvertible {
     var description: String {
         let header = """
-        CLAUSE BENEFICIAIRE:
-           - Valide:    \(isValid)
-           - Démembrée: \(isDismembered)
+        - Valide:    \(isValid.frenchString)
+        - Démembrée: \(isDismembered.frenchString)
 
         """
         let fr =

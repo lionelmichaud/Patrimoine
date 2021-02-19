@@ -57,7 +57,7 @@ struct RealEstateAsset: Identifiable, BundleCodable, Ownable {
         guard willBeSold else { return 0 }
         guard let sellingDate = sellingYear.year, let buyingDate = buyingYear.year else { return 0 }
         let detentionDuration = zeroOrPositive(sellingDate - buyingDate)
-        let capitalGain       = self.sellingNetPrice - buyingPrice
+        let capitalGain       = sellingNetPrice - buyingPrice
         let socialTaxes       = RealEstateAsset.fiscalModel.estateCapitalGainTaxes.socialTaxes(
             capitalGain      : capitalGain,
             detentionDuration: detentionDuration)
@@ -326,17 +326,20 @@ extension RealEstateAsset: CustomStringConvertible {
         let s1 =
         """
         IMMOBILIER: \(name)
-         - Acheté en \(buyingYear) au prix de \(buyingPrice.€String)
-         - Note: \(note)
-         - Valeur vénale estimée: \(estimatedValue.€String)\n
+        - Acheté en \(buyingYear) au prix de \(buyingPrice.€String)
+        - Note:
+        \(note.withPrefixedSplittedLines("    "))
+        - Droits de propriété:
+        \(ownership.description.withPrefixedSplittedLines("  "))
+        - Valeur vénale estimée: \(estimatedValue.€String)\n
         """
         var s2: String = ""
         if willBeInhabited {
             s2 =
             """
-             - Habité de \(inhabitedFrom) à \(inhabitedTo)
-               - Taxe d'habitation: \(yearlyTaxeHabitation.€String)
-               - Taxe fonçière:     \(yearlyTaxeFonciere.€String) \n
+            - Habité de \(inhabitedFrom) à \(inhabitedTo)
+              - Taxe d'habitation: \(yearlyTaxeHabitation.€String)
+              - Taxe fonçière:     \(yearlyTaxeFonciere.€String) \n
             """
         }
         
@@ -344,11 +347,11 @@ extension RealEstateAsset: CustomStringConvertible {
         if willBeRented {
             s3 =
                 """
-                 - Loué de \(rentalFrom) à \(rentalTo)
-                   - Loyer mensuel:        \(monthlyRentAfterCharges.€String)
-                   - Loyer annuel:         \(yearlyRentAfterCharges.€String)
-                   - Loyer annuel taxable: \(yearlyRentTaxableIrpp.€String)
-                   - Profitabilité:        \((profitability*100.0).percentString(digit: 1)) % \n
+                - Loué de \(rentalFrom) à \(rentalTo)
+                  - Loyer mensuel:        \(monthlyRentAfterCharges.€String)
+                  - Loyer annuel:         \(yearlyRentAfterCharges.€String)
+                  - Loyer annuel taxable: \(yearlyRentTaxableIrpp.€String)
+                  - Profitabilité:        \((profitability*100.0).percentString(digit: 1)) % \n
                 """
         }
         
@@ -356,8 +359,8 @@ extension RealEstateAsset: CustomStringConvertible {
         if willBeSold {
             s4 =
                 """
-                 - Vendu en \(sellingYear) au prix de \(sellingNetPrice.€String)
-                   - Produit de la vente net de taxes \(sellingPriceAfterTaxes.€String)\n
+                - Vendu en \(sellingYear) au prix de \(sellingNetPrice.€String)
+                  - Produit de la vente net de taxes \(sellingPriceAfterTaxes.€String)\n
                 """
         }
 

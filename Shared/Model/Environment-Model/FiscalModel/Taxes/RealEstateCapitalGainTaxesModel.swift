@@ -63,6 +63,9 @@ struct RealEstateCapitalGainTaxesModel: Codable {
      **/
     func socialTaxes (capitalGain       : Double,
                       detentionDuration : Int) -> Double {
+        guard capitalGain > 0 else {
+            return 0
+        }
         // exoneration partielle ou totale de charges sociales en fonction de la durée de détention
         var discount = 0.0
         if let slice = model.exoGrid.last(where: \.floor, <, detentionDuration) {

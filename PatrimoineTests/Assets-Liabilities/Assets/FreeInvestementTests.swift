@@ -65,9 +65,6 @@ class FreeInvestementTests: XCTestCase {
             - FreeInvestementTests.inflation
     }
     
-    override func setUp() {
-    }
-    
     func test_averageInterestRate() {
         var fi = FreeInvestement(for: FreeInvestementTests.self,
                                  from                 : nil,

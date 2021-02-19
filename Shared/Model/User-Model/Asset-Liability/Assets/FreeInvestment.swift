@@ -411,14 +411,18 @@ extension FreeInvestement: Comparable {
 extension FreeInvestement: CustomStringConvertible {
     var description: String {
         """
-        INVEST LIBRE: \(name)
-         - Type: \(type)
-         - Valeur (\(Date.now.year)): \(value(atEndOf: Date.now.year).€String)
-         - Etat initial: (year: \(initialState.year), interest: \(initialState.interest.€String), invest: \(initialState.investment.€String), Value: \(initialState.value.€String))
-         - Etat courant: (year: \(currentState.year), interest: \(currentState.interest.€String), invest: \(currentState.investment.€String), Value: \(currentState.value.€String))
-         - Taux d'intérêt brut: \(averageInterestRate) %
-         - Taux d'intérêt net : \(averageInterestRateNet) %
-
+        INVESTISSEMENT LIBRE: \(name)
+        - Note:
+        \(note.withPrefixedSplittedLines("    "))
+        - Type:\(type.description.withPrefixedSplittedLines("  "))
+        - Droits de propriété:
+        \(ownership.description.withPrefixedSplittedLines("  "))
+        - Valeur (\(Date.now.year)): \(value(atEndOf: Date.now.year).€String)
+        - Etat initial: (year: \(initialState.year), interest: \(initialState.interest.€String), invest: \(initialState.investment.€String), Value: \(initialState.value.€String))
+        - Etat courant: (year: \(currentState.year), interest: \(currentState.interest.€String), invest: \(currentState.investment.€String), Value: \(currentState.value.€String))
+        - \(interestRateType)
+        - Taux d'intérêt net d'inflation avant prélèvements sociaux:   \(averageInterestRate) %
+        - Taux d'intérêt net d'inflation, net de prélèvements sociaux: \(averageInterestRateNet) %
         """
     }
 }

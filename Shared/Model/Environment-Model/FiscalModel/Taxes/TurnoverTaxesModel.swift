@@ -31,7 +31,7 @@ struct TurnoverTaxesModel: Codable {
     /// chiffre d'affaire net de charges sociales
     /// - Parameter brut: chiffre d'affaire brut
     func net(_ brut: Double) -> Double {
-        guard brut >= 0.0 else {
+        guard brut > 0.0 else {
             return 0.0
         }
         return brut - socialTaxes(brut)
@@ -40,7 +40,7 @@ struct TurnoverTaxesModel: Codable {
     /// charges sociales sur le chiffre d'affaire brut
     /// - Parameter brut: chiffre d'affaire brut
     func socialTaxes(_ brut: Double) -> Double {
-        guard brut >= 0.0 else {
+        guard brut > 0.0 else {
             return 0.0
         }
         return brut * model.URSSAF / 100.0

@@ -52,10 +52,10 @@ extension InterestRateType: CustomStringConvertible {
     var description: String {
         switch self {
             case .contractualRate(let fixedRate):
-                return "Taux Contractuel = \(fixedRate) %\n"
+                return "Taux Contractuel = \(fixedRate) %"
                 
             case .marketRate(let stockRatio):
-                return "Taux de Marché avec \(stockRatio) % d'actions et \(100 - stockRatio) % d'obligations\n"
+                return "Taux de Marché avec \(stockRatio) % d'actions et \(100 - stockRatio) % d'obligations"
         }
     }
 }
