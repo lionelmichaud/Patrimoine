@@ -160,18 +160,18 @@ struct TimeSpanEditView: View {
                 ()
                 
             case TimeSpan.periodic(from: DateBoundary.empty, period: 0, to: DateBoundary.empty).id:
-                self.timeSpanVM.fromVM = DateBoundaryViewModel(from: DateBoundary(year: Date.now.year))
-                self.timeSpanVM.toVM = DateBoundaryViewModel(from: DateBoundary(year: Date.now.year))
+                self.timeSpanVM.fromVM = DateBoundaryViewModel(from: DateBoundary(fixedYear: Date.now.year))
+                self.timeSpanVM.toVM = DateBoundaryViewModel(from: DateBoundary(fixedYear: Date.now.year))
                 
             case TimeSpan.starting(from: DateBoundary.empty).id:
-                self.timeSpanVM.fromVM = DateBoundaryViewModel(from: DateBoundary(year: Date.now.year))
+                self.timeSpanVM.fromVM = DateBoundaryViewModel(from: DateBoundary(fixedYear: Date.now.year))
                 
             case TimeSpan.ending(to: DateBoundary.empty).id:
-                self.timeSpanVM.toVM = DateBoundaryViewModel(from: DateBoundary(year: Date.now.year))
+                self.timeSpanVM.toVM = DateBoundaryViewModel(from: DateBoundary(fixedYear: Date.now.year))
                 
             case TimeSpan.spanning(from: DateBoundary.empty, to: DateBoundary.empty).id:
-                self.timeSpanVM.fromVM = DateBoundaryViewModel(from: DateBoundary(year: Date.now.year))
-                self.timeSpanVM.toVM = DateBoundaryViewModel(from: DateBoundary(year: Date.now.year))
+                self.timeSpanVM.fromVM = DateBoundaryViewModel(from: DateBoundary(fixedYear: Date.now.year))
+                self.timeSpanVM.toVM = DateBoundaryViewModel(from: DateBoundary(fixedYear: Date.now.year))
                 
             case TimeSpan.exceptional(inYear:0).id:
                 self.timeSpanVM.inYear = Date.now.year

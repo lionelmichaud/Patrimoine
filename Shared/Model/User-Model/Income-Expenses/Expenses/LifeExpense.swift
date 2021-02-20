@@ -117,3 +117,16 @@ struct LifeExpense: Identifiable, Codable, Hashable, NameableValuable {
 extension LifeExpense: Comparable {
     static func < (lhs: LifeExpense, rhs: LifeExpense) -> Bool { (lhs.name < rhs.name) }
 }
+
+extension LifeExpense: CustomStringConvertible {
+    var description: String {
+        """
+        DEPENSE: \(name)
+        - Note:
+        \(note.withPrefixedSplittedLines("    "))
+        - Montant: \(value.€String)
+        - Proportionnel aux nombre de membres de la famille: \(proportional.frenchString)
+        - Période: \(timeSpan.description.withPrefixedSplittedLines("  "))
+        """
+    }
+}

@@ -73,34 +73,6 @@ struct DateBoundary: Hashable, Codable {
             return fixedYear
         }
     }
-
-    // MARK: - Initializers
-    
-    internal init() {
-    }
-    
-    internal init(fixedYear : Int              = 0,
-                  event     : LifeEvent?       = nil,
-                  name      : String?          = nil,
-                  group     : GroupOfPersons?  = nil,
-                  order     : SoonestLatest?   = nil) {
-        self.fixedYear = fixedYear
-        self.event     = event
-        self.name      = name
-        self.group     = group
-        self.order     = order
-    }
-    
-    internal init(year: Int) {
-        self.fixedYear = year
-        self.event     = nil
-        self.name      = nil
-    }
-    
-    internal init(event: LifeEvent?) {
-        self.event = event
-        self.name  = nil
-    }
 }
 
 extension DateBoundary: CustomStringConvertible {
@@ -132,7 +104,8 @@ enum LifeEvent: String, PickableEnum, Codable, CustomStringConvertible {
     var description: String {
         pickerString
     }
-
+    
+    // True si l'événement est spécifique des Adultes
     var isAdultEvent: Bool {
         switch self {
             case .cessationActivite,
@@ -145,6 +118,7 @@ enum LifeEvent: String, PickableEnum, Codable, CustomStringConvertible {
         }
     }
 
+    // True si l'événement est spécifique des Enfant
     var isChildEvent: Bool {
         switch self {
             case .debutEtude,

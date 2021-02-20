@@ -283,17 +283,26 @@ extension TimeSpan: CustomStringConvertible {
     public var description: String {
         switch self {
             case .permanent:
-                return "permanent"
+                return "Permanent"
             case .periodic (let from, let period, let to):
-                return "periodic - from \(from) every \(period) years - ending in \(to)"
+                return
+                    """
+                    Periodique:
+                    - de \(from) (inclus) à \(to) (exclu)
+                    - tous les \(period) ans
+                    """
+                
             case .starting (let from):
-                return "starting from \(from)"
+                return "A partir de \(from) (inclus)"
+                
             case .ending (let to):
-                return "ending in \(to.year ?? -1) on event: \(String(describing: to.event))"
+                return "Jusqu'en \(to.year ?? -1) (exclu) on event: \(String(describing: to.event))"
+                
             case .spanning (let from, let to):
-                return "starting from \(from) - ending in \(to)"
+                return "De \(from) (inclus) à \(to) (exclu)"
+                
             case .exceptional(let inYear):
-                return "in \(inYear)"
+                return "En \(inYear)"
         }
     }
 }
