@@ -12,7 +12,7 @@ import os
 private let customLog = Logger(subsystem: "me.michaud.lionel.Patrimoine", category: "Model.TimeSpan")
 
 // MARK: - Elongation temporelle du poste de dépense
-
+ 
 enum TimeSpan: Hashable {
     // les années de début et de fin sont inclues
     case permanent
