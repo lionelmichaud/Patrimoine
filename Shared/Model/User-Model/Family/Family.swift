@@ -1,10 +1,20 @@
 import Foundation
 import TypePreservingCodingAdapter // https://github.com/IgorMuzyka/Type-Preserving-Coding-Adapter.git
 
-// MARK: - DI: Protocol de service de calcul de l'age
+// MARK: - DI: Protocol de service de fourniture de l'age d'une personne
 
 protocol PersonAgeProvider {
     func ageOf(_ name: String, _ year: Int) -> Int
+}
+
+// MARK: - DI: Protocol de service de fourniture de l'année d'un événement de vie d'une personne
+
+protocol PersonEventYearProvider {
+    func yearOf(lifeEvent : LifeEvent,
+                for name  : String) -> Int?
+    func yearOf(lifeEvent : LifeEvent,
+                for group : GroupOfPersons,
+                order     : SoonestLatest) -> Int?
 }
 
 // MARK: - Class Family: la Famille, ses membres, leurs actifs et leurs revenus
@@ -53,6 +63,13 @@ final class Family: ObservableObject {
         return nb
     }
     
+    var adults  : [Person] {
+        members.filter {$0 is Adult}
+    }
+    var children: [Person] {
+        members.filter {$0 is Child}
+    }
+
     // MARK: - Initialization
 
     init() {
@@ -60,6 +77,8 @@ final class Family: ObservableObject {
         self.members  = Family.loadMembersFromFile()
         // initialiser les catégories de dépenses à partir des fichiers JSON
         self.expenses = LifeExpensesDic()
+        // injection de family dans la propriété statique de DateBoundary pour lier les évenements à des personnes
+        DateBoundary.setPersonEventYearProvider(self)
         // injection de family dans la propriété statique de Expense pour lier les évenements à des personnes
         LifeExpense.family = self
         // injection de family dans la propriété statique de Person pour lier les évenements à des personnes
@@ -194,7 +213,7 @@ final class Family: ObservableObject {
     func member(withName name: String) -> Person? {
         self.members.first(where: { $0.displayName == name })
     }
-
+    
     /// Ajouter un membre à la famille
     /// - Parameter person: personne à ajouter
     func addMember(_ person: Person) {
@@ -367,5 +386,45 @@ extension Family: PersonAgeProvider {
     func ageOf(_ name: String, _ year: Int) -> Int {
         let person = member(withName: name)
         return person?.age(atEndOf: Date.now.year) ?? -1
+    }
+}
+
+extension Family: PersonEventYearProvider {
+    func yearOf(lifeEvent : LifeEvent,
+                for name  : String) -> Int? {
+        // rechercher la personne
+        if let person = member(withName: name) {
+            // rechercher l'année de l'événement pour cette personne
+            return person.yearOf(event: lifeEvent)
+        } else {
+            // on ne trouve pas le nom de la personne dans la famille
+            return nil
+        }
+    }
+    
+    func yearOf(lifeEvent : LifeEvent,
+                for group : GroupOfPersons,
+                order     : SoonestLatest) -> Int? {
+        var persons: [Person]?
+        switch group {
+            case .allAdults:
+                persons = adults
+                
+            case .allChildrens:
+                persons = children
+                
+            case .allPersons:
+                persons = members
+        }
+        if let years = persons?.map({ $0.yearOf(event: lifeEvent)! }) {
+            switch order {
+                case .soonest:
+                    return years.min()
+                case .latest:
+                    return years.max()
+            }
+        } else {
+            return nil
+        }
     }
 }

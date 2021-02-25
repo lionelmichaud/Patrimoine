@@ -50,13 +50,13 @@ struct DateBoundaryViewModel: Equatable {
                         guard !event.isChildEvent else {
                             return nil
                         }
-                        persons = LifeExpense.family?.members.filter {$0 is Adult}
+                        persons = LifeExpense.family?.adults
                         
                     case .allChildrens:
                         guard !event.isAdultEvent else {
                             return nil
                         }
-                        persons = LifeExpense.family?.members.filter {$0 is Child}
+                        persons = LifeExpense.family?.children
                         
                     case .allPersons:
                         guard !event.isChildEvent && !event.isAdultEvent else {

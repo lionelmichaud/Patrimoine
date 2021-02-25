@@ -93,7 +93,8 @@ struct LifeExpense: Identifiable, Codable, Hashable, NameableValuable {
         if timeSpan.contains(year) {
             if proportional {
                 if let family = LifeExpense.family {
-                    let nbMembers = (family.nbOfAdultAlive(atEndOf: year) + family.nbOfFiscalChildren(during: year)).double()
+                    let nbMembers = FiscalHousehold.nbOfMembers(in      : family,
+                                                                atEndOf : year).double()
                     return value * LifeExpense.correctionFactor * nbMembers
                 } else {
                     return 0

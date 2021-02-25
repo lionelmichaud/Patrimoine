@@ -14,8 +14,18 @@ import Foundation
 /// Date fixe ou calculée à partir d'un éventuel événement de vie d'une personne
 struct DateBoundary: Hashable, Codable {
     
+    // MARK: - Static Properties
+
+    private static var personEventYearProvider: PersonEventYearProvider!
     static let empty: DateBoundary = DateBoundary()
 
+    // MARK: - Static Methods
+    
+    /// Dependency Injection: Setter Injection
+    static func setPersonEventYearProvider(_ personEventYearProvider : PersonEventYearProvider) {
+        DateBoundary.personEventYearProvider = personEventYearProvider
+    }
+    
     // MARK: - Properties
     
     // date fixe ou calculée à partir d'un éventuel événement de vie d'une personne
@@ -35,38 +45,25 @@ struct DateBoundary: Hashable, Codable {
     var year  : Int? {
         if let lifeEvent = self.event {
             // la borne temporelle est accrochée à un événement
-            var persons: [Person]?
-            switch group {
-                case nil:
-                    // rechercher la personne
-                    if let theName = name, let person = LifeExpense.family?.member(withName: theName) {
-                        // rechercher l'année de l'événement pour cette personne
-                        return person.yearOf(event: lifeEvent)
-                    } else {
-                        // on ne trouve pas le nom de la personne dans la famille
-                        return nil
-                    }
-                    
-                case .allAdults:
-                    persons = LifeExpense.family?.members.filter {$0 is Adult}
-                    
-                case .allChildrens:
-                    persons = LifeExpense.family?.members.filter {$0 is Child}
-                    
-                case .allPersons:
-                    persons = LifeExpense.family?.members
-            }
-            if let years = persons?.map({ $0.yearOf(event: lifeEvent)! }) {
-                switch order {
-                    case .soonest:
-                        return years.min()
-                    case .latest:
-                        return years.max()
-                    default:
-                        return nil
+            if let group = group {
+                if let order = order {
+                    return DateBoundary.personEventYearProvider.yearOf(lifeEvent : lifeEvent,
+                                                                       for       : group,
+                                                                       order     : order)
+                } else {
+                    return nil
                 }
             } else {
-                return nil
+                // rechercher la personne
+                if let theName = name,
+                   let year = DateBoundary.personEventYearProvider.yearOf(lifeEvent: lifeEvent,
+                                                                          for: theName) {
+                    // rechercher l'année de l'événement pour cette personne
+                    return year
+                } else {
+                    // on ne trouve pas le nom de la personne dans la famille
+                    return nil
+                }
             }
         } else {
             // pas d'événement, la date est fixe

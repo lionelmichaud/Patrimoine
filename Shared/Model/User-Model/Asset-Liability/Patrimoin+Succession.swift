@@ -342,8 +342,10 @@ extension Patrimoin {
     func realEstateValue(atEndOf year     : Int,
                          evaluationMethod : EvaluationMethod) -> Double {
         assets.realEstateValue(atEndOf          : year,
+                               for              : Patrimoin.family!,
                                evaluationMethod : evaluationMethod) +
             liabilities.realEstateValue(atEndOf          : year,
+                                        for              : Patrimoin.family!,
                                         evaluationMethod : evaluationMethod)
     }
     

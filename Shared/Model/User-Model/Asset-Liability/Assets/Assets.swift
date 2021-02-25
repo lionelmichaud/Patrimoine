@@ -43,8 +43,8 @@ struct Assets {
     // MARK: - Initializers
     
     /// Charger les actifs stockés en fichier JSON
-    /// - Parameter family: famille à laquelle associer le patrimoine
-    /// - Note: family est utilisée pour injecter dans chaque actif un délégué family.ageOf
+    /// - Parameter personAgeProvider: famille à laquelle associer le patrimoine
+    /// - Note: personAgeProvider est utilisée pour injecter dans chaque actif un délégué personAgeProvider.ageOf
     ///         permettant de calculer les valeurs respectives des Usufruits et Nu-Propriétés
     internal init(personAgeProvider: PersonAgeProvider?) {
         self.periodicInvests = PeriodicInvestementArray(personAgeProvider: personAgeProvider)
@@ -194,12 +194,14 @@ struct Assets {
     ///   - evaluationMethod: méthode d'évaluation de la valeure des bien
     ///   - Returns: assiette nette fiscale calculée selon la méthode choisie
     func realEstateValue(atEndOf year     : Int,
+                         for family       : Family,
                          evaluationMethod : EvaluationMethod) -> Double {
         switch evaluationMethod {
             case .ifi, .isf :
                 /// on prend la valeure IFI des biens immobiliers
                 /// pour: le foyer fiscal
-                return FiscalHousehold.value(atEndOf: year) { name in
+                return FiscalHousehold.value(atEndOf : year,
+                                             for     : family) { name in
                     realEstates.ownedValue(by               : name,
                                            atEndOf          : year,
                                            evaluationMethod : evaluationMethod) +

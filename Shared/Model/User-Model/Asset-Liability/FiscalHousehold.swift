@@ -15,10 +15,9 @@ struct FiscalHousehold {
     ///   - ownedValue: méthode d'évaluation de la valeur du patrimoine d'un membre du foyer fiscal
     /// - Returns: valeur cumulée sur l'ensemble des membres d'un foyer fiscal
     static func value(atEndOf year : Int,
+                      for family   : Family,
                       ownedValue   : (String) -> Double) -> Double {
         /// pour: adultes + enfants non indépendants
-        guard let family = Patrimoin.family else {return 0.0}
-        
         var cumulatedvalue: Double = 0.0
         
         for member in family.members {
@@ -39,5 +38,11 @@ struct FiscalHousehold {
             }
         }
         return cumulatedvalue
+    }
+    
+    static func nbOfMembers(in family    : Family,
+                            atEndOf year : Int) -> Int {
+        family.nbOfAdultAlive(atEndOf: year) +
+            family.nbOfFiscalChildren(during: year)
     }
 }
