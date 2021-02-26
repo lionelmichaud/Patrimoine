@@ -17,6 +17,20 @@ protocol PersonEventYearProvider {
                 order     : SoonestLatest) -> Int?
 }
 
+// MARK: - DI: Protocol de service de fourniture de dénombrement dans la famille
+
+protocol MembersCountProvider {
+    func nbOfAdultAlive(atEndOf year: Int) -> Int
+    func nbOfFiscalChildren(during year: Int) -> Int
+}
+
+// MARK: - DI: Protocol de service d'itération sur les membres du foyer fiscal dans la famille
+
+protocol FiscalHouseholdSumator {
+    func sum(atEndOf year : Int,
+             memberValue  : (String) -> Double) -> Double
+}
+
 // MARK: - Class Family: la Famille, ses membres, leurs actifs et leurs revenus
 
 /// la Famille, ses membres, leurs actifs et leurs revenus
@@ -80,7 +94,7 @@ final class Family: ObservableObject {
         // injection de family dans la propriété statique de DateBoundary pour lier les évenements à des personnes
         DateBoundary.setPersonEventYearProvider(self)
         // injection de family dans la propriété statique de Expense pour lier les évenements à des personnes
-        LifeExpense.family = self
+        LifeExpense.setMembersCountProvider(membersCountProvider: self)
         // injection de family dans la propriété statique de Person pour lier les évenements à des personnes
         Adult.family = self
         // injection de family dans la propriété statique de Patrimoin pour lier les ages à des personnes
@@ -113,31 +127,6 @@ final class Family: ObservableObject {
             .map { person in
                 person as! Child
             }
-    }
-    
-    /// Nombre d'enfant dans le foyer fiscal
-    /// - Parameter year: année d'imposition
-    /// - Note: [service-public.fr](https://www.service-public.fr/particuliers/vosdroits/F3085)
-    func nbOfFiscalChildren(during year: Int) -> Int {
-        members
-            .reduce(0) { (result, person) in
-                guard let child = person as? Child else {
-                    return result
-                }
-                let isAlive     = child.isAlive(atEndOf: year)
-                let isDependant = !child.isIndependant(during: year)
-                let age         = child.age(atEndOf: year - 1) // au début de l'année d'imposition
-                let isFiscalementACharge = isAlive && ((age <= 21) || (isDependant && age <= 25))
-                return result + (isFiscalementACharge ? 1 : 0)
-            }
-    }
-    
-    /// Nombre d'adulte vivant à la fin de l'année
-    /// - Parameter year: année
-    func nbOfAdultAlive(atEndOf year: Int) -> Int {
-        members.reduce(0) { (result, person) in
-            result + ((person is Adult && person.isAlive(atEndOf: year)) ? 1 : 0)
-        }
     }
     
     /// Nombre d'adulte vivant à la fin de l'année
@@ -426,5 +415,58 @@ extension Family: PersonEventYearProvider {
         } else {
             return nil
         }
+    }
+}
+
+extension Family: MembersCountProvider {
+    /// Nombre d'adulte vivant à la fin de l'année
+    /// - Parameter year: année
+    func nbOfAdultAlive(atEndOf year: Int) -> Int {
+        members.reduce(0) { (result, person) in
+            result + ((person is Adult && person.isAlive(atEndOf: year)) ? 1 : 0)
+        }
+    }
+
+    /// Nombre d'enfant dans le foyer fiscal
+    /// - Parameter year: année d'imposition
+    /// - Note: [service-public.fr](https://www.service-public.fr/particuliers/vosdroits/F3085)
+    func nbOfFiscalChildren(during year: Int) -> Int {
+        members
+            .reduce(0) { (result, person) in
+                guard let child = person as? Child else {
+                    return result
+                }
+                let isFiscalementACharge = child.isFiscalyDependant(during: year)
+                return result + (isFiscalementACharge ? 1 : 0)
+            }
+    }
+}
+
+extension Family: FiscalHouseholdSumator {
+    func sum(atEndOf year : Int,
+             memberValue  : (String) -> Double) -> Double {
+        /// pour: adultes + enfants non indépendants
+        var cumulatedvalue: Double = 0.0
+
+        for member in members {
+            var toBeConsidered : Bool
+
+            if member is Adult {
+                toBeConsidered = true
+
+            } else if member is Child {
+                let child = member as! Child
+                toBeConsidered = child.isFiscalyDependant(during: year)
+
+            } else {
+                toBeConsidered = false
+            }
+
+            if toBeConsidered {
+                cumulatedvalue +=
+                    memberValue(member.displayName)
+            }
+        }
+        return cumulatedvalue
     }
 }

@@ -34,8 +34,8 @@ struct LifeExpense: Identifiable, Codable, Hashable, NameableValuable {
     
     // MARK: - Static properties
     
-    static var family         : Family?
-    static var simulationMode : SimulationModeEnum = .deterministic
+    private static var membersCountProvider : MembersCountProvider!
+    private static var simulationMode       : SimulationModeEnum = .deterministic
     
     // MARK: - Static Methods
     
@@ -43,6 +43,10 @@ struct LifeExpense: Identifiable, Codable, Hashable, NameableValuable {
     /// - Parameter simulationMode: mode de simulation à utiliser
     static func setSimulationMode(to simulationMode : SimulationModeEnum) {
         LifeExpense.simulationMode = simulationMode
+    }
+
+    static func setMembersCountProvider(membersCountProvider: MembersCountProvider) {
+        LifeExpense.membersCountProvider = membersCountProvider
     }
     
     /// Calcule le facteur aléatoire de correction à appliquer
@@ -92,10 +96,10 @@ struct LifeExpense: Identifiable, Codable, Hashable, NameableValuable {
     func value(atEndOf year: Int) -> Double {
         if timeSpan.contains(year) {
             if proportional {
-                if let family = LifeExpense.family {
-                    let nbMembers = FiscalHousehold.nbOfMembers(in      : family,
-                                                                atEndOf : year).double()
-                    return value * LifeExpense.correctionFactor * nbMembers
+                if let membersCountProvider = LifeExpense.membersCountProvider {
+                    let nbMembers = membersCountProvider.nbOfAdultAlive(atEndOf: year) +
+                        membersCountProvider.nbOfFiscalChildren(during: year)
+                    return value * LifeExpense.correctionFactor * nbMembers.double()
                 } else {
                     return 0
                 }

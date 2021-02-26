@@ -80,15 +80,14 @@ struct Liabilities {
     ///   - year: année d'évaluation
     ///   - evaluationMethod: méthode d'évalution des biens
     /// - Returns: assiette nette fiscale calculée selon la méthode choisie
-    func realEstateValue(atEndOf year     : Int,
-                         for family       : Family,
-                         evaluationMethod : EvaluationMethod) -> Double {
+    func realEstateValue(atEndOf year        : Int,
+                         for fiscalHousehold : FiscalHouseholdSumator,
+                         evaluationMethod    : EvaluationMethod) -> Double {
         switch evaluationMethod {
             case .ifi, .isf :
                 /// on prend la valeure IFI des emprunts
                 /// pour: le foyer fiscal
-                return FiscalHousehold.value(atEndOf : year,
-                                             for     : family) { name in
+                return fiscalHousehold.sum(atEndOf: year) { name in
                     loans.ownedValue(by               : name,
                                      atEndOf          : year,
                                      evaluationMethod : evaluationMethod)

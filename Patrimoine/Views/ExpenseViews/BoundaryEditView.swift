@@ -41,53 +41,24 @@ struct DateBoundaryViewModel: Equatable {
     var year  : Int? {
         if isLinkedToEvent {
             // la borne temporelle est accrochée à un événement
-            var persons: [Person]?
             if isLinkedToGroup {
                 // l'événement est accroché à un groupe
                 // construire un tableau des membres du groupe
-                switch group {
-                    case .allAdults:
-                        guard !event.isChildEvent else {
-                            return nil
-                        }
-                        persons = LifeExpense.family?.adults
-                        
-                    case .allChildrens:
-                        guard !event.isAdultEvent else {
-                            return nil
-                        }
-                        persons = LifeExpense.family?.children
-                        
-                    case .allPersons:
-                        guard !event.isChildEvent && !event.isAdultEvent else {
-                            return nil
-                        }
-                        persons = LifeExpense.family?.members
-                }
-                // rechercher l'année au plus tôt ou au plus tard
-                if let years = persons?.map({ $0.yearOf(event: event)! }) {
-                    switch order {
-                        case .soonest:
-                            return years.min()
-                        case .latest:
-                            return years.max()
-                    }
-                } else {
-                    // on ne trouve pas l'année
-                    return nil
-                }
-                
+                return DateBoundary.personEventYearProvider.yearOf(lifeEvent : event,
+                                                                   for       : group,
+                                                                   order     : order)
+
             } else {
                 // l'événement est accroché à une personne
                 // rechercher la personne
-                if let person = LifeExpense.family?.member(withName: name) {
+                if let year = DateBoundary.personEventYearProvider.yearOf(lifeEvent: event,
+                                                                          for: name) {
                     // rechercher l'année de l'événement pour cette personne
-                    return person.yearOf(event: event)
+                    return year
                 } else {
                     // on ne trouve pas le nom de la personne dans la famille
                     return nil
                 }
-                
             }
             
         } else {

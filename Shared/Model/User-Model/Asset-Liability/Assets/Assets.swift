@@ -27,7 +27,7 @@ struct Assets {
         // on suppose que les loyers des biens immobiliers physiques sont réévalués de l'inflation
         ()
         // on suppose que les valeurs de vente des biens immobiliers physiques et papier sont réévalués de l'inflation
-        () // RealEstateAsset.simulationMode     = simulationMode
+        ()
         // on suppose que les salaires et les chiffres d'affaires sont réévalués de l'inflation
         ()
     }
@@ -193,15 +193,14 @@ struct Assets {
     ///   - year: année d'évaluation
     ///   - evaluationMethod: méthode d'évaluation de la valeure des bien
     ///   - Returns: assiette nette fiscale calculée selon la méthode choisie
-    func realEstateValue(atEndOf year     : Int,
-                         for family       : Family,
-                         evaluationMethod : EvaluationMethod) -> Double {
+    func realEstateValue(atEndOf year        : Int,
+                         for fiscalHousehold : FiscalHouseholdSumator,
+                         evaluationMethod    : EvaluationMethod) -> Double {
         switch evaluationMethod {
             case .ifi, .isf :
                 /// on prend la valeure IFI des biens immobiliers
                 /// pour: le foyer fiscal
-                return FiscalHousehold.value(atEndOf : year,
-                                             for     : family) { name in
+                return fiscalHousehold.sum(atEndOf: year) { name in
                     realEstates.ownedValue(by               : name,
                                            atEndOf          : year,
                                            evaluationMethod : evaluationMethod) +

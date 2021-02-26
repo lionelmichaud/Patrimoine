@@ -16,7 +16,7 @@ struct DateBoundary: Hashable, Codable {
     
     // MARK: - Static Properties
 
-    private static var personEventYearProvider: PersonEventYearProvider!
+    static var personEventYearProvider: PersonEventYearProvider!
     static let empty: DateBoundary = DateBoundary()
 
     // MARK: - Static Methods
