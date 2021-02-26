@@ -45,7 +45,7 @@ struct LifeExpense: Identifiable, Codable, Hashable, NameableValuable {
         LifeExpense.simulationMode = simulationMode
     }
 
-    static func setMembersCountProvider(membersCountProvider: MembersCountProvider) {
+    static func setMembersCountProvider(_ membersCountProvider: MembersCountProvider) {
         LifeExpense.membersCountProvider = membersCountProvider
     }
     

@@ -8,7 +8,6 @@
 
 import Foundation
 
-// MARK: -
 final class Adult: Person { // swiftlint:disable:this type_body_length
     
     // MARK: - nested types
@@ -23,15 +22,20 @@ final class Adult: Person { // swiftlint:disable:this type_body_length
              regime_General_Situation,
              age_Of_Agirc_Pension_Liquid,
              regime_Agirc_Situation,
-             //nb_Of_Year_Of_Dependency,
              work_Income
     }
     
-    // MARK: - Static properties
+    // MARK: - Static Properties
     
-    static var family: Family?
+    static var adultRelativesProvider: AdultRelativesProvider!
     
-    // MARK: - properties
+    // MARK: - Static Methods
+    
+    static func setAdultRelativesProvider(_ adultRelativesProvider: AdultRelativesProvider) {
+        self.adultRelativesProvider = adultRelativesProvider
+    }
+    
+    // MARK: - Properties
     
     // nombre d'enfants
     @Published var nbOfChildBirth: Int = 0
@@ -321,8 +325,8 @@ final class Adult: Person { // swiftlint:disable:this type_body_length
                 dateOfRetirement         : dateOfRetirement,
                 dateOfEndOfUnemployAlloc : dateOfEndOfUnemployementAllocation,
                 dateOfPensionLiquid      : dateOfAgircPensionLiquid,
-                nbEnfantNe               : Adult.family!.nbOfChildren,
-                nbEnfantACharge          : Adult.family!.nbOfFiscalChildren(during: dateOfAgircPensionLiquid.year)) {
+                nbEnfantNe               : Adult.adultRelativesProvider.nbOfChildren,
+                nbEnfantACharge          : Adult.adultRelativesProvider.nbOfFiscalChildren(during: dateOfAgircPensionLiquid.year)) {
             return (pensionAgirc.pensionBrute,
                     pensionAgirc.pensionNette)
         } else {
@@ -399,15 +403,10 @@ final class Adult: Person { // swiftlint:disable:this type_body_length
                                  forKey: .regime_Agirc_Situation)
         // initialiser avec la valeur moyenne déterministe
         nbOfYearOfDependency = Int(HumanLife.model.nbOfYearsOfdependency.value(withMode: .deterministic))
-//        nbOfYearOfDependency =
-//            try container.decode(Int.self,
-//                                 forKey: .nb_Of_Year_Of_Dependency)
         workIncome =
             try container.decode(WorkIncomeType.self,
                                  forKey: .work_Income)
         
-        // Get superDecoder for superclass and call super.init(from:) with it
-        //let superDecoder = try container.superDecoder()
         try super.init(from: decoder)
 
         // pas de dépendance avant l'âge de 65 ans
@@ -479,10 +478,10 @@ final class Adult: Person { // swiftlint:disable:this type_body_length
         if sexe == .female {nbOfChildBirth -= 1}
     }
     func nbOfFiscalChildren(during year: Int) -> Int {
-        Adult.family!.nbOfFiscalChildren(during: year)
+        Adult.adultRelativesProvider.nbOfFiscalChildren(during: year)
     }
     func nbOfChildren() -> Int {
-        Adult.family!.nbOfChildren
+        Adult.adultRelativesProvider.nbOfChildren
     }
     func setAgeOfPensionLiquidComp(year: Int, month: Int = 0, day: Int = 0) {
         ageOfPensionLiquidComp = DateComponents(calendar: Date.calendar, year: year, month: month, day: day)

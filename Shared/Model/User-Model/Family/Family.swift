@@ -20,9 +20,18 @@ protocol PersonEventYearProvider {
 // MARK: - DI: Protocol de service de fourniture de dénombrement dans la famille
 
 protocol MembersCountProvider {
+    var nbOfChildren: Int { get }
     func nbOfAdultAlive(atEndOf year: Int) -> Int
     func nbOfFiscalChildren(during year: Int) -> Int
 }
+
+// MARK: - DI: Protocol de service de fourniture de l'époux d'un adulte
+
+protocol AdultSpouseProvider {
+    func spouseOf(_ member: Adult) -> Adult?
+}
+
+typealias AdultRelativesProvider = MembersCountProvider & AdultSpouseProvider
 
 // MARK: - DI: Protocol de service d'itération sur les membres du foyer fiscal dans la famille
 
@@ -94,27 +103,14 @@ final class Family: ObservableObject {
         // injection de family dans la propriété statique de DateBoundary pour lier les évenements à des personnes
         DateBoundary.setPersonEventYearProvider(self)
         // injection de family dans la propriété statique de Expense pour lier les évenements à des personnes
-        LifeExpense.setMembersCountProvider(membersCountProvider: self)
+        LifeExpense.setMembersCountProvider(self)
         // injection de family dans la propriété statique de Person pour lier les évenements à des personnes
-        Adult.family = self
+        Adult.setAdultRelativesProvider(self)
         // injection de family dans la propriété statique de Patrimoin pour lier les ages à des personnes
         Patrimoin.family = self
     }
     
     // MARK: - Methodes
-    
-    /// Rend l'époux d'un adult de la famille (s'il existe), qu'il soit vivant où décédé
-    /// - Parameter member: membre adult de la famille
-    /// - Returns: époux  (s'il existe)
-    /// - Warning: Ne vérifie pas que l'époux est vivant
-    func spouseOf(_ member: Adult) -> Adult? {
-        for person in members {
-            if let adult = person as? Adult {
-                if adult != member { return adult }
-            }
-        }
-        return nil
-    }
     
     /// Rend la liste des enfants vivants
     /// - Parameter year: année
@@ -468,5 +464,20 @@ extension Family: FiscalHouseholdSumator {
             }
         }
         return cumulatedvalue
+    }
+}
+
+extension Family: AdultSpouseProvider {
+    /// Rend l'époux d'un adult de la famille (s'il existe), qu'il soit vivant où décédé
+    /// - Parameter member: membre adult de la famille
+    /// - Returns: époux  (s'il existe)
+    /// - Warning: Ne vérifie pas que l'époux est vivant
+    func spouseOf(_ member: Adult) -> Adult? {
+        for person in members {
+            if let adult = person as? Adult {
+                if adult != member { return adult }
+            }
+        }
+        return nil
     }
 }

@@ -85,7 +85,7 @@ extension Adult {
         }
         if withReversion {
             // ajouter la pension de réversion s'il y en a une
-            if let pensionReversion = Adult.family!.spouseOf(self)?.pensionReversionForSpouse(during: year) {
+            if let pensionReversion = Adult.adultRelativesProvider.spouseOf(self)?.pensionReversionForSpouse(during: year) {
                 brut += pensionReversion.brut
                 net  += pensionReversion.net
             }
@@ -106,7 +106,7 @@ extension Adult {
             return nil
         }
         // le conjoint existe
-        guard let spouse = Adult.family!.spouseOf(self) else {
+        guard let spouse = Adult.adultRelativesProvider.spouseOf(self) else {
             return nil
         }
         // le conjoint est vivant
