@@ -207,8 +207,8 @@ struct ExpenseSummaryChartView: UIViewRepresentable {
         chartView.fitBars = true
         
         //: ### BarChartData
-        let dataSet = getExpenseDataSet(formatter: xAxisValueFormatter,
-                                        baloonMarker: marker)
+        let dataSet = getExpenseDataSet(formatter    : xAxisValueFormatter,
+                                        baloonMarker : marker)
         
         // ajouter le dataset au graphique
         let data = BarChartData(dataSet: dataSet)
@@ -260,7 +260,12 @@ struct ExpenseSummaryChartView: UIViewRepresentable {
 }
 
 struct ExpenseSummaryView_Previews: PreviewProvider {
+    static var family     = Family()
+    static var uiState    = UIState()
+    
     static var previews: some View {
         ExpenseSummaryView()
+            .environmentObject(family)
+            .environmentObject(uiState)
     }
 }

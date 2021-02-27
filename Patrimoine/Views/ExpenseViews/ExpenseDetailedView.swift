@@ -175,7 +175,7 @@ struct ExpenseDetailedView: View {
             return
         }
         guard expenseVM.timeSpanVM.timeSpan.isValid else {
-            self.alertItem = AlertItem(title         : Text("La date de début (\(firstYear)) doit être antérieure ou égale à la date de fin (\(lastYear))"),
+            self.alertItem = AlertItem(title         : Text("La date de début (\(firstYear)) doit être antérieure à la date de fin (exclue) (\(lastYear))"),
                                        dismissButton : .default(Text("OK")))
             return
         }

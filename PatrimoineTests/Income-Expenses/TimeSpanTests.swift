@@ -43,4 +43,51 @@ class TimeSpanTests: XCTestCase {
         ts = TimeSpan.exceptional(inYear: 2022)
         print(ts)
     }
+    
+    func test_starting() {
+        let ts = TimeSpan.starting(from: DateBoundary(fixedYear: 2020))
+        XCTAssertTrue(ts.isValid)
+        XCTAssertEqual(2020, ts.firstYear)
+        XCTAssertEqual(Date.now.year + 100, ts.lastYear)
+    }
+
+    func test_ending() {
+        let datePassee = Date.now.year - 1
+        var ts = TimeSpan.ending(to: DateBoundary(fixedYear: datePassee))
+        XCTAssertTrue(ts.isValid)
+        XCTAssertEqual(datePassee - 1, ts.firstYear)
+        XCTAssertEqual(datePassee - 1, ts.lastYear)
+        
+        let dateFutur = Date.now.year + 2
+        ts = TimeSpan.ending(to: DateBoundary(fixedYear: dateFutur))
+        XCTAssertTrue(ts.isValid)
+        XCTAssertEqual(Date.now.year, ts.firstYear)
+        XCTAssertEqual(dateFutur - 1, ts.lastYear)
+    }
+    
+    func test_spanning() {
+        let datePassee = Date.now.year - 1
+        let dateFutur  = Date.now.year + 2
+        var ts = TimeSpan.spanning(from : DateBoundary(fixedYear: datePassee),
+                                   to   : DateBoundary(fixedYear: dateFutur))
+        XCTAssertTrue(ts.isValid)
+        XCTAssertTrue(ts.contains(datePassee))
+        XCTAssertTrue(ts.contains(dateFutur-1))
+        XCTAssertFalse(ts.contains(dateFutur))
+        XCTAssertEqual(datePassee, ts.firstYear)
+        XCTAssertEqual(dateFutur - 1, ts.lastYear)
+
+        ts = TimeSpan.spanning(from : DateBoundary(fixedYear: datePassee),
+                               to   : DateBoundary(fixedYear: datePassee))
+        XCTAssertFalse(ts.isValid)
+        XCTAssertNil(ts.firstYear)
+        XCTAssertNil(ts.lastYear)
+    }
+
+    func test_exceptional() {
+        let ts = TimeSpan.exceptional(inYear: 2020)
+        XCTAssertTrue(ts.isValid)
+        XCTAssertEqual(2020, ts.firstYear)
+        XCTAssertEqual(2020, ts.lastYear)
+    }
 }

@@ -14,11 +14,14 @@ private let customLog = Logger(subsystem: "me.michaud.lionel.Patrimoine", catego
 // MARK: - Elongation temporelle du poste de dépense
  
 enum TimeSpan: Hashable {
-    // les années de début et de fin sont inclues
     case permanent
+    // l'année de début est inclue mais la date de fin n'est pas inclue
     case periodic (from: DateBoundary, period: Int, to: DateBoundary)
+    // l'année de début est inclue
     case starting (from: DateBoundary)
+    // l'année de fin n'est pas inclue
     case ending   (to:   DateBoundary)
+    // l'année de début est inclue mais la date de fin n'est pas inclue
     case spanning (from: DateBoundary, to: DateBoundary)
     case exceptional (inYear: Int)
     
@@ -66,11 +69,11 @@ enum TimeSpan: Hashable {
                     customLog.log(level: .info, "contains: to.year = nil or from.year = nil")
                     return false
                 }
-                guard from.year! <= to.year! else {
+                guard from.year! < to.year! else {
 //                    customLog.log(level: .info, "contains: from.year \(from.year!) > to.year \(to.year!)")
                     return false
                 }
-                return (from.year!...to.year!).contains {
+                return (from.year!..<to.year!).contains {
                     let includesYear = $0 == year
                     return includesYear && (($0 - from.year!) % period == 0)
             }
@@ -80,14 +83,14 @@ enum TimeSpan: Hashable {
                     customLog.log(level: .info, "contains: from.year = nil")
                     return false
                 }
-                return year >= from.year!
+                return from.year! <= year
             
             case .ending (let to):
                 guard to.year != nil else {
                     customLog.log(level: .info, "contains: to.year = nil")
                     return false
                 }
-                return year <= to.year!
+                return year < to.year!
             
             case .spanning (let from, let to):
                 guard to.year != nil && from.year != nil else {
@@ -95,7 +98,7 @@ enum TimeSpan: Hashable {
                     return false
                 }
                 if from.year! > to.year! { return false }
-                return (from.year!...to.year!).contains(year)
+                return (from.year!..<to.year!).contains(year)
             
             case .exceptional(let inYear):
                 return year == inYear
@@ -103,16 +106,19 @@ enum TimeSpan: Hashable {
     }
     
     var firstYear: Int? { // computed
+        guard isValid else {
+            return nil
+        }
         switch self {
             case .permanent:
                 return Date.now.year
                 
             case .ending(let to):
                 guard to.year != nil else {
-                    customLog.log(level: .info, "contains: to.year = nil")
+                    customLog.log(level: .info, "firstYear: to.year = nil")
                     return nil
                 }
-                return min(Date.now.year, to.year!)
+                return min(Date.now.year, to.year! - 1)
                 
             case .periodic(let from, period: _, to: _),
                  .starting(let from),
@@ -125,19 +131,25 @@ enum TimeSpan: Hashable {
     }
     
     var lastYear: Int? { // computed
+        guard isValid else {
+            return nil
+        }
         switch self {
             case .permanent:
                 return Date.now.year + 100
+                
             case .periodic(from: _, period: _, to: let to),
                  .spanning(from: _,            to: let to),
                  .ending(let to):
-                return to.year
+                return to.year - 1
+                
             case .starting(let from):
                 guard from.year != nil else {
-                    customLog.log(level: .info, "contains: from.year = nil")
+                    customLog.log(level: .info, "lastYear: from.year = nil")
                     return nil
                 }
                 return Date.now.year + 100
+                
             case .exceptional(inYear: let inYear):
                 return inYear
         }
@@ -147,16 +159,20 @@ enum TimeSpan: Hashable {
         switch self {
             case .permanent:
                 return true
+                
             case .periodic(let from, _, let to),
                  .spanning(let from,    let to):
                 guard let fromYear = from.year, let toYear = to.year else { return false }
-                return fromYear <= toYear
+                return fromYear < toYear
+                
             case .starting(from: _):
                 return true
+                
             case .ending(to: _):
                 return true
+                
             case .exceptional(inYear: _):
-            return true
+                return true
         }
     }
 }

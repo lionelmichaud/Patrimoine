@@ -39,22 +39,6 @@
         },
         
         {
-            "id" : "562EE2A1-4FF5-450D-7BAE-3E8B803928D2",
-            "value" : 1870,
-            "proportional" : false,
-            "name" : "Etudes Lycée+CP Arthur (formation, fournitures...)",
-            "note" : "Actualisé le 16/02/2021\nJusqu'à l'entrée dans l'ensignement supérieur",
-            "timeSpan" : {
-                "ending_to" : {
-                    "fixedYear" : 0,
-                    "event"     : "Début des études supérieurs",
-                    "group"     : null,
-                    "name"      : "M. Arthur MICHAUD"
-                }
-            }
-        },
-        
-        {
             "id" : "562EE2A1-4FF5-450D-7BAE-3E8B803928D3",
             "value" : 12000,
             "proportional" : false,
@@ -77,6 +61,41 @@
         },
         
         {
+            "id" : "562EE2A1-4FF5-450D-7BAE-3E8B803928D5",
+            "value" : 6400,
+            "proportional" : false,
+            "name" : "Pension post-bac Lou-Ann",
+            "note" : "Actualisé le 16/02/2021\n Loyer studio 500€/mois\nEau, Gaz & Electricité 400€/an\nNourriture 10€/jour",
+            "timeSpan" : {
+                "spanning_from" : {
+                    "fixedYear" : 2023,
+                },
+                "spanning_to" : {
+                    "fixedYear" : 0,
+                    "event"     : "Indépendance financière",
+                    "group"     : null,
+                    "name"      : "Mme Lou-Ann MICHAUD"
+                }
+            }
+        },
+        
+        {
+            "id" : "562EE2A1-4FF5-450D-7BAE-3E8B803928D2",
+            "value" : 1870,
+            "proportional" : false,
+            "name" : "Etudes Lycée+CP Arthur (formation, fournitures...)",
+            "note" : "Actualisé le 16/02/2021\nJusqu'à l'entrée dans l'ensignement supérieur",
+            "timeSpan" : {
+                "ending_to" : {
+                    "fixedYear" : 0,
+                    "event"     : "Début des études supérieurs",
+                    "group"     : null,
+                    "name"      : "M. Arthur MICHAUD"
+                }
+            }
+        },
+        
+        {
             "id" : "562EE2A1-4FF5-450D-7BAE-3E8B803928D4",
             "value" : 12000,
             "proportional" : false,
@@ -94,25 +113,6 @@
                     "event"     : "Indépendance financière",
                     "group"     : null,
                     "name"      : "M. Arthur MICHAUD"
-                }
-            }
-        },
-        
-        {
-            "id" : "562EE2A1-4FF5-450D-7BAE-3E8B803928D5",
-            "value" : 6400,
-            "proportional" : false,
-            "name" : "Pension post-bac Lou-Ann",
-            "note" : "Actualisé le 16/02/2021\n Loyer studio 500€/mois\nEau, Gaz & Electricité 400€/an\nNourriture 10€/jour",
-            "timeSpan" : {
-                "spanning_from" : {
-                    "fixedYear" : 2023,
-                },
-                "spanning_to" : {
-                    "fixedYear" : 0,
-                    "event"     : "Indépendance financière",
-                    "group"     : null,
-                    "name"      : "Mme Lou-Ann MICHAUD"
                 }
             }
         },

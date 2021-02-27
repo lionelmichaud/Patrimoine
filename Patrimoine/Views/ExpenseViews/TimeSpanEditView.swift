@@ -111,7 +111,7 @@ struct TimeSpanEditView: View {
             // en fonction du type choisi
             if timeSpanVM.caseIndex == TimeSpan.ending(to: DateBoundary.empty).id {
                 // TimeSpan = .ending
-                BoundaryEditView(label    : "Fin",
+                BoundaryEditView(label    : "Fin (exclue)",
                                  boundary : $timeSpanVM.toVM)
                 
             } else if timeSpanVM.caseIndex == TimeSpan.starting(from: DateBoundary.empty).id {
@@ -124,7 +124,7 @@ struct TimeSpanEditView: View {
                 // TimeSpan = .spanning
                 BoundaryEditView(label    : "Début",
                                  boundary : $timeSpanVM.fromVM)
-                BoundaryEditView(label    : "Fin",
+                BoundaryEditView(label    : "Fin (exclue)",
                                  boundary : $timeSpanVM.toVM)
                 
             } else if timeSpanVM.caseIndex == TimeSpan.periodic(from: DateBoundary.empty,
@@ -133,7 +133,7 @@ struct TimeSpanEditView: View {
                 // TimeSpan = .periodic
                 BoundaryEditView(label    : "Début",
                                  boundary : $timeSpanVM.fromVM)
-                BoundaryEditView(label     : "Fin",
+                BoundaryEditView(label     : "Fin (exclue)",
                                  boundary : $timeSpanVM.toVM)
                 Section(header: Text("Période")) {
                     Stepper(value: $timeSpanVM.period, in: 0...100, step: 1, label: {
