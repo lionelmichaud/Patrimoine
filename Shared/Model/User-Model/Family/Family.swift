@@ -102,11 +102,11 @@ final class Family: ObservableObject {
         self.expenses = LifeExpensesDic()
         // injection de family dans la propriété statique de DateBoundary pour lier les évenements à des personnes
         DateBoundary.setPersonEventYearProvider(self)
-        // injection de family dans la propriété statique de Expense pour lier les évenements à des personnes
+        // injection de family dans la propriété statique de Expense
         LifeExpense.setMembersCountProvider(self)
-        // injection de family dans la propriété statique de Person pour lier les évenements à des personnes
+        // injection de family dans la propriété statique de Adult
         Adult.setAdultRelativesProvider(self)
-        // injection de family dans la propriété statique de Patrimoin pour lier les ages à des personnes
+        // injection de family dans la propriété statique de Patrimoin
         Patrimoin.family = self
     }
     
