@@ -87,7 +87,7 @@
         
         {
             "id" : "29C6B93B-3A68-4963-AF88-775E65451189",
-            "value" : 150,
+            "value" : 200,
             "proportional" : true,
             "name" : "Retrait cash CB",
             "note" : "Actualisé le 16/02/2021",
@@ -103,7 +103,7 @@
         
         {
             "id" : "29C6B93B-3A68-4963-AF88-775E65451190",
-            "value" : 150,
+            "value" : 200,
             "proportional" : true,
             "name" : "Non catégorisé",
             "note" : "Actualisé le 16/02/2021",

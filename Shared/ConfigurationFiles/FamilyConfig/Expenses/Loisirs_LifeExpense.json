@@ -2,7 +2,7 @@
     "items" : [
         {
             "id" : "45325B0E-331D-481F-9C34-57C088289751",
-            "value" : 70,
+            "value" : 150,
             "proportional" : true,
             "name" : "Divertissement - culture",
             "note" : "Actualisé le ",
@@ -32,7 +32,7 @@
         },
         {
             "id" : "45325B0E-331D-481F-9C34-57C088289752",
-            "value" : 250,
+            "value" : 300,
             "proportional" : true,
             "name" : "Restaurants, bars...",
             "note" : "Actualisé le 16/02/2021",
@@ -47,7 +47,7 @@
         },
         {
             "id" : "45325B0E-331D-481F-9C34-57C088289754",
-            "value" : 120,
+            "value" : 150,
             "proportional" : false,
             "name" : "Loisirs - Autres",
             "note" : "Actualisé le 16/02/2021",
