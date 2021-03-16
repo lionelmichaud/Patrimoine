@@ -19,10 +19,10 @@
         
         {
             "id" : "B4EFF395-6A51-47AB-AD27-E7461ECB9AD1",
-            "value" : 1600,
+            "value" : 3300,
             "proportional" : false,
             "name" : "Complémentaires santé - TNS",
-            "note" : "Actualisé le 16/02/2021",
+            "note" : "Actualisé le 16/03/2021",
             "timeSpan" : {
                 "spanning_from" :
                 {
@@ -43,7 +43,7 @@
         
         {
             "id" : "B4EFF395-6A51-47AB-AD27-E7461ECB9AD2",
-            "value" : 2640,
+            "value" : 3300,
             "proportional" : false,
             "name" : "Complémentaires santé - Retraités",
             "note" : "Actualisé le 16/02/2021",
