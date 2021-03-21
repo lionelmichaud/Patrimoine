@@ -110,13 +110,6 @@ struct LifeExpense: Identifiable, Codable, Hashable, NameableValuable {
             return 0.0
         }
     }
-    
-    func print() {
-        Swift.print("    category: \(name) ")
-        Swift.print("      time span:    \(timeSpan)")
-        Swift.print("      amount:       \(value) €")
-        Swift.print("      proportional: \(proportional)")
-    }
 }
 
 extension LifeExpense: Comparable {

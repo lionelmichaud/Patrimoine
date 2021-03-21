@@ -33,18 +33,8 @@ struct SocialAccounts {
     var isEmpty: Bool {
         cashFlowArray.isEmpty || balanceArray.isEmpty
     }
-    
+
     // MARK: - Methods
-    
-    /// Réinitialiser les comptes sociaux
-    mutating func reset() {
-        cashFlowArray = CashFlowArray()
-        balanceArray  = BalanceSheetArray()
-        firstYear     = Date.now.year
-        lastYear      = Date.now.year
-        legalSuccessions        = []
-        lifeInsSuccessions = []
-}
     
     /// Mémorise le niveau le + bas atteint par les actifs financiers (hors immobilier physique) au cours du run
     /// - Parameters:

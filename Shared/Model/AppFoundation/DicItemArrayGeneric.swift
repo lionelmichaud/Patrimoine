@@ -24,6 +24,7 @@ where ItemCategory: PickableEnum, ItemCategory: Codable {
     /// nom du fichier "Category_LifeExpense.json"
     init() {
         for category in ItemCategory.allCases {
+            // charger les Items de cette catégorie à partir du fichier JSON associé à cette catégorie
             perCategory[category] = ArrayOfItems(fileNamePrefix: category.pickerString + "_")
         }
     }

@@ -118,16 +118,16 @@ struct Assets {
                                       spouseName         : String?,
                                       spouseFiscalOption : InheritanceDonation.FiscalOption?) {
         for idx in 0..<periodicInvests.items.count {
-            switch periodicInvests.items[idx].type {
+            switch periodicInvests[idx].type {
                 case .lifeInsurance(_, let clause):
                     // régles de transmission particulières pour l'Assurance Vie
                     // TODO: - ne transférer que ce qui n'est pas de l'assurance vie, sinon utiliser d'autres règles de transmission
-                    try! periodicInvests.items[idx].ownership.transferLifeInsuranceOfDecedent(
+                    try! periodicInvests[idx].ownership.transferLifeInsuranceOfDecedent(
                         of          : decedentName,
                         accordingTo : clause)
                     
                 default:
-                    try! periodicInvests.items[idx].ownership.transferOwnershipOf(
+                    try! periodicInvests[idx].ownership.transferOwnershipOf(
                         decedentName       : decedentName,
                         chidrenNames       : chidrenNames,
                         spouseName         : spouseName,
@@ -135,16 +135,16 @@ struct Assets {
             }
         }
         for idx in 0..<freeInvests.items.count {
-            switch freeInvests.items[idx].type {
+            switch freeInvests[idx].type {
                 case .lifeInsurance(_, let clause):
                     // régles de transmission particulières pour l'Assurance Vie
                     // TODO: - ne transférer que ce qui n'est pas de l'assurance vie, sinon utiliser d'autres règles de transmission
-                    try! freeInvests.items[idx].ownership.transferLifeInsuranceOfDecedent(
+                    try! freeInvests[idx].ownership.transferLifeInsuranceOfDecedent(
                         of          : decedentName,
                         accordingTo : clause)
                     
                 default:
-                    try! freeInvests.items[idx].ownership.transferOwnershipOf(
+                    try! freeInvests[idx].ownership.transferOwnershipOf(
                         decedentName       : decedentName,
                         chidrenNames       : chidrenNames,
                         spouseName         : spouseName,
@@ -152,7 +152,7 @@ struct Assets {
             }
         }
         for idx in 0..<realEstates.items.count {
-            try! realEstates.items[idx].ownership.transferOwnershipOf(
+            try! realEstates[idx].ownership.transferOwnershipOf(
                 decedentName       : decedentName,
                 chidrenNames       : chidrenNames,
                 spouseName         : spouseName,

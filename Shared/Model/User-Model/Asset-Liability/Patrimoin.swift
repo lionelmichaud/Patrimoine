@@ -15,7 +15,19 @@ final class Patrimoin: ObservableObject {
     
     // doit être injecté depuis l'extérieur avant toute instanciation de la classe
     static var family: Family?
-    
+
+    // MARK: - Nested Type
+
+    struct Memento {
+        private(set) var assets      : Assets
+        private(set) var liabilities : Liabilities
+        init(assets      : Assets,
+             liabilities : Liabilities) {
+            self.assets      = assets
+            self.liabilities = liabilities
+        }
+    }
+
     // MARK: - Static Methods
     
     /// Définir le mode de simulation à utiliser pour tous les calculs futurs
@@ -25,12 +37,21 @@ final class Patrimoin: ObservableObject {
     }
     
     // MARK: - Properties
+
+    @Published var assets      : Assets
+    @Published var liabilities : Liabilities
+    var memento: Memento?
     
-    @Published var assets      = Assets(personAgeProvider: Patrimoin.family)
-    @Published var liabilities = Liabilities(personAgeProvider: Patrimoin.family)
-    
+    // MARK: - Initializers
+
+    init() {
+        self.assets      = Assets(personAgeProvider      : Patrimoin.family)
+        self.liabilities = Liabilities(personAgeProvider : Patrimoin.family)
+        self.save()
+    }
+
     // MARK: - Methods
-    
+
     func value(atEndOf year: Int) -> Double {
         assets.value(atEndOf: year) +
             liabilities.value(atEndOf: year)
@@ -43,12 +64,18 @@ final class Patrimoin: ObservableObject {
     func resetFreeInvestementCurrentValue() {
         assets.resetFreeInvestementCurrentValue()
     }
-    
+
+    /// Sauvegarder l'état courant du Patrimoine
+    func save() {
+        memento = Memento(assets      : assets,
+                          liabilities : liabilities)
+    }
+
     /// Recharger les actifs et passifs à partir des fichiers pour repartir d'une situation initiale sans aucune modification
     /// - Warning: Doit être appelée après toute simulation ayant affectée le Patrimoine (succession)
-    func reLoad() {
-        assets.reLoad(personAgeProvider: Patrimoin.family)
-        liabilities.reLoad(personAgeProvider: Patrimoin.family)
+    func restore() {
+        assets      = memento!.assets
+        liabilities = memento!.liabilities
     }
     
     /// Capitaliser les intérêts des investissements financiers libres
@@ -56,7 +83,7 @@ final class Patrimoin: ObservableObject {
     ///   - year: à la fin de cette année
     func capitalizeFreeInvestments(atEndOf year: Int) {
         for idx in 0..<assets.freeInvests.items.count {
-            try! assets.freeInvests.items[idx].capitalize(atEndOf: year)
+            try! assets.freeInvests[idx].capitalize(atEndOf: year)
         }
     }
     
@@ -69,22 +96,22 @@ final class Patrimoin: ObservableObject {
         
         // investir en priorité dans une assurance vie
         for idx in 0..<assets.freeInvests.items.count {
-            switch assets.freeInvests.items[idx].type {
+            switch assets.freeInvests[idx].type {
                 case .lifeInsurance(let periodicSocialTaxes, _):
                     if periodicSocialTaxes && amount != 0 {
                         // investir la totalité du cash
-                        assets.freeInvests.items[idx].add(amount)
+                        assets.freeInvests[idx].add(amount)
                         return
                     }
                 default: ()
             }
         }
         for idx in 0..<assets.freeInvests.items.count {
-            switch assets.freeInvests.items[idx].type {
+            switch assets.freeInvests[idx].type {
                 case .lifeInsurance(let periodicSocialTaxes, _):
                     if !periodicSocialTaxes && amount != 0 {
                         // investir la totalité du cash
-                        assets.freeInvests.items[idx].add(amount)
+                        assets.freeInvests[idx].add(amount)
                         return
                     }
                 default: ()
@@ -92,15 +119,15 @@ final class Patrimoin: ObservableObject {
         }
         
         // si pas d'assurance vie alors investir dans un PEA
-        for idx in 0..<assets.freeInvests.items.count where assets.freeInvests.items[idx].type == .pea {
+        for idx in 0..<assets.freeInvests.items.count where assets.freeInvests[idx].type == .pea {
             // investir la totalité du cash
-            assets.freeInvests.items[idx].add(amount)
+            assets.freeInvests[idx].add(amount)
             return
         }
         // si pas d'assurance vie ni de PEA alors investir dans un autre placement
-        for idx in 0..<assets.freeInvests.items.count where assets.freeInvests.items[idx].type == .other {
+        for idx in 0..<assets.freeInvests.items.count where assets.freeInvests[idx].type == .other {
             // investir la totalité du cash
-            assets.freeInvests.items[idx].add(amount)
+            assets.freeInvests[idx].add(amount)
             return
         }
     }
@@ -122,11 +149,11 @@ final class Patrimoin: ObservableObject {
         assets.freeInvests.items.sort(by: {$0.averageInterestRate < $1.averageInterestRate})
         
         // PEA: retirer le montant d'un investissement libre: d'abord le PEA procurant le moins bon rendement
-        for idx in 0..<assets.freeInvests.items.count where assets.freeInvests.items[idx].type == .pea {
+        for idx in 0..<assets.freeInvests.items.count where assets.freeInvests[idx].type == .pea {
             // tant que l'on a pas retiré le montant souhaité
             // retirer le montant du PEA s'il y en avait assez à la fin de l'année dernière
-            if amountRemainingToRemove > 0.0 && assets.freeInvests.items[idx].value(atEndOf: year-1) > 0.0 {
-                let removal = assets.freeInvests.items[idx].remove(netAmount: amountRemainingToRemove)
+            if amountRemainingToRemove > 0.0 && assets.freeInvests[idx].value(atEndOf: year-1) > 0.0 {
+                let removal = assets.freeInvests[idx].remove(netAmount: amountRemainingToRemove)
                 amountRemainingToRemove -= removal.revenue
                 // IRPP: les plus values PEA ne sont pas imposables à l'IRPP
                 // Prélèvements sociaux: prélevés à la source sur le montant brut du retrait donc pas à payer dans le futur
@@ -136,12 +163,12 @@ final class Patrimoin: ObservableObject {
         
         // ASSURANCE VIE: si le solde des PEA n'était pas suffisant alors retirer de l'Assurances vie procurant le moins bon rendement
         for idx in 0..<assets.freeInvests.items.count {
-            switch assets.freeInvests.items[idx].type {
+            switch assets.freeInvests[idx].type {
                 case .lifeInsurance:
                     // tant que l'on a pas retiré le montant souhaité
                     // retirer le montant de l'Assurances vie s'il y en avait assez à la fin de l'année dernière
-                    if amountRemainingToRemove > 0.0 && assets.freeInvests.items[idx].value(atEndOf: year-1) > 0.0 {
-                        let removal = assets.freeInvests.items[idx].remove(netAmount: amountRemainingToRemove)
+                    if amountRemainingToRemove > 0.0 && assets.freeInvests[idx].value(atEndOf: year-1) > 0.0 {
+                        let removal = assets.freeInvests[idx].remove(netAmount: amountRemainingToRemove)
                         amountRemainingToRemove -= removal.revenue
                         // IRPP: part des produit de la liquidation inscrit en compte courant imposable à l'IRPP après déduction de ce qu'il reste de franchise
                         var taxableInterests: Double

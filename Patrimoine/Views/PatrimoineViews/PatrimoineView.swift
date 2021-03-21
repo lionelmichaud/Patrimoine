@@ -15,7 +15,6 @@ struct PatrimoineView: View {
     var body: some View {
         NavigationView {
             VStack(alignment: .leading) {
-
                 List {
                     // entête
                     PatrimoineHeaderView()
@@ -29,15 +28,13 @@ struct PatrimoineView: View {
                 .defaultSideBarListStyle()
                 //.listStyle(GroupedListStyle())
                 .environment(\.horizontalSizeClass, .regular)
-
             }
-//            .onAppear(perform: { self.patrimoine.reLoad() })
             .navigationTitle("Patrimoine")
             .navigationBarItems(
                 leading: EditButton(),
                 trailing: Button("Réinitialiser",
                                  action: {
-                                    self.patrimoine.reLoad()
+                                    self.patrimoine.restore()
                                     uiState.patrimoineViewState.evalDate = Date.now.year.double()
                                  }))
 

@@ -215,7 +215,7 @@ private struct InheritanceSectionView: View {
                     })
             }
         }
-        .onAppear(perform: { self.patrimoine.reLoad() })
+        //.onAppear(perform: { self.patrimoine.restore() })
     }
     
     /// Option fiscale retenue en cas d'héritage
