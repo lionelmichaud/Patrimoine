@@ -53,7 +53,7 @@ final class Simulation: ObservableObject {
     
     //#if DEBUG
     /// URL du fichier de stockage du résultat de calcul au format CSV
-    static let monteCarloFileUrl = Bundle.main.url(forResource: "Monté-Carlo Kpi.csv", withExtension: nil)
+//    static let monteCarloFileUrl = Bundle.main.url(forResource: "Monté-Carlo Kpi.csv", withExtension: nil)
     //#endif
     
     static var player: AVPlayer { AVPlayer.sharedDingPlayer }

@@ -91,26 +91,37 @@ struct SciCashFlowLine {
     
     // MARK: - Initializers
     
-    init(withYear year : Int,
-         withSCI sci   : SCI) {
+    init(withYear year  : Int,
+         for adultsName : [String],
+         withSCI sci    : SCI) {
         self.year = year
         
         // populate produit de vente, dividendes des SCPI
         
         // pour chaque SCPI
         for scpi in sci.scpis.items.sorted(by:<) {
-            // populate SCPI revenues de la SCI, nets de charges sociales et avant IS
-            let yearlyRevenue = scpi.yearlyRevenue(during: year)
-            let name          = scpi.name
-            // revenus inscrit en compte courant après prélèvements sociaux et avant IS
-            // car dans le cas d'une SCI, le revenu remboursable aux actionnaires c'est le net de charges sociales
-            revenues.sciDividends.namedValues.append((name : name,
-                                                      value: yearlyRevenue.taxableIrpp.rounded()))
-            // populate SCPI sale revenue: produit net de charges sociales et d'impôt sur la plus-value
-            // FIXME: vérifier si c'est net où brut dans le cas d'une SCI
-            let liquidatedValue = scpi.liquidatedValue(year)
-            revenues.scpiSale.namedValues.append((name : name,
-                                                  value: liquidatedValue.netRevenue.rounded()))
+            let name = scpi.name
+            // FIXME: Ca ne marche pas comme ca. C'est toute la SCI dont il faut géréer les droit de propriété. Pas chaque SCPI individuellement.
+            if scpi.providesRevenue(to: adultsName) {
+                // populate SCPI revenues de la SCI, nets de charges sociales et avant IS
+                let yearlyRevenue = scpi.yearlyRevenue(during: year)
+                // revenus inscrit en compte courant après prélèvements sociaux et avant IS
+                // car dans le cas d'une SCI, le revenu remboursable aux actionnaires c'est le net de charges sociales
+                revenues.sciDividends.namedValues
+                    .append((name : name,
+                             value: yearlyRevenue.taxableIrpp.rounded()))
+            }
+            
+            // les produits de la vente ne reviennent qu'aux PP ou NP
+            // FIXME: Ca ne marche pas comme ca. C'est toute la SCI dont il faut géréer les droit de propriété. Pas chaque SCPI individuellement.
+            if scpi.providesSaleProduct(to: adultsName) {
+                // populate SCPI sale revenue: produit net de charges sociales et d'impôt sur la plus-value
+                // FIXME: vérifier si c'est net où brut dans le cas d'une SCI
+                let liquidatedValue = scpi.liquidatedValue(year)
+                revenues.scpiSale.namedValues
+                    .append((name : name,
+                             value: liquidatedValue.netRevenue.rounded()))
+            }
         }
         
         // calcul de l'IS de la SCI

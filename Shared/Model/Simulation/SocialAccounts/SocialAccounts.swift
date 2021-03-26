@@ -12,8 +12,12 @@ struct SocialAccounts {
     
     // #if DEBUG
     /// URL du fichier de stockage du résultat de calcul au format CSV
+    // en mode DEBUG sauvegarder le fichier .CSV dans le répertoire Bundle/csv
+    // en plus du répertoire Data/Documents/csv
     static let balanceSheetFileUrl = Bundle.main.url(forResource: "BalanceSheet.csv", withExtension: nil)
     /// URL du fichier de stockage du résultat de calcul au format CSV
+    // en mode DEBUG sauvegarder le fichier .CSV dans le répertoire Bundle/csv
+    // en plus du répertoire Data/Documents/csv
     static let cashFlowFileUrl = Bundle.main.url(forResource: "CashFlow.csv", withExtension: nil)
     // #endif
     

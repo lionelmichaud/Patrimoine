@@ -102,10 +102,12 @@ final class Patrimoin: ObservableObject {
     }
     
     /// Ajouter la capacité d'épargne à l'investissement libre de type Assurance vie de meilleur rendement
+    /// dont un des adultes est PP
     /// - Parameters:
     ///   - patrimoine: du patrimoine
     ///   - amount: capacité d'épargne = montant à investir
-    func investNetCashFlow(_ amount: Double) {
+    func investNetCashFlow(amount         : Double,
+                           for adultsName : [String]) {
         assets.freeInvests.items.sort(by: {$0.averageInterestRate > $1.averageInterestRate})
         
         // investir en priorité dans une assurance vie
@@ -154,9 +156,10 @@ final class Patrimoin: ObservableObject {
     ///   - year: année en cours
     /// - Throws: Si pas assez de capital -> CashFlowError.notEnoughCash(missingCash: amountRemainingToRemove)
     /// - Returns: taxable Interests
-    func removeFromInvestement(thisAmount amount   : Double,
-                               atEndOf year        : Int,
-                               lifeInsuranceRebate : inout Double) throws -> Double {
+    func getCashFromInvestement(thisAmount amount   : Double,
+                                atEndOf year        : Int,
+                                for adultsName      : [String],
+                                lifeInsuranceRebate : inout Double) throws -> Double {
         var amountRemainingToRemove = amount
         var totalTaxableInterests   = 0.0
         

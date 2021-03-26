@@ -58,7 +58,7 @@ struct CashFlowLine {
     var successions     : [Succession] = []
     // les transmissions d'assurances vie survenues dans l'année
     var lifeInsSuccessions : [Succession] = []
-
+    
     // solde net
     var netCashFlow: Double {
         sumOfrevenues - sumOfExpenses
@@ -78,6 +78,7 @@ struct CashFlowLine {
          withPatrimoine patrimoine             : Patrimoin,
          taxableIrppRevenueDelayedFromLastyear : Double) throws {
         self.year = year
+        let adultsNames = family.adults.map {$0.displayName}
         revenues.taxableIrppRevenueDelayedFromLastYear.setValue(to: taxableIrppRevenueDelayedFromLastyear)
         
         /// initialize life insurance yearly rebate on taxes
@@ -86,6 +87,7 @@ struct CashFlowLine {
         
         /// SCI: calculer le cash flow de la SCI
         sciCashFlowLine = SciCashFlowLine(withYear : year,
+                                          for      : adultsNames,
                                           withSCI  : patrimoine.assets.sci)
         
         autoreleasepool {
@@ -93,13 +95,16 @@ struct CashFlowLine {
             populateIncomes(of: family)
             
             /// REAL ESTATE: populate produit de vente, loyers, taxes sociales et taxes locales des bien immobiliers
-            populateRealEstateCashFlow(of: patrimoine)
+            populateRealEstateCashFlow(of  : patrimoine,
+                                       for : adultsNames)
             
             /// SCPI: populate produit de vente, dividendes, taxes sociales des SCPI
-            populateScpiCashFlow(of: patrimoine)
+            populateScpiCashFlow(of  : patrimoine,
+                                 for : adultsNames)
             
             /// PERIODIC INVEST: populate revenue, des investissements financiers périodiques
             populatePeriodicInvestmentsCashFlow(of                  : patrimoine,
+                                                for                 : adultsNames,
                                                 lifeInsuranceRebate : &lifeInsuranceRebate)
             
             // Note: les intérêts des investissements financiers libres sont capitalisés
@@ -126,6 +131,7 @@ struct CashFlowLine {
         
         /// FREE INVEST: populate revenue, des investissements financiers libres et investir/retirer le solde net du cash flow de l'année
         try manageYearlyNetCashFlow(of                  : patrimoine,
+                                    for                 : adultsNames,
                                     lifeInsuranceRebate : &lifeInsuranceRebate,
                                     atEndOf             : year)
         #if DEBUG
@@ -170,10 +176,12 @@ struct CashFlowLine {
             // Transférer les biens d'un défunt vers ses héritiers
             patrimoine.transferOwnershipOf(decedent: decedent, atEndOf: year)
         }
-        taxes.perCategory[.succession]?.namedValues.append((name  : TaxeCategory.succession.rawValue,
-                                                            value : totalSuccessionTax.rounded()))
-        taxes.perCategory[.liSuccession]?.namedValues.append((name  : TaxeCategory.liSuccession.rawValue,
-                                                              value : totalLiSuccessionTax.rounded()))
+        taxes.perCategory[.succession]?.namedValues
+            .append((name  : TaxeCategory.succession.rawValue,
+                     value : totalSuccessionTax.rounded()))
+        taxes.perCategory[.liSuccession]?.namedValues
+            .append((name  : TaxeCategory.liSuccession.rawValue,
+                     value : totalLiSuccessionTax.rounded()))
     }
     
     fileprivate mutating func populateIrpp(of family: Family) {
@@ -193,6 +201,7 @@ struct CashFlowLine {
         taxes.perCategory[.isf]?.namedValues.append((name  : TaxeCategory.isf.rawValue,
                                                      value : taxes.isf.amount.rounded()))
     }
+    
     /// Populate Ages and Work incomes
     /// - Parameter family: de la famille
     fileprivate mutating func populateIncomes(of family: Family) {
@@ -208,42 +217,51 @@ struct CashFlowLine {
                 /// revenus du travail
                 let workIncome = adult.workIncome(during: year)
                 // revenus du travail inscrit en compte avant IRPP (net charges sociales, de dépenses de mutuelle ou d'assurance perte d'emploi)
-                revenues.perCategory[.workIncomes]?.credits.namedValues.append((name: name,
-                                                                                value: workIncome.net.rounded()))
+                revenues.perCategory[.workIncomes]?.credits.namedValues
+                    .append((name: name,
+                             value: workIncome.net.rounded()))
                 // part des revenus du travail inscrite en compte qui est imposable à l'IRPP
-                revenues.perCategory[.workIncomes]?.taxablesIrpp.namedValues.append((name: name,
-                                                                                     value: workIncome.taxableIrpp.rounded()))
+                revenues.perCategory[.workIncomes]?.taxablesIrpp.namedValues
+                    .append((name: name,
+                             value: workIncome.taxableIrpp.rounded()))
                 
                 /// pension de retraite
                 let pension  = adult.pension(during: year)
                 // pension inscrit en compte avant IRPP (net de charges sociales)
-                revenues.perCategory[.pensions]?.credits.namedValues.append((name: name,
-                                                                             value: pension.net.rounded()))
+                revenues.perCategory[.pensions]?.credits.namedValues
+                    .append((name: name,
+                             value: pension.net.rounded()))
                 // part de la pension inscrite en compte qui est imposable à l'IRPP
                 let relicat = Fiscal.model.pensionTaxes.model.maxRebate - totalPensionDiscount
                 var discount = pension.net - pension.taxable
                 if relicat >= discount {
                     // l'abattement est suffisant pour cette personne
-                    revenues.perCategory[.pensions]?.taxablesIrpp.namedValues.append((name: name,
-                                                                                      value: pension.taxable.rounded()))
+                    revenues.perCategory[.pensions]?.taxablesIrpp.namedValues
+                        .append((name: name,
+                                 value: pension.taxable.rounded()))
                 } else {
                     discount = relicat
-                    revenues.perCategory[.pensions]?.taxablesIrpp.namedValues.append((name: name,
-                                                                                      value: (pension.net - discount).rounded()))
+                    revenues.perCategory[.pensions]?.taxablesIrpp.namedValues
+                        .append((name: name,
+                                 value: (pension.net - discount).rounded()))
                 }
                 totalPensionDiscount += discount
                 
                 /// indemnité de licenciement
                 let compensation = adult.layoffCompensation(during: year)
-                revenues.perCategory[.layoffCompensation]?.credits.namedValues.append((name: name,
-                                                                                       value: compensation.net.rounded()))
-                revenues.perCategory[.layoffCompensation]?.taxablesIrpp.namedValues.append((name: name,
-                                                                                            value: compensation.taxable.rounded()))
+                revenues.perCategory[.layoffCompensation]?.credits.namedValues
+                    .append((name: name,
+                             value: compensation.net.rounded()))
+                revenues.perCategory[.layoffCompensation]?.taxablesIrpp.namedValues
+                    .append((name: name,
+                             value: compensation.taxable.rounded()))
                 /// allocation chomage
                 let alocation = adult.unemployementAllocation(during: year)
-                revenues.perCategory[.unemployAlloc]?.credits.namedValues.append((name: name, value: alocation.net.rounded()))
-                revenues.perCategory[.unemployAlloc]?.taxablesIrpp.namedValues.append((name: name,
-                                                                                       value: alocation.taxable.rounded()))
+                revenues.perCategory[.unemployAlloc]?.credits.namedValues
+                    .append((name: name, value: alocation.net.rounded()))
+                revenues.perCategory[.unemployAlloc]?.taxablesIrpp.namedValues
+                    .append((name: name,
+                             value: alocation.taxable.rounded()))
                 
             }
         }
@@ -251,56 +269,80 @@ struct CashFlowLine {
     
     /// Populate loyers, produit de la vente et impots locaux des biens immobiliers
     /// - Parameter patrimoine: du patrimoine
-    fileprivate mutating func populateRealEstateCashFlow(of patrimoine: Patrimoin) {
-        for realEstate in patrimoine.assets.realEstates.items.sorted(by:<) {
-            // populate real estate rent revenues and social taxes
-            let yearlyRent = realEstate.yearlyRent(during: year)
-            let name       = realEstate.name
-            // loyers inscrit en compte courant avant prélèvements sociaux et IRPP
-            revenues.perCategory[.realEstateRents]?.credits.namedValues.append((name: name,
-                                                                                value: yearlyRent.revenue.rounded()))
-            // part des loyers inscrit en compte courant imposable à l'IRPP - idem ci-dessus car même base
-            revenues.perCategory[.realEstateRents]?.taxablesIrpp.namedValues.append((name: name,
-                                                                                     value: yearlyRent.taxableIrpp.rounded()))
-            // prélèvements sociaux payés sur le loyer
-            taxes.perCategory[.socialTaxes]?.namedValues.append((name : name,
-                                                                 value               : yearlyRent.socialTaxes.rounded()))
+    fileprivate mutating func populateRealEstateCashFlow(of patrimoine  : Patrimoin,
+                                                         for adultsName : [String]) {
+        for realEstate in patrimoine.assets.realEstates.items
+            .sorted(by:<) {
+            let name = realEstate.name
             
-            // produit de la vente inscrit en compte courant: produit net de charges sociales et d'impôt sur la plus-value
-            // le crédit se fait au début de l'année qui suit la vente
-            let liquidatedValue = realEstate.liquidatedValue(year - 1)
-            revenues.perCategory[.realEstateSale]?.credits.namedValues.append((name: name,
-                                                                               value: liquidatedValue.netRevenue.rounded()))
+            // les revenus ne reviennent qu'aux UF ou PP, idem pour les impôts locaux
+            if realEstate.providesRevenue(to: adultsName) {
+                // populate real estate rent revenues and social taxes
+                let yearlyRent = realEstate.yearlyRent(during: year)
+                // loyers inscrit en compte courant avant prélèvements sociaux et IRPP
+                revenues.perCategory[.realEstateRents]?.credits.namedValues
+                    .append((name: name,
+                             value: yearlyRent.revenue.rounded()))
+                // part des loyers inscrit en compte courant imposable à l'IRPP - idem ci-dessus car même base
+                revenues.perCategory[.realEstateRents]?.taxablesIrpp.namedValues
+                    .append((name: name,
+                             value: yearlyRent.taxableIrpp.rounded()))
+                // prélèvements sociaux payés sur le loyer
+                taxes.perCategory[.socialTaxes]?.namedValues.append((name : name,
+                                                                     value: yearlyRent.socialTaxes.rounded()))
+                
+                // impôts locaux
+                let yearlyLocaltaxes = realEstate.yearlyLocalTaxes(during: year)
+                taxes.perCategory[.localTaxes]?.namedValues
+                    .append((name: name,
+                             value: yearlyLocaltaxes.rounded()))
+            }
             
-            // impôts locaux
-            let yearlyLocaltaxes = realEstate.yearlyLocalTaxes(during: year)
-            taxes.perCategory[.localTaxes]?.namedValues.append((name: name,
-                                                                value: yearlyLocaltaxes.rounded()))
+            // les produits de la vente ne reviennent qu'aux PP ou NP
+            if realEstate.providesSaleProduct(to: adultsName) {
+                // produit de la vente inscrit en compte courant:
+                //    produit net de charges sociales et d'impôt sur la plus-value
+                // le crédit se fait au début de l'année qui suit la vente
+                let liquidatedValue = realEstate.liquidatedValue(year - 1)
+                revenues.perCategory[.realEstateSale]?.credits.namedValues
+                    .append((name: name,
+                             value: liquidatedValue.netRevenue.rounded()))
+            }
         }
     }
     
     /// Populate produit de vente, dividendes, taxes sociales des SCPI hors de la SCI
     /// - Parameter patrimoine: du patrimoine
-    fileprivate mutating func populateScpiCashFlow(of patrimoine: Patrimoin) {
+    fileprivate mutating func populateScpiCashFlow(of patrimoine  : Patrimoin,
+                                                   for adultsName : [String]) {
         for scpi in patrimoine.assets.scpis.items.sorted(by:<) {
-            // populate SCPI revenues and social taxes
-            let yearlyRevenue = scpi.yearlyRevenue(during: year)
-            let name          = scpi.name
-            // dividendes inscrit en compte courant avant prélèvements sociaux et IRPP
-            revenues.perCategory[.scpis]?.credits.namedValues.append((name: name,
-                                                                      value: yearlyRevenue.revenue.rounded()))
-            // part des dividendes inscrit en compte courant imposable à l'IRPP
-            revenues.perCategory[.scpis]?.taxablesIrpp.namedValues.append((name: name,
-                                                                           value: yearlyRevenue.taxableIrpp.rounded()))
-            // prélèvements sociaux payés sur les dividendes de SCPI
-            taxes.perCategory[.socialTaxes]?.namedValues.append((name: name,
-                                                                 value: yearlyRevenue.socialTaxes.rounded()))
+            let name = scpi.name
+            if scpi.providesRevenue(to: adultsName) {
+                // populate SCPI revenues and social taxes
+                let yearlyRevenue = scpi.yearlyRevenue(during: year)
+                // dividendes inscrit en compte courant avant prélèvements sociaux et IRPP
+                revenues.perCategory[.scpis]?.credits.namedValues
+                    .append((name: name,
+                             value: yearlyRevenue.revenue.rounded()))
+                // part des dividendes inscrit en compte courant imposable à l'IRPP
+                revenues.perCategory[.scpis]?.taxablesIrpp.namedValues
+                    .append((name: name,
+                             value: yearlyRevenue.taxableIrpp.rounded()))
+                // prélèvements sociaux payés sur les dividendes de SCPI
+                taxes.perCategory[.socialTaxes]?.namedValues
+                    .append((name: name,
+                             value: yearlyRevenue.socialTaxes.rounded()))
+            }
             
-            // populate SCPI sale revenue: produit de vente net de charges sociales et d'impôt sur la plus-value
-            // le crédit se fait au début de l'année qui suit la vente
-            let liquidatedValue = scpi.liquidatedValue(year - 1)
-            revenues.perCategory[.scpiSale]?.credits.namedValues.append((name: name,
-                                                                         value: liquidatedValue.netRevenue.rounded()))
+            // les produits de la vente ne reviennent qu'aux PP ou NP
+            if scpi.providesSaleProduct(to: adultsName) {
+                // populate SCPI sale revenue: produit de vente net de charges sociales et d'impôt sur la plus-value
+                // le crédit se fait au début de l'année qui suit la vente
+                let liquidatedValue = scpi.liquidatedValue(year - 1)
+                revenues.perCategory[.scpiSale]?.credits.namedValues
+                    .append((name: name,
+                             value: liquidatedValue.netRevenue.rounded()))
+            }
         }
     }
     
@@ -309,50 +351,53 @@ struct CashFlowLine {
     ///   - patrimoine: du patrimoine
     ///   - lifeInsuranceRebate: franchise d'imposition sur les plus values
     fileprivate mutating func populatePeriodicInvestmentsCashFlow(of patrimoine       : Patrimoin,
+                                                                  for adultsName      : [String],
                                                                   lifeInsuranceRebate : inout Double) {
         // pour chaque investissement financier periodique
         for periodicInvestement in patrimoine.assets.periodicInvests.items.sorted(by:<) {
-            // le crédit se fait au début de l'année qui suit la vente
-            let liquidatedValue = periodicInvestement.liquidatedValue(atEndOf: year - 1)
-            // on compte quand même les versements de la dernière année
-            let yearlyPayement  = periodicInvestement.yearlyTotalPayement(atEndOf: year)
-            let name            = periodicInvestement.name
-            // produit de la liquidation inscrit en compte courant avant prélèvements sociaux et IRPP
-            revenues.perCategory[.financials]?.credits.namedValues.append(
-                (name: name,
-                 value: liquidatedValue.revenue.rounded()))
-            // populate taxable interests
-            switch periodicInvestement.type {
-                case .lifeInsurance:
-                    var taxableInterests: Double
-                    // apply rebate if some is remaining
-                    taxableInterests = zeroOrPositive(liquidatedValue.taxableIrppInterests - lifeInsuranceRebate)
-                    lifeInsuranceRebate -= (liquidatedValue.taxableIrppInterests - taxableInterests)
-                    // part des produit de la liquidation inscrit en compte courant imposable à l'IRPP
-                    revenues.perCategory[.financials]?.taxablesIrpp.namedValues.append(
-                        (name: name,
-                         value: taxableInterests.rounded()))
-                case .pea:
-                    // part des produit de la liquidation inscrit en compte courant imposable à l'IRPP
-                    revenues.perCategory[.financials]?.taxablesIrpp.namedValues.append(
-                        (name: name,
-                         value: liquidatedValue.taxableIrppInterests.rounded()))
-                case .other:
-                    // part des produit de la liquidation inscrit en compte courant imposable à l'IRPP
-                    revenues.perCategory[.financials]?.taxablesIrpp.namedValues.append(
-                        (name: name,
-                         value: liquidatedValue.taxableIrppInterests.rounded()))
+            // les produits de la vente ne reviennent qu'aux PP ou NP, idem pour les versements périodiques
+            if periodicInvestement.providesSaleProduct(to: adultsName) {
+                let name = periodicInvestement.name
+                // le crédit se fait au début de l'année qui suit la vente
+                let liquidatedValue = periodicInvestement.liquidatedValue(atEndOf: year - 1)
+                // produit de la liquidation inscrit en compte courant avant prélèvements sociaux et IRPP
+                revenues.perCategory[.financials]?.credits.namedValues.append(
+                    (name: name,
+                     value: liquidatedValue.revenue.rounded()))
+                // populate taxable interests
+                switch periodicInvestement.type {
+                    case .lifeInsurance:
+                        var taxableInterests: Double
+                        // apply rebate if some is remaining
+                        taxableInterests = zeroOrPositive(liquidatedValue.taxableIrppInterests - lifeInsuranceRebate)
+                        lifeInsuranceRebate -= (liquidatedValue.taxableIrppInterests - taxableInterests)
+                        // part des produit de la liquidation inscrit en compte courant imposable à l'IRPP
+                        revenues.perCategory[.financials]?.taxablesIrpp.namedValues.append(
+                            (name: name,
+                             value: taxableInterests.rounded()))
+                    case .pea:
+                        // part des produit de la liquidation inscrit en compte courant imposable à l'IRPP
+                        revenues.perCategory[.financials]?.taxablesIrpp.namedValues.append(
+                            (name: name,
+                             value: liquidatedValue.taxableIrppInterests.rounded()))
+                    case .other:
+                        // part des produit de la liquidation inscrit en compte courant imposable à l'IRPP
+                        revenues.perCategory[.financials]?.taxablesIrpp.namedValues.append(
+                            (name: name,
+                             value: liquidatedValue.taxableIrppInterests.rounded()))
+                }
+                // populate prélèvements sociaux
+                taxes.perCategory[.socialTaxes]?.namedValues.append(
+                    (name: name,
+                     value: liquidatedValue.socialTaxes.rounded()))
+                
+                // populate versements
+                // on compte quand même les versements de la dernière année
+                let yearlyPayement = periodicInvestement.yearlyTotalPayement(atEndOf: year)
+                investPayements.namedValues.append(
+                    (name : name,
+                     value: yearlyPayement.rounded()))
             }
-            // populate prélèvements sociaux
-            taxes.perCategory[.socialTaxes]?.namedValues.append(
-                (name: name,
-                 value: liquidatedValue.socialTaxes.rounded()))
-            
-            // populate versements
-            investPayements.namedValues.append(
-                (name : name,
-                 value: yearlyPayement.rounded()))
-            
         }
     }
     
@@ -363,7 +408,7 @@ struct CashFlowLine {
             let yearlyPayement = -loan.yearlyPayement(year)
             let name           = loan.name
             debtPayements.namedValues.append((name : name,
-                                                              value: yearlyPayement.rounded()))
+                                              value: yearlyPayement.rounded()))
         }
     }
     
@@ -374,20 +419,24 @@ struct CashFlowLine {
     ///   - lifeInsuranceRebate: franchise d'imposition sur les plus values
     /// - Throws: Si pas assez de capital -> CashFlowError.notEnoughCash(missingCash: amountRemainingToRemove)
     fileprivate mutating func manageYearlyNetCashFlow(of patrimoine       : Patrimoin,
+                                                      for adultsName      : [String],
                                                       lifeInsuranceRebate : inout Double,
                                                       atEndOf year        : Int) throws {
         if netCashFlow > 0.0 {
             // capitaliser les intérêts des investissements libres
             patrimoine.capitalizeFreeInvestments(atEndOf: year)
             // ajouter le cash flow net à un investissement libre de type Assurance vie
-            patrimoine.investNetCashFlow(netCashFlow)
+            patrimoine.investNetCashFlow(amount : netCashFlow,
+                                         for    : adultsName)
             
         } else {
             // retirer le solde net d'un investissement libre: d'abord PEA ensuite Assurance vie
             // géré comme un revenu en report d'imposition (dette)
-            let totalTaxableInterests = try patrimoine.removeFromInvestement(thisAmount          : -netCashFlow,
-                                                                             atEndOf             : year,
-                                                                             lifeInsuranceRebate : &lifeInsuranceRebate)
+            let totalTaxableInterests =
+                try patrimoine.getCashFromInvestement(thisAmount          : -netCashFlow,
+                                                      atEndOf             : year,
+                                                      for                 : adultsName,
+                                                      lifeInsuranceRebate : &lifeInsuranceRebate)
             taxableIrppRevenueDelayedToNextYear.increase(by: totalTaxableInterests.rounded())
             
             // capitaliser les intérêts des investissements libres
