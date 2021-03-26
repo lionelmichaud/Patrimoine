@@ -116,8 +116,8 @@ struct ItemArray<E>: Codable, Versionable where
 extension ItemArray where E: Ownable {
     // MARK: - Initializers
     
-    init(fileNamePrefix    : String = "",
-         personAgeProvider : PersonAgeProvider?) {
+    init(fileNamePrefix         : String = "",
+         with personAgeProvider : PersonAgeProvider?) {
         self.init(fileNamePrefix: fileNamePrefix)
         // injecter le délégué pour la méthode family.ageOf qui par défaut est nil à la création de l'objet
         for idx in 0..<items.count {
@@ -129,7 +129,7 @@ extension ItemArray where E: Ownable {
 
     init(for aClass        : AnyClass,
          fileNamePrefix    : String = "",
-         personAgeProvider : PersonAgeProvider?) {
+         with personAgeProvider : PersonAgeProvider?) {
         self.init(for            : aClass,
                   fileNamePrefix : fileNamePrefix)
         // injecter le délégué pour la méthode family.ageOf qui par défaut est nil à la création de l'objet

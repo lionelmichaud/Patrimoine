@@ -46,14 +46,14 @@ struct Assets {
     /// - Parameter personAgeProvider: famille à laquelle associer le patrimoine
     /// - Note: personAgeProvider est utilisée pour injecter dans chaque actif un délégué personAgeProvider.ageOf
     ///         permettant de calculer les valeurs respectives des Usufruits et Nu-Propriétés
-    internal init(personAgeProvider: PersonAgeProvider?) {
-        self.periodicInvests = PeriodicInvestementArray(personAgeProvider: personAgeProvider)
-        self.freeInvests     = FreeInvestmentArray(personAgeProvider: personAgeProvider)
-        self.realEstates     = RealEstateArray(personAgeProvider: personAgeProvider)
-        self.scpis           = ScpiArray(personAgeProvider: personAgeProvider) // SCPI hors de la SCI
-        self.sci             = SCI(name              : "LVLA",
-                                   note              : "Crée en 2019",
-                                   personAgeProvider : personAgeProvider)
+    internal init(with personAgeProvider: PersonAgeProvider?) {
+        self.periodicInvests = PeriodicInvestementArray(with: personAgeProvider)
+        self.freeInvests     = FreeInvestmentArray(with: personAgeProvider)
+        self.realEstates     = RealEstateArray(with: personAgeProvider)
+        self.scpis           = ScpiArray(with: personAgeProvider) // SCPI hors de la SCI
+        self.sci = SCI(name : "LVLA",
+                       note : "Crée en 2019",
+                       with : personAgeProvider)
         
         // initialiser le vetcuer d'état de chaque FreeInvestement à la date courante
         resetFreeInvestementCurrentValue()
@@ -69,23 +69,6 @@ struct Assets {
         for idx in 0..<freeInvests.items.count {
             freeInvests[idx].resetCurrentState()
         }
-    }
-    
-    /// Recharger depuis les fichiers pour repartir d'une situation initiale
-    /// - Note: Doit être appelé avant de lancer un nouveau run de simulation
-    ///         susceptible de modifier le patrimoin en cours de simulation (tel que
-    ///         les propriétaire des biens à l'issue des successions.
-    mutating func reLoad(personAgeProvider: PersonAgeProvider?) {
-        periodicInvests = PeriodicInvestementArray(personAgeProvider: personAgeProvider)
-        freeInvests     = FreeInvestmentArray(personAgeProvider: personAgeProvider)
-        realEstates     = RealEstateArray(personAgeProvider: personAgeProvider)
-        scpis           = ScpiArray(personAgeProvider: personAgeProvider) // SCPI hors de la SCI
-        sci             = SCI(name              : "LVLA",
-                              note              : "Crée en 2019",
-                              personAgeProvider : personAgeProvider)
-        
-        // initialiser le vetcuer d'état de chaque FreeInvestement à la date courante
-        resetFreeInvestementCurrentValue()
     }
     
     func value(atEndOf year: Int) -> Double {

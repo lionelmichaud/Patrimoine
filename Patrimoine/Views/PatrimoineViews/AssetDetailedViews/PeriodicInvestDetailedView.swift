@@ -123,7 +123,13 @@ struct PeriodicInvestDetailedView: View {
         }
     }
     
-    func duplicate() {
+    private func resetSimulation() {
+        // remettre à zéro la simulation et sa vue
+        simulation.reset(withPatrimoine: patrimoine)
+        uiState.resetSimulation()
+    }
+    
+    private func duplicate() {
         // générer un nouvel identifiant pour la copie
         localItem.id = UUID()
         localItem.name += "-copie"
@@ -131,10 +137,13 @@ struct PeriodicInvestDetailedView: View {
         patrimoine.assets.periodicInvests.add(localItem)
         // revenir à l'élement avant duplication
         localItem = originalItem!
-    }
+        
+        // remettre à zéro la simulation et sa vue
+        resetSimulation()
+   }
     
     // sauvegarder les changements
-    func applyChanges() {
+    private func applyChanges() {
         // validation avant sauvegarde
         guard self.isValid() else { return }
         
@@ -151,11 +160,10 @@ struct PeriodicInvestDetailedView: View {
         }
         
         // remettre à zéro la simulation et sa vue
-        simulation.reset(withPatrimoine: patrimoine)
-        uiState.resetSimulation()
+        resetSimulation()
     }
     
-    func isValid() -> Bool {
+    private func isValid() -> Bool {
         /// vérifier que le nom n'est pas vide
         guard localItem.name != "" else {
             self.alertItem = AlertItem(title         : Text("Donner un nom"),
@@ -185,31 +193,31 @@ struct PeriodicInvestDetailedView: View {
         return true
     }
     
-    func changeOccured() -> Bool {
+    private func changeOccured() -> Bool {
         return localItem != originalItem
     }
     
-    func liquidatedValue() -> Double {
+    private func liquidatedValue() -> Double {
         let liquidationDate = self.localItem.lastYear
         return self.localItem.value(atEndOf: liquidationDate)
     }
-    func cumulatedInterests() -> Double {
+    private func cumulatedInterests() -> Double {
         let liquidationDate = self.localItem.lastYear
         return self.localItem.cumulatedInterests(atEndOf: liquidationDate)
     }
-    func netCmulatedInterests() -> Double {
+    private func netCmulatedInterests() -> Double {
         let liquidationDate = self.localItem.lastYear
         return self.localItem.liquidatedValue(atEndOf: liquidationDate).netInterests
     }
-    func taxableCmulatedInterests() -> Double {
+    private func taxableCmulatedInterests() -> Double {
         let liquidationDate = self.localItem.lastYear
         return self.localItem.liquidatedValue(atEndOf: liquidationDate).taxableIrppInterests
     }
-    func socialTaxes() -> Double {
+    private func socialTaxes() -> Double {
         let liquidationDate = self.localItem.lastYear
         return self.localItem.liquidatedValue(atEndOf: liquidationDate).socialTaxes
     }
-    func liquidatedValueAfterSocialTaxes() -> Double {
+    private func liquidatedValueAfterSocialTaxes() -> Double {
         let liquidationDate = self.localItem.lastYear
         let liquidatedValue = self.localItem.liquidatedValue(atEndOf: liquidationDate)
         return liquidatedValue.revenue - liquidatedValue.socialTaxes

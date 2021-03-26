@@ -111,27 +111,40 @@ final class Simulation: ObservableObject {
     
     // MARK: - Methods
     
-    /// Réinitialiser la simulation
+    /// Réinitialiser la simulation quand un des paramètres qui influe sur la simulation à changé
+    /// Paramètres qui influe sur la simulation:
+    ///  Famille,
+    ///  Dépenses,
+    ///  Patrimoine
     ///
     /// - Note:
     ///   - les comptes sociaux sont réinitialisés
     ///   - les années de début et fin sont réinitialisées à nil
+    ///   - les successions sont réinitilisées
     ///   - les KPI peuvent être réinitialisés
     ///
     /// - Parameters:
     ///   - patrimoine: le patrimoine
     ///   - includingKPIs: réinitialiser les KPI (seulement sur le premier run)
     ///
-    func reset(withPatrimoine patrimoine : Patrimoin,
-               includingKPIs             : Bool = true) {
+    func reset(withPatrimoine patrimoine : Patrimoin) {
         // réinitialiser les comptes sociaux du patrimoine de la famille
         socialAccounts = SocialAccounts()
         
         // réinitialiser le patrimoine pour repartir d'une situation initiale
         // sans aucune altération par des simulation passées éventuelles
         //patrimoine.resetFreeInvestementCurrentValue()
-        patrimoine.restore()
 
+//        firstYear    = nil
+//        lastYear     = nil
+        isComputed   = false
+        isSaved      = false
+    }
+    
+    private func reset(includingKPIs: Bool = true) {
+        // réinitialiser les comptes sociaux du patrimoine de la famille
+        socialAccounts = SocialAccounts()
+        
         // remettre à zéro l'historique des KPI (Histogramme)
         //  - au début d'un MontéCarlo seulement
         //  - mais pas à chaque Run
@@ -139,10 +152,57 @@ final class Simulation: ObservableObject {
             KpiArray.reset(theseKPIs: &kpis, withMode: mode)
         }
         
-//        firstYear    = nil
-//        lastYear     = nil
         isComputed   = false
         isSaved      = false
+    }
+
+    /// remettre à zéro les historiques des tirages aléatoires
+    private func resetAllRandomHistories() {
+        HumanLife.model.resetRandomHistory()
+        Economy.model.resetRandomHistory()
+        SocioEconomy.model.resetRandomHistory()
+    }
+    
+    private func nextRandomProperties(_ family                            : Family,
+                                      _ dicoOfEconomyRandomVariables      : inout Economy.DictionaryOfRandomVariable,
+                                      _ dicoOfSocioEconomyRandomVariables : inout SocioEconomy.DictionaryOfRandomVariable) {
+        // re-générer les propriétés aléatoires de la famille
+        family.nextRandomProperties()
+        // re-générer les propriétés aléatoires du modèle macro économique
+        dicoOfEconomyRandomVariables = try! Economy.model.nextRun(withMode  : mode,
+                                                                  firstYear : firstYear!,
+                                                                  lastYear  : lastYear!)
+        // re-générer les propriétés aléatoires du modèle socio économique
+        dicoOfSocioEconomyRandomVariables = SocioEconomy.model.next()
+    }
+    
+    private func closeMonteCarloRun(_ family                            : Family, // swiftlint:disable:this function_parameter_count
+                                    _ run                               : Int,
+                                    _ dicoOfEconomyRandomVariables      : Economy.DictionaryOfRandomVariable,
+                                    _ dicoOfSocioEconomyRandomVariables : SocioEconomy.DictionaryOfRandomVariable,
+                                    _ dicoOfKpiResults                  : DictionaryOfKpiResults,
+                                    _ nbOfRuns                          : Int) {
+        // récupérer les propriétés aléatoires des adultes de la famille
+        var dicoOfAdultsRandomProperties = DictionaryOfAdultRandomProperties()
+        family.members.forEach { person in
+            if let adult = person as? Adult {
+                dicoOfAdultsRandomProperties[adult.displayName] = AdultRandomProperties(ageOfDeath          : adult.ageOfDeath,
+                                                                                        nbOfYearOfDependency: adult.nbOfYearOfDependency)
+            }
+        }
+        // Synthèse du Run de Simulation
+        let currentRunResults = SimulationResultLine(runNumber                         : run,
+                                                     dicoOfAdultsRandomProperties      : dicoOfAdultsRandomProperties,
+                                                     dicoOfEconomyRandomVariables      : dicoOfEconomyRandomVariables,
+                                                     dicoOfSocioEconomyRandomVariables : dicoOfSocioEconomyRandomVariables,
+                                                     dicoOfKpiResults                  : dicoOfKpiResults)
+        resultTable.append(currentRunResults)
+        
+        // Dernier run, créer les histogrammes et y ranger
+        // les échantillons de KPIs si on est en mode Aléatoire
+        if run == nbOfRuns {
+            KpiArray.generateHistograms(ofTheseKPIs: &self.kpis)
+        }
     }
     
     /// Exécuter une simulation Déterministe ou Aléatoire
@@ -162,7 +222,6 @@ final class Simulation: ObservableObject {
             Simulation.player.seek(to: .zero)
             Simulation.player.play()
         }
-//        isComputing    = true
 
         //propriétés indépendantes du nombre de run
         firstYear   = Date.now.year
@@ -172,70 +231,50 @@ final class Simulation: ObservableObject {
         var dicoOfEconomyRandomVariables      = Economy.DictionaryOfRandomVariable()
         var dicoOfSocioEconomyRandomVariables = SocioEconomy.DictionaryOfRandomVariable()
 
-        // remettre à zéro les historiques des tirages aléatoires
         if monteCarlo {
-            HumanLife.model.resetRandomHistory()
-            Economy.model.resetRandomHistory()
-            SocioEconomy.model.resetRandomHistory()
+            // remettre à zéro les historiques des tirages aléatoires
+            resetAllRandomHistories()
+            // remettre à zéro la table de résultat
             resultTable = SimulationResultTable()
         }
+        
+        // sauvegarder l'état initial du patrimoine pour y revenir à la fin de chaque run
+        patrimoine.save()
         
         // calculer tous les runs
         for run in 1...nbOfRuns {
             currentRunNb = run
             
-            // Régénérer les propriétés aléatoires à chaque run si on est en mode Aléatoire
+            // re-générer les propriétés aléatoires à chaque run si on est en mode Aléatoire
             if monteCarlo {
-                // réinitialiser les propriétés aléatoires de la famille
-                family.nextRandomProperties()
-                // réinitialiser les propriétés aléatoires du modèle macro économique
-                dicoOfEconomyRandomVariables      = try! Economy.model.nextRun(withMode  : mode,
-                                                                               firstYear : firstYear!,
-                                                                               lastYear  : lastYear!)
-                // réinitialiser les propriétés aléatoires du modèle socio économique
-                dicoOfSocioEconomyRandomVariables = SocioEconomy.model.next()
+                nextRandomProperties(family,
+                                     &dicoOfEconomyRandomVariables,
+                                     &dicoOfSocioEconomyRandomVariables)
             }
             
             // Réinitialiser la simulation
-            reset(withPatrimoine : patrimoine,
-                  includingKPIs  : run == 1 ? true : false)
+            reset(includingKPIs: run == 1 ? true : false)
             
-            // construire les comptes sociaux du patrimoine de la famille:
-            // - personnes
-            // - dépenses
+            // construire les comptes sociaux du patrimoine de la famille
             let dicoOfKpiResults = socialAccounts.build(nbOfYears      : nbOfYears,
                                                         withFamily     : family,
                                                         withPatrimoine : patrimoine,
                                                         withKPIs       : &kpis,
                                                         withMode       : mode)
             if monteCarlo {
-                // récupérer les propriétés aléatoires des adultes de la famille
-                var dicoOfAdultsRandomProperties = DictionaryOfAdultRandomProperties()
-                family.members.forEach { person in
-                    if let adult = person as? Adult {
-                        dicoOfAdultsRandomProperties[adult.displayName] = AdultRandomProperties(ageOfDeath          : adult.ageOfDeath,
-                                                                                                nbOfYearOfDependency: adult.nbOfYearOfDependency)
-                    }
-                }
-                // Synthèse du Run de Simulation
-                let currentRunResults = SimulationResultLine(runNumber                         : run,
-                                                             dicoOfAdultsRandomProperties      : dicoOfAdultsRandomProperties,
-                                                             dicoOfEconomyRandomVariables      : dicoOfEconomyRandomVariables,
-                                                             dicoOfSocioEconomyRandomVariables : dicoOfSocioEconomyRandomVariables,
-                                                             dicoOfKpiResults                  : dicoOfKpiResults)
-                resultTable.append(currentRunResults)
-                
-                // Dernier run, créer les histogrammes et y ranger
-                // les échantillons de KPIs si on est en mode Aléatoire
-                if run == nbOfRuns {
-                    KpiArray.generateHistograms(ofTheseKPIs: &self.kpis)
-                }
+                closeMonteCarloRun(family,
+                                   run,
+                                   dicoOfEconomyRandomVariables,
+                                   dicoOfSocioEconomyRandomVariables,
+                                   dicoOfKpiResults,
+                                   nbOfRuns)
             }
+            
+            patrimoine.restore()
         }
         
         isComputed  = true
         isSaved     = false
-//        isComputing = false
     }
     
     func replay(thisRun                   : SimulationResultLine,
@@ -264,18 +303,16 @@ final class Simulation: ObservableObject {
         }
         
         // Réinitialiser la simulation
-        self.reset(withPatrimoine : patrimoine,
-                   includingKPIs  : false)
+        self.reset(includingKPIs: false)
         
-        // construire les comptes sociaux du patrimoine de la famille:
-        // - personnes
-        // - dépenses
+        // construire les comptes sociaux du patrimoine de la famille
         _ = socialAccounts.build(nbOfYears      : nbOfYears,
                                  withFamily     : family,
                                  withPatrimoine : patrimoine,
                                  withKPIs       : &kpis,
                                  withMode       : mode)
-        
+        patrimoine.restore()
+
         isComputed  = true
         isSaved     = false
     }

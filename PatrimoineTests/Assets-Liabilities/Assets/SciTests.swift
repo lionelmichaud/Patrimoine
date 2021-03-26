@@ -26,9 +26,9 @@ class SciTests: XCTestCase {
 
     override class func setUp() {
         super.setUp()
-        SciTests.sci = SCI(name              : "LVLA",
-                           note              : "Crée en 2019",
-                           personAgeProvider : nil)
+        SciTests.sci = SCI(name : "LVLA",
+                           note : "Crée en 2019",
+                           with : nil)
         print(SciTests.sci!)
     }
     

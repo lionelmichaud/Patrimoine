@@ -147,7 +147,7 @@ struct ScpiView: View {
             // items
             if !uiState.patrimoineViewState.assetViewState.colapseSCPI {
                 // ajout d'un nouvel item à la liste
-                NavigationLink(destination: SCPIDetailedView(item       : nil,
+                NavigationLink(destination: ScpiDetailedView(item       : nil,
                                                              //family     : self.family,
                                                              updateItem : { (localItem, index) in
                                                                 self.patrimoine.assets.scpis.update(with: localItem, at: index) },
@@ -166,7 +166,7 @@ struct ScpiView: View {
                 
                 // liste des items
                 ForEach(patrimoine.assets.scpis.items) { item in
-                    NavigationLink(destination: SCPIDetailedView(item       : item,
+                    NavigationLink(destination: ScpiDetailedView(item       : item,
                                                                  //family     : self.family,
                                                                  updateItem : { (localItem, index) in
                                                                     self.patrimoine.assets.scpis.update(with: localItem, at: index) },
@@ -340,7 +340,7 @@ struct SciScpiView: View {
             // items
             if !uiState.patrimoineViewState.assetViewState.colapseSCISCPI {
                 // ajout d'un nouvel item à la liste
-                NavigationLink(destination: SCPIDetailedView(item       : nil,
+                NavigationLink(destination: ScpiDetailedView(item       : nil,
                                                              //patrimoine : patrimoine,
                                                              updateItem : { (localItem, index) in
                                                                 self.patrimoine.assets.sci.scpis.update(with: localItem, at: index) },
@@ -359,7 +359,7 @@ struct SciScpiView: View {
                 
                 // liste des items
                 ForEach(patrimoine.assets.sci.scpis.items) { item in
-                    NavigationLink(destination: SCPIDetailedView(item: item,
+                    NavigationLink(destination: ScpiDetailedView(item: item,
                                                                  //patrimoine : patrimoine,
                                                                  updateItem : { (localItem, index) in
                                                                     self.patrimoine.assets.sci.scpis.update(with: localItem, at: index) },

@@ -8,7 +8,7 @@
 
 import SwiftUI
 
-struct SCPIDetailedView: View {
+struct ScpiDetailedView: View {
     @EnvironmentObject var family     : Family
     @EnvironmentObject var patrimoine : Patrimoin
     @EnvironmentObject var simulation : Simulation
@@ -121,7 +121,13 @@ struct SCPIDetailedView: View {
         }
     }
     
-    func duplicate() {
+    private func resetSimulation() {
+        // remettre à zéro la simulation et sa vue
+        simulation.reset(withPatrimoine: patrimoine)
+        uiState.resetSimulation()
+    }
+    
+    private func duplicate() {
         // générer un nouvel identifiant pour la copie
         localItem.id = UUID()
         localItem.name += "-copie"
@@ -129,10 +135,13 @@ struct SCPIDetailedView: View {
         addItem(localItem)
         // revenir à l'élement avant duplication
         localItem = originalItem!
+        
+        // remettre à zéro la simulation et sa vue
+        resetSimulation()
     }
     
     // sauvegarder les changements
-    func applyChanges() {
+    private func applyChanges() {
         // validation avant sauvegarde
         guard self.isValid() else { return }
         
@@ -149,11 +158,10 @@ struct SCPIDetailedView: View {
         }
         
         // remettre à zéro la simulation et sa vue
-        simulation.reset(withPatrimoine: patrimoine)
-        uiState.resetSimulation()
+        resetSimulation()
     }
     
-    func isValid() -> Bool {
+    private func isValid() -> Bool {
         /// vérifier que le nom n'est pas vide
         guard localItem.name != "" else {
             self.alertItem = AlertItem(title         : Text("Donner un nom"),
@@ -171,7 +179,7 @@ struct SCPIDetailedView: View {
         return true
     }
 
-    func changeOccured() -> Bool {
+    private func changeOccured() -> Bool {
         return localItem != originalItem
     }
 }
@@ -184,7 +192,7 @@ struct SCPIDetailedView_Previews: PreviewProvider {
         return
             Group {
                 NavigationView {
-                    SCPIDetailedView(item       : patrimoine.assets.scpis[0],
+                    ScpiDetailedView(item       : patrimoine.assets.scpis[0],
                                      //patrimoine     : patrimoine,
                                      updateItem : { (localItem, index) in patrimoine.assets.scpis.update(with: localItem, at: index) },
                                      addItem    : { (localItem) in patrimoine.assets.scpis.add(localItem) },

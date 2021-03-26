@@ -21,21 +21,12 @@ struct Liabilities {
     /// - Parameter family: famille à laquelle associer le patrimoine
     /// - Note: family est utilisée pour injecter dans chaque passif un délégué family.ageOf
     ///         permettant de calculer les valeurs respectives des Usufruits et Nu-Propriétés
-    internal init(personAgeProvider: PersonAgeProvider?) {
-        self.debts = DebtArray(personAgeProvider: personAgeProvider)
-        self.loans = LoanArray(personAgeProvider: personAgeProvider)
+    internal init(with personAgeProvider: PersonAgeProvider?) {
+        self.debts = DebtArray(with: personAgeProvider)
+        self.loans = LoanArray(with: personAgeProvider)
     }
     
     // MARK: - Methods
-    
-    /// Recharger depuis les fichiers pour repartir d'une situation initiale
-    /// - Note: Doit être appelé avant de lancer un nouveau run de simulation
-    ///         susceptible de modifier le patrimoin en cours de simulation (tel que
-    ///         les propriétaire des biens à l'issue des successions.
-    mutating func reLoad(personAgeProvider: PersonAgeProvider?) {
-        debts = DebtArray(personAgeProvider: personAgeProvider)
-        loans = LoanArray(personAgeProvider: personAgeProvider)
-    }
     
     func value(atEndOf year: Int) -> Double {
         loans.items.sumOfValues(atEndOf: year) +

@@ -7,6 +7,9 @@
 //
 
 import Foundation
+import os
+
+private let customLog = Logger(subsystem: "me.michaud.lionel.Patrimoine", category: "Model.Patrimoin")
 
 // MARK: - Patrimoine constitué d'un Actif et d'un Passif
 final class Patrimoin: ObservableObject {
@@ -45,13 +48,19 @@ final class Patrimoin: ObservableObject {
     // MARK: - Initializers
 
     init() {
-        self.assets      = Assets(personAgeProvider      : Patrimoin.family)
-        self.liabilities = Liabilities(personAgeProvider : Patrimoin.family)
-        self.save()
+        self.assets      = Assets(with      : Patrimoin.family)
+        self.liabilities = Liabilities(with : Patrimoin.family)
+        //self.save()
     }
 
     // MARK: - Methods
 
+    func reload() {
+        assets      = Assets(with      : Patrimoin.family)
+        liabilities = Liabilities(with : Patrimoin.family)
+        memento     = nil
+    }
+    
     func value(atEndOf year: Int) -> Double {
         assets.value(atEndOf: year) +
             liabilities.value(atEndOf: year)
@@ -66,16 +75,21 @@ final class Patrimoin: ObservableObject {
     }
 
     /// Sauvegarder l'état courant du Patrimoine
+    /// - Warning: Doit être appelée avant toute simulation pouvant affecter le Patrimoine (succession)
     func save() {
         memento = Memento(assets      : assets,
                           liabilities : liabilities)
     }
 
-    /// Recharger les actifs et passifs à partir des fichiers pour repartir d'une situation initiale sans aucune modification
+    /// Recharger les actifs et passifs à partir des de la dernière sauvegarde pour repartir d'une situation initiale sans aucune modification
     /// - Warning: Doit être appelée après toute simulation ayant affectée le Patrimoine (succession)
     func restore() {
-        assets      = memento!.assets
-        liabilities = memento!.liabilities
+        guard let memento = memento else {
+            customLog.log(level: .fault, "patrimoine.restore: tentative de restauration d'un patrimoine non sauvegardé")
+            fatalError("patrimoine.restore: tentative de restauration d'un patrimoine non sauvegardé")
+        }
+        assets      = memento.assets
+        liabilities = memento.liabilities
     }
     
     /// Capitaliser les intérêts des investissements financiers libres

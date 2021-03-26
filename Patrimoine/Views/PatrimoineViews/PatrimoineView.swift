@@ -34,7 +34,7 @@ struct PatrimoineView: View {
                 leading: EditButton(),
                 trailing: Button("Réinitialiser",
                                  action: {
-                                    self.patrimoine.restore()
+                                    self.patrimoine.reload()
                                     uiState.patrimoineViewState.evalDate = Date.now.year.double()
                                  }))
 

@@ -74,7 +74,13 @@ struct DebtDetailedView: View {
         }
     }
     
-    func duplicate() {
+    private func resetSimulation() {
+        // remettre à zéro la simulation et sa vue
+        simulation.reset(withPatrimoine: patrimoine)
+        uiState.resetSimulation()
+    }
+    
+    private func duplicate() {
         // générer un nouvel identifiant pour la copie
         localItem.id = UUID()
         localItem.name += "-copie"
@@ -82,10 +88,13 @@ struct DebtDetailedView: View {
         patrimoine.liabilities.debts.add(localItem)
         // revenir à l'élement avant duplication
         localItem = originalItem!
+        
+        // remettre à zéro la simulation et sa vue
+        resetSimulation()
     }
     
     // sauvegarder les changements
-    func applyChanges() {
+    private func applyChanges() {
         guard self.isValid() else { return }
 
         if let index = index {
@@ -99,17 +108,15 @@ struct DebtDetailedView: View {
             // ajouter le nouvel élément à la liste
             patrimoine.liabilities.debts.add(localItem)
         }
-        
         // remettre à zéro la simulation et sa vue
-        simulation.reset(withPatrimoine: patrimoine)
-        uiState.resetSimulation()
+        resetSimulation()
     }
     
-    func changeOccured() -> Bool {
+    private func changeOccured() -> Bool {
         return localItem != originalItem
     }
     
-    func isValid() -> Bool {
+    private func isValid() -> Bool {
         if localItem.value > 0 {
             self.alertItem = AlertItem(title         : Text("Erreur"),
                                        message       : Text("Le montant emprunté doit être négatif"),

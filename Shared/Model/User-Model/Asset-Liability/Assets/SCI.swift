@@ -20,13 +20,13 @@ struct SCI {
     
     // MARK: - Initializers
     
-    internal init(name              : String,
-                  note              : String,
-                  personAgeProvider : PersonAgeProvider?) {
+    internal init(name                   : String,
+                  note                   : String,
+                  with personAgeProvider : PersonAgeProvider?) {
         self.name  = name
         self.note  = note
-        self.scpis = ScpiArray(fileNamePrefix    : "SCI_",
-                               personAgeProvider : personAgeProvider)
+        self.scpis = ScpiArray(fileNamePrefix : "SCI_",
+                               with           : personAgeProvider)
         self.bankAccount = 0
     }
     

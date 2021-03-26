@@ -133,7 +133,13 @@ struct ExpenseDetailedView: View {
     
     // MARK: - Methods
     
-    func duplicate() {
+    private func resetSimulation() {
+        // remettre à zéro la simulation et sa vue
+        simulation.reset(withPatrimoine: patrimoine)
+        uiState.resetSimulation()
+    }
+    
+    private func duplicate() {
         var localItem = expenseVM.lifeExpense
         // générer un nouvel identifiant pour la copie
         localItem.id = UUID()
@@ -141,10 +147,12 @@ struct ExpenseDetailedView: View {
         // ajouter la copie créée
         family.expenses.perCategory[self.category]?.add(localItem,
                                                         fileNamePrefix : self.category.pickerString + "_")
+        // remettre à zéro la simulation et sa vue
+        resetSimulation()
     }
     
     // sauvegarder les changements
-    func applyChanges() {
+    private func applyChanges() {
         /// vérifier que le nom ne fait pas doublon si l'élément est nouveau ou si le nom a été modifié
         if (originalItem == nil) || (expenseVM.name != originalItem?.name) {
             let nameAlreadyExists = family.expenses.perCategory.values.contains { arrayOfExpenses in
@@ -193,13 +201,12 @@ struct ExpenseDetailedView: View {
         }
         
         // remettre à zéro la simulation et sa vue
-        simulation.reset(withPatrimoine: patrimoine)
-        uiState.resetSimulation()
+        resetSimulation()
         
         self.presentationMode.wrappedValue.dismiss()
     }
     
-    func changeOccured() -> Bool {
+    private func changeOccured() -> Bool {
         if originalItem == nil {
             return true
         } else {

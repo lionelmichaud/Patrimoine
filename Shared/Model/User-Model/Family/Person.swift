@@ -175,6 +175,7 @@ class Person : ObservableObject, Identifiable, CustomStringConvertible, Codable 
         self.name.namePrefix     = sexe.displayString
         self.name.givenName      = givenName
         self.name.familyName     = familyName.localizedUppercase
+        self.displayName         = personNameFormatter.string(from: name) // disSet not executed during init
         self.birthDate           = birthDate
         self.birthDateComponents = Date.calendar.dateComponents([.year, .month, .day], from : birthDate)
         self.ageOfDeath          = ageOfDeath

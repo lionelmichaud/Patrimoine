@@ -163,7 +163,7 @@
 		7994895E249E4FC200DAFF1E /* TypeInvestEditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799488F4249E4FC100DAFF1E /* TypeInvestEditView.swift */; };
 		7994895F249E4FC200DAFF1E /* FreeInvestDetailedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799488F5249E4FC100DAFF1E /* FreeInvestDetailedView.swift */; };
 		79948960249E4FC200DAFF1E /* EstateDetailedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799488F6249E4FC100DAFF1E /* EstateDetailedView.swift */; };
-		79948961249E4FC200DAFF1E /* SCPIDetailedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799488F7249E4FC100DAFF1E /* SCPIDetailedView.swift */; };
+		79948961249E4FC200DAFF1E /* scpiDetailedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799488F7249E4FC100DAFF1E /* scpiDetailedView.swift */; };
 		79948962249E4FC200DAFF1E /* LiabilityView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799488F8249E4FC100DAFF1E /* LiabilityView.swift */; };
 		79948963249E4FC200DAFF1E /* PatrimoineSummaryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799488F9249E4FC100DAFF1E /* PatrimoineSummaryView.swift */; };
 		79948964249E4FC200DAFF1E /* DebtDetailedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799488FB249E4FC100DAFF1E /* DebtDetailedView.swift */; };
@@ -505,7 +505,7 @@
 		799488F4249E4FC100DAFF1E /* TypeInvestEditView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TypeInvestEditView.swift; sourceTree = "<group>"; };
 		799488F5249E4FC100DAFF1E /* FreeInvestDetailedView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FreeInvestDetailedView.swift; sourceTree = "<group>"; };
 		799488F6249E4FC100DAFF1E /* EstateDetailedView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EstateDetailedView.swift; sourceTree = "<group>"; };
-		799488F7249E4FC100DAFF1E /* SCPIDetailedView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SCPIDetailedView.swift; sourceTree = "<group>"; };
+		799488F7249E4FC100DAFF1E /* scpiDetailedView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = scpiDetailedView.swift; sourceTree = "<group>"; };
 		799488F8249E4FC100DAFF1E /* LiabilityView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LiabilityView.swift; sourceTree = "<group>"; };
 		799488F9249E4FC100DAFF1E /* PatrimoineSummaryView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PatrimoineSummaryView.swift; sourceTree = "<group>"; };
 		799488FB249E4FC100DAFF1E /* DebtDetailedView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DebtDetailedView.swift; sourceTree = "<group>"; };
@@ -1153,7 +1153,7 @@
 			isa = PBXGroup;
 			children = (
 				799488F6249E4FC100DAFF1E /* EstateDetailedView.swift */,
-				799488F7249E4FC100DAFF1E /* SCPIDetailedView.swift */,
+				799488F7249E4FC100DAFF1E /* scpiDetailedView.swift */,
 				799488F3249E4FC100DAFF1E /* PeriodicInvestDetailedView.swift */,
 				799488F5249E4FC100DAFF1E /* FreeInvestDetailedView.swift */,
 				799488F4249E4FC100DAFF1E /* TypeInvestEditView.swift */,
@@ -2013,7 +2013,7 @@
 				79948981249E4FC200DAFF1E /* Constants.swift in Sources */,
 				79948986249E4FC200DAFF1E /* CashFlowLine.swift in Sources */,
 				7994895B249E4FC200DAFF1E /* AssetView.swift in Sources */,
-				79948961249E4FC200DAFF1E /* SCPIDetailedView.swift in Sources */,
+				79948961249E4FC200DAFF1E /* scpiDetailedView.swift in Sources */,
 				794248AE25CAA317004E3C7F /* Version.swift in Sources */,
 				799489A0249E4FC200DAFF1E /* Extensions+Bundle-Codable.swift in Sources */,
 				799489A5249E4FC200DAFF1E /* Extensions+Int.swift in Sources */,

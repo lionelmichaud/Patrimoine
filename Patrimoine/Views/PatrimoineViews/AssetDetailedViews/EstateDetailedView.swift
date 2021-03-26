@@ -202,7 +202,13 @@ struct RealEstateDetailedView: View {
         }
     }
     
-    func duplicate() {
+    private func resetSimulation() {
+        // remettre à zéro la simulation et sa vue
+        simulation.reset(withPatrimoine: patrimoine)
+        uiState.resetSimulation()
+    }
+    
+    private func duplicate() {
         // générer un nouvel identifiant pour la copie
         localItem.id = UUID()
         localItem.name += "-copie"
@@ -210,10 +216,13 @@ struct RealEstateDetailedView: View {
         patrimoine.assets.realEstates.add(localItem)
         // revenir à l'élement avant duplication
         localItem = originalItem!
+        
+        // remettre à zéro la simulation et sa vue
+        resetSimulation()
     }
     
     // sauvegarder les changements
-    func applyChanges() {
+    private func applyChanges() {
         // validation avant sauvegarde
         guard self.isValid() else { return }
 
@@ -233,11 +242,10 @@ struct RealEstateDetailedView: View {
         }
         
         // remettre à zéro la simulation et sa vue
-        simulation.reset(withPatrimoine: patrimoine)
-        uiState.resetSimulation()
+        resetSimulation()
     }
     
-    func isValid() -> Bool { // swiftlint:disable:this cyclomatic_complexity
+    private func isValid() -> Bool { // swiftlint:disable:this cyclomatic_complexity
         /// vérifier que toutes les dates sont définies
         guard assetVM.buyingYearVM.year != nil else {
             self.alertItem = AlertItem(title         : Text("La date d'achat doit être définie"),
@@ -324,7 +332,7 @@ struct RealEstateDetailedView: View {
         return true
     }
 
-    func changeOccured() -> Bool {
+    private func changeOccured() -> Bool {
         if localItem != originalItem {
             return true
         } else {

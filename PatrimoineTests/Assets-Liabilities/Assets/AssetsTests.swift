@@ -15,7 +15,7 @@ class AssetsTests: XCTestCase {
     
     override class func setUp() {
         super.setUp()
-        AssetsTests.assets = Assets(personAgeProvider: nil)
+        AssetsTests.assets = Assets(with: nil)
         print(AssetsTests.assets!)
     }
     
