@@ -8,7 +8,7 @@
 
 import Foundation
 
-// MARK: - Table d'Item Generic Valuable and Namable
+// MARK: - Table d'Item Generic Valuable and Nameable
 
 struct ItemArray<E>: Codable, Versionable where
     E: Codable,
@@ -19,7 +19,7 @@ struct ItemArray<E>: Codable, Versionable where
     // MARK: - Properties
     
     var items          = [E]()
-    var fileNamePrefix : String
+    var fileNamePrefix : String?
     var version        : Version
     var currentValue   : Double {
         items.sumOfValues(atEndOf: Date.now.year)
@@ -43,6 +43,7 @@ struct ItemArray<E>: Codable, Versionable where
                                   from                 : fileNamePrefix + String(describing: E.self) + ".json",
                                   dateDecodingStrategy : .iso8601,
                                   keyDecodingStrategy  : .useDefaultKeys)
+        self.fileNamePrefix = fileNamePrefix
     }
 
     init(for aClass     : AnyClass,
@@ -52,6 +53,7 @@ struct ItemArray<E>: Codable, Versionable where
                                  from                 : fileNamePrefix + String(describing: E.self) + ".json",
                                  dateDecodingStrategy : .iso8601,
                                  keyDecodingStrategy  : .useDefaultKeys)
+        self.fileNamePrefix = fileNamePrefix
     }
 
     // MARK: - Methods
@@ -59,7 +61,7 @@ struct ItemArray<E>: Codable, Versionable where
     func storeItemsToFile(fileNamePrefix: String = "") {
         // encode to JSON file
         Bundle.main.encode(self,
-                           to                   : fileNamePrefix + self.fileNamePrefix + String(describing: E.self) + ".json",
+                           to                   : fileNamePrefix + self.fileNamePrefix! + String(describing: E.self) + ".json",
                            dateEncodingStrategy : .iso8601,
                            keyEncodingStrategy  : .useDefaultKeys)
     }
@@ -69,7 +71,7 @@ struct ItemArray<E>: Codable, Versionable where
         let testBundle = Bundle(for: aClass)
         // encode to JSON file
         testBundle.encode(self,
-                           to                   : fileNamePrefix + self.fileNamePrefix + String(describing: E.self) + ".json",
+                           to                   : fileNamePrefix + self.fileNamePrefix! + String(describing: E.self) + ".json",
                            dateEncodingStrategy : .iso8601,
                            keyEncodingStrategy  : .useDefaultKeys)
     }

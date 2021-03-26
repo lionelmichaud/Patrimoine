@@ -14,8 +14,7 @@ struct ExpenseArray: NameableValuableArray {
     
     // MARK: - Properties
     
-    var items             = [LifeExpense]()
-    var fileNamePrefix    : String
+    var items = [LifeExpense]()
     
     // MARK: - Initializers
     
@@ -25,6 +24,16 @@ struct ExpenseArray: NameableValuableArray {
                                   dateDecodingStrategy : .iso8601,
                                   keyDecodingStrategy  : .useDefaultKeys)
     }
+
+    init(for aClass     : AnyClass,
+         fileNamePrefix : String = "") {
+        let testBundle = Bundle(for: aClass)
+        self = testBundle.decode(ExpenseArray.self,
+                                 from                 : fileNamePrefix + String(describing: Item.self) + ".json",
+                                 dateDecodingStrategy : .iso8601,
+                                 keyDecodingStrategy  : .useDefaultKeys)
+    }
+    
 }
 //typealias ExpenseArray = ItemArray<LifeExpense>
 

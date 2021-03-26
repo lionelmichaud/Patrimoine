@@ -33,7 +33,7 @@ extension Array where Element: NameableValuable {
     }
 }
 
-// MARK: - Protocol Table d'Item Valuable and Namable
+// MARK: - Protocol Table d'Item Valuable and Nameable
 
 protocol NameableValuableArray: Codable {
     associatedtype Item: Codable, Identifiable, NameableValuable
@@ -41,7 +41,6 @@ protocol NameableValuableArray: Codable {
     // MARK: - Properties
     
     var items          : [Item] { get set }
-    var fileNamePrefix : String { get set }
     var currentValue   : Double { get }
     
     // MARK: - Subscript
@@ -52,6 +51,10 @@ protocol NameableValuableArray: Codable {
     
     init(fileNamePrefix: String)
     
+    // used for Unit Testing
+    init(for aClass     : AnyClass,
+         fileNamePrefix : String)
+
     // MARK: - Methods
     
     func storeItemsToFile(fileNamePrefix: String)
@@ -75,7 +78,7 @@ protocol NameableValuableArray: Codable {
     func namedValueTable(atEndOf: Int) -> NamedValueArray
 }
 
-// implémntation par défaut
+// implémentation par défaut
 extension NameableValuableArray {
     var currentValue      : Double {
         items.sumOfValues(atEndOf : Date.now.year)
@@ -95,7 +98,7 @@ extension NameableValuableArray {
     func storeItemsToFile(fileNamePrefix: String = "") {
         // encode to JSON file
         Bundle.main.encode(self,
-                           to                   : fileNamePrefix + self.fileNamePrefix + String(describing: Item.self) + ".json",
+                           to                   : fileNamePrefix + String(describing: Item.self) + ".json",
                            dateEncodingStrategy : .iso8601,
                            keyEncodingStrategy  : .useDefaultKeys)
     }
