@@ -264,7 +264,8 @@ extension Patrimoin {
             let share = inheritanceShares.forSpouse
             let brut  = totalTaxableInheritance * share
             
-            // caluler les droits de succession du conjoint
+            // calculer les droits de succession du conjoint
+            // TODO: le soritr d'une fonction du modèle fiscal
             let tax = 0.0
             
 //            print("  Part d'héritage de \(conjointSurvivant.displayName) = \(brut.rounded())")

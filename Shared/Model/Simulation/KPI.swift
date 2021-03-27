@@ -262,6 +262,10 @@ struct KPI: Identifiable, Codable {
         }
     }
     
+    func objectiveIsReached(for value: Double) -> Bool {
+        value >= objective
+    }
+    
     /// Retourrne true si l'objectif de valeur est atteint lors du run unique (.deterministic)
     /// ou statistiquement sur l'ensemble des runs (.random)
     func objectiveIsReached(withMode mode: SimulationModeEnum) -> Bool? {

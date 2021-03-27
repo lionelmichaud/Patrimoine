@@ -206,8 +206,14 @@ class Person : ObservableObject, Identifiable, CustomStringConvertible, Codable 
     /// - Parameter year: année
     /// - Returns: True si la personne est encore vivante
     /// - Warnings: la personne n'est pas vivante l'année du décès
-    func isAlive(atEndOf year : Int) -> Bool {
+    func isAlive(atEndOf year: Int) -> Bool {
         year < yearOfDeath
+    }
+    
+    /// True si la personne décède dans l'année spécifiée
+    /// - Parameter year: année testée
+    func isDeceased(during year: Int) -> Bool {
+        self is Adult && !self.isAlive(atEndOf: year) && self.isAlive(atEndOf: year-1)
     }
     
     /// Année ou a lieu l'événement recherché

@@ -823,8 +823,8 @@
 				79581B1525E1832300BD2826 /* Income-Expenses */,
 				7973B9E825DF265200D30A44 /* ExtensionsTests.swift */,
 				793D1E7B25A8C7A00083E2BD /* FinancialMathTests.swift */,
-				7959745225C9DC4C00B9F9A2 /* EnvironmentModel */,
 				79AE4AD025C8A010007810DF /* Assets-Liabilities */,
+				7959745225C9DC4C00B9F9A2 /* EnvironmentModel */,
 				793D1E8725A8DCAB0083E2BD /* Ressources */,
 				793D1E7D25A8C7A00083E2BD /* Info.plist */,
 			);

@@ -90,7 +90,7 @@ struct CashFlowLine {
                                           for      : adultsNames,
                                           withSCI  : patrimoine.assets.sci)
         
-        autoreleasepool {
+        try autoreleasepool {
             /// INCOME: populate Ages and Work incomes
             populateIncomes(of: family)
             
@@ -123,17 +123,22 @@ struct CashFlowLine {
             /// LOAN: populate remboursement d'emprunts
             populateLoanCashFlow(of: patrimoine)
             
-            /// SUCCESSIONS: calcule des droits de successions y.c. assurances vies + réalise la tranmission de patrimoine
-            manageDeath(of   : family,
-                        with : patrimoine,
-                        for  : year)
+            /// SUCCESSIONS: calcule des droits de successions y.c. assurances vies + peuple les successions de l'année
+            populateSuccession(of   : family,
+                               with : patrimoine,
+                               for  : year)
+            
+            /// FREE INVEST: populate revenue, des investissements financiers libres et investir/retirer le solde net du cash flow de l'année
+            try manageYearlyNetCashFlow(of                  : patrimoine,
+                                        for                 : adultsNames,
+                                        lifeInsuranceRebate : &lifeInsuranceRebate,
+                                        atEndOf             : year)
+            
+            /// SUCCESSIONS: Transférerles biens des personnes décédées dans l'année vers ses héritiers
+            transferOwnershipOfDecedents(of   : family,
+                                         with : patrimoine,
+                                         for  : year)
         }
-        
-        /// FREE INVEST: populate revenue, des investissements financiers libres et investir/retirer le solde net du cash flow de l'année
-        try manageYearlyNetCashFlow(of                  : patrimoine,
-                                    for                 : adultsNames,
-                                    lifeInsuranceRebate : &lifeInsuranceRebate,
-                                    atEndOf             : year)
         #if DEBUG
         //Swift.print("Year = \(year), Revenus = \(sumOfrevenues), Expenses = \(sumOfExpenses), Net cash flow = \(netCashFlow)")
         #endif
@@ -141,19 +146,13 @@ struct CashFlowLine {
     
     // MARK: - methods
     
-    /// gérer les droits de succession au décès de l'un ou des 2 conjoints
-    fileprivate mutating func manageDeath(of family       : Family,
-                                          with patrimoine : Patrimoin,
-                                          for year        : Int) {
+    /// Définir toutes les successions de l'année et Calculer les droits de succession des personnes décédées dans l'année
+    fileprivate mutating func populateSuccession(of family       : Family,
+                                                 with patrimoine : Patrimoin,
+                                                 for year        : Int) {
         // FIXME: - en fait il faudrait traiter les sucessions en séquences: calcul taxe => transmission puis calcul tax => transmission
-        let decedents : [Person] = family.members.compactMap { member in
-            if member is Adult && !member.isAlive(atEndOf: year) && member.isAlive(atEndOf: year-1) {
-                // un décès est survenu
-                return member
-            } else {
-                return nil
-            }
-        }
+        // identification des personnes décédées dans l'année
+        let decedents = family.deceasedPersons(during: year)
         
         // ajouter les droits de succession (légales et assurances vie) aux taxes
         var totalSuccessionTax   = 0.0
@@ -161,20 +160,17 @@ struct CashFlowLine {
         // pour chaque défunt
         decedents.forEach { decedent in
             Swift.print("Succession de \(decedent.displayName) en \(year)")
-            // droits de successions légales
+            // calculer les droits de successions légales
             let succession = patrimoine.legalSuccession(of      : decedent,
                                                         atEndOf : year)
             successions.append(succession)
             totalSuccessionTax += succession.tax
             
-            // droits de transmission assurances vies
+            // calculer les droits de transmission assurances vies
             let liSuccession = patrimoine.lifeInsuraceSuccession(of      : decedent,
                                                                  atEndOf : year)
             lifeInsSuccessions.append(liSuccession)
             totalLiSuccessionTax += liSuccession.tax
-            
-            // Transférer les biens d'un défunt vers ses héritiers
-            patrimoine.transferOwnershipOf(decedent: decedent, atEndOf: year)
         }
         taxes.perCategory[.succession]?.namedValues
             .append((name  : TaxeCategory.succession.rawValue,
@@ -182,6 +178,20 @@ struct CashFlowLine {
         taxes.perCategory[.liSuccession]?.namedValues
             .append((name  : TaxeCategory.liSuccession.rawValue,
                      value : totalLiSuccessionTax.rounded()))
+    }
+    
+    /// Transférer les biens des personnes décédées dans l'année vers ses héritiers
+    func transferOwnershipOfDecedents(of family       : Family,
+                                      with patrimoine : Patrimoin,
+                                      for year        : Int) {
+        // identification des personnes décédées dans l'année
+        let decedents = family.deceasedPersons(during: year)
+
+        // pour chaque défunt
+        decedents.forEach { decedent in
+            // transférer les biens d'un défunt vers ses héritiers
+            patrimoine.transferOwnershipOf(decedent: decedent, atEndOf: year)
+        }
     }
     
     fileprivate mutating func populateIrpp(of family: Family) {

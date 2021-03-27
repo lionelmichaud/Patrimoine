@@ -21,25 +21,25 @@ struct Succession: Identifiable {
     // liste des héritages par héritier
     let inheritances : [Inheritance]
     
-    // dictionnaire des héritages net reçu par les enfants dans une succession
+    // dictionnaire des héritages net reçu par chaque enfant dans une succession
     var childrenSuccessorsInheritedNetValue: [String: Double] {
         inheritances.reduce(into: [:]) { counts, inheritance in
             counts[inheritance.person.displayName, default: 0] += inheritance.net
         }
     }
     
-    // somme des héritages reçus par les hétritiers dans une succession
+    // somme des héritages reçus par les héritiers dans une succession
     var net: Double {
         inheritances.sum(for: \.net)
     }
     
-    // somme des taxes payées par les hétritiers dans une succession
+    // somme des taxes payées par les héritiers dans une succession
     var tax: Double {
         inheritances.sum(for: \.tax)
     }
 }
 extension Array where Element == Succession {
-    // dictionnaire des héritages net reçu par les enfants sur un ensemble de successions
+    // dictionnaire des héritages net reçu par chaque enfant sur un ensemble de successions
     var childrenSuccessorsInheritedNetValue: [String: Double] {
         var globalDico: [String: Double] = [:]
         self.forEach { succession in

@@ -114,7 +114,8 @@ final class Patrimoin: ObservableObject {
         for idx in 0..<assets.freeInvests.items.count {
             switch assets.freeInvests[idx].type {
                 case .lifeInsurance(let periodicSocialTaxes, _):
-                    if periodicSocialTaxes && amount != 0 {
+                    if periodicSocialTaxes && amount != 0 &&
+                        assets.freeInvests[idx].isFullyOwned(by: adultsName) {
                         // investir la totalité du cash
                         assets.freeInvests[idx].add(amount)
                         return
@@ -125,7 +126,8 @@ final class Patrimoin: ObservableObject {
         for idx in 0..<assets.freeInvests.items.count {
             switch assets.freeInvests[idx].type {
                 case .lifeInsurance(let periodicSocialTaxes, _):
-                    if !periodicSocialTaxes && amount != 0 {
+                    if !periodicSocialTaxes && amount != 0 &&
+                        assets.freeInvests[idx].isFullyOwned(by: adultsName) {
                         // investir la totalité du cash
                         assets.freeInvests[idx].add(amount)
                         return
@@ -135,17 +137,24 @@ final class Patrimoin: ObservableObject {
         }
         
         // si pas d'assurance vie alors investir dans un PEA
-        for idx in 0..<assets.freeInvests.items.count where assets.freeInvests[idx].type == .pea {
+        for idx in 0..<assets.freeInvests.items.count
+        where assets.freeInvests[idx].type == .pea
+            && assets.freeInvests[idx].isFullyOwned(by: adultsName) {
             // investir la totalité du cash
             assets.freeInvests[idx].add(amount)
             return
         }
         // si pas d'assurance vie ni de PEA alors investir dans un autre placement
-        for idx in 0..<assets.freeInvests.items.count where assets.freeInvests[idx].type == .other {
+        for idx in 0..<assets.freeInvests.items.count
+        where assets.freeInvests[idx].type == .other
+            && assets.freeInvests[idx].isFullyOwned(by: adultsName) {
             // investir la totalité du cash
             assets.freeInvests[idx].add(amount)
             return
         }
+        
+        customLog.log(level: .info, "Il n'y a plus de réceptacle pour receuillir les flux de trésorerie positifs")
+        print("Il n'y a plus de réceptacle pour receuillir les flux de trésorerie positifs")
     }
     
     /// Retirer le montant d'un investissement libre: d'abord PEA ensuite Assurance vie puis autre
@@ -166,7 +175,9 @@ final class Patrimoin: ObservableObject {
         assets.freeInvests.items.sort(by: {$0.averageInterestRate < $1.averageInterestRate})
         
         // PEA: retirer le montant d'un investissement libre: d'abord le PEA procurant le moins bon rendement
-        for idx in 0..<assets.freeInvests.items.count where assets.freeInvests[idx].type == .pea {
+        for idx in 0..<assets.freeInvests.items.count
+        where assets.freeInvests[idx].type == .pea
+            && assets.freeInvests[idx].isFullyOwned(by: adultsName) {
             // tant que l'on a pas retiré le montant souhaité
             // retirer le montant du PEA s'il y en avait assez à la fin de l'année dernière
             if amountRemainingToRemove > 0.0 && assets.freeInvests[idx].value(atEndOf: year-1) > 0.0 {
@@ -184,7 +195,9 @@ final class Patrimoin: ObservableObject {
                 case .lifeInsurance:
                     // tant que l'on a pas retiré le montant souhaité
                     // retirer le montant de l'Assurances vie s'il y en avait assez à la fin de l'année dernière
-                    if amountRemainingToRemove > 0.0 && assets.freeInvests[idx].value(atEndOf: year-1) > 0.0 {
+                    if amountRemainingToRemove > 0.0 &&
+                        assets.freeInvests[idx].value(atEndOf: year-1) > 0.0
+                        && assets.freeInvests[idx].isFullyOwned(by: adultsName) {
                         let removal = assets.freeInvests[idx].remove(netAmount: amountRemainingToRemove)
                         amountRemainingToRemove -= removal.revenue
                         // IRPP: part des produit de la liquidation inscrit en compte courant imposable à l'IRPP après déduction de ce qu'il reste de franchise

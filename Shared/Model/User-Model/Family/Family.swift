@@ -125,13 +125,27 @@ final class Family: ObservableObject {
             }
     }
     
-    /// Nombre d'adulte vivant à la fin de l'année
-    /// - Parameter year: année
+    /// Nombre d'enfant vivant à la fin de l'année
+    /// - Parameter year: année considérée
     func nbOfChildrenAlive(atEndOf year: Int) -> Int {
         members
             .reduce(0) { (result, person) in
                 result + ((person is Child && person.isAlive(atEndOf: year)) ? 1 : 0)
             }
+    }
+    
+    /// Retourne la liste des personnes décédées dans l'année
+    /// - Parameter year: année où l'on recherche des décès
+    /// - Returns: liste des personnes décédées dans l'année
+    func deceasedPersons(during year: Int) -> [Person] {
+        members.compactMap { member in
+            if member.isDeceased(during: year) {
+                // un décès est survenu
+                return member
+            } else {
+                return nil
+            }
+        }
     }
     
     /// Revenus du tavail cumulés de la famille durant l'année
