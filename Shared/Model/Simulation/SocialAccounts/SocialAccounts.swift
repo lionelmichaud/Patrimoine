@@ -72,12 +72,13 @@ struct SocialAccounts {
     ///   - year: année du run courant
     ///   - withKPIs: les KPI à utiliser
     ///   - kpiResults: valeur des KPIs pour le run courant
-    fileprivate func computeCurrentKpisValues(year                    : Int,  // swiftlint:disable:this function_parameter_count
-                                              withFamily family       : Family,
-                                              withKPIs kpiDefinitions : inout KpiArray,
-                                              kpiResults              : inout DictionaryOfKpiResults,
-                                              withMode simulationMode : SimulationModeEnum,
-                                              withbalanceSheetLine    : BalanceSheetLine) {
+    fileprivate func computeKpisAtZeroCashAvailable // swiftlint:disable:this function_parameter_count
+    (year                    : Int,
+     withFamily family       : Family,
+     withKPIs kpiDefinitions : inout KpiArray,
+     kpiResults              : inout DictionaryOfKpiResults,
+     withMode simulationMode : SimulationModeEnum,
+     withbalanceSheetLine    : BalanceSheetLine) {
         customLog.log(level: .info, "Arrêt de la construction de la table en \(year) de Comptes sociaux: Actifs financiers = 0 dans \(Self.self, privacy: .public)")
         Swift.print("Arrêt de la construction de la table en \(year) de Comptes sociaux: Actifs financiers = 0")
         
@@ -118,11 +119,11 @@ struct SocialAccounts {
                 fatalError("Nombre d'adulte survivants inattendu: \(family.nbOfAdultAlive(atEndOf: year)) dans \(Self.self)")
         }
         /// KPI n°3 : on est arrivé à la fin de la simulation car il n'y a plus de cash dans les Free Investements
+        /// mais il peut éventuellement rester d'autres actifs (immobilier de rendement...)
         // TODO: - il faudrait définir un KPI spécifique
         setKpiValue(kpiEnum: .minimumAsset, value: 0,
                     &kpiDefinitions, &kpiResults,
                     simulationMode)
-
     }
     
     /// Gérer les KPI n°1, 2, 3 au décès de l'un ou des 2 conjoints
@@ -222,13 +223,13 @@ struct SocialAccounts {
             } catch {
                 /// il n'y a plus de Cash => on arrête la simulation
                 lastYear = year
-                computeCurrentKpisValues(year                 : year,
-                                         withFamily           : family,
-                                         withKPIs             : &kpis,
-                                         kpiResults           : &kpiResults,
-                                         withMode             : simulationMode,
-                                         withbalanceSheetLine : balanceArray.last!)
-                       //                withbalanceSheetLine : balanceArray[balanceArray.endIndex - 2])
+                computeKpisAtZeroCashAvailable(year                 : year,
+                                               withFamily           : family,
+                                               withKPIs             : &kpis,
+                                               kpiResults           : &kpiResults,
+                                               withMode             : simulationMode,
+                                               withbalanceSheetLine : balanceArray.last!)
+                //                withbalanceSheetLine : balanceArray[balanceArray.endIndex - 2])
                 return kpiResults // arrêter la construction de la table
             }
 

@@ -134,7 +134,7 @@ struct CashFlowLine {
                                         lifeInsuranceRebate : &lifeInsuranceRebate,
                                         atEndOf             : year)
             
-            /// SUCCESSIONS: Transférerles biens des personnes décédées dans l'année vers ses héritiers
+            /// SUCCESSIONS: Transférer les biens des personnes décédées dans l'année vers ses héritiers
             transferOwnershipOfDecedents(of   : family,
                                          with : patrimoine,
                                          for  : year)
@@ -446,6 +446,7 @@ struct CashFlowLine {
                 try patrimoine.getCashFromInvestement(thisAmount          : -netCashFlow,
                                                       atEndOf             : year,
                                                       for                 : adultsName,
+                                                      taxes               : &taxes.perCategory,
                                                       lifeInsuranceRebate : &lifeInsuranceRebate)
             taxableIrppRevenueDelayedToNextYear.increase(by: totalTaxableInterests.rounded())
             

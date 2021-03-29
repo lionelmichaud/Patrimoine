@@ -168,6 +168,7 @@ final class Patrimoin: ObservableObject {
     func getCashFromInvestement(thisAmount amount   : Double,
                                 atEndOf year        : Int,
                                 for adultsName      : [String],
+                                taxes               : inout [TaxeCategory: NamedValueTable],
                                 lifeInsuranceRebate : inout Double) throws -> Double {
         var amountRemainingToRemove = amount
         var totalTaxableInterests   = 0.0
@@ -215,7 +216,25 @@ final class Patrimoin: ObservableObject {
             }
         }
         
-        // TODO: - Si pas assez alors prendre sur la trésorerie
+        // AUTRE: retirer le montant d'un investissement libre: d'abord celui procurant le moins bon rendement
+        for idx in 0..<assets.freeInvests.items.count
+        where assets.freeInvests[idx].type == .other
+            && assets.freeInvests[idx].isFullyOwned(by: adultsName) {
+            // tant que l'on a pas retiré le montant souhaité
+            // retirer le montant s'il y en avait assez à la fin de l'année dernière
+            if amountRemainingToRemove > 0.0 && assets.freeInvests[idx].value(atEndOf: year-1) > 0.0 {
+                let removal = assets.freeInvests[idx].remove(netAmount: amountRemainingToRemove)
+                amountRemainingToRemove -= removal.revenue
+                // IRPP: les plus values sont imposables à l'IRPP
+                totalTaxableInterests += removal.taxableInterests
+                // Prélèvements sociaux
+                // TODO: - il faudrait ajouter les prélèvements sociaux (removal.socialTaxes) à ceux de l'année
+                taxes[.socialTaxes]?.namedValues.append((name : assets.freeInvests[idx].name,
+                                                         value: removal.socialTaxes))
+                
+                if amountRemainingToRemove <= 0.0 { return totalTaxableInterests }
+            }
+        }
         
         if amountRemainingToRemove > 0.0 {
             // on a pas pu retirer suffisament pour couvrir le déficit de cash de l'année

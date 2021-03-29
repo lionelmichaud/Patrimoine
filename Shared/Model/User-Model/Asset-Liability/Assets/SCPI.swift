@@ -82,7 +82,7 @@ struct SCPI: Identifiable, BundleCodable, Ownable {
     /// Revenus annuels net d'inflation
     /// - Parameters:
     ///   - year: fin de l'année
-    /// - Note: On retire l'infllation du taux de rendement annuel car côté dépenses, celles-ci ne sont pas augmentée de l'inflation chaque année
+    /// - Note: On retire l'inflation du taux de rendement annuel car côté dépenses, celles-ci ne sont pas augmentée de l'inflation chaque année
     /// - Returns:
     ///   - revenue: revenus inscrit en compte courant avant prélèvements sociaux et IRPP mais net d'inflation
     ///   - taxableIrpp: part des revenus inscrit en compte courant imposable à l'IRPP (après charges sociales)
