@@ -165,7 +165,7 @@ final class Patrimoin: ObservableObject {
     ///   - year: année en cours
     /// - Throws: Si pas assez de capital -> CashFlowError.notEnoughCash(missingCash: amountRemainingToRemove)
     /// - Returns: taxable Interests
-    func getCashFromInvestement(thisAmount amount   : Double,
+    func getCashFromInvestement(thisAmount amount   : Double, // swiftlint:disable:this cyclomatic_complexity
                                 atEndOf year        : Int,
                                 for adultsName      : [String],
                                 taxes               : inout [TaxeCategory: NamedValueTable],
@@ -178,7 +178,7 @@ final class Patrimoin: ObservableObject {
         // PEA: retirer le montant d'un investissement libre: d'abord le PEA procurant le moins bon rendement
         for idx in 0..<assets.freeInvests.items.count
         where assets.freeInvests[idx].type == .pea
-            && assets.freeInvests[idx].isFullyOwned(by: adultsName) {
+            && (assets.freeInvests[idx].isFullyOwned(by: adultsName) || adultsName.isEmpty) {
             // tant que l'on a pas retiré le montant souhaité
             // retirer le montant du PEA s'il y en avait assez à la fin de l'année dernière
             if amountRemainingToRemove > 0.0 && assets.freeInvests[idx].value(atEndOf: year-1) > 0.0 {
@@ -198,7 +198,7 @@ final class Patrimoin: ObservableObject {
                     // retirer le montant de l'Assurances vie s'il y en avait assez à la fin de l'année dernière
                     if amountRemainingToRemove > 0.0 &&
                         assets.freeInvests[idx].value(atEndOf: year-1) > 0.0
-                        && assets.freeInvests[idx].isFullyOwned(by: adultsName) {
+                        && (assets.freeInvests[idx].isFullyOwned(by: adultsName) || adultsName.isEmpty) {
                         let removal = assets.freeInvests[idx].remove(netAmount: amountRemainingToRemove)
                         amountRemainingToRemove -= removal.revenue
                         // IRPP: part des produit de la liquidation inscrit en compte courant imposable à l'IRPP après déduction de ce qu'il reste de franchise
@@ -219,7 +219,7 @@ final class Patrimoin: ObservableObject {
         // AUTRE: retirer le montant d'un investissement libre: d'abord celui procurant le moins bon rendement
         for idx in 0..<assets.freeInvests.items.count
         where assets.freeInvests[idx].type == .other
-            && assets.freeInvests[idx].isFullyOwned(by: adultsName) {
+            && (assets.freeInvests[idx].isFullyOwned(by: adultsName) || adultsName.isEmpty) {
             // tant que l'on a pas retiré le montant souhaité
             // retirer le montant s'il y en avait assez à la fin de l'année dernière
             if amountRemainingToRemove > 0.0 && assets.freeInvests[idx].value(atEndOf: year-1) > 0.0 {
@@ -228,7 +228,6 @@ final class Patrimoin: ObservableObject {
                 // IRPP: les plus values sont imposables à l'IRPP
                 totalTaxableInterests += removal.taxableInterests
                 // Prélèvements sociaux
-                // TODO: - il faudrait ajouter les prélèvements sociaux (removal.socialTaxes) à ceux de l'année
                 taxes[.socialTaxes]?.namedValues.append((name : assets.freeInvests[idx].name,
                                                          value: removal.socialTaxes))
                 

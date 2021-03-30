@@ -393,7 +393,7 @@ struct Ownership {
     /// - Warning: Ne donne pas le bon résultat pour un bien indivis.
     /// - Throws:
     ///   - OwnershipError.invalidOwnership: le ownership avant ou après n'est pas valide
-    mutating func transferOwnershipOf(decedentName       : String,
+    mutating func transferOwnershipOf(decedentName       : String, // swiftlint:disable:this cyclomatic_complexity
                                       chidrenNames       : [String]?,
                                       spouseName         : String?,
                                       spouseFiscalOption : InheritanceDonation.FiscalOption?) throws {

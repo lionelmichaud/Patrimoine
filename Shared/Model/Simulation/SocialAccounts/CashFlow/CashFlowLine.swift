@@ -78,7 +78,9 @@ struct CashFlowLine {
          withPatrimoine patrimoine             : Patrimoin,
          taxableIrppRevenueDelayedFromLastyear : Double) throws {
         self.year = year
-        let adultsNames = family.adults.map {$0.displayName}
+        let adultsNames = family.adults.compactMap {
+            $0.isAlive(atEndOf: year) ? $0.displayName : nil
+        }
         revenues.taxableIrppRevenueDelayedFromLastYear.setValue(to: taxableIrppRevenueDelayedFromLastyear)
         
         /// initialize life insurance yearly rebate on taxes
@@ -128,16 +130,15 @@ struct CashFlowLine {
                                with : patrimoine,
                                for  : year)
             
+            /// SUCCESSIONS: Transférer les biens des personnes décédées dans l'année vers ses héritiers
+            transferOwnershipOfDecedents(of   : family,
+                                         with : patrimoine,
+                                         for  : year)
             /// FREE INVEST: populate revenue, des investissements financiers libres et investir/retirer le solde net du cash flow de l'année
             try manageYearlyNetCashFlow(of                  : patrimoine,
                                         for                 : adultsNames,
                                         lifeInsuranceRebate : &lifeInsuranceRebate,
                                         atEndOf             : year)
-            
-            /// SUCCESSIONS: Transférer les biens des personnes décédées dans l'année vers ses héritiers
-            transferOwnershipOfDecedents(of   : family,
-                                         with : patrimoine,
-                                         for  : year)
         }
         #if DEBUG
         //Swift.print("Year = \(year), Revenus = \(sumOfrevenues), Expenses = \(sumOfExpenses), Net cash flow = \(netCashFlow)")
