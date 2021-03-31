@@ -49,15 +49,14 @@ protocol Ownable: NameableValuable {
     func ownedValues(atEndOf year     : Int,
                      evaluationMethod : EvaluationMethod) -> [String : Double]
     
+    func ownedValues(ofValue totalValue : Double,
+                     atEndOf year       : Int,
+                     evaluationMethod   : EvaluationMethod) -> [String : Double]
+
     /// True si un des adultes de la famille perçoit les revenus.
     /// Cad si un des adultes est UF ou PP
     /// - Parameter adultsNames: liste des noms des adultes de la famille
     func providesRevenue(to adultsNames: [String]) -> Bool
-    
-    /// True si un des adultes de la famille perçoit les produits de la vente.
-    /// Cad si un des adultes est NP ou PP
-    /// - Parameter adultsNames: liste des noms des adultes de la famille
-    func providesSaleProduct(to adultsNames: [String]) -> Bool
     
     func isFullyOwned(by adultsNames: [String]) -> Bool
     
@@ -127,15 +126,39 @@ extension Ownable {
         return dico
     }
 
+    func ownedValues(ofValue totalValue : Double,
+                     atEndOf year       : Int,
+                     evaluationMethod   : EvaluationMethod) -> [String : Double] {
+        var dico: [String : Double] = [:]
+        if ownership.isDismembered {
+            for owner in ownership.bareOwners {
+                dico[owner.name] = ownership.ownedValue(by               : owner.name,
+                                                        ofValue          : totalValue,
+                                                        atEndOf          : year,
+                                                        evaluationMethod : evaluationMethod)
+            }
+            for owner in ownership.usufructOwners {
+                dico[owner.name] = ownership.ownedValue(by               : owner.name,
+                                                        ofValue          : totalValue,
+                                                        atEndOf          : year,
+                                                        evaluationMethod : evaluationMethod)
+            }
+            
+        } else {
+            // valeur en pleine propriété
+            for owner in ownership.fullOwners {
+                dico[owner.name] = ownership.ownedValue(by               : owner.name,
+                                                        ofValue          : totalValue,
+                                                        atEndOf          : year,
+                                                        evaluationMethod : evaluationMethod)
+            }
+        }
+        return dico
+    }
+    
     func providesRevenue(to adultsNames: [String]) -> Bool {
         (adultsNames.first(where: {
             ownership.isAFullOwner(ownerName: $0) || ownership.isAnUsufructOwner(ownerName: $0)
-        }) != nil)
-    }
-    
-    func providesSaleProduct(to adultsNames: [String]) -> Bool {
-        (adultsNames.first(where: {
-            ownership.isAFullOwner(ownerName: $0) || ownership.isABareOwner(ownerName: $0)
         }) != nil)
     }
     

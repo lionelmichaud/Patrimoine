@@ -101,6 +101,66 @@ final class Patrimoin: ObservableObject {
         }
     }
     
+    /// Investir un capital dans des actifs financiers détenus en PP
+    /// - Parameters:
+    ///   - ownedCapitals: [nom du détenteur, du capital]
+    ///   - year: année de l'investissement
+    func investCapital(ownedCapitals: [String : Double],
+                       atEndOf year : Int) {
+        ownedCapitals.forEach { (name, capital) in
+            if capital != 0,
+               let adult = Patrimoin.family?.member(withName: name) as? Adult,
+               adult.isAlive(atEndOf: year) {
+                
+                // investir en priorité dans une assurance vie
+                for idx in 0..<assets.freeInvests.items.count {
+                    switch assets.freeInvests[idx].type {
+                        case .lifeInsurance(let periodicSocialTaxes, _):
+                            if periodicSocialTaxes &&
+                                assets.freeInvests[idx].ownership.isAFullOwner(ownerName: name) {
+                                // investir la totalité du cash
+                                assets.freeInvests[idx].add(capital)
+                                return
+                            }
+                        default: ()
+                    }
+                }
+                for idx in 0..<assets.freeInvests.items.count {
+                    switch assets.freeInvests[idx].type {
+                        case .lifeInsurance(let periodicSocialTaxes, _):
+                            if !periodicSocialTaxes &&
+                                assets.freeInvests[idx].ownership.isAFullOwner(ownerName: name) {
+                                // investir la totalité du cash
+                                assets.freeInvests[idx].add(capital)
+                                return
+                            }
+                        default: ()
+                    }
+                }
+                
+                // si pas d'assurance vie alors investir dans un PEA
+                for idx in 0..<assets.freeInvests.items.count
+                where assets.freeInvests[idx].type == .pea
+                    && assets.freeInvests[idx].ownership.isAFullOwner(ownerName: name) {
+                    // investir la totalité du cash
+                    assets.freeInvests[idx].add(capital)
+                    return
+                }
+                
+                // si pas d'assurance vie ni de PEA alors investir dans un autre placement
+                for idx in 0..<assets.freeInvests.items.count
+                where assets.freeInvests[idx].type == .other
+                    && assets.freeInvests[idx].ownership.isAFullOwner(ownerName: name) {
+                    // investir la totalité du cash
+                    assets.freeInvests[idx].add(capital)
+                    return
+                }
+                
+                customLog.log(level: .info, "Il n'y a plus de réceptacle pour receuillir les capitaux")
+                print("Il n'y a plus de réceptacle pour receuillir les capitaux")
+            }
+        }
+    }
     /// Ajouter la capacité d'épargne à l'investissement libre de type Assurance vie de meilleur rendement
     /// dont un des adultes est PP
     /// - Parameters:

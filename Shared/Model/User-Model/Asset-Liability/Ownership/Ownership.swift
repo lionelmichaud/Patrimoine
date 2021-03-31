@@ -201,6 +201,36 @@ struct Ownership {
         }
     }
     
+    func ownedValues(ofValue totalValue : Double,
+                     atEndOf year       : Int,
+                     evaluationMethod   : EvaluationMethod) -> [String : Double] {
+        var dico: [String : Double] = [:]
+        if isDismembered {
+            for owner in bareOwners {
+                dico[owner.name] = ownedValue(by               : owner.name,
+                                              ofValue          : totalValue,
+                                              atEndOf          : year,
+                                              evaluationMethod : evaluationMethod)
+            }
+            for owner in usufructOwners {
+                dico[owner.name] = ownedValue(by               : owner.name,
+                                              ofValue          : totalValue,
+                                              atEndOf          : year,
+                                              evaluationMethod : evaluationMethod)
+            }
+            
+        } else {
+            // valeur en pleine propriété
+            for owner in fullOwners {
+                dico[owner.name] = ownedValue(by               : owner.name,
+                                              ofValue          : totalValue,
+                                              atEndOf          : year,
+                                              evaluationMethod : evaluationMethod)
+            }
+        }
+        return dico
+    }
+
     /// Transférer l'usufruit du défunt aux nue-propriétaires
     /// - Note:
     ///   - le défunt était seulement usufruitier
