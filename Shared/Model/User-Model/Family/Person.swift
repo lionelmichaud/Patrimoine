@@ -98,8 +98,6 @@ class Person : ObservableObject, Identifiable, CustomStringConvertible, Codable 
     static let coder = CoderPreservingType()
     
     // MARK: - Properties
-    // retirer
-//    var test: Double = Economy.model.securedRate.value()
 
     let id                    = UUID()
     let sexe                  : Sexe

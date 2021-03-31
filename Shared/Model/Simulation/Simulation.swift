@@ -244,7 +244,10 @@ final class Simulation: ObservableObject {
         // calculer tous les runs
         for run in 1...nbOfRuns {
             currentRunNb = run
-            
+            SimulationLogger.shared.log(run      : run,
+                                        logTopic : LogTopic.simulationEvent,
+                                        message  : "Début : \(firstYear!)")
+
             // re-générer les propriétés aléatoires à chaque run si on est en mode Aléatoire
             if monteCarlo {
                 nextRandomProperties(family,
@@ -256,7 +259,8 @@ final class Simulation: ObservableObject {
             reset(includingKPIs: run == 1 ? true : false)
             
             // construire les comptes sociaux du patrimoine de la famille
-            let dicoOfKpiResults = socialAccounts.build(nbOfYears      : nbOfYears,
+            let dicoOfKpiResults = socialAccounts.build(run            : run,
+                                                        nbOfYears      : nbOfYears,
                                                         withFamily     : family,
                                                         withPatrimoine : patrimoine,
                                                         withKPIs       : &kpis,
@@ -306,7 +310,8 @@ final class Simulation: ObservableObject {
         self.reset(includingKPIs: false)
         
         // construire les comptes sociaux du patrimoine de la famille
-        _ = socialAccounts.build(nbOfYears      : nbOfYears,
+        _ = socialAccounts.build(run            : 0,
+                                 nbOfYears      : nbOfYears,
                                  withFamily     : family,
                                  withPatrimoine : patrimoine,
                                  withKPIs       : &kpis,

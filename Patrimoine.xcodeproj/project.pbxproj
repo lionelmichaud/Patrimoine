@@ -316,6 +316,7 @@
 		79DB52CE25866B0600BC6E84 /* Adult+Pension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79DB52CD25866B0600BC6E84 /* Adult+Pension.swift */; };
 		79DB52D225866B7F00BC6E84 /* Adult+Unemployement.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79DB52D125866B7F00BC6E84 /* Adult+Unemployement.swift */; };
 		79E3629B253A46AB00450BEE /* BetaRandomizerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79E3629A253A46AB00450BEE /* BetaRandomizerView.swift */; };
+		79E4C54726138DE300AD3CCE /* SimulationLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79E4C54626138DE200AD3CCE /* SimulationLogger.swift */; };
 		79E6B73625042C9D00CE6F0D /* Histogram.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79E6B73525042C9D00CE6F0D /* Histogram.swift */; };
 		79E7588B250D5A3100153AB6 /* EconomyModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79E7588A250D5A3100153AB6 /* EconomyModel.swift */; };
 		79E78B5725C221840037006B /* LayoffCompensationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79E78B5625C221840037006B /* LayoffCompensationTests.swift */; };
@@ -650,6 +651,7 @@
 		79DB52CD25866B0600BC6E84 /* Adult+Pension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Adult+Pension.swift"; sourceTree = "<group>"; };
 		79DB52D125866B7F00BC6E84 /* Adult+Unemployement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Adult+Unemployement.swift"; sourceTree = "<group>"; };
 		79E3629A253A46AB00450BEE /* BetaRandomizerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BetaRandomizerView.swift; sourceTree = "<group>"; };
+		79E4C54626138DE200AD3CCE /* SimulationLogger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimulationLogger.swift; sourceTree = "<group>"; };
 		79E6B73525042C9D00CE6F0D /* Histogram.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Histogram.swift; sourceTree = "<group>"; };
 		79E7588A250D5A3100153AB6 /* EconomyModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EconomyModel.swift; sourceTree = "<group>"; };
 		79E78B5625C221840037006B /* LayoffCompensationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LayoffCompensationTests.swift; sourceTree = "<group>"; };
@@ -1324,6 +1326,7 @@
 				79D147252506DA7000249539 /* KPI.swift */,
 				791027B92549F37700016A62 /* SimulationResultTable.swift */,
 				79948923249E4FC200DAFF1E /* SocialAccounts */,
+				79E4C54626138DE200AD3CCE /* SimulationLogger.swift */,
 			);
 			path = Simulation;
 			sourceTree = "<group>";
@@ -2004,6 +2007,7 @@
 				79948984249E4FC200DAFF1E /* Balance Sheet.swift in Sources */,
 				796135D225B21B5800C64230 /* FinancialRevenuTaxesModel.swift in Sources */,
 				793BA8E92539FFF7003DCFA4 /* ModelEconomyView.swift in Sources */,
+				79E4C54726138DE300AD3CCE /* SimulationLogger.swift in Sources */,
 				79E3629B253A46AB00450BEE /* BetaRandomizerView.swift in Sources */,
 				79948987249E4FC200DAFF1E /* SocialAccounts.swift in Sources */,
 				797592B624A4B9E3004CE646 /* RetirementDetailView.swift in Sources */,

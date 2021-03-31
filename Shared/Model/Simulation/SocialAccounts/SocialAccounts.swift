@@ -184,7 +184,8 @@ struct SocialAccounts {
     ///   - reportProgress: closure pour indiquer l'avancement de la simulation
     ///   - kpis: les KPI
     ///   - simulationMode: mode de simluation en cours
-    mutating func build(nbOfYears                 : Int,
+    mutating func build(run                       : Int,
+                        nbOfYears                 : Int,
                         withFamily family         : Family,
                         withPatrimoine patrimoine : Patrimoin,
                         withKPIs kpis             : inout KpiArray,
@@ -211,15 +212,15 @@ struct SocialAccounts {
             
             /// ajouter une nouvelle ligne pour une nouvelle année
             do {
-                    let newCashFlowLine = try CashFlowLine(withYear                              : year,
-                                                           withFamily                            : family,
-                                                           withPatrimoine                        : patrimoine,
-                                                           taxableIrppRevenueDelayedFromLastyear : lastYearDelayedTaxableIrppRevenue)
-                    cashFlowArray.append(newCashFlowLine)
-                    // ajouter les éventuelles successions survenues pendant l'année à la liste globale
-                    legalSuccessions   += newCashFlowLine.successions
-                    // ajouter les éventuelles transmissions d'assurance vie survenues pendant l'année à la liste globale
-                    lifeInsSuccessions += newCashFlowLine.lifeInsSuccessions
+                let newCashFlowLine = try CashFlowLine(withYear                              : year,
+                                                       withFamily                            : family,
+                                                       withPatrimoine                        : patrimoine,
+                                                       taxableIrppRevenueDelayedFromLastyear : lastYearDelayedTaxableIrppRevenue)
+                cashFlowArray.append(newCashFlowLine)
+                // ajouter les éventuelles successions survenues pendant l'année à la liste globale
+                legalSuccessions   += newCashFlowLine.successions
+                // ajouter les éventuelles transmissions d'assurance vie survenues pendant l'année à la liste globale
+                lifeInsSuccessions += newCashFlowLine.lifeInsSuccessions
             } catch {
                 /// il n'y a plus de Cash => on arrête la simulation
                 lastYear = year
@@ -230,6 +231,9 @@ struct SocialAccounts {
                                                withMode             : simulationMode,
                                                withbalanceSheetLine : balanceArray.last!)
                 //                withbalanceSheetLine : balanceArray[balanceArray.endIndex - 2])
+                SimulationLogger.shared.log(run      : run,
+                                            logTopic : LogTopic.simulationEvent,
+                                            message  : "Fin du run: à cours de cash en \(year)")
                 return kpiResults // arrêter la construction de la table
             }
 
@@ -248,12 +252,18 @@ struct SocialAccounts {
                                    kpiResults           : &kpiResults,
                                    withMode             : simulationMode,
                                    withbalanceSheetLine : newBalanceSheetLine)
+                SimulationLogger.shared.log(run      : run,
+                                            logTopic : LogTopic.simulationEvent,
+                                            message  : "Décès d'un adulte en \(year)")
             }
             
             if family.nbOfAdultAlive(atEndOf: year) == 0 {
                 // il n'y a plus d'adulte vivant à la fin de l'année
                 // on arrête la simulation après avoir clos les dernières successions
                 lastYear = year
+                SimulationLogger.shared.log(run      : run,
+                                            logTopic : LogTopic.simulationEvent,
+                                            message  : "Fin du run: plus d'adulte en vie en \(year)")
                 return kpiResults
             }
         }
