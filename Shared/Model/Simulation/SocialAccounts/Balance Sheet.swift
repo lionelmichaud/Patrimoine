@@ -1,9 +1,11 @@
 import Foundation
 import Disk
 
-// MARK: - Table des Bilans annuels
+// MARK: - BalanceSheetArray: Table des Bilans annuels
 
 typealias BalanceSheetArray = [BalanceSheetLine]
+
+// MARK: - BalanceSheetArray extension for CSV export
 
 extension BalanceSheetArray {
     func storeTableCSV(simulationTitle: String,
@@ -15,16 +17,18 @@ extension BalanceSheetArray {
             // pour chaque catégorie
             AssetsCategory.allCases.forEach { category in
                 // heading
-                heading += firstLine.assets.headersCSV(category)! + "; "
+                heading += firstLine.assets[AppSettings.shared.allPersonsLabel]!.headersCSV(category)! + "; "
                 // valeurs
                 // values: For every element , extract the values as a comma-separated string.
-                rows = zip(rows, self.map { "\($0.assets.valuesCSV(category)!); " }).map(+)
+                rows = zip(rows,
+                           self.map { "\($0.assets[AppSettings.shared.allPersonsLabel]!.valuesCSV(category)!); " })
+                    .map(+)
             }
             // total
             // heading
             heading += "ACTIF TOTAL; "
             // valeurs
-            let rowsTotal = self.map { "\($0.assets.total.roundedString); " }
+            let rowsTotal = self.map { "\($0.assets[AppSettings.shared.allPersonsLabel]!.total.roundedString); " }
             rows = zip(rows, rowsTotal).map(+)
         }
         
@@ -32,16 +36,18 @@ extension BalanceSheetArray {
             // pour chaque catégorie
             LiabilitiesCategory.allCases.forEach { category in
                 // heading
-                heading += firstLine.liabilities.headersCSV(category)! + "; "
+                heading += firstLine.liabilities[AppSettings.shared.allPersonsLabel]!.headersCSV(category)! + "; "
                 // valeurs
                 // values: For every element , extract the values as a comma-separated string.
-                rows = zip(rows, self.map { "\($0.liabilities.valuesCSV(category)!); " }).map(+)
+                rows = zip(rows,
+                           self.map { "\($0.liabilities[AppSettings.shared.allPersonsLabel]!.valuesCSV(category)!); " })
+                    .map(+)
             }
             // total
             // heading
             heading += "PASSIF TOTAL; "
             // valeurs
-            let rowsTotal = self.map { "\($0.liabilities.total.roundedString); " }
+            let rowsTotal = self.map { "\($0.liabilities[AppSettings.shared.allPersonsLabel]!.total.roundedString); " }
             rows = zip(rows, rowsTotal).map(+)
         }
         
@@ -143,62 +149,74 @@ struct BalanceSheetLine {
     // année de début de la simulation
     var year: Int   = 0
     // actifs
-    var assets      = ValuedAssets(name: "ACTIF")
+    var assets      : [String : ValuedAssets]
     // passifs
-    var liabilities = ValuedLiabilities(name: "PASSIF")
+    var liabilities : [String : ValuedLiabilities]
     // net
     var netAssets   : Double {
-        assets.total + liabilities.total
+        assets[AppSettings.shared.allPersonsLabel]!.total
+            + liabilities[AppSettings.shared.allPersonsLabel]!.total
     }
     // tous les actifs net sauf immobilier physique
     var netFinancialAssets : Double {
-        netAssets - assets.perCategory[.realEstates]?.total ?? 0.0
+        netAssets
+            - assets[AppSettings.shared.allPersonsLabel]!.perCategory[.realEstates]?.total ?? 0.0
     }
     // tous les actifs sauf immobilier physique
     var financialAssets: Double {
-        assets.total - assets.perCategory[.realEstates]?.total ?? 0.0
+        assets[AppSettings.shared.allPersonsLabel]!.total
+            - assets[AppSettings.shared.allPersonsLabel]!.perCategory[.realEstates]?.total ?? 0.0
     }
     
     // MARK: - Initializers
     
     init(withYear year             : Int,
+         withFamily family         : Family,
          withPatrimoine patrimoine : Patrimoin) {
 //        autoreleasepool {
-        self.year = year
+        self.year        = year
         
+        // initialiser les dictionnaires
+        self.assets      = [AppSettings.shared.allPersonsLabel: ValuedAssets(name: "ACTIF")]
+        self.liabilities = [AppSettings.shared.allPersonsLabel: ValuedLiabilities(name : "PASSIF")]
+        family.members.forEach { person in
+            self.assets[person.displayName]      = ValuedAssets(name : "ACTIF")
+            self.liabilities[person.displayName] = ValuedLiabilities(name : "PASSIF")
+        }
+
         // actifs
         for asset in patrimoine.assets.realEstates.items.sorted(by:<) {
             // populate real estate assets
-            appendToAssets(.realEstates, asset, year)
+            appendToAssets(.realEstates, family, asset, year)
         }
         for asset in patrimoine.assets.periodicInvests.items.sorted(by:<) {
             // populate periodic investments assets
-            appendToAssets(.periodicInvests, asset, year)
+            appendToAssets(.periodicInvests, family, asset, year)
         }
         for asset in patrimoine.assets.freeInvests.items.sorted(by:<) {
             // populate free investment assets
-            appendToAssets(.freeInvests, asset, year)
+            appendToAssets(.freeInvests, family, asset, year)
         }
         for asset in patrimoine.assets.scpis.items.sorted(by:<) {
             // populate SCPI assets
-            appendToAssets(.scpis, asset, year)
+            appendToAssets(.scpis, family, asset, year)
         }
         
         // actifs SCI - SCPI
         for asset in patrimoine.assets.sci.scpis.items.sorted(by:<) {
             // populate SCI assets
-            appendToAssets(.sci, asset, year, "SCI - ")
+            appendToAssets(.sci, family, asset, year, "SCI - ")
         }
         
         // dettes
         for liability in patrimoine.liabilities.debts.items.sorted(by:<) {
             // populate debt liabilities
-            appendToLiabilities(.debts, liability, year)
+            appendToLiabilities(.debts, family, liability, year)
         }
         // emprunts
         for liability in patrimoine.liabilities.loans.items.sorted(by:<) {
             // populate loan liabilities
-            appendToLiabilities(.loans, liability, year)
+            appendToLiabilities(.loans, family, liability, year)
         }
 //        }
     }
@@ -206,32 +224,49 @@ struct BalanceSheetLine {
     // MARK: - Methods
     
     fileprivate mutating func appendToAssets(_ category       : AssetsCategory,
-                                             _ asset          : NameableValuable,
+                                             _ family         : Family,
+                                             _ asset          : Ownable,
                                              _ year           : Int,
                                              _ withNamePrefix : String = "") {
-        assets.perCategory[category]?.namedValues.append(
+        assets[AppSettings.shared.allPersonsLabel]!.perCategory[category]?.namedValues.append(
             (name  : withNamePrefix + asset.name,
              value : asset.value(atEndOf: year).rounded()))
+        
+        family.members.forEach { person in
+            assets[person.displayName]!.perCategory[category]?.namedValues.append(
+                (name  : withNamePrefix + asset.name,
+                 value : asset.providesRevenue(to: [person.displayName]) ?
+                    asset.value(atEndOf: year).rounded() :
+                    0))
+        }
     }
     
     fileprivate mutating func appendToLiabilities(_ category       : LiabilitiesCategory,
-                                                  _ liability      : NameableValuable,
+                                                  _ family         : Family,
+                                                  _ liability      : Ownable,
                                                   _ year           : Int,
                                                   _ withNamePrefix : String = "") {
-        liabilities.perCategory[category]?.namedValues.append(
+        liabilities[AppSettings.shared.allPersonsLabel]!.perCategory[category]?.namedValues.append(
             (name  : withNamePrefix + liability.name,
              value : liability.value(atEndOf: year).rounded()))
+        
+        family.members.forEach { person in
+            liabilities[person.displayName]!.perCategory[category]?.namedValues.append(
+                (name  : withNamePrefix + liability.name,
+                 value : liability.providesRevenue(to: [person.displayName]) ?
+                    liability.value(atEndOf: year).rounded() :
+                    0))
+        }
     }
     
     func print() {
         Swift.print("YEAR:", year)
         // actifs
-        assets.print(level: 1)
+        assets["Tous"]!.print(level: 1)
         // passifs
-        liabilities.print(level: 1)
+        liabilities["Tous"]!.print(level: 1)
         // net
         Swift.print("Net: \(netAssets)")
         Swift.print("-----------------------------------------")
     }
-    
 }

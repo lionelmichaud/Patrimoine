@@ -184,7 +184,7 @@ struct SocialAccounts {
     ///   - reportProgress: closure pour indiquer l'avancement de la simulation
     ///   - kpis: les KPI
     ///   - simulationMode: mode de simluation en cours
-    mutating func build(run                       : Int,
+    mutating func build(run                       : Int, // swiftlint:disable:this function_parameter_count
                         nbOfYears                 : Int,
                         withFamily family         : Family,
                         withPatrimoine patrimoine : Patrimoin,
@@ -241,6 +241,7 @@ struct SocialAccounts {
             // construire la ligne annuelle de Bilan de fin d'année
             //-----------------------------------------------------
             let newBalanceSheetLine = BalanceSheetLine(withYear       : year,
+                                                       withFamily     : family,
                                                        withPatrimoine : patrimoine)
             balanceArray.append(newBalanceSheetLine)
 

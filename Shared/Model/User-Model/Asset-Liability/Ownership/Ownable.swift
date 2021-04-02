@@ -53,17 +53,19 @@ protocol Ownable: NameableValuable {
                      atEndOf year       : Int,
                      evaluationMethod   : EvaluationMethod) -> [String : Double]
 
-    /// True si un des adultes de la famille perçoit les revenus.
-    /// Cad si un des adultes est UF ou PP
-    /// - Parameter adultsNames: liste des noms des adultes de la famille
-    func providesRevenue(to adultsNames: [String]) -> Bool
+    /// True si une des personnes listées perçoit des revenus de ce bien.
+    /// Cad si elle est une des UF ou une des PP
+    /// - Parameter names: liste de noms de membres de la famille
+    func providesRevenue(to names: [String]) -> Bool
     
-    func isFullyOwned(by adultsNames: [String]) -> Bool
+    /// True si une des personnes listées fait partie des PP de ce bien.
+    /// - Parameter names: liste de noms de membres de la famille
+    func isFullyOwned(by names: [String]) -> Bool
     
-    /// True si le bien fait partie du patrimoine d'un des adultes.
-    /// Cad si un des adultes est UF ou PP ou NP
-    /// - Parameter adultsNames: liste des noms des adultes de la famille
-    func isPartOfPatrimoine(of adultsNames: [String]) -> Bool
+    /// True si le bien fait partie du patrimoine d'une des personnes listées.
+    /// Cad si elle est une des UF ou une des PP ou une des NP
+    /// - Parameter names: liste de noms de membres de la famille
+    func isPartOfPatrimoine(of names: [String]) -> Bool
 }
 
 extension Ownable {
@@ -156,20 +158,20 @@ extension Ownable {
         return dico
     }
     
-    func providesRevenue(to adultsNames: [String]) -> Bool {
-        (adultsNames.first(where: {
+    func providesRevenue(to names: [String]) -> Bool {
+        (names.first(where: {
             ownership.isAFullOwner(ownerName: $0) || ownership.isAnUsufructOwner(ownerName: $0)
         }) != nil)
     }
     
-    func isFullyOwned(by adultsNames: [String]) -> Bool {
-        (adultsNames.first(where: {
+    func isFullyOwned(by names: [String]) -> Bool {
+        (names.first(where: {
             ownership.isAFullOwner(ownerName: $0)
         }) != nil)
     }
     
-    func isPartOfPatrimoine(of adultsNames: [String]) -> Bool {
-        (adultsNames.first(where: {
+    func isPartOfPatrimoine(of names: [String]) -> Bool {
+        (names.first(where: {
             ownership.isAFullOwner(ownerName: $0) || ownership.isAnUsufructOwner(ownerName: $0) || ownership.isABareOwner(ownerName: $0)
         }) != nil)
     }

@@ -72,22 +72,28 @@ extension HasNamedValuedTable {
     }
     /// liste des noms CSV
     var headerCSV: String {
-        namesArray.joined(separator: "; ") + "; " + tableName.uppercased() + " TOTAL"
+        namesArray
+            .joined(separator: "; ") + "; " + tableName.uppercased() + " TOTAL"
     }
     /// liste des valeurs CSV
     var valuesCSV: String {
-        namedValues.map { (namedValue: NamedValue) -> String in namedValue.value.roundedString }
+        namedValues
+            .map { (namedValue: NamedValue) -> String in namedValue.value.roundedString }
             .joined(separator: "; ") + "; " + total.roundedString
     }
     
     // MARK: - Methods
     
     func filtredNames(with itemSelectionList: ItemSelectionList) -> [String] {
-        namedValues.filter({ itemSelectionList.selectionContains($0.name) }).map(\.name)
+        namedValues
+            .filter({ itemSelectionList.selectionContains($0.name) })
+            .map(\.name)
     }
     
     func filtredValues(with itemSelectionList: ItemSelectionList) -> [Double] {
-        namedValues.filter({ itemSelectionList.selectionContains($0.name) }).map(\.value)
+        namedValues
+            .filter({ itemSelectionList.selectionContains($0.name) })
+            .map(\.value)
     }
     
     func filtredTableName(with itemSelectionList: ItemSelectionList) -> [String] {

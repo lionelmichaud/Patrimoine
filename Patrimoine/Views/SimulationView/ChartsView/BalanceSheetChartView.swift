@@ -44,6 +44,7 @@ struct BalanceSheetGlobalChartView: View {
 
 /// Vue détaillée du bilan: Actif / Passif / Tout
 struct BalanceSheetDetailedChartView: View {
+    @EnvironmentObject var family     : Family
     @EnvironmentObject var simulation : Simulation
     @EnvironmentObject var uiState    : UIState
     @State private var menuIsPresented = false
@@ -54,12 +55,23 @@ struct BalanceSheetDetailedChartView: View {
             ZStack(alignment: .leading) {
                 /// zone de graphique
                 VStack {
+                    // sélecteur: Membre de la famille / Tous
+                    Picker(selection: self.$uiState.bsChartState.nameSelection, label: Text("Personne")) {
+                        ForEach(family.members.sorted(by: < )) { person in
+                            PersonNameRow(member: person)
+                        }
+                        Text(AppSettings.shared.allPersonsLabel)
+                            .tag(AppSettings.shared.allPersonsLabel)
+                    }
+                        .padding(.horizontal)
+                        .pickerStyle(SegmentedPickerStyle())
                     // sélecteur: Actif / Passif / Tout
                     CasePicker(pickedCase: self.$uiState.bsChartState.combination, label: "")
                         .padding(.horizontal)
                         .pickerStyle(SegmentedPickerStyle())
                     // graphique
-                    BalanceSheetStackedBarChartView(socialAccounts: self.$simulation.socialAccounts,
+                    BalanceSheetStackedBarChartView(for           : self.uiState.bsChartState.nameSelection,
+                                                    socialAccounts: self.$simulation.socialAccounts,
                                                     title         : self.simulation.title,
                                                     combination   : self.uiState.bsChartState.combination,
                                                     itemSelection : self.uiState.bsChartState.itemSelection)
@@ -208,17 +220,20 @@ struct BalanceSheetStackedBarChartView: UIViewRepresentable {
     @Binding var socialAccounts : SocialAccounts
     var title                   : String
     var combination             : SocialAccounts.AssetLiabilitiesCombination
+    var personSelection         : String
     var itemSelectionList       : ItemSelectionList
 
     // initializers
     
-    internal init(socialAccounts : Binding<SocialAccounts>,
+    internal init(for thisName   : String,
+                  socialAccounts : Binding<SocialAccounts>,
                   title          : String,
                   combination    : SocialAccounts.AssetLiabilitiesCombination,
                   itemSelection  : ItemSelectionList) {
         BalanceSheetStackedBarChartView.titleStatic = title
         self.title             = title
         self.combination       = combination
+        self.personSelection   = thisName
         self.itemSelectionList = itemSelection
         self._socialAccounts   = socialAccounts
     }
@@ -276,8 +291,9 @@ struct BalanceSheetStackedBarChartView: UIViewRepresentable {
         
         // créer le DataSet: BarChartDataSet
         let dataSet = socialAccounts.getBalanceSheetStackedBarChartDataSet(
-            combination      : combination,
-            itemSelectionList: itemSelectionList)
+            personSelection   : personSelection,
+            combination       : combination,
+            itemSelectionList : itemSelectionList)
         
         // ajouter les DataSet au Chartdata
         let data = BarChartData(dataSet: dataSet)
@@ -310,15 +326,18 @@ struct BalanceSheetStackedBarChartView: UIViewRepresentable {
         if itemSelectionList.onlyOneCategorySelected() {
             // il y a un seule catégorie de sélectionnée, afficher le détail
             if let categoryName = itemSelectionList.firstCategorySelected() {
-                aDataSet = socialAccounts.getBalanceSheetCategoryStackedBarChartDataSet(categoryName: categoryName)
+                aDataSet = socialAccounts.getBalanceSheetCategoryStackedBarChartDataSet(
+                    personSelection : personSelection,
+                    categoryName    : categoryName)
             } else {
-                customLog.log(level: .error,
+                customLog.log(level : .error,
                               "getBalanceSheetCategoryStackedBarChartDataSet : aDataSet = nil => graphique vide")
                 aDataSet = nil
             }
         } else {
             // il y a plusieurs catégories sélectionnées, afficher le graphe résumé par catégorie
             aDataSet = socialAccounts.getBalanceSheetStackedBarChartDataSet(
+                personSelection   : personSelection,
                 combination       : combination,
                 itemSelectionList : itemSelectionList)
         }

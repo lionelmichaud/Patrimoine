@@ -65,6 +65,7 @@ class UIState: ObservableObject {
     // MARK: - Etat des filtres graphes Bilan
     struct BalanceSheetChartState {
         var combination    : SocialAccounts.AssetLiabilitiesCombination = .both
+        var nameSelection  : String = AppSettings.shared.allPersonsLabel
         var itemSelection  : ItemSelectionList = []
     }
     

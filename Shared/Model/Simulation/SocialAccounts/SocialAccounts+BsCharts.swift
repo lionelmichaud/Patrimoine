@@ -47,10 +47,10 @@ extension SocialAccounts {
         var yVals3 = [ChartDataEntry]()
         
         yVals1 = balanceArray.map {
-            ChartDataEntry(x: $0.year.double(), y: $0.assets.total)
+            ChartDataEntry(x: $0.year.double(), y: $0.assets[AppSettings.shared.allPersonsLabel]!.total)
         }
         yVals2 = balanceArray.map {
-            ChartDataEntry(x: $0.year.double(), y: $0.liabilities.total)
+            ChartDataEntry(x: $0.year.double(), y: $0.liabilities[AppSettings.shared.allPersonsLabel]!.total)
         }
         yVals3 = balanceArray.map {
             ChartDataEntry(x: $0.year.double(), y: $0.netAssets)
@@ -85,9 +85,11 @@ extension SocialAccounts {
         let firstLine   = balanceArray.first!
         switch combination {
             case .assets:
-                return firstLine.assets.summary.namedValues.map({($0.name, true)}) // sélectionné par défaut
+                return firstLine.assets[AppSettings.shared.allPersonsLabel]!.summary.namedValues
+                    .map {($0.name, true)} // sélectionné par défaut
             case .liabilities:
-                return firstLine.liabilities.summary.namedValues.map({($0.name, true)}) // sélectionné par défaut
+                return firstLine.liabilities[AppSettings.shared.allPersonsLabel]!.summary.namedValues
+                    .map {($0.name, true)} // sélectionné par défaut
             case .both:
                 return getBalanceSheetLegend(.assets) + getBalanceSheetLegend(.liabilities)
         }
@@ -99,13 +101,12 @@ extension SocialAccounts {
     ///   - itemSelectionList: séries sélectionnées pour être affichées
     /// - Returns: DataSet
     func getBalanceSheetStackedBarChartDataSet(
+        personSelection  : String,
         combination      : AssetLiabilitiesCombination = .both,
         itemSelectionList: ItemSelectionList) -> BarChartDataSet? {
         
         // si la table est vide alors quitter
-        guard !balanceArray.isEmpty else { return nil }
-        
-        let firstLine   = balanceArray.first!
+        guard let firstLine = balanceArray.first else { return nil }
         var dataEntries = [ChartDataEntry]()
         let dataSet : BarChartDataSet
         
@@ -113,9 +114,9 @@ extension SocialAccounts {
             case .assets:
                 dataEntries += balanceArray.map { // pour chaque année
                     BarChartDataEntry(x       : $0.year.double(),
-                                      yValues : $0.assets.summaryFiltredValues(with: itemSelectionList))
+                                      yValues : $0.assets[personSelection]!.summaryFiltredValues(with: itemSelectionList))
                 }
-                let labels = firstLine.assets.summaryFiltredNames(with : itemSelectionList)
+                let labels = firstLine.assets[personSelection]!.summaryFiltredNames(with : itemSelectionList)
                 dataSet = BarChartDataSet(entries: dataEntries,
                                           label: (labels.count == 1 ? labels.first : nil))
                 dataSet.stackLabels = labels
@@ -124,9 +125,9 @@ extension SocialAccounts {
             case .liabilities:
                 dataEntries += balanceArray.map { // pour chaque année
                     BarChartDataEntry(x       : $0.year.double(),
-                                      yValues : $0.liabilities.summaryFiltredValues(with: itemSelectionList))
+                                      yValues : $0.liabilities[personSelection]!.summaryFiltredValues(with: itemSelectionList))
                 }
-                let labels = firstLine.liabilities.summaryFiltredNames(with : itemSelectionList)
+                let labels = firstLine.liabilities[personSelection]!.summaryFiltredNames(with : itemSelectionList)
                 dataSet = BarChartDataSet(entries: dataEntries,
                                           label: (labels.count == 1 ? labels.first : nil))
                 dataSet.stackLabels = labels
@@ -135,16 +136,16 @@ extension SocialAccounts {
             case .both:
                 dataEntries += balanceArray.map {
                     BarChartDataEntry(x       : $0.year.double(),
-                                      yValues : $0.assets.summaryFiltredValues(with: itemSelectionList) +
-                                        $0.liabilities.summaryFiltredValues(with: itemSelectionList))
+                                      yValues : $0.assets[personSelection]!.summaryFiltredValues(with: itemSelectionList) +
+                                        $0.liabilities[personSelection]!.summaryFiltredValues(with: itemSelectionList))
                 }
-                let labels = firstLine.assets.summaryFiltredNames(with : itemSelectionList) +
-                    firstLine.liabilities.summaryFiltredNames(with : itemSelectionList)
+                let labels = firstLine.assets[personSelection]!.summaryFiltredNames(with : itemSelectionList) +
+                    firstLine.liabilities[personSelection]!.summaryFiltredNames(with : itemSelectionList)
                 dataSet = BarChartDataSet(entries: dataEntries,
                                           label: (labels.count == 1 ? labels.first : nil))
-                dataSet.stackLabels = firstLine.assets.summaryFiltredNames(with : itemSelectionList)
+                dataSet.stackLabels = firstLine.assets[personSelection]!.summaryFiltredNames(with : itemSelectionList)
                 let numberPositive = dataSet.stackLabels.count
-                dataSet.stackLabels += firstLine.liabilities.summaryFiltredNames(with : itemSelectionList)
+                dataSet.stackLabels += firstLine.liabilities[personSelection]!.summaryFiltredNames(with : itemSelectionList)
                 dataSet.colors = ChartThemes.positiveNegativeColors(numberPositive: numberPositive,
                                                                     numberNegative: dataSet.stackLabels.count - numberPositive)
         }
@@ -157,33 +158,31 @@ extension SocialAccounts {
     /// Créer le DataSet pour former un un graphe barre empilées : une seule catégorie
     /// - Parameters:
     ///   - categoryName: nom de la catégories
-    /// - Returns: DataSet
-    func getBalanceSheetCategoryStackedBarChartDataSet(categoryName: String) -> BarChartDataSet? {
+    /// - Returns       : DataSet
+    func getBalanceSheetCategoryStackedBarChartDataSet(
+        personSelection : String,
+        categoryName    : String) -> BarChartDataSet? {
         
         // si la table est vide alors quitter
-        guard !balanceArray.isEmpty else {
-            return nil
-        }
-        
-        let firstLine   = balanceArray.first!
+        guard let firstLine = balanceArray.first else { return nil }
         var dataEntries = [ChartDataEntry]()
         let dataSet : BarChartDataSet
         
-        if firstLine.assets.summary.namedValues.first(where: { $0.name == categoryName }) != nil {
+        if firstLine.assets[personSelection]!.summary.namedValues.first(where: { $0.name == categoryName }) != nil {
             /// rechercher les valeurs des actifs
             // customLog.log(level: .info, "Catégorie trouvée dans assets : \(found.name)")
             guard let category = AssetsCategory(rawValue: categoryName) else {
                 return BarChartDataSet()
             }
 //            print("  nom : \(category)")
-            guard let labelsInCategory = firstLine.assets.namesArray(category) else {
+            guard let labelsInCategory = firstLine.assets[personSelection]!.namesArray(category) else {
                 return BarChartDataSet()
             }
 //            print("  legende : ", labelsInCategory)
             
             // valeurs des revenus de la catégorie
             dataEntries = balanceArray.map { // pour chaque année
-                let y = $0.assets.valuesArray(category)
+                let y = $0.assets[personSelection]!.valuesArray(category)
                 return BarChartDataEntry(x       : $0.year.double(),
                                          yValues : y!)
             }
@@ -192,21 +191,21 @@ extension SocialAccounts {
             dataSet.stackLabels = labelsInCategory
             dataSet.colors      = ChartThemes.positiveColors(number : dataSet.stackLabels.count)
             
-        } else if firstLine.liabilities.summary.namedValues.first(where: { $0.name == categoryName }) != nil {
+        } else if firstLine.liabilities[personSelection]!.summary.namedValues.first(where: { $0.name == categoryName }) != nil {
             /// rechercher les valeurs des passifs
             // customLog.log(level: .info, "Catégorie trouvée dans liabilities : \(found.name)")
             guard let category = LiabilitiesCategory(rawValue: categoryName) else {
                 return BarChartDataSet()
             }
 //            print("  nom : \(category)")
-            guard let labelsInCategory = firstLine.liabilities.namesArray(category) else {
+            guard let labelsInCategory = firstLine.liabilities[personSelection]!.namesArray(category) else {
                 return BarChartDataSet()
             }
 //            print("  legende : ", labelsInCategory)
             
             // valeurs des revenus de la catégorie
             dataEntries = balanceArray.map { // pour chaque année
-                let y = $0.liabilities.valuesArray(category)
+                let y = $0.liabilities[personSelection]!.valuesArray(category)
                 return BarChartDataEntry(x       : $0.year.double(),
                                          yValues : y!)
             }
