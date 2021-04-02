@@ -184,9 +184,9 @@ struct Ownership {
                         // valeur de son usufuit
                         let usufruiterAge = ageOf!(owner.name, year)
                         
-                        value +=
-                            try! Ownership.fiscalModel.demembrement.demembrement(of              : ownedValue,
-                                                                                 usufructuaryAge : usufruiterAge).usufructValue
+                        value += try! Ownership.fiscalModel.demembrement
+                            .demembrement(of              : ownedValue,
+                                          usufructuaryAge : usufruiterAge).usufructValue
                     }
                     return value
             }

@@ -27,4 +27,17 @@ enum RevenueCategory: String, PickableEnum, Codable, Hashable {
     var pickerString: String {
         return self.rawValue
     }
+
+    // True si la catégorie de revenus est incorporée un NetCashFlow commun de fin d'année
+    // et donc ré-inveti dans un actif sans distinction de son propriétaire
+    var isPartOfCashFlow: Bool {
+        switch self {
+            case .workIncomes, .pensions,
+                 .layoffCompensation, .unemployAlloc,
+                 .scpis, .realEstateRents:
+                return true
+            default:
+                return false
+        }
+    }
 }

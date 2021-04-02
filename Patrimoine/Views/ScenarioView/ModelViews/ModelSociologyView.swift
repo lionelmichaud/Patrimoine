@@ -17,13 +17,14 @@ struct ModelSociologyView: View {
             CasePicker(pickedCase: $modelChoice, label: "")
                 .padding(.horizontal)
                 .pickerStyle(SegmentedPickerStyle())
+
             switch modelChoice {
                 case .pensionDevaluationRate:
                     BetaRandomizerView(randomizer: SocioEconomy.model.pensionDevaluationRate)
-                    
+
                 case .nbTrimTauxPlein:
                     DiscreteRandomizerView(randomizer: SocioEconomy.model.nbTrimTauxPlein)
-                    
+
                 case .expensesUnderEvaluationRate:
                     BetaRandomizerView(randomizer: SocioEconomy.model.expensesUnderEvaluationRate)
             }

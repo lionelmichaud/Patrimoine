@@ -42,7 +42,7 @@ extension CashFlowArray {
             // heading
             heading += "REVENU PERCU TOTAL; "
             // valeurs
-            let rowsTotal = self.map { "\($0.revenues.totalCredited.roundedString); " }
+            let rowsTotal = self.map { "\($0.revenues.totalRevenue.roundedString); " }
             rows = zip(rows, rowsTotal).map(+)
             
             heading += "\(firstLine.revenues.taxableIrppRevenueDelayedFromLastYear.name);"
@@ -59,7 +59,7 @@ extension CashFlowArray {
             let rowsSciDividends   = self.map { "\($0.sciCashFlowLine.revenues.sciDividends.valuesCSV); " }
             let rowsSciSales       = self.map { "\($0.sciCashFlowLine.revenues.scpiSale.valuesCSV); " }
             let rowsSciIS          = self.map { "\((-$0.sciCashFlowLine.IS).roundedString); " }
-            let rowsSciNetCashFlow = self.map { "\($0.sciCashFlowLine.netCashFlow.roundedString); " }
+            let rowsSciNetCashFlow = self.map { "\($0.sciCashFlowLine.netRevenues.roundedString); " }
             
             rows = zip(rows, rowsSciDividends).map(+)
             rows = zip(rows, rowsSciSales).map(+)
@@ -139,7 +139,7 @@ extension CashFlowArray {
         
         // somme des rentrées de trésorerie
         heading += "RENTREES TOTAL; "
-        rows = zip(rows, self.map { "\($0.sumOfrevenues.roundedString); " }).map(+)
+        rows = zip(rows, self.map { "\($0.sumOfRevenues.roundedString); " }).map(+)
         
         // construire la partie Dépenses de vie du tableau
         buildLifeExpensesTableCSV(firstLine: firstLine)

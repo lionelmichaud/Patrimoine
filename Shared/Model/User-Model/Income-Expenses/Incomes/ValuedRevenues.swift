@@ -21,16 +21,30 @@ struct ValuedRevenues {
     var taxableIrppRevenueDelayedFromLastYear = Debt(name: "REVENU IMPOSABLE REPORTE DE L'ANNEE PRECEDENTE", note: "", value: 0)
     
     /// total de tous les revenus nets de l'année versé en compte courant avant taxes et impots
-    var totalCredited: Double {
-        perCategory.reduce(.zero, { result, element in result + element.value.credits.total })
+    var totalRevenue: Double {
+        perCategory.reduce(.zero, { result, element in
+            result + element.value.credits.total
+        })
     }
+
+    /// total de tous les revenus nets de l'année versé en compte courant avant taxes et impots
+    var totalRevenueSalesExcluded: Double {
+        perCategory.reduce(.zero, { result, element in
+            if element.key.isPartOfCashFlow {
+                return result + element.value.credits.total
+            } else {
+                return result
+            }
+        })
+    }
+
     /// total de tous les revenus de l'année imposables à l'IRPP
     var totalTaxableIrpp: Double {
         // ne pas oublier les revenus en report d'imposition
         perCategory.reduce(.zero, { result, element in result + element.value.taxablesIrpp.total })
             + taxableIrppRevenueDelayedFromLastYear.value(atEndOf: 0)
     }
-    
+
     /// tableau des noms de catégories et valeurs total des revenus de cette catégorie
     var summary: NamedValueTable {
         var table = NamedValueTable(tableName: name)
@@ -53,6 +67,7 @@ struct ValuedRevenues {
         }
         return headers
     }
+
     /// tableau détaillé des valeurs des revenus: concaténation à plat des catégories
     var valuesFlatArray: [Double] {
         var values: [Double] = [ ]

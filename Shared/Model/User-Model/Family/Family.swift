@@ -146,6 +146,7 @@ final class Family: ObservableObject {
                 return nil
             }
         }
+        .sorted(by: \.birthDate)
     }
     
     /// Revenus du tavail cumulés de la famille durant l'année

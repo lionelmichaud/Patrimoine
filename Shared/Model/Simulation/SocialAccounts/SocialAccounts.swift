@@ -78,24 +78,24 @@ struct SocialAccounts {
      withKPIs kpiDefinitions : inout KpiArray,
      kpiResults              : inout DictionaryOfKpiResults,
      withMode simulationMode : SimulationModeEnum,
-     withbalanceSheetLine    : BalanceSheetLine) {
+     withbalanceSheetLine    : BalanceSheetLine?) {
         customLog.log(level: .info, "Arrêt de la construction de la table en \(year) de Comptes sociaux: Actifs financiers = 0 dans \(Self.self, privacy: .public)")
-        Swift.print("Arrêt de la construction de la table en \(year) de Comptes sociaux: Actifs financiers = 0")
-        
+
         // Actif Net (hors immobilier physique)
-        let netAsset = withbalanceSheetLine.netFinancialAssets
+        let netAsset = withbalanceSheetLine?.netFinancialAssets ?? 0
         
         // mémoriser le montant de l'Actif financier Net (hors immobilier physique)
         switch family.nbOfAdultAlive(atEndOf: year) {
             case 2:
                 // il reste 2 adultes vivants
-                setKpiValue(kpiEnum: .assetAt1stDeath, value: netAsset,
-                            &kpiDefinitions, &kpiResults,
-                            simulationMode)
-
-                setKpiValue(kpiEnum: .assetAt2ndtDeath, value: netAsset,
-                            &kpiDefinitions, &kpiResults,
-                            simulationMode)
+//                setKpiValue(kpiEnum: .assetAt1stDeath, value: netAsset,
+//                            &kpiDefinitions, &kpiResults,
+//                            simulationMode)
+//
+//                setKpiValue(kpiEnum: .assetAt2ndtDeath, value: netAsset,
+//                            &kpiDefinitions, &kpiResults,
+//                            simulationMode)
+            ()
 
             case 1:
                 // il reste 1 seul adulte vivant
@@ -105,9 +105,9 @@ struct SocialAccounts {
                                 &kpiDefinitions, &kpiResults,
                                 simulationMode)
                 }
-                setKpiValue(kpiEnum: .assetAt2ndtDeath, value: netAsset,
-                            &kpiDefinitions, &kpiResults,
-                            simulationMode)
+//                setKpiValue(kpiEnum: .assetAt2ndtDeath, value: netAsset,
+//                            &kpiDefinitions, &kpiResults,
+//                            simulationMode)
 
             case 0:
                 // il ne plus d'adulte vivant
@@ -212,7 +212,8 @@ struct SocialAccounts {
             
             /// ajouter une nouvelle ligne pour une nouvelle année
             do {
-                let newCashFlowLine = try CashFlowLine(withYear                              : year,
+                let newCashFlowLine = try CashFlowLine(run                                   : run,
+                                                       withYear                              : year,
                                                        withFamily                            : family,
                                                        withPatrimoine                        : patrimoine,
                                                        taxableIrppRevenueDelayedFromLastyear : lastYearDelayedTaxableIrppRevenue)
@@ -229,7 +230,7 @@ struct SocialAccounts {
                                                withKPIs             : &kpis,
                                                kpiResults           : &kpiResults,
                                                withMode             : simulationMode,
-                                               withbalanceSheetLine : balanceArray.last!)
+                                               withbalanceSheetLine : balanceArray.last)
                 //                withbalanceSheetLine : balanceArray[balanceArray.endIndex - 2])
                 SimulationLogger.shared.log(run      : run,
                                             logTopic : LogTopic.simulationEvent,
@@ -252,9 +253,6 @@ struct SocialAccounts {
                                    kpiResults           : &kpiResults,
                                    withMode             : simulationMode,
                                    withbalanceSheetLine : newBalanceSheetLine)
-                SimulationLogger.shared.log(run      : run,
-                                            logTopic : LogTopic.simulationEvent,
-                                            message  : "Décès d'un adulte en \(year)")
             }
             
             if family.nbOfAdultAlive(atEndOf: year) == 0 {

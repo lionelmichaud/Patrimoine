@@ -284,6 +284,10 @@
 		79C7B1FC258B98CD004B38E7 /* Extensions+Collection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79C7B1FB258B98CD004B38E7 /* Extensions+Collection.swift */; };
 		79C7B1FF258B9D96004B38E7 /* Ownership+TransferLifeInsurance.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79C7B1FE258B9D96004B38E7 /* Ownership+TransferLifeInsurance.swift */; };
 		79C7B202258D2783004B38E7 /* Succession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79C7B201258D2783004B38E7 /* Succession.swift */; };
+		79C93D712616325F00FC4CE0 /* CashFlowLine+populateIncomes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79C93D702616325F00FC4CE0 /* CashFlowLine+populateIncomes.swift */; };
+		79C93D77261632ED00FC4CE0 /* CashFlowLine+manageRealEstate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79C93D76261632ED00FC4CE0 /* CashFlowLine+manageRealEstate.swift */; };
+		79C93D7B2616332400FC4CE0 /* CashFlowLine+manageSCPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79C93D7A2616332400FC4CE0 /* CashFlowLine+manageSCPI.swift */; };
+		79C93D812616336A00FC4CE0 /* CashFlowLine+managePeriodicInvest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79C93D802616336A00FC4CE0 /* CashFlowLine+managePeriodicInvest.swift */; };
 		79CAD664249E51CB00319BCD /* TypePreservingCodingAdapter in Frameworks */ = {isa = PBXBuildFile; productRef = 79CAD663249E51CB00319BCD /* TypePreservingCodingAdapter */; };
 		79CAD667249E525F00319BCD /* Charts in Frameworks */ = {isa = PBXBuildFile; productRef = 79CAD666249E525F00319BCD /* Charts */; };
 		79CAD66A249E547200319BCD /* Disk in Frameworks */ = {isa = PBXBuildFile; productRef = 79CAD669249E547200319BCD /* Disk */; };
@@ -623,6 +627,10 @@
 		79C7B1FB258B98CD004B38E7 /* Extensions+Collection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Extensions+Collection.swift"; sourceTree = "<group>"; };
 		79C7B1FE258B9D96004B38E7 /* Ownership+TransferLifeInsurance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Ownership+TransferLifeInsurance.swift"; sourceTree = "<group>"; };
 		79C7B201258D2783004B38E7 /* Succession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Succession.swift; sourceTree = "<group>"; };
+		79C93D702616325F00FC4CE0 /* CashFlowLine+populateIncomes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CashFlowLine+populateIncomes.swift"; sourceTree = "<group>"; };
+		79C93D76261632ED00FC4CE0 /* CashFlowLine+manageRealEstate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CashFlowLine+manageRealEstate.swift"; sourceTree = "<group>"; };
+		79C93D7A2616332400FC4CE0 /* CashFlowLine+manageSCPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CashFlowLine+manageSCPI.swift"; sourceTree = "<group>"; };
+		79C93D802616336A00FC4CE0 /* CashFlowLine+managePeriodicInvest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CashFlowLine+managePeriodicInvest.swift"; sourceTree = "<group>"; };
 		79CB810725AE1C6D00DC7FCC /* FinancialRevenuTaxesModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FinancialRevenuTaxesModelTests.swift; sourceTree = "<group>"; };
 		79CB810B25AE1E7A00DC7FCC /* FinancialRevenuTaxesModel.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = FinancialRevenuTaxesModel.json; sourceTree = "<group>"; };
 		79CC729C24BC6B0D000302C5 /* UnemploymentModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnemploymentModel.swift; sourceTree = "<group>"; };
@@ -996,6 +1004,10 @@
 			children = (
 				79DB52BA2586620F00BC6E84 /* CashFlowArray.swift */,
 				79948927249E4FC200DAFF1E /* CashFlowLine.swift */,
+				79C93D702616325F00FC4CE0 /* CashFlowLine+populateIncomes.swift */,
+				79C93D76261632ED00FC4CE0 /* CashFlowLine+manageRealEstate.swift */,
+				79C93D7A2616332400FC4CE0 /* CashFlowLine+manageSCPI.swift */,
+				79C93D802616336A00FC4CE0 /* CashFlowLine+managePeriodicInvest.swift */,
 				7907C28625E03891005499CC /* SciCashFlowLine.swift */,
 			);
 			path = CashFlow;
@@ -1882,6 +1894,7 @@
 				799489A6249E4FC200DAFF1E /* Extensions+Date.swift in Sources */,
 				79F655BE2517CDE2008F9159 /* SocialAccounts+CfCharts.swift in Sources */,
 				79948966249E4FC200DAFF1E /* FamilySectionView.swift in Sources */,
+				79C93D77261632ED00FC4CE0 /* CashFlowLine+manageRealEstate.swift in Sources */,
 				7994897E249E4FC200DAFF1E /* ContentView.swift in Sources */,
 				79948960249E4FC200DAFF1E /* EstateDetailedView.swift in Sources */,
 				799489A8249E4FC200DAFF1E /* Extensions+Sequence-Keypath.swift in Sources */,
@@ -1911,6 +1924,7 @@
 				7997F99F251FA9F500A79194 /* Distributions.swift in Sources */,
 				79BF6FAF25740CE200F19A81 /* Ownership.swift in Sources */,
 				79F655C32517D005008F9159 /* ChartView+Extensions.swift in Sources */,
+				79C93D7B2616332400FC4CE0 /* CashFlowLine+manageSCPI.swift in Sources */,
 				79D909C325CB14A900970DAF /* PropertyWrappers.swift in Sources */,
 				791D70B0250E4DFB000A20D0 /* Extensions+Bundle.swift in Sources */,
 				79948965249E4FC200DAFF1E /* LoanDetailedView.swift in Sources */,
@@ -2003,6 +2017,7 @@
 				79E6B73625042C9D00CE6F0D /* Histogram.swift in Sources */,
 				7994899D249E4FC200DAFF1E /* LifeEvent.swift in Sources */,
 				79948975249E4FC200DAFF1E /* CashFlowChartView.swift in Sources */,
+				79C93D712616325F00FC4CE0 /* CashFlowLine+populateIncomes.swift in Sources */,
 				79DACB3A256BBFDE00DED381 /* KpiSectionView.swift in Sources */,
 				79948984249E4FC200DAFF1E /* Balance Sheet.swift in Sources */,
 				796135D225B21B5800C64230 /* FinancialRevenuTaxesModel.swift in Sources */,
@@ -2043,6 +2058,7 @@
 				7940694724D33E62002FD72E /* SwiftUIconditional.swift in Sources */,
 				7946511325ADB11500BC9F99 /* LayOffTaxes.swift in Sources */,
 				7994898A249E4FC200DAFF1E /* Simulation.swift in Sources */,
+				79C93D812616336A00FC4CE0 /* CashFlowLine+managePeriodicInvest.swift in Sources */,
 				791027BA2549F37700016A62 /* SimulationResultTable.swift in Sources */,
 				796135CC25B21B1400C64230 /* AllocationChomageTaxesModel.swift in Sources */,
 				793D188D25B25141005D5A4E /* Ownable.swift in Sources */,

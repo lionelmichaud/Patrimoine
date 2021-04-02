@@ -62,8 +62,9 @@ struct SciCashFlowLine {
     var revenues    = Revenues() // revenus des SCPI de la SCI
     // TODO: Ajouter les dépenses de la SCI déductibles du revenu (comptable, gestion, banque...)
     let IS          : Double // impôts sur les société
-    var netCashFlow : Double { revenues.total - IS }
-    
+    var netRevenues : Double { revenues.total - IS }
+    var netRevenuesSalesExcluded: Double { revenues.sciDividends.total - IS }
+
     // tableau résumé des noms
     var namesArray: [String] {
         revenues.namesArray + ["SCI-IS"]
@@ -85,21 +86,21 @@ struct SciCashFlowLine {
     var summary: NamedValueTable {
         var table = NamedValueTable(tableName: "SCI")
         table.namedValues.append((name  : "Revenu SCI",
-                                  value : netCashFlow))
+                                  value : netRevenues))
         return table
     }
     
     // MARK: - Initializers
     
     init(withYear year  : Int,
-         for adultsName : [String],
-         withSCI sci    : SCI) {
+         of patrimoine: Patrimoin,
+         for adultsName : [String]) {
         self.year = year
         
         // populate produit de vente, dividendes des SCPI
         
         // pour chaque SCPI
-        for scpi in sci.scpis.items.sorted(by:<)
+        for scpi in patrimoine.assets.sci.scpis.items.sorted(by:<)
         where scpi.isPartOfPatrimoine(of: adultsName) {
             let name = scpi.name
             // FIXME: Ca ne marche pas comme ca. C'est toute la SCI dont il faut géréer les droit de propriété. Pas chaque SCPI individuellement.
@@ -121,10 +122,18 @@ struct SciCashFlowLine {
             // FIXME: Ca ne marche pas comme ca. C'est toute la SCI dont il faut géréer les droit de propriété. Pas chaque SCPI individuellement.
             // populate SCPI sale revenue: produit net de charges sociales et d'impôt sur la plus-value
             // FIXME: vérifier si c'est net où brut dans le cas d'une SCI
-            let liquidatedValue = scpi.liquidatedValue(year)
+            // le crédit se fait au début de l'année qui suit la vente
+            let liquidatedValue = scpi.liquidatedValue(year - 1)
             revenues.scpiSale.namedValues
                 .append((name : name,
                          value: liquidatedValue.netRevenue.rounded()))
+            // créditer le produit de la vente sur les comptes des personnes
+            // en fonction de leur part de propriété respective
+            let ownedSaleValues = scpi.ownedValues(ofValue          : liquidatedValue.netRevenue,
+                                                   atEndOf          : year,
+                                                   evaluationMethod : .patrimoine)
+            patrimoine.investCapital(ownedCapitals : ownedSaleValues,
+                                     atEndOf       : year)
         }
         
         // calcul de l'IS de la SCI
@@ -149,6 +158,6 @@ struct SciCashFlowLine {
         // IS de la SCI
         Swift.print(h + StringCst.header + "IS:", IS)
         // net cash flow
-        Swift.print(h + StringCst.header + "NET CASH FLOW:", netCashFlow)
+        Swift.print(h + StringCst.header + "NET CASH FLOW:", netRevenues)
     }
 }

@@ -244,7 +244,7 @@ final class Simulation: ObservableObject {
         // calculer tous les runs
         for run in 1...nbOfRuns {
             currentRunNb = run
-            SimulationLogger.shared.log(run      : run,
+            SimulationLogger.shared.log(run      : currentRunNb,
                                         logTopic : LogTopic.simulationEvent,
                                         message  : "Début : \(firstYear!)")
 
@@ -292,6 +292,9 @@ final class Simulation: ObservableObject {
         lastYear    = firstYear + nbOfYears - 1
 
         currentRunNb = 1
+        SimulationLogger.shared.log(run      : currentRunNb,
+                                    logTopic : LogTopic.simulationEvent,
+                                    message  : "Début : \(firstYear!)")
 
         // fixer tous les paramètres du run à rejouer
         try! Economy.model.setRandomValue(to        : thisRun.dicoOfEconomyRandomVariables,

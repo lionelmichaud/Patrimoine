@@ -18,7 +18,8 @@ struct FamilySummaryView: View {
         // sauvegarder l'état initial du patrimoine pour y revenir à la fin de chaque run
         patrimoine.save()
         //simulation.reset(withPatrimoine: patrimoine)
-        self.cashFlow = try? CashFlowLine(withYear      : Date.now.year,
+        self.cashFlow = try? CashFlowLine(run           : 0,
+                                          withYear      : Date.now.year,
                                           withFamily    : self.family,
                                           withPatrimoine: self.patrimoine,
                                           taxableIrppRevenueDelayedFromLastyear : 0)
@@ -76,11 +77,11 @@ struct RevenuSummarySection: View {
         } else {
             Section(header: header("REVENUS")) {
                 AmountView(label : "Revenu familliale net de charges sociales et d'assurance (à vivre)",
-                           amount: cashFlow!.revenues.totalCredited)
+                           amount: cashFlow!.revenues.totalRevenue)
                 AmountView(label : "Revenu de la SCI net de taxes et d'IS ",
-                           amount: cashFlow!.sciCashFlowLine.netCashFlow)
+                           amount: cashFlow!.sciCashFlowLine.netRevenues)
                 AmountView(label : "Revenu total net",
-                           amount: cashFlow!.sumOfrevenues,
+                           amount: cashFlow!.sumOfRevenues,
                            weight: .bold)
                 AmountView(label : "Revenu imposable à l'IRPP",
                            amount: cashFlow!.revenues.totalTaxableIrpp)

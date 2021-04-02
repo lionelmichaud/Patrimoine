@@ -62,7 +62,7 @@
             "pdfMax"   : null,
             "cdfCurve" : null
         },
-        "defaultValue" : 0.0,
+        "defaultValue" : 5.0,
         "randomValue"  : 0.0
     }
 }

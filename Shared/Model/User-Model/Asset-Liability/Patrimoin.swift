@@ -101,11 +101,11 @@ final class Patrimoin: ObservableObject {
         }
     }
     
-    /// Investir un capital dans des actifs financiers détenus en PP
+    /// Investir les capitaux dans des actifs financiers détenus en PP par les récipiendaires des capitaux
     /// - Parameters:
     ///   - ownedCapitals: [nom du détenteur, du capital]
     ///   - year: année de l'investissement
-    func investCapital(ownedCapitals: [String : Double],
+    func investCapital(ownedCapitals: [String : Double], // swiftlint:disable:this cyclomatic_complexity
                        atEndOf year : Int) {
         ownedCapitals.forEach { (name, capital) in
             if capital != 0,
@@ -156,8 +156,9 @@ final class Patrimoin: ObservableObject {
                     return
                 }
                 
-                customLog.log(level: .info, "Il n'y a plus de réceptacle pour receuillir les capitaux")
-                print("Il n'y a plus de réceptacle pour receuillir les capitaux")
+                customLog.log(level: .info, "Il n'y a plus de réceptacle pour receuillir les capitaux reçus par \(name) en \(year)")
+                SimulationLogger.shared.log(logTopic: .simulationEvent,
+                                            message: "Il n'y a plus de réceptacle pour receuillir les capitaux reçus par \(name) en \(year)")
             }
         }
     }

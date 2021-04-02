@@ -47,7 +47,7 @@ extension SocialAccounts {
         var yVals3 = [ChartDataEntry]()
         
         yVals1 = cashFlowArray.map {
-            ChartDataEntry(x: $0.year.double(), y: $0.sumOfrevenues)
+            ChartDataEntry(x: $0.year.double(), y: $0.sumOfRevenues)
         }
         yVals2 = cashFlowArray.map {
             ChartDataEntry(x: $0.year.double(), y: -$0.sumOfExpenses)
