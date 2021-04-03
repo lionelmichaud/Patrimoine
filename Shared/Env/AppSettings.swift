@@ -16,7 +16,6 @@ struct AppSettings: Decodable {
     
     // MARK: - Properties
     
-    var appVersion      : Version
     var imageDir        : String = "image/"
     var tableDir        : String = "csv/"
     var allPersonsLabel : String = "Tous"
@@ -31,11 +30,10 @@ struct AppSettings: Decodable {
         simulationTitle + "/" + AppSettings.shared.imageDir
     }
 
-    init() {
+    private init() {
         self = Bundle.main.decode(AppSettings.self,
                                   from                 : "AppSettings.json",
                                   dateDecodingStrategy : .iso8601,
                                   keyDecodingStrategy  : .useDefaultKeys)
-        appVersion.initializeWithBundleValues()
     }
 }

@@ -302,6 +302,10 @@
 		79CE57812588EF3C00C2E00C /* SuccessionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79CE57802588EF3C00C2E00C /* SuccessionsView.swift */; };
 		79CE57842588EF7E00C2E00C /* SuccessionsSectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79CE57832588EF7E00C2E00C /* SuccessionsSectionView.swift */; };
 		79D011FF252B970A00817C8D /* KpiListSummaryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79D011FE252B970A00817C8D /* KpiListSummaryView.swift */; };
+		79D0A87F2617B7E3002BF610 /* Foil in Frameworks */ = {isa = PBXBuildFile; productRef = 79D0A87E2617B7E3002BF610 /* Foil */; };
+		79D0A8832617C435002BF610 /* AppVersion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79D0A8822617C435002BF610 /* AppVersion.swift */; };
+		79D0A8892617C4D3002BF610 /* AppVersion.json in Resources */ = {isa = PBXBuildFile; fileRef = 79D0A8882617C4D3002BF610 /* AppVersion.json */; };
+		79D0A88D2617CF3C002BF610 /* UserSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79D0A88C2617CF3C002BF610 /* UserSettings.swift */; };
 		79D147262506DA7000249539 /* KPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79D147252506DA7000249539 /* KPI.swift */; };
 		79D2BF86251A8CEC009028A0 /* ValuedAssets.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79D2BF85251A8CEC009028A0 /* ValuedAssets.swift */; };
 		79D3DD822568002100E914F5 /* IrppEvolutionChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79D3DD812568002100E914F5 /* IrppEvolutionChartView.swift */; };
@@ -641,6 +645,9 @@
 		79CE57802588EF3C00C2E00C /* SuccessionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SuccessionsView.swift; sourceTree = "<group>"; };
 		79CE57832588EF7E00C2E00C /* SuccessionsSectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SuccessionsSectionView.swift; sourceTree = "<group>"; };
 		79D011FE252B970A00817C8D /* KpiListSummaryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KpiListSummaryView.swift; sourceTree = "<group>"; };
+		79D0A8822617C435002BF610 /* AppVersion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppVersion.swift; sourceTree = "<group>"; };
+		79D0A8882617C4D3002BF610 /* AppVersion.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = AppVersion.json; sourceTree = "<group>"; };
+		79D0A88C2617CF3C002BF610 /* UserSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserSettings.swift; sourceTree = "<group>"; };
 		79D147252506DA7000249539 /* KPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KPI.swift; sourceTree = "<group>"; };
 		79D2BF85251A8CEC009028A0 /* ValuedAssets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ValuedAssets.swift; sourceTree = "<group>"; };
 		79D3DD812568002100E914F5 /* IrppEvolutionChartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IrppEvolutionChartView.swift; sourceTree = "<group>"; };
@@ -699,6 +706,7 @@
 				79777F9C259D3378008C84A3 /* RNGExtension in Frameworks */,
 				79CAD66A249E547200319BCD /* Disk in Frameworks */,
 				7997F995251F9D5100A79194 /* RealModule in Frameworks */,
+				79D0A87F2617B7E3002BF610 /* Foil in Frameworks */,
 				79AA94C324BA746400BD3FCD /* StepperView in Frameworks */,
 				79A4CCCD2506A672003E6172 /* SigmaSwiftStatistics in Frameworks */,
 				79CAD66D249E54A800319BCD /* ActivityIndicatorView in Frameworks */,
@@ -1105,6 +1113,7 @@
 			children = (
 				799488BE249E4F9700DAFF1E /* Dependencies.swift */,
 				799488BF249E4F9700DAFF1E /* Themes.swift */,
+				79D0A8822617C435002BF610 /* AppVersion.swift */,
 				799488C0249E4F9700DAFF1E /* AppSettings.swift */,
 				799488C1249E4F9700DAFF1E /* UIState.swift */,
 			);
@@ -1606,6 +1615,8 @@
 			isa = PBXGroup;
 			children = (
 				79EEEC6B256FF33B00778588 /* AppSettings.json */,
+				79D0A8882617C4D3002BF610 /* AppVersion.json */,
+				79D0A88C2617CF3C002BF610 /* UserSettings.swift */,
 			);
 			path = AppConfig;
 			sourceTree = "<group>";
@@ -1673,6 +1684,7 @@
 				7997F994251F9D5100A79194 /* RealModule */,
 				7997F996251F9D5100A79194 /* Numerics */,
 				79777F9B259D3378008C84A3 /* RNGExtension */,
+				79D0A87E2617B7E3002BF610 /* Foil */,
 			);
 			productName = Patrimoine;
 			productReference = 799488A6249E4F4600DAFF1E /* Patrimoine.app */;
@@ -1715,6 +1727,7 @@
 				79A4CCCB2506A671003E6172 /* XCRemoteSwiftPackageReference "SigmaSwiftStatistics" */,
 				7997F993251F9D5100A79194 /* XCRemoteSwiftPackageReference "swift-numerics" */,
 				79777F9A259D3378008C84A3 /* XCRemoteSwiftPackageReference "rng-extension" */,
+				79D0A87D2617B7E3002BF610 /* XCRemoteSwiftPackageReference "Foil" */,
 			);
 			productRefGroup = 799488A7249E4F4600DAFF1E /* Products */;
 			projectDirPath = "";
@@ -1787,6 +1800,7 @@
 				799488E3249E4FA800DAFF1E /* BalanceSheet.csv in Resources */,
 				799488B3249E4F4600DAFF1E /* Preview Assets.xcassets in Resources */,
 				799488E4249E4FA800DAFF1E /* FiscalModelConfig.json in Resources */,
+				79D0A8892617C4D3002BF610 /* AppVersion.json in Resources */,
 				799488DA249E4FA800DAFF1E /* PeriodicInvestement.json in Resources */,
 				79A4237325165D0D008383A1 /* Cadeaux_LifeExpense.json in Resources */,
 				799488B0249E4F4600DAFF1E /* Assets.xcassets in Resources */,
@@ -1929,6 +1943,7 @@
 				791D70B0250E4DFB000A20D0 /* Extensions+Bundle.swift in Sources */,
 				79948965249E4FC200DAFF1E /* LoanDetailedView.swift in Sources */,
 				7973ADD72517A8AD00ADBB65 /* DicItemArrayGeneric.swift in Sources */,
+				79D0A88D2617CF3C002BF610 /* UserSettings.swift in Sources */,
 				790115DC256955E20005B0F5 /* IrppSliceView.swift in Sources */,
 				79948956249E4FC200DAFF1E /* ChartsFormaters.swift in Sources */,
 				79948998249E4FC200DAFF1E /* InvestmentType.swift in Sources */,
@@ -2028,6 +2043,7 @@
 				797592B624A4B9E3004CE646 /* RetirementDetailView.swift in Sources */,
 				79D147262506DA7000249539 /* KPI.swift in Sources */,
 				796135D625B21B8400C64230 /* LifeInsuranceTaxes.swift in Sources */,
+				79D0A8832617C435002BF610 /* AppVersion.swift in Sources */,
 				79948999249E4FC200DAFF1E /* SCI.swift in Sources */,
 				79948981249E4FC200DAFF1E /* Constants.swift in Sources */,
 				79948986249E4FC200DAFF1E /* CashFlowLine.swift in Sources */,
@@ -2428,6 +2444,14 @@
 				minimumVersion = 0.0.2;
 			};
 		};
+		79D0A87D2617B7E3002BF610 /* XCRemoteSwiftPackageReference "Foil" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/jessesquires/Foil.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -2475,6 +2499,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 79CAD66B249E54A800319BCD /* XCRemoteSwiftPackageReference "ActivityIndicatorView" */;
 			productName = ActivityIndicatorView;
+		};
+		79D0A87E2617B7E3002BF610 /* Foil */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 79D0A87D2617B7E3002BF610 /* XCRemoteSwiftPackageReference "Foil" */;
+			productName = Foil;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

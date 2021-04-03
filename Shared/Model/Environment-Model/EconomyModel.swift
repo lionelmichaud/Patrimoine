@@ -62,7 +62,7 @@ struct Economy {
         var inflation   : ModelRandomizer<BetaRandomGenerator>
         var securedRate : ModelRandomizer<BetaRandomGenerator> // moyenne annuelle
         var stockRate   : ModelRandomizer<BetaRandomGenerator> // moyenne annuelle
-        var simulateVolatility: Bool = false
+        //var simulateVolatility: Bool = false
         var securedVolatility : Double // % [0, 100]
         var stockVolatility   : Double // % [0, 100]
         

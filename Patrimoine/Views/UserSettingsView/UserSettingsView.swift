@@ -9,17 +9,29 @@
 import SwiftUI
 
 struct UserSettingsView: View {
-    var body: some View {
-        VStack {
-            Text(AppSettings.shared.appVersion.name ?? "?").font(.title)
+    @AppStorage(UserSettings.simulateVolatility) var simulateVolatility: Bool = false
+
+    var versionView: some View {
+        GroupBox {
+            Text(AppVersion.shared.appVersion.name ?? "?")
+                .font(.title)
                 .fontWeight(.heavy)
-            Text("Version: \(AppSettings.shared.appVersion.version ?? "?")")
-            if let date = AppSettings.shared.appVersion.date {
+                .frame(maxWidth: .infinity)
+            Text("Version: \(AppVersion.shared.appVersion.version ?? "?")")
+            if let date = AppVersion.shared.appVersion.date {
                 Text(date, style: Text.DateStyle.date)
             }
-            Text(AppSettings.shared.appVersion.comment ?? "")
+            Text(AppVersion.shared.appVersion.comment ?? "")
                 .multilineTextAlignment(.center)
-            
+        }
+    }
+
+    var body: some View {
+        VStack {
+            versionView
+            Form {
+                Toggle("Simuler la volatilité du cours des actions", isOn: $simulateVolatility)
+            }
         }.padding()
     }
 }
