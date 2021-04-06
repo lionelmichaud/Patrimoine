@@ -162,8 +162,9 @@ final class Patrimoin: ObservableObject {
             }
         }
     }
+
     /// Ajouter la capacité d'épargne à l'investissement libre de type Assurance vie de meilleur rendement
-    /// dont un des adultes est PP
+    /// dont un des adultes est un des PP
     /// - Parameters:
     ///   - patrimoine: du patrimoine
     ///   - amount: capacité d'épargne = montant à investir

@@ -37,13 +37,13 @@ struct ScenarioSummaryView: View {
                                 percent : Economy.model.randomizers.inflation.value(withMode: simulation.mode)/100.0)
                     PercentView(label   : "Rendement annuel moyen des Obligations sans risque",
                                 percent : Economy.model.randomizers.securedRate.value(withMode: simulation.mode)/100.0)
-                    if Economy.model.randomizers.simulateVolatility {
+                    if UserSettings.shared.simulateVolatility {
                         PercentView(label   : "Volatilité des Obligations sans risque",
                                     percent : Economy.model.randomizers.securedVolatility/100.0)
                     }
                     PercentView(label   : "Rendement annuel moyen des Actions",
                                 percent : Economy.model.randomizers.stockRate.value(withMode: simulation.mode)/100.0)
-                    if Economy.model.randomizers.simulateVolatility {
+                    if UserSettings.shared.simulateVolatility {
                         PercentView(label   : "Volatilité des Actions",
                                     percent : Economy.model.randomizers.stockVolatility/100.0)
                     }

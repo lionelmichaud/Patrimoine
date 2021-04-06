@@ -73,7 +73,7 @@ class EconomyModelTests: XCTestCase {
         XCTAssertEqual(model.stockRateSamples.count, 0)
         
         // random
-        model.randomizers.simulateVolatility = true
+        UserSettings.shared.simulateVolatility = true
         dico = try model.nextRun(withMode: .random, firstYear: firstYear, lastYear: lastYear)
         XCTAssertNotNil(dico[.inflation])
         XCTAssertNotNil(dico[.securedRate])
@@ -83,7 +83,7 @@ class EconomyModelTests: XCTestCase {
         XCTAssertEqual(model.securedRateSamples.count, lastYear - firstYear + 1)
         XCTAssertEqual(model.stockRateSamples.count, lastYear - firstYear + 1)
         
-        model.randomizers.simulateVolatility = false
+        UserSettings.shared.simulateVolatility = false
         dico = try model.nextRun(withMode: .random, firstYear: firstYear, lastYear: lastYear)
         XCTAssertNotNil(dico[.inflation])
         XCTAssertNotNil(dico[.securedRate])
@@ -104,20 +104,20 @@ class EconomyModelTests: XCTestCase {
         dico[.stockRate]  = 0.0
 
         // deterministe
-        model.randomizers.simulateVolatility = true
+        UserSettings.shared.simulateVolatility = true
         try model.setRandomValue(to: dico, withMode: .deterministic, firstYear: firstYear, lastYear: lastYear)
         XCTAssertEqual(model.firstYearSampled, firstYear)
         XCTAssertEqual(model.securedRateSamples.count, 0)
         XCTAssertEqual(model.stockRateSamples.count, 0)
         
         // random
-        model.randomizers.simulateVolatility = true
+        UserSettings.shared.simulateVolatility = true
         try model.setRandomValue(to: dico, withMode: .random, firstYear: firstYear, lastYear: lastYear)
         XCTAssertEqual(model.firstYearSampled, firstYear)
         XCTAssertEqual(model.securedRateSamples.count, lastYear - firstYear + 1)
         XCTAssertEqual(model.stockRateSamples.count, lastYear - firstYear + 1)
         
-        model.randomizers.simulateVolatility = false
+        UserSettings.shared.simulateVolatility = false
         try model.setRandomValue(to: dico, withMode: .random, firstYear: firstYear, lastYear: lastYear)
         XCTAssertEqual(model.firstYearSampled, firstYear)
         XCTAssertEqual(model.securedRateSamples.count, 0)

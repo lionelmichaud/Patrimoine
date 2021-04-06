@@ -122,7 +122,7 @@ struct Economy {
     }
     
     // MARK: - Modèles statistiques de générateurs aléatoires + échantillons tirés pour une simulation
-    struct Model: EconomyModelProviderProtocol {
+    class Model: EconomyModelProviderProtocol {
         
         // MARK: - Properties
         
@@ -145,7 +145,7 @@ struct Economy {
                    withMode mode : SimulationModeEnum)
         -> (securedRate : Double,
             stockRate   : Double) {
-            if mode == .random && randomizers.simulateVolatility {
+            if mode == .random && UserSettings.shared.simulateVolatility {
                 // utiliser la séquence tirée aléatoirement au début du run par la fonction 'generateRandomSamples'
                 return (securedRate : securedRateSamples[year - firstYearSampled],
                         stockRate   : stockRateSamples[year - firstYearSampled])
@@ -173,9 +173,10 @@ struct Economy {
         ///   - firstYear: première année
         ///   - lastYear: dernière année
         ///   - withMode: mode de simulation qui détermine quelle sera la valeure moyenne retenue
-        private mutating func generateRandomSamples(withMode  : SimulationModeEnum,
-                                                    firstYear : Int,
-                                                    lastYear  : Int) throws {
+        /// - Note: comportement différent selon que la volatilité doit être prise en compte ou pas
+        private func generateRandomSamples(withMode  : SimulationModeEnum,
+                                           firstYear : Int,
+                                           lastYear  : Int) throws {
             guard lastYear >= firstYear else {
                 customLog.log(level: .fault, "generateRandomSamples: lastYear < firstYear")
                 throw ModelError.outOfBounds
@@ -183,7 +184,7 @@ struct Economy {
             firstYearSampled        = firstYear
             securedRateSamples      = []
             stockRateSamples        = []
-            if withMode == .random && randomizers.simulateVolatility {
+            if withMode == .random && UserSettings.shared.simulateVolatility {
                 for _ in firstYear...lastYear {
                     securedRateSamples.append(Random.default.normal.next(mu   : randomizers.securedRate.value(withMode: withMode),
                                                                          sigma: randomizers.securedVolatility))
@@ -195,7 +196,7 @@ struct Economy {
         
         /// Remettre à zéro les historiques des tirages aléatoires
         /// - Note : Appeler avant de lancer une simulation
-        mutating func resetRandomHistory() {
+        func resetRandomHistory() {
             randomizers.resetRandomHistory()
         }
         
@@ -205,9 +206,9 @@ struct Economy {
         ///   - lastYear: dernière année
         /// - Returns: dictionnaire des échantillon de valeurs moyennes pour le prochain Run
         /// - Note : Appeler avant de lancer un Run de simulation
-        mutating func nextRun(withMode  : SimulationModeEnum,
-                              firstYear : Int,
-                              lastYear  : Int) throws -> DictionaryOfRandomVariable {
+        func nextRun(withMode  : SimulationModeEnum,
+                     firstYear : Int,
+                     lastYear  : Int) throws -> DictionaryOfRandomVariable {
             guard lastYear >= firstYear else {
                 customLog.log(level: .fault, "nextRun: lastYear < firstYear")
                 throw ModelError.outOfBounds
@@ -227,10 +228,10 @@ struct Economy {
         ///   - firstYear: première année
         ///   - lastYear: dernière année
         /// - Note : Appeler avant de rejouer un Run de simulation
-        mutating func setRandomValue(to values : DictionaryOfRandomVariable,
-                                     withMode  : SimulationModeEnum,
-                                     firstYear : Int,
-                                     lastYear  : Int) throws {
+        func setRandomValue(to values : DictionaryOfRandomVariable,
+                            withMode  : SimulationModeEnum,
+                            firstYear : Int,
+                            lastYear  : Int) throws {
             // Définir une valeur pour chaque variable aléatoire avant un rejeu
             randomizers.setRandomValue(to: values)
             // à partir de la nouvelle valeure moyenne, tirer au hazard une valeur pour chaque année

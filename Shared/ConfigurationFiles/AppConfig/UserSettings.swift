@@ -10,7 +10,7 @@ import Foundation
 import Foil
 
 struct UserSettings {
-    static let shared = UserSettings()
+    static var shared = UserSettings()
     static let simulateVolatility = "simulateVolatility"
 
     @WrappedDefault(keyName: UserSettings.simulateVolatility, defaultValue: false)
