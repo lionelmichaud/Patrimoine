@@ -27,13 +27,20 @@ struct BalanceSheetGlobalChartView: View {
         }
         .navigationTitle("Bilan")
         .navigationBarTitleDisplayMode(.inline)
-        .navigationBarItems(trailing: Button(action: saveImage,
-                                             label : {
-                                                HStack {
-                                                    Image(systemName: "square.and.arrow.up")
-                                                    Text("Image")
-                                                }
-                                             }).capsuleButtonStyle()
+        .navigationBarItems(trailing:
+                                HStack {
+                                    Button(action: saveImage,
+                                           label : {
+                                            HStack {
+                                                Image(systemName: "square.and.arrow.up")
+                                                Text("Image")
+                                            }
+                                           }).capsuleButtonStyle()
+                                    Button(action: saveImage,
+                                           label : {
+                                            Image(systemName: "questionmark.circle.fill").font(.largeTitle)
+                                           })
+                                }
         )
     }
     
