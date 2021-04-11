@@ -21,7 +21,6 @@ struct SimulationView: View {
     
     var body: some View {
         NavigationView {
-            //liste
             List {
                 // calcul de simulation
                 NavigationLink(destination : ComputationView(),

@@ -8,10 +8,37 @@
 
 import SwiftUI
 
-struct UserSettingsView: View {
+struct GraphicUserSettings: View {
+    // si la variable d'état est locale (@State) cela ne fonctionne pas correctement
+    @Binding var ownership: OwnershipNature
+    
+    var body: some View {
+        Form {
+            Section(footer: Text("Le graphique détaillé de l'évolution dans le temps du bilan d'un individu ne prendra en compte que les biens satisfaisant à ce critère")) {
+                CasePicker(pickedCase: $ownership, label: "Nature de propriété individuelle du graphique Bilan")
+                    .pickerStyle(DefaultPickerStyle())
+                    .onChange(of     : ownership,
+                              perform: { newValue in
+                                UserSettings.shared.ownershipSelection = newValue })
+            }
+        }
+    }
+}
+
+struct SimulationUserSettings: View {
     @AppStorage(UserSettings.simulateVolatility) var simulateVolatility: Bool = false
-    @AppStorage(UserSettings.ownershipSelection) var ownershipSelectionString: String = OwnershipNature.fullOwners.rawValue
-    @State private var ownership: OwnershipNature = OwnershipNature(rawValue: UserSettings.shared.ownershipSelectionString)!
+    
+    var body: some View {
+        Form {
+            Section(footer: Text("En mode Monté-Carlo seulement: simuler la volatilité du cours des actions et des obligations")) {
+                Toggle("Simuler la volatilité des marchés", isOn: $simulateVolatility)
+            }
+        }
+    }
+}
+
+struct UserSettingsView: View {
+    @State private var ownership: OwnershipNature = UserSettings.shared.ownershipSelection
 
     var versionView: some View {
         GroupBox {
@@ -27,27 +54,31 @@ struct UserSettingsView: View {
                 .multilineTextAlignment(.center)
         }
     }
-
+    
     var body: some View {
         NavigationView {
+            List {
+                NavigationLink("Simulation", destination: SimulationUserSettings())
+                    .isDetailLink(true)
+                
+                NavigationLink("Graphiques", destination: GraphicUserSettings(ownership: $ownership))
+                    .isDetailLink(true)
+            }
+            .listStyle(SidebarListStyle())
+            .navigationTitle("Préférences")
+
+            // default View
             versionView
                 .padding()
-            Form {
-                CasePicker(pickedCase: $ownership, label: "Nature de la propriété individuelle pris en compte dans le graphique Bilan")
-                    .pickerStyle(DefaultPickerStyle())
-                    .onChange(of     : ownership,
-                              perform: { newValue in
-                                ownershipSelectionString = newValue.rawValue })
-                Text(UserSettings.shared.ownershipSelectionString)
-                Toggle("Simuler la volatilité du cours des actions (en mode Monté-Carlo)", isOn: $simulateVolatility)
-                // sélecteur: Revenus / Cessibles / Tout
-            }
         }
+        .navigationViewStyle(DoubleColumnNavigationViewStyle())
     }
 }
 
 struct UserSettingsView_Previews: PreviewProvider {
     static var previews: some View {
-        UserSettingsView()
+        Group {
+            UserSettingsView()
+        }
     }
 }
