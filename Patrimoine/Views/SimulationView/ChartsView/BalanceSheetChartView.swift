@@ -18,6 +18,15 @@ private let customLog = Logger(subsystem: "me.michaud.lionel.Patrimoine", catego
 /// Vue globale du bilan: Actif / Passif / Net
 struct BalanceSheetGlobalChartView: View {
     @EnvironmentObject var simulation: Simulation
+    @State private var showInfoPopover = false
+    let popOverTitle   = "Contenu du graphique:"
+    let popOverMessage =
+        """
+        Evolution dans le temps des valeurs de l'ensemble des biens (actif et passif).
+        détenus par l'ensemble des membres de la famille.
+
+        Evolution du solde net.
+        """
     
     var body: some View {
         VStack {
@@ -27,18 +36,24 @@ struct BalanceSheetGlobalChartView: View {
         }
         .navigationTitle("Bilan")
         .navigationBarTitleDisplayMode(.inline)
-        .navigationBarItems(trailing: Button(action: saveImage,
-                                             label : {
-                                                HStack {
-                                                    Image(systemName: "square.and.arrow.up")
-                                                    Text("Image")
-                                                }
-                                             }).capsuleButtonStyle()
-        )
-    }
-    
-    func saveImage() {
-        BalanceSheetLineChartView.saveImage()
+        .toolbar {
+            // sauvergarder l'image dans l'album photo
+            ToolbarItem(placement: .automatic) {
+                Button(action: BalanceSheetLineChartView.saveImage,
+                       label : { Image(systemName: "camera.circle") })
+            }
+            // afficher info-bulle
+            ToolbarItem(placement: .automatic) {
+                Button(action: { self.showInfoPopover = true },
+                       label : {
+                        Image(systemName: "info.circle")
+                       })
+                    .popover(isPresented: $showInfoPopover) {
+                        PopOverContentView(title       : popOverTitle,
+                                           description : popOverMessage)
+                    }
+            }
+        }
     }
 }
 
@@ -49,7 +64,22 @@ struct BalanceSheetDetailedChartView: View {
     @EnvironmentObject var uiState    : UIState
     @State private var menuIsPresented = false
     let menuWidth: CGFloat = 200
-    
+    @State private var showInfoPopover = false
+    let popOverTitle   = "Contenu du graphique:"
+    let popOverMessage =
+        """
+        Evolution dans le temps des valeurs de l'ensemble des biens (actif et passif) détenus
+        par l'ensemble des membres de la famille ou par un individu en particulier.
+
+        Détail par catégorie d'actif / passif.
+        Utiliser la loupe 🔍 pour filtrer les catégories d'actif / passif.
+
+        Lorsqu'un seul individu est sélectionné, les actifs sont évalués selon une méthode
+        et selon un filtre définis dans les préférences ⚙️.
+
+        Evolution du solde net.
+        """
+
     var body: some View {
         GeometryReader { geometry in
             ZStack(alignment: .leading) {
@@ -92,32 +122,35 @@ struct BalanceSheetDetailedChartView: View {
         }
         .navigationTitle("Bilan détaillé")
         .navigationBarTitleDisplayMode(.inline)
-        .navigationBarItems(
-            leading: Button(
-                action: {
-                    withAnimation { self.menuIsPresented.toggle() }
-                },
-                label: {
-                    HStack {
-                        if !self.uiState.bsChartState.itemSelection.allCategoriesSelected() {
-                            Image(systemName: "loupe")
+        .toolbar {
+            //  menu slideover de filtrage
+            ToolbarItem(placement: .navigation) {
+                Button(action: { withAnimation { self.menuIsPresented.toggle() } },
+                       label: {
+                        if self.uiState.bsChartState.itemSelection.allCategoriesSelected() {
+                            Image(systemName: "magnifyingglass.circle")
+                        } else {
+                            Image(systemName: "magnifyingglass.circle.fill")
                         }
-                        Text("Filtrer")
+                       })//.capsuleButtonStyle()
+            }
+            // sauvergarder l'image dans l'album photo
+            ToolbarItem(placement: .automatic) {
+                Button(action: BalanceSheetStackedBarChartView.saveImage,
+                       label : { Image(systemName: "camera.circle") })
+            }
+            // afficher info-bulle
+            ToolbarItem(placement: .automatic) {
+                Button(action: { self.showInfoPopover = true },
+                       label : {
+                        Image(systemName: "info.circle")//.font(.largeTitle)
+                       })
+                    .popover(isPresented: $showInfoPopover) {
+                        PopOverContentView(title       : popOverTitle,
+                                           description : popOverMessage)
                     }
-                }).capsuleButtonStyle(),
-            trailing: Button(
-                action: saveImage,
-                label : {
-                    HStack {
-                        Image(systemName: "square.and.arrow.up")
-                        Text("Image")
-                    }
-                }).capsuleButtonStyle()
-        )
-    }
-    
-    func saveImage() {
-        BalanceSheetStackedBarChartView.saveImage()
+            }
+        }
     }
 }
 

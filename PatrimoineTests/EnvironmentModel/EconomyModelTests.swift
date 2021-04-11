@@ -23,7 +23,7 @@ class EconomyModelTests: XCTestCase {
                            keyEncodingStrategy: .useDefaultKeys)
     }
     func test_generation_aleatoire_outOfBounds() {
-        var model = Economy.Model()
+        let model = Economy.Model()
         
         XCTAssertThrowsError(try model.nextRun(withMode: .random,
                                                firstYear: 2030,
@@ -55,7 +55,7 @@ class EconomyModelTests: XCTestCase {
     }
     
     func test_generation_aleatoire() throws {
-        var model = Economy.Model()
+        let model = Economy.Model()
         let firstYear = 2020
         let lastYear = 2030
         
@@ -95,7 +95,7 @@ class EconomyModelTests: XCTestCase {
     }
     
     func test_reinit_rejeu() throws {
-        var model = Economy.Model()
+        let model = Economy.Model()
         let firstYear = 2020
         let lastYear = 2030
         var dico = Economy.DictionaryOfRandomVariable()

@@ -96,8 +96,8 @@ struct ExpenseDetailedView: View {
             TimeSpanEditView(timeSpanVM: $expenseVM.timeSpanVM)
         }
         .textFieldStyle(RoundedBorderTextFieldStyle())
-        .navigationBarTitle(Text("Dépense " + category.displayString),
-                            displayMode: .inline)
+        .navigationTitle(Text("Dépense " + category.displayString))
+        .navigationBarTitleDisplayMode(.inline)
         .navigationBarItems(
             leading: Button(
                 action : duplicate,
