@@ -17,25 +17,37 @@ private let customLog = Logger(subsystem: "me.michaud.lionel.Patrimoine", catego
 
 struct IsfEvolutionChartView: View {
     @EnvironmentObject var simulation: Simulation
-    
+    @State private var showInfoPopover = false
+    let popOverTitle   = "Contenu du graphique:"
+    let popOverMessage =
+        """
+        Evolution dans le temps du montant de l'ISF dû.
+        """
+
     var body: some View {
         IsfLineChartView(socialAccounts : $simulation.socialAccounts,
                          title          : simulation.title)
             .padding(.trailing, 4)
             .navigationTitle("Evolution de la Fiscalité")
             .navigationBarTitleDisplayMode(.inline)
-            .navigationBarItems(trailing: Button(action: saveImages,
-                                                 label : {
-                                                    HStack {
-                                                        Image(systemName: "square.and.arrow.up")
-                                                        Text("Image")
-                                                    }
-                                                 }).capsuleButtonStyle()
-            )
-    }
-    
-    func saveImages() {
-        IsfLineChartView.saveImage()
+            .toolbar {
+                // sauvergarder l'image dans l'album photo
+                ToolbarItem(placement: .automatic) {
+                    Button(action: IsfLineChartView.saveImage,
+                           label : { Image(systemName: "camera.circle") })
+                }
+                // afficher info-bulle
+                ToolbarItem(placement: .automatic) {
+                    Button(action: { self.showInfoPopover = true },
+                           label : {
+                            Image(systemName: "info.circle")
+                           })
+                        .popover(isPresented: $showInfoPopover) {
+                            PopOverContentView(title       : popOverTitle,
+                                               description : popOverMessage)
+                        }
+                }
+            }
     }
 }
 

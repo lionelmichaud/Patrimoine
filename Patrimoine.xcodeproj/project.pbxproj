@@ -274,6 +274,7 @@
 		79BF6FAF25740CE200F19A81 /* Ownership.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79BF6FAE25740CE200F19A81 /* Ownership.swift */; };
 		79BF6FB22574112800F19A81 /* OwnershipView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79BF6FB12574112800F19A81 /* OwnershipView.swift */; };
 		79C26F082566CE5F0016B3F5 /* Extensions+Ranges.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79C26F072566CE5F0016B3F5 /* Extensions+Ranges.swift */; };
+		79C2DB5D2623488C00C07A83 /* PopOverContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79C2DB5C2623488C00C07A83 /* PopOverContentView.swift */; };
 		79C6D1F725C476D700D76CDC /* UnemploymentCompensationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79C6D1F625C476D700D76CDC /* UnemploymentCompensationTests.swift */; };
 		79C6D1FB25C47A8A00D76CDC /* UnemploymentCompensationModel.json in Resources */ = {isa = PBXBuildFile; fileRef = 79C6D1FA25C47A8A00D76CDC /* UnemploymentCompensationModel.json */; };
 		79C6FC0D24BF9D0400D99594 /* UnemployementDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79C6FC0C24BF9D0400D99594 /* UnemployementDetailView.swift */; };
@@ -621,6 +622,7 @@
 		79BF6FAE25740CE200F19A81 /* Ownership.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Ownership.swift; sourceTree = "<group>"; };
 		79BF6FB12574112800F19A81 /* OwnershipView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OwnershipView.swift; sourceTree = "<group>"; };
 		79C26F072566CE5F0016B3F5 /* Extensions+Ranges.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Extensions+Ranges.swift"; sourceTree = "<group>"; };
+		79C2DB5C2623488C00C07A83 /* PopOverContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PopOverContentView.swift; sourceTree = "<group>"; };
 		79C6D1F625C476D700D76CDC /* UnemploymentCompensationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnemploymentCompensationTests.swift; sourceTree = "<group>"; };
 		79C6D1FA25C47A8A00D76CDC /* UnemploymentCompensationModel.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = UnemploymentCompensationModel.json; sourceTree = "<group>"; };
 		79C6FC0C24BF9D0400D99594 /* UnemployementDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnemployementDetailView.swift; sourceTree = "<group>"; };
@@ -1286,6 +1288,7 @@
 				79DB52C3258663EB00BC6E84 /* CheckBoxStyles.swift */,
 				79DB52C62586648200BC6E84 /* ProgressViews.swift */,
 				79DB52C92586675700BC6E84 /* MenuCollapsable.swift */,
+				79C2DB5C2623488C00C07A83 /* PopOverContentView.swift */,
 			);
 			path = HelperViews;
 			sourceTree = "<group>";
@@ -1928,6 +1931,7 @@
 				7994898D249E4FC200DAFF1E /* Scenario.swift in Sources */,
 				79D011FF252B970A00817C8D /* KpiListSummaryView.swift in Sources */,
 				7994897C249E4FC200DAFF1E /* GridView.swift in Sources */,
+				79C2DB5D2623488C00C07A83 /* PopOverContentView.swift in Sources */,
 				79061B4924FD89F60045AB25 /* App.swift in Sources */,
 				7975E4E3252E1ED20036C1F5 /* SocioEconomyModel.swift in Sources */,
 				7994896D249E4FC200DAFF1E /* ExpenseDetailedView.swift in Sources */,

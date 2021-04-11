@@ -18,7 +18,15 @@ private let customLog = Logger(subsystem: "me.michaud.lionel.Patrimoine", catego
 /// Vue globale du cash flow: Revenus / Dépenses / Net
 struct CashFlowGlobalChartView: View {
     @EnvironmentObject var simulation: Simulation
-    
+    @State private var showInfoPopover = false
+    let popOverTitle   = "Contenu du graphique:"
+    let popOverMessage =
+        """
+        Evolution dans le temps des flux de trésorerie annuels de l'ensemble des membres de la famille.
+
+        Evolution du solde net.
+        """
+
     var body: some View {
         VStack {
             CashFlowLineChartView(socialAccounts : $simulation.socialAccounts,
@@ -27,18 +35,24 @@ struct CashFlowGlobalChartView: View {
         }
         .navigationTitle("Cash Flow")
         .navigationBarTitleDisplayMode(.inline)
-        .navigationBarItems(trailing: Button(action: saveImage,
-                                             label : {
-                                                HStack {
-                                                    Image(systemName: "square.and.arrow.up")
-                                                    Text("Image")
-                                                }
-                                             }).capsuleButtonStyle()
-        )
-    }
-    
-    func saveImage() {
-        CashFlowLineChartView.saveImage()
+        .toolbar {
+            // sauvergarder l'image dans l'album photo
+            ToolbarItem(placement: .automatic) {
+                Button(action: CashFlowLineChartView.saveImage,
+                       label : { Image(systemName: "camera.circle") })
+            }
+            // afficher info-bulle
+            ToolbarItem(placement: .automatic) {
+                Button(action: { self.showInfoPopover = true },
+                       label : {
+                        Image(systemName: "info.circle")//.font(.largeTitle)
+                       })
+                    .popover(isPresented: $showInfoPopover) {
+                        PopOverContentView(title       : popOverTitle,
+                                           description : popOverMessage)
+                    }
+            }
+        }
     }
 }
 
@@ -49,7 +63,18 @@ struct CashFlowDetailedChartView: View {
     @EnvironmentObject var uiState    : UIState
     @State private var menuIsPresented = false
     let menuWidth: CGFloat = 200
-    
+    @State private var showInfoPopover = false
+    let popOverTitle   = "Contenu du graphique:"
+    let popOverMessage =
+        """
+        Evolution dans le temps des des flux de trésorerie annuels de l'ensemble des membres de la famille.
+
+        Détail par catégorie de dépense / revenus.
+        Utiliser la loupe 🔍 pour filtrer les catégories de dépense / revenus.
+
+        Evolution du solde net.
+        """
+
     var body: some View {
         GeometryReader { geometry in
             ZStack(alignment: .leading) {
@@ -90,32 +115,35 @@ struct CashFlowDetailedChartView: View {
         }
         .navigationTitle("Cash Flow détaillé")
         .navigationBarTitleDisplayMode(.inline)
-        .navigationBarItems(
-            leading: Button(
-                action: {
-                    withAnimation { self.menuIsPresented.toggle() }
-                },
-                label : {
-                    HStack {
-                        if !self.uiState.cfChartState.itemSelection.allCategoriesSelected() {
-                            Image(systemName: "loupe")
+        .toolbar {
+            //  menu slideover de filtrage
+            ToolbarItem(placement: .navigation) {
+                Button(action: { withAnimation { self.menuIsPresented.toggle() } },
+                       label: {
+                        if self.uiState.cfChartState.itemSelection.allCategoriesSelected() {
+                            Image(systemName: "magnifyingglass.circle")
+                        } else {
+                            Image(systemName: "magnifyingglass.circle.fill")
                         }
-                        Text("Filtrer")
+                       })//.capsuleButtonStyle()
+            }
+            // sauvergarder l'image dans l'album photo
+            ToolbarItem(placement: .automatic) {
+                Button(action: CashFlowStackedBarChartView.saveImage,
+                       label : { Image(systemName: "camera.circle") })
+            }
+            // afficher info-bulle
+            ToolbarItem(placement: .automatic) {
+                Button(action: { self.showInfoPopover = true },
+                       label : {
+                        Image(systemName: "info.circle")//.font(.largeTitle)
+                       })
+                    .popover(isPresented: $showInfoPopover) {
+                        PopOverContentView(title       : popOverTitle,
+                                           description : popOverMessage)
                     }
-                }).capsuleButtonStyle(),
-            trailing: Button(
-                action: saveImage,
-                label : {
-                    HStack {
-                        Image(systemName: "square.and.arrow.up")
-                        Text("Image")
-                    }
-                }).capsuleButtonStyle()
-        )
-    }
-    
-    func saveImage() {
-        CashFlowStackedBarChartView.saveImage()
+            }
+        }
     }
 }
 

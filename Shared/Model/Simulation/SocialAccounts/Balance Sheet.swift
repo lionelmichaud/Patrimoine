@@ -72,7 +72,7 @@ extension BalanceSheetArray {
         // ligne de titre du tableau: utiliser la première ligne de la table de bilan
         heading = "YEAR; " // + self.first!.headerCSV
         rows = self.map { "\($0.year); " }
-
+        
         // inflation
         // heading
         heading += "Inflation; "
@@ -94,7 +94,7 @@ extension BalanceSheetArray {
         let rowsStockRate = self.map { "\(Economy.model.rates(in: $0.year, withMode: mode).stockRate.percentString(digit: 1)); " }
         rows = zip(rows, rowsStockRate).map(+)
         
-       // construire la partie Actifs du tableau
+        // construire la partie Actifs du tableau
         buildAssetsTableCSV(firstLine: firstLine)
         
         // construire la partie Passifs du tableau
@@ -173,7 +173,7 @@ struct BalanceSheetLine {
     init(withYear year             : Int,
          withFamily family         : Family,
          withPatrimoine patrimoine : Patrimoin) {
-//        autoreleasepool {
+        //        autoreleasepool {
         self.year        = year
         
         // initialiser les dictionnaires
@@ -183,7 +183,7 @@ struct BalanceSheetLine {
             self.assets[person.displayName]      = ValuedAssets(name : "ACTIF")
             self.liabilities[person.displayName] = ValuedLiabilities(name : "PASSIF")
         }
-
+        
         // actifs
         for asset in patrimoine.assets.realEstates.items.sorted(by:<) {
             // populate real estate assets
@@ -218,7 +218,7 @@ struct BalanceSheetLine {
             // populate loan liabilities
             appendToLiabilities(.loans, family, liability, year)
         }
-//        }
+        //        }
     }
     
     // MARK: - Methods
@@ -261,9 +261,7 @@ struct BalanceSheetLine {
                                          evaluationMethod: .patrimoine).rounded()
                         : 0
             }
-            assets[person.displayName]!
-                .perCategory[category]?
-                .namedValues
+            assets[person.displayName]!.perCategory[category]?.namedValues
                 .append((name  : withNamePrefix + asset.name,
                          value : value))
         }
@@ -279,11 +277,37 @@ struct BalanceSheetLine {
              value : liability.value(atEndOf: year).rounded()))
         
         family.members.forEach { person in
-            liabilities[person.displayName]!.perCategory[category]?.namedValues.append(
-                (name  : withNamePrefix + liability.name,
-                 value : liability.providesRevenue(to: [person.displayName]) ?
-                    liability.value(atEndOf: year).rounded() :
-                    0))
+            let isSelected: Bool
+            switch UserSettings.shared.ownershipSelection {
+                
+                case .generatesRevenue:
+                    isSelected = liability.providesRevenue(to: [person.displayName])
+                    
+                case .sellable:
+                    isSelected = liability.isFullyOwned(partlyBy: [person.displayName])
+                    
+                case .all:
+                    isSelected = liability.isPartOfPatrimoine(of: [person.displayName])
+            }
+            
+            let value: Double
+            switch UserSettings.shared.assetEvaluationMethod {
+                
+                case .totalValue:
+                    value = isSelected ?
+                        liability.value(atEndOf: year).rounded()
+                        : 0
+                    
+                case .ownedValue:
+                    value = isSelected ?
+                        liability.ownedValue(by              : person.displayName,
+                                             atEndOf         : year,
+                                             evaluationMethod: .patrimoine).rounded()
+                        : 0
+            }
+            liabilities[person.displayName]!.perCategory[category]?.namedValues
+                .append( (name  : withNamePrefix + liability.name,
+                          value : value))
         }
     }
     

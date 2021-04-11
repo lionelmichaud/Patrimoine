@@ -17,7 +17,15 @@ private let customLog = Logger(subsystem: "me.michaud.lionel.Patrimoine", catego
 
 struct IrppEvolutionChartView: View {
     @EnvironmentObject var simulation: Simulation
-    
+    @State private var showInfoPopover = false
+    let popOverTitle   = "Contenu du graphique:"
+    let popOverMessage =
+        """
+        Evolution dans le temps des taux d'imposition sur le revenu (IRPP).
+
+        Evolution du revenu imposable à l'IRRP et du montant de l'IRPP.
+        """
+
     var body: some View {
         VStack {
             IrppParamLineChartView(socialAccounts : $simulation.socialAccounts,
@@ -28,14 +36,24 @@ struct IrppEvolutionChartView: View {
         .padding(.trailing, 4)
         .navigationTitle("Evolution de la Fiscalité")
         .navigationBarTitleDisplayMode(.inline)
-        .navigationBarItems(trailing: Button(action: saveImages,
-                                             label : {
-                                                HStack {
-                                                    Image(systemName: "square.and.arrow.up")
-                                                    Text("Image")
-                                                }
-                                             }).capsuleButtonStyle()
-        )
+        .toolbar {
+            // sauvergarder l'image dans l'album photo
+            ToolbarItem(placement: .automatic) {
+                Button(action: saveImages,
+                       label : { Image(systemName: "camera.circle") })
+            }
+            // afficher info-bulle
+            ToolbarItem(placement: .automatic) {
+                Button(action: { self.showInfoPopover = true },
+                       label : {
+                        Image(systemName: "info.circle")
+                       })
+                    .popover(isPresented: $showInfoPopover) {
+                        PopOverContentView(title       : popOverTitle,
+                                           description : popOverMessage)
+                    }
+            }
+        }
     }
     
     func saveImages() {

@@ -19,6 +19,12 @@ struct IrppSliceView: View {
     @EnvironmentObject var simulation: Simulation
     @EnvironmentObject var family    : Family
     @EnvironmentObject var uiState   : UIState
+    @State private var showInfoPopover = false
+    let popOverTitle   = "Contenu du graphique:"
+    let popOverMessage =
+        """
+        Evolution du montant de l'IRPP dû dans chaque tranche du barême (avec et sans enfants).
+        """
 
     var body: some View {
         VStack {
@@ -40,18 +46,24 @@ struct IrppSliceView: View {
         .padding(.trailing, 4)
         .navigationTitle("Décomposition par tranche d'imposition")
         .navigationBarTitleDisplayMode(.inline)
-        .navigationBarItems(trailing: Button(action: saveImages,
-                                             label : {
-                                                HStack {
-                                                    Image(systemName: "square.and.arrow.up")
-                                                    Text("Image")
-                                                }
-                                             }).capsuleButtonStyle()
-        )
-    }
-    
-    func saveImages() {
-        IrppSlicesStackedBarChartView.saveImage()
+        .toolbar {
+            // sauvergarder l'image dans l'album photo
+            ToolbarItem(placement: .automatic) {
+                Button(action: IrppSlicesStackedBarChartView.saveImage,
+                       label : { Image(systemName: "camera.circle") })
+            }
+            // afficher info-bulle
+            ToolbarItem(placement: .automatic) {
+                Button(action: { self.showInfoPopover = true },
+                       label : {
+                        Image(systemName: "info.circle")
+                       })
+                    .popover(isPresented: $showInfoPopover) {
+                        PopOverContentView(title       : popOverTitle,
+                                           description : popOverMessage)
+                    }
+            }
+        }
     }
 }
 
