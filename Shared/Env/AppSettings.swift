@@ -16,9 +16,9 @@ struct AppSettings: Decodable {
     
     // MARK: - Properties
     
-    var imageDir        : String = "image/"
-    var tableDir        : String = "csv/"
-    var allPersonsLabel : String = "Tous"
+    var imageDir        : String
+    var tableDir        : String
+    var allPersonsLabel : String
 
     // MARK: - Static Methods
     

@@ -63,12 +63,14 @@ struct BalanceSheetDetailedChartView: View {
                         Text(AppSettings.shared.allPersonsLabel)
                             .tag(AppSettings.shared.allPersonsLabel)
                     }
-                        .padding(.horizontal)
-                        .pickerStyle(SegmentedPickerStyle())
+                    .padding(.horizontal)
+                    .pickerStyle(SegmentedPickerStyle())
+                    
                     // sélecteur: Actif / Passif / Tout
                     CasePicker(pickedCase: self.$uiState.bsChartState.combination, label: "")
                         .padding(.horizontal)
                         .pickerStyle(SegmentedPickerStyle())
+                    
                     // graphique
                     BalanceSheetStackedBarChartView(for           : self.uiState.bsChartState.nameSelection,
                                                     socialAccounts: self.$simulation.socialAccounts,

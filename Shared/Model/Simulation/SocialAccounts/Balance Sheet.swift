@@ -262,9 +262,9 @@ struct BalanceSheetLine {
     func print() {
         Swift.print("YEAR:", year)
         // actifs
-        assets["Tous"]!.print(level: 1)
+        assets[AppSettings.shared.allPersonsLabel]!.print(level: 1)
         // passifs
-        liabilities["Tous"]!.print(level: 1)
+        liabilities[AppSettings.shared.allPersonsLabel]!.print(level: 1)
         // net
         Swift.print("Net: \(netAssets)")
         Swift.print("-----------------------------------------")

@@ -29,6 +29,20 @@ enum OwnershipError: Error {
     case invalidOwnership
 }
 
+// MARK: - Enumération de nature d'une propriété
+
+enum OwnershipNature: String, PickableEnum {
+    case fullOwners     = "Plein Propriétaire"
+    case bareOwners     = "Nu-Propriétaire"
+    case usufructOwners = "Usufruitier"
+    
+    var pickerString: String {
+        return self.rawValue
+    }
+}
+
+// MARK: - Struct définissant les droits de propriété d'un bien
+
 struct Ownership {
     
     // MARK: - Static Properties

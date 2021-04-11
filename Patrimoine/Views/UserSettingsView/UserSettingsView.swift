@@ -10,6 +10,8 @@ import SwiftUI
 
 struct UserSettingsView: View {
     @AppStorage(UserSettings.simulateVolatility) var simulateVolatility: Bool = false
+    @AppStorage(UserSettings.ownershipSelection) var ownershipSelectionString: String = OwnershipNature.fullOwners.rawValue
+    @State private var ownership: OwnershipNature = OwnershipNature(rawValue: UserSettings.shared.ownershipSelectionString)!
 
     var versionView: some View {
         GroupBox {
@@ -27,12 +29,20 @@ struct UserSettingsView: View {
     }
 
     var body: some View {
-        VStack {
+        NavigationView {
             versionView
+                .padding()
             Form {
-                Toggle("Simuler la volatilité du cours des actions", isOn: $simulateVolatility)
+                CasePicker(pickedCase: $ownership, label: "Nature de la propriété individuelle pris en compte dans le graphique Bilan")
+                    .pickerStyle(DefaultPickerStyle())
+                    .onChange(of     : ownership,
+                              perform: { newValue in
+                                ownershipSelectionString = newValue.rawValue })
+                Text(UserSettings.shared.ownershipSelectionString)
+                Toggle("Simuler la volatilité du cours des actions (en mode Monté-Carlo)", isOn: $simulateVolatility)
+                // sélecteur: Revenus / Cessibles / Tout
             }
-        }.padding()
+        }
     }
 }
 
