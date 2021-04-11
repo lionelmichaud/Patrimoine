@@ -60,7 +60,7 @@ protocol Ownable: NameableValuable {
     
     /// True si une des personnes listées fait partie des PP de ce bien.
     /// - Parameter names: liste de noms de membres de la famille
-    func isFullyOwned(by names: [String]) -> Bool
+    func isFullyOwned(partlyBy names: [String]) -> Bool
     
     /// True si le bien fait partie du patrimoine d'une des personnes listées.
     /// Cad si elle est une des UF ou une des PP ou une des NP
@@ -164,7 +164,7 @@ extension Ownable {
         }) != nil)
     }
     
-    func isFullyOwned(by names: [String]) -> Bool {
+    func isFullyOwned(partlyBy names: [String]) -> Bool {
         (names.first(where: {
             ownership.isAFullOwner(ownerName: $0)
         }) != nil)

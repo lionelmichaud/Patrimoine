@@ -88,7 +88,7 @@ struct CashFlowDetailedChartView: View {
                 }
             }
         }
-        .navigationTitle("Cash Flow")
+        .navigationTitle("Cash Flow détaillé")
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarItems(
             leading: Button(

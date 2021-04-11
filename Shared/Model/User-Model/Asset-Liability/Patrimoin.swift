@@ -177,7 +177,7 @@ final class Patrimoin: ObservableObject {
             switch assets.freeInvests[idx].type {
                 case .lifeInsurance(let periodicSocialTaxes, _):
                     if periodicSocialTaxes && amount != 0 &&
-                        assets.freeInvests[idx].isFullyOwned(by: adultsName) {
+                        assets.freeInvests[idx].isFullyOwned(partlyBy: adultsName) {
                         // investir la totalité du cash
                         assets.freeInvests[idx].add(amount)
                         return
@@ -189,7 +189,7 @@ final class Patrimoin: ObservableObject {
             switch assets.freeInvests[idx].type {
                 case .lifeInsurance(let periodicSocialTaxes, _):
                     if !periodicSocialTaxes && amount != 0 &&
-                        assets.freeInvests[idx].isFullyOwned(by: adultsName) {
+                        assets.freeInvests[idx].isFullyOwned(partlyBy: adultsName) {
                         // investir la totalité du cash
                         assets.freeInvests[idx].add(amount)
                         return
@@ -201,7 +201,7 @@ final class Patrimoin: ObservableObject {
         // si pas d'assurance vie alors investir dans un PEA
         for idx in 0..<assets.freeInvests.items.count
         where assets.freeInvests[idx].type == .pea
-            && assets.freeInvests[idx].isFullyOwned(by: adultsName) {
+            && assets.freeInvests[idx].isFullyOwned(partlyBy: adultsName) {
             // investir la totalité du cash
             assets.freeInvests[idx].add(amount)
             return
@@ -209,7 +209,7 @@ final class Patrimoin: ObservableObject {
         // si pas d'assurance vie ni de PEA alors investir dans un autre placement
         for idx in 0..<assets.freeInvests.items.count
         where assets.freeInvests[idx].type == .other
-            && assets.freeInvests[idx].isFullyOwned(by: adultsName) {
+            && assets.freeInvests[idx].isFullyOwned(partlyBy: adultsName) {
             // investir la totalité du cash
             assets.freeInvests[idx].add(amount)
             return
@@ -240,7 +240,7 @@ final class Patrimoin: ObservableObject {
         // PEA: retirer le montant d'un investissement libre: d'abord le PEA procurant le moins bon rendement
         for idx in 0..<assets.freeInvests.items.count
         where assets.freeInvests[idx].type == .pea
-            && (assets.freeInvests[idx].isFullyOwned(by: adultsName) || adultsName.isEmpty) {
+            && (assets.freeInvests[idx].isFullyOwned(partlyBy: adultsName) || adultsName.isEmpty) {
             // tant que l'on a pas retiré le montant souhaité
             // retirer le montant du PEA s'il y en avait assez à la fin de l'année dernière
             if amountRemainingToRemove > 0.0 && assets.freeInvests[idx].value(atEndOf: year-1) > 0.0 {
@@ -260,7 +260,7 @@ final class Patrimoin: ObservableObject {
                     // retirer le montant de l'Assurances vie s'il y en avait assez à la fin de l'année dernière
                     if amountRemainingToRemove > 0.0 &&
                         assets.freeInvests[idx].value(atEndOf: year-1) > 0.0
-                        && (assets.freeInvests[idx].isFullyOwned(by: adultsName) || adultsName.isEmpty) {
+                        && (assets.freeInvests[idx].isFullyOwned(partlyBy: adultsName) || adultsName.isEmpty) {
                         let removal = assets.freeInvests[idx].remove(netAmount: amountRemainingToRemove)
                         amountRemainingToRemove -= removal.revenue
                         // IRPP: part des produit de la liquidation inscrit en compte courant imposable à l'IRPP après déduction de ce qu'il reste de franchise
@@ -281,7 +281,7 @@ final class Patrimoin: ObservableObject {
         // AUTRE: retirer le montant d'un investissement libre: d'abord celui procurant le moins bon rendement
         for idx in 0..<assets.freeInvests.items.count
         where assets.freeInvests[idx].type == .other
-            && (assets.freeInvests[idx].isFullyOwned(by: adultsName) || adultsName.isEmpty) {
+            && (assets.freeInvests[idx].isFullyOwned(partlyBy: adultsName) || adultsName.isEmpty) {
             // tant que l'on a pas retiré le montant souhaité
             // retirer le montant s'il y en avait assez à la fin de l'année dernière
             if amountRemainingToRemove > 0.0 && assets.freeInvests[idx].value(atEndOf: year-1) > 0.0 {

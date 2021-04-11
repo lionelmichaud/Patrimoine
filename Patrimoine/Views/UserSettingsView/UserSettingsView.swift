@@ -8,37 +8,11 @@
 
 import SwiftUI
 
-struct GraphicUserSettings: View {
-    // si la variable d'état est locale (@State) cela ne fonctionne pas correctement
-    @Binding var ownership: OwnershipNature
-    
-    var body: some View {
-        Form {
-            Section(footer: Text("Le graphique détaillé de l'évolution dans le temps du bilan d'un individu ne prendra en compte que les biens satisfaisant à ce critère")) {
-                CasePicker(pickedCase: $ownership, label: "Nature de propriété individuelle du graphique Bilan")
-                    .pickerStyle(DefaultPickerStyle())
-                    .onChange(of     : ownership,
-                              perform: { newValue in
-                                UserSettings.shared.ownershipSelection = newValue })
-            }
-        }
-    }
-}
-
-struct SimulationUserSettings: View {
-    @AppStorage(UserSettings.simulateVolatility) var simulateVolatility: Bool = false
-    
-    var body: some View {
-        Form {
-            Section(footer: Text("En mode Monté-Carlo seulement: simuler la volatilité du cours des actions et des obligations")) {
-                Toggle("Simuler la volatilité des marchés", isOn: $simulateVolatility)
-            }
-        }
-    }
-}
+// MARK: - View UserSettingsView
 
 struct UserSettingsView: View {
-    @State private var ownership: OwnershipNature = UserSettings.shared.ownershipSelection
+    @State private var ownership        = UserSettings.shared.ownershipSelection
+    @State private var evaluationMethod = UserSettings.shared.assetEvaluationMethod
 
     var versionView: some View {
         GroupBox {
@@ -58,20 +32,65 @@ struct UserSettingsView: View {
     var body: some View {
         NavigationView {
             List {
-                NavigationLink("Simulation", destination: SimulationUserSettings())
+                NavigationLink("Simulation",
+                               destination: SimulationUserSettings())
                     .isDetailLink(true)
                 
-                NavigationLink("Graphiques", destination: GraphicUserSettings(ownership: $ownership))
+                NavigationLink("Graphiques",
+                               destination: GraphicUserSettings(ownership        : $ownership,
+                                                                evaluationMethod : $evaluationMethod))
                     .isDetailLink(true)
             }
             .listStyle(SidebarListStyle())
             .navigationTitle("Préférences")
-
+            
             // default View
             versionView
                 .padding()
         }
         .navigationViewStyle(DoubleColumnNavigationViewStyle())
+    }
+}
+
+// MARK: - View UserSettingsView / GraphicUserSettings
+
+struct GraphicUserSettings: View {
+    // si la variable d'état est locale (@State) cela ne fonctionne pas correctement
+    @Binding var ownership        : OwnershipNature
+    @Binding var evaluationMethod : AssetEvaluationMethod
+
+    var body: some View {
+        Form {
+            Section(footer: Text("Le graphique détaillé de l'évolution dans le temps du bilan d'un individu ne prendra en compte que les biens satisfaisant à ce critère")) {
+                CasePicker(pickedCase: $ownership, label: "Filtrage du Bilan individuel")
+                    .pickerStyle(DefaultPickerStyle())
+                    .onChange(of     : ownership,
+                              perform: { newValue in
+                                UserSettings.shared.ownershipSelection = newValue })
+            }
+            
+            Section(footer: Text("Le graphique détaillé de l'évolution dans le temps du bilan d'un individu prendra en compte cette valeur")) {
+                CasePicker(pickedCase: $evaluationMethod, label: "Valeure prise en compte")
+                    .pickerStyle(DefaultPickerStyle())
+                    .onChange(of     : evaluationMethod,
+                              perform: { newValue in
+                                UserSettings.shared.assetEvaluationMethod = newValue })
+            }
+        }
+    }
+}
+
+// MARK: - View UserSettingsView / SimulationUserSettings
+
+struct SimulationUserSettings: View {
+    @AppStorage(UserSettings.simulateVolatility) var simulateVolatility: Bool = false
+    
+    var body: some View {
+        Form {
+            Section(footer: Text("En mode Monté-Carlo seulement: simuler la volatilité du cours des actions et des obligations")) {
+                Toggle("Simuler la volatilité des marchés", isOn: $simulateVolatility)
+            }
+        }
     }
 }
 

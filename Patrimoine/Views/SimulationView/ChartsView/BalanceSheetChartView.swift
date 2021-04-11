@@ -90,7 +90,7 @@ struct BalanceSheetDetailedChartView: View {
                 }
             }
         }
-        .navigationTitle("Bilan")
+        .navigationTitle("Bilan détaillé")
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarItems(
             leading: Button(

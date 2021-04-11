@@ -233,11 +233,39 @@ struct BalanceSheetLine {
              value : asset.value(atEndOf: year).rounded()))
         
         family.members.forEach { person in
-            assets[person.displayName]!.perCategory[category]?.namedValues.append(
-                (name  : withNamePrefix + asset.name,
-                 value : asset.providesRevenue(to: [person.displayName]) ?
-                    asset.value(atEndOf: year).rounded() :
-                    0))
+            let isSelected: Bool
+            switch UserSettings.shared.ownershipSelection {
+                
+                case .generatesRevenue:
+                    isSelected = asset.providesRevenue(to: [person.displayName])
+                    
+                case .sellable:
+                    isSelected = asset.isFullyOwned(partlyBy: [person.displayName])
+                    
+                case .all:
+                    isSelected = asset.isPartOfPatrimoine(of: [person.displayName])
+            }
+            
+            let value: Double
+            switch UserSettings.shared.assetEvaluationMethod {
+                
+                case .totalValue:
+                    value = isSelected ?
+                        asset.value(atEndOf: year).rounded()
+                        : 0
+                    
+                case .ownedValue:
+                    value = isSelected ?
+                        asset.ownedValue(by              : person.displayName,
+                                         atEndOf         : year,
+                                         evaluationMethod: .patrimoine).rounded()
+                        : 0
+            }
+            assets[person.displayName]!
+                .perCategory[category]?
+                .namedValues
+                .append((name  : withNamePrefix + asset.name,
+                         value : value))
         }
     }
     
