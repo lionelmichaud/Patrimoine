@@ -11,6 +11,7 @@ import SwiftUI
 struct SuccessionsView: View {
     @EnvironmentObject var simulation : Simulation
     @EnvironmentObject var uiState    : UIState
+    var title: String
     
     var successions: [Succession]
     
@@ -41,11 +42,11 @@ struct SuccessionsView: View {
                 }
 
                 // liste des successsions dans le temps
-                ForEach(successions) { succession in
+                ForEach(successions.sorted(by: \.yearOfDeath)) { succession in
                     SuccessionGroupBox(succession: succession)
                 }
             }
-            .navigationTitle("Successions")
+            .navigationTitle(title)
             .navigationBarTitleDisplayMode(.inline)
         }
     }
@@ -170,7 +171,8 @@ struct SuccessionsView_Previews: PreviewProvider {
     static var previews: some View {
         let simulation = initializedSimulation()
         
-        return SuccessionsView(successions: simulation.occuredLegalSuccessions)
+        return SuccessionsView(title       : "Successions",
+                               successions : simulation.occuredLegalSuccessions)
             .preferredColorScheme(.dark)
             .environmentObject(uiState)
             .environmentObject(family)
