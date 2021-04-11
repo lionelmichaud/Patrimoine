@@ -55,10 +55,13 @@ struct UserSettingsView: View {
 // MARK: - View UserSettingsView / GraphicUserSettings
 
 struct GraphicUserSettings: View {
+    @EnvironmentObject var simulation : Simulation
+    @EnvironmentObject var patrimoine : Patrimoin
+    @EnvironmentObject var uiState    : UIState
     // si la variable d'état est locale (@State) cela ne fonctionne pas correctement
     @Binding var ownership        : OwnershipNature
     @Binding var evaluationMethod : AssetEvaluationMethod
-
+    
     var body: some View {
         Form {
             Section(footer: Text("Le graphique détaillé de l'évolution dans le temps du bilan d'un individu ne prendra en compte que les biens satisfaisant à ce critère")) {
@@ -66,7 +69,11 @@ struct GraphicUserSettings: View {
                     .pickerStyle(DefaultPickerStyle())
                     .onChange(of     : ownership,
                               perform: { newValue in
-                                UserSettings.shared.ownershipSelection = newValue })
+                                UserSettings.shared.ownershipSelection = newValue
+                                // remettre à zéro la simulation et sa vue
+                                simulation.reset(withPatrimoine: patrimoine)
+                                uiState.resetSimulation()
+                              })
             }
             
             Section(footer: Text("Le graphique détaillé de l'évolution dans le temps du bilan d'un individu prendra en compte cette valeur")) {
@@ -74,7 +81,11 @@ struct GraphicUserSettings: View {
                     .pickerStyle(DefaultPickerStyle())
                     .onChange(of     : evaluationMethod,
                               perform: { newValue in
-                                UserSettings.shared.assetEvaluationMethod = newValue })
+                                UserSettings.shared.assetEvaluationMethod = newValue
+                                // remettre à zéro la simulation et sa vue
+                                simulation.reset(withPatrimoine: patrimoine)
+                                uiState.resetSimulation()
+                              })
             }
         }
     }
@@ -83,12 +94,21 @@ struct GraphicUserSettings: View {
 // MARK: - View UserSettingsView / SimulationUserSettings
 
 struct SimulationUserSettings: View {
+    @EnvironmentObject var simulation : Simulation
+    @EnvironmentObject var patrimoine : Patrimoin
+    @EnvironmentObject var uiState    : UIState
     @AppStorage(UserSettings.simulateVolatility) var simulateVolatility: Bool = false
     
     var body: some View {
         Form {
             Section(footer: Text("En mode Monté-Carlo seulement: simuler la volatilité du cours des actions et des obligations")) {
                 Toggle("Simuler la volatilité des marchés", isOn: $simulateVolatility)
+                    .onChange(of     : simulateVolatility,
+                              perform: { newValue in
+                                // remettre à zéro la simulation et sa vue
+                                simulation.reset(withPatrimoine: patrimoine)
+                                uiState.resetSimulation()
+                              })
             }
         }
     }
