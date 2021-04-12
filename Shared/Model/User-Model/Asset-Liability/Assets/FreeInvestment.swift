@@ -47,8 +47,8 @@ struct FreeInvestement: Identifiable, BundleCodable, FinancialEnvelop {
         FreeInvestement.economyModel.inflation(withMode: simulationMode)
     }
     
-    /// taux à long terme - rendem
-    /// rendement des actions - en moyenne
+    /// averageSecuredRate: taux à long terme - rendement des obligations - en moyenne
+    /// averageStockRate: rendement des actions - en moyenne
     private static var rates: (averageSecuredRate: Double, averageStockRate: Double) { // %
         let rates = FreeInvestement.economyModel.rates(withMode: simulationMode)
         return (rates.securedRate, rates.stockRate)
@@ -157,9 +157,7 @@ struct FreeInvestement: Identifiable, BundleCodable, FinancialEnvelop {
             case .marketRate(let stockRatio):
                 // taux de marché variable
                 let stock = stockRatio / 100.0
-                let rates = FreeInvestement.economyModel.rates(
-                    in       : year,
-                    withMode : FreeInvestement.simulationMode)
+                let rates = FreeInvestement.rates(in: year)
                 // taux d'intérêt composite fonction de la composition du portefeuille
                 let rate = stock * rates.stockRate + (1.0 - stock) * rates.securedRate
                 return rate - FreeInvestement.inflation

@@ -176,8 +176,8 @@ final class Patrimoin: ObservableObject {
         for idx in 0..<assets.freeInvests.items.count {
             switch assets.freeInvests[idx].type {
                 case .lifeInsurance(let periodicSocialTaxes, _):
-                    if periodicSocialTaxes && amount != 0 &&
-                        assets.freeInvests[idx].isFullyOwned(partlyBy: adultsName) {
+                    if periodicSocialTaxes && amount != 0
+                        && assets.freeInvests[idx].isFullyOwned(partlyBy: adultsName) {
                         // investir la totalité du cash
                         assets.freeInvests[idx].add(amount)
                         return
@@ -188,8 +188,8 @@ final class Patrimoin: ObservableObject {
         for idx in 0..<assets.freeInvests.items.count {
             switch assets.freeInvests[idx].type {
                 case .lifeInsurance(let periodicSocialTaxes, _):
-                    if !periodicSocialTaxes && amount != 0 &&
-                        assets.freeInvests[idx].isFullyOwned(partlyBy: adultsName) {
+                    if !periodicSocialTaxes && amount != 0
+                        && assets.freeInvests[idx].isFullyOwned(partlyBy: adultsName) {
                         // investir la totalité du cash
                         assets.freeInvests[idx].add(amount)
                         return
