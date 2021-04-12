@@ -170,53 +170,29 @@ struct BalanceSheetLine {
     
     // MARK: - Initializers
     
-    init(withYear year             : Int,
-         withFamily family         : Family,
-         withPatrimoine patrimoine : Patrimoin) {
+    init(withYear year               : Int,
+         withMembersName membersName : [String],
+         withAssets assets           : [(ownable: Ownable, category: AssetsCategory)],
+         withLiabilities liabilities : [(ownable: Ownable, category: LiabilitiesCategory)]) {
         //        autoreleasepool {
-        self.year        = year
+        self.year = year
         
         // initialiser les dictionnaires
         self.assets      = [AppSettings.shared.allPersonsLabel: ValuedAssets(name: "ACTIF")]
         self.liabilities = [AppSettings.shared.allPersonsLabel: ValuedLiabilities(name : "PASSIF")]
-        family.members.forEach { person in
-            self.assets[person.displayName]      = ValuedAssets(name : "ACTIF")
-            self.liabilities[person.displayName] = ValuedLiabilities(name : "PASSIF")
+        membersName.forEach { name in
+            self.assets[name]      = ValuedAssets(name : "ACTIF")
+            self.liabilities[name] = ValuedLiabilities(name : "PASSIF")
         }
         
         // actifs
-        for asset in patrimoine.assets.realEstates.items.sorted(by:<) {
-            // populate real estate assets
-            appendToAssets(.realEstates, family, asset, year)
-        }
-        for asset in patrimoine.assets.periodicInvests.items.sorted(by:<) {
-            // populate periodic investments assets
-            appendToAssets(.periodicInvests, family, asset, year)
-        }
-        for asset in patrimoine.assets.freeInvests.items.sorted(by:<) {
-            // populate free investment assets
-            appendToAssets(.freeInvests, family, asset, year)
-        }
-        for asset in patrimoine.assets.scpis.items.sorted(by:<) {
-            // populate SCPI assets
-            appendToAssets(.scpis, family, asset, year)
-        }
-        
-        // actifs SCI - SCPI
-        for asset in patrimoine.assets.sci.scpis.items.sorted(by:<) {
-            // populate SCI assets
-            appendToAssets(.sci, family, asset, year, "SCI - ")
+        for asset in assets {
+            appendToAssets(asset.category, membersName, asset.ownable, year)
         }
         
         // dettes
-        for liability in patrimoine.liabilities.debts.items.sorted(by:<) {
-            // populate debt liabilities
-            appendToLiabilities(.debts, family, liability, year)
-        }
-        // emprunts
-        for liability in patrimoine.liabilities.loans.items.sorted(by:<) {
-            // populate loan liabilities
-            appendToLiabilities(.loans, family, liability, year)
+        for liability in liabilities {
+            appendToLiabilities(liability.category, membersName, liability.ownable, year)
         }
         //        }
     }
@@ -224,90 +200,79 @@ struct BalanceSheetLine {
     // MARK: - Methods
     
     fileprivate mutating func appendToAssets(_ category       : AssetsCategory,
-                                             _ family         : Family,
+                                             _ membersName    : [String],
                                              _ asset          : Ownable,
-                                             _ year           : Int,
-                                             _ withNamePrefix : String = "") {
-        assets[AppSettings.shared.allPersonsLabel]!.perCategory[category]?.namedValues.append(
-            (name  : withNamePrefix + asset.name,
-             value : asset.value(atEndOf: year).rounded()))
-        
-        family.members.forEach { person in
-            let isSelected: Bool
-            switch UserSettings.shared.ownershipSelection {
-                
-                case .generatesRevenue:
-                    isSelected = asset.providesRevenue(to: [person.displayName])
-                    
-                case .sellable:
-                    isSelected = asset.isFullyOwned(partlyBy: [person.displayName])
-                    
-                case .all:
-                    isSelected = asset.isPartOfPatrimoine(of: [person.displayName])
-            }
+                                             _ year           : Int) {
+        let namePrefix: String
+        switch category {
             
-            let value: Double
-            switch UserSettings.shared.assetEvaluationMethod {
+            case .sci:
+                namePrefix = "SCI - "
                 
-                case .totalValue:
-                    value = isSelected ?
-                        asset.value(atEndOf: year).rounded()
-                        : 0
-                    
-                case .ownedValue:
-                    value = isSelected ?
-                        asset.ownedValue(by              : person.displayName,
-                                         atEndOf         : year,
-                                         evaluationMethod: .patrimoine).rounded()
-                        : 0
-            }
-            assets[person.displayName]!.perCategory[category]?.namedValues
-                .append((name  : withNamePrefix + asset.name,
+            default:
+                namePrefix = ""
+        }
+        
+        assets[AppSettings.shared.allPersonsLabel]!.perCategory[category]?.namedValues
+            .append((name  : namePrefix + asset.name,
+                     value : asset.value(atEndOf: year).rounded()))
+        
+        membersName.forEach { name in
+            let selected = isSelected(ownable  : asset, name  : name)
+            let value    = graphicValueOf(ownable : asset, isSelected : selected, name : name)
+            
+            assets[name]!.perCategory[category]?.namedValues
+                .append((name  : namePrefix + asset.name,
                          value : value))
         }
     }
     
     fileprivate mutating func appendToLiabilities(_ category       : LiabilitiesCategory,
-                                                  _ family         : Family,
+                                                  _ membersName    : [String],
                                                   _ liability      : Ownable,
-                                                  _ year           : Int,
-                                                  _ withNamePrefix : String = "") {
-        liabilities[AppSettings.shared.allPersonsLabel]!.perCategory[category]?.namedValues.append(
-            (name  : withNamePrefix + liability.name,
-             value : liability.value(atEndOf: year).rounded()))
+                                                  _ year           : Int) {
+        liabilities[AppSettings.shared.allPersonsLabel]!.perCategory[category]?.namedValues
+            .append((name  : liability.name,
+                     value : liability.value(atEndOf: year).rounded()))
         
-        family.members.forEach { person in
-            let isSelected: Bool
-            switch UserSettings.shared.ownershipSelection {
-                
-                case .generatesRevenue:
-                    isSelected = liability.providesRevenue(to: [person.displayName])
-                    
-                case .sellable:
-                    isSelected = liability.isFullyOwned(partlyBy: [person.displayName])
-                    
-                case .all:
-                    isSelected = liability.isPartOfPatrimoine(of: [person.displayName])
-            }
-            
-            let value: Double
-            switch UserSettings.shared.assetEvaluationMethod {
-                
-                case .totalValue:
-                    value = isSelected ?
-                        liability.value(atEndOf: year).rounded()
-                        : 0
-                    
-                case .ownedValue:
-                    value = isSelected ?
-                        liability.ownedValue(by              : person.displayName,
-                                             atEndOf         : year,
-                                             evaluationMethod: .patrimoine).rounded()
-                        : 0
-            }
-            liabilities[person.displayName]!.perCategory[category]?.namedValues
-                .append( (name  : withNamePrefix + liability.name,
+        membersName.forEach { name in
+            let selected = isSelected(ownable: liability, name: name)
+            let value    = graphicValueOf(ownable : liability, isSelected : selected, name : name)
+
+            liabilities[name]!.perCategory[category]?.namedValues
+                .append( (name  : liability.name,
                           value : value))
+        }
+    }
+    
+    fileprivate func isSelected(ownable: Ownable, name: String) -> Bool {
+        switch UserSettings.shared.ownershipSelection {
+            
+            case .generatesRevenue:
+                return ownable.providesRevenue(to: [name])
+                
+            case .sellable:
+                return ownable.isFullyOwned(partlyBy: [name])
+                
+            case .all:
+                return ownable.isPartOfPatrimoine(of: [name])
+        }
+    }
+    
+    fileprivate func graphicValueOf(ownable: Ownable, isSelected: Bool, name: String) -> Double {
+        switch UserSettings.shared.assetEvaluationMethod {
+            
+            case .totalValue:
+                return isSelected ?
+                    ownable.value(atEndOf: year).rounded()
+                    : 0
+                
+            case .ownedValue:
+                return isSelected ?
+                    ownable.ownedValue(by              : name,
+                                       atEndOf         : year,
+                                       evaluationMethod: .patrimoine).rounded()
+                    : 0
         }
     }
     

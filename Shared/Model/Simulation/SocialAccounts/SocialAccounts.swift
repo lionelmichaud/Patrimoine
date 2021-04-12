@@ -240,9 +240,10 @@ struct SocialAccounts {
 
             // construire la ligne annuelle de Bilan de fin d'année
             //-----------------------------------------------------
-            let newBalanceSheetLine = BalanceSheetLine(withYear       : year,
-                                                       withFamily     : family,
-                                                       withPatrimoine : patrimoine)
+            let newBalanceSheetLine = BalanceSheetLine(withYear        : year,
+                                                       withMembersName : family.membersName,
+                                                       withAssets      : patrimoine.assets.allOwnableItems,
+                                                       withLiabilities : patrimoine.liabilities.allOwnableItems)
             balanceArray.append(newBalanceSheetLine)
 
             if family.nbOfAdultAlive(atEndOf: year) < family.nbOfAdultAlive(atEndOf: year-1) {

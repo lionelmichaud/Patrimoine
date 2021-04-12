@@ -14,6 +14,12 @@ struct Liabilities {
     
     var debts : DebtArray
     var loans : LoanArray
+    var allOwnableItems : [(ownable: Ownable, category: LiabilitiesCategory)] {
+        debts.items.sorted(by:<)
+            .map { ($0, LiabilitiesCategory.debts) } +
+        loans.items.sorted(by:<)
+            .map { ($0, LiabilitiesCategory.loans) }
+    }
     
     // MARK: - Initializers
     

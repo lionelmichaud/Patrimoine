@@ -39,6 +39,21 @@ struct Assets {
     var realEstates     : RealEstateArray
     var scpis           : ScpiArray // SCPI hors de la SCI
     var sci             : SCI
+    var allOwnableItems : [(ownable: Ownable, category: AssetsCategory)] {
+        var ownables = [(ownable: Ownable, category: AssetsCategory)]()
+        
+        ownables = periodicInvests.items.sorted(by:<)
+            .map { ($0, AssetsCategory.periodicInvests) }
+        ownables += freeInvests.items.sorted(by:<)
+            .map { ($0, AssetsCategory.freeInvests) }
+        ownables += realEstates.items.sorted(by:<)
+            .map { ($0, AssetsCategory.realEstates) }
+        ownables += scpis.items.sorted(by:<)
+            .map { ($0, AssetsCategory.scpis) }
+        ownables += sci.scpis.items.sorted(by:<)
+            .map { ($0, AssetsCategory.sci) }
+        return ownables
+    }
     
     // MARK: - Initializers
     

@@ -104,7 +104,7 @@ struct SimulationUserSettings: View {
             Section(footer: Text("En mode Monté-Carlo seulement: simuler la volatilité du cours des actions et des obligations")) {
                 Toggle("Simuler la volatilité des marchés", isOn: $simulateVolatility)
                     .onChange(of     : simulateVolatility,
-                              perform: { newValue in
+                              perform: { _ in
                                 // remettre à zéro la simulation et sa vue
                                 simulation.reset(withPatrimoine: patrimoine)
                                 uiState.resetSimulation()

@@ -31,6 +31,14 @@ protocol AdultSpouseProvider {
     func spouseOf(_ member: Adult) -> Adult?
 }
 
+// MARK: - DI: Protocol de service de fourniture de la liste des noms des membres de la famille
+
+protocol MembersNameProvider {
+    var membersName  : [String] { get }
+    var adultsName   : [String] { get }
+    var childrenName : [String] { get }
+}
+
 typealias AdultRelativesProvider = MembersCountProvider & AdultSpouseProvider
 
 // MARK: - DI: Protocol de service d'itération sur les membres du foyer fiscal dans la famille
@@ -494,5 +502,17 @@ extension Family: AdultSpouseProvider {
             }
         }
         return nil
+    }
+}
+
+extension Family: MembersNameProvider {
+    var membersName: [String] {
+        members.map { $0.displayName }
+    }
+    var adultsName: [String] {
+        adults.map { $0.displayName }
+    }
+    var childrenName: [String] {
+        children.map { $0.displayName }
     }
 }

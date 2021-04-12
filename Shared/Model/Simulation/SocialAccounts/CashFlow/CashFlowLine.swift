@@ -126,21 +126,20 @@ struct CashFlowLine {
             computeIrpp(of: family)
             
             /// ISF: calcule de l'impot sur la fortune
-            computeISF(of   : family,
-                       with : patrimoine)
+            computeISF(with : patrimoine)
             /// EXPENSES: compute and populate family expenses
             lifeExpenses.namedValues = family.expenses.namedValueTable(atEndOf: year)
             
             /// LOAN: populate remboursement d'emprunts
             manageLoanCashFlow(for : adultsNames,
-                                 of  : patrimoine)
+                               of  : patrimoine)
             
             /// SUCCESSIONS: calcule des droits de successions y.c. assurances vies + peuple les successions de l'année
             /// SUCCESSIONS: Transférer les biens des personnes décédées dans l'année vers ses héritiers
             manageSuccession(run  : run,
                              of   : family,
                              with : patrimoine)
-
+            
             /// FREE INVEST: populate revenue, des investissements financiers libres et investir/retirer le solde net du cash flow de l'année
             try manageYearlyNetCashFlow(of                  : patrimoine,
                                         for                 : adultsNames,
@@ -200,8 +199,7 @@ struct CashFlowLine {
                                                       value : taxes.irpp.amount.rounded()))
     }
     
-    fileprivate mutating func computeISF(of family       : Family,
-                                         with patrimoine : Patrimoin) {
+    fileprivate mutating func computeISF(with patrimoine : Patrimoin) {
         let taxableAsset = patrimoine.realEstateValue(atEndOf          : year,
                                                       evaluationMethod : .ifi)
         taxes.isf = try! Fiscal.model.isf.isf(taxableAsset: taxableAsset)
