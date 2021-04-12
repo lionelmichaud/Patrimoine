@@ -18,9 +18,9 @@ final class Patrimoin: ObservableObject {
     
     // doit être injecté depuis l'extérieur avant toute instanciation de la classe
     static var family: Family?
-
+    
     // MARK: - Nested Type
-
+    
     struct Memento {
         private(set) var assets      : Assets
         private(set) var liabilities : Liabilities
@@ -30,7 +30,7 @@ final class Patrimoin: ObservableObject {
             self.liabilities = liabilities
         }
     }
-
+    
     // MARK: - Static Methods
     
     /// Définir le mode de simulation à utiliser pour tous les calculs futurs
@@ -40,21 +40,21 @@ final class Patrimoin: ObservableObject {
     }
     
     // MARK: - Properties
-
+    
     @Published var assets      : Assets
     @Published var liabilities : Liabilities
     var memento: Memento?
     
     // MARK: - Initializers
-
+    
     init() {
         self.assets      = Assets(with      : Patrimoin.family)
         self.liabilities = Liabilities(with : Patrimoin.family)
         //self.save()
     }
-
+    
     // MARK: - Methods
-
+    
     func reload() {
         assets      = Assets(with      : Patrimoin.family)
         liabilities = Liabilities(with : Patrimoin.family)
@@ -65,7 +65,7 @@ final class Patrimoin: ObservableObject {
         assets.value(atEndOf: year) +
             liabilities.value(atEndOf: year)
     }
-      
+    
     /// Réinitialiser les valeurs courantes des investissements libres
     /// - Warning:
     ///   - Doit être appelée après le chargement d'un objet FreeInvestement depuis le fichier JSON
@@ -73,14 +73,14 @@ final class Patrimoin: ObservableObject {
     func resetFreeInvestementCurrentValue() {
         assets.resetFreeInvestementCurrentValue()
     }
-
+    
     /// Sauvegarder l'état courant du Patrimoine
     /// - Warning: Doit être appelée avant toute simulation pouvant affecter le Patrimoine (succession)
     func save() {
         memento = Memento(assets      : assets,
                           liabilities : liabilities)
     }
-
+    
     /// Recharger les actifs et passifs à partir des de la dernière sauvegarde pour repartir d'une situation initiale sans aucune modification
     /// - Warning: Doit être appelée après toute simulation ayant affectée le Patrimoine (succession)
     func restore() {
@@ -162,7 +162,7 @@ final class Patrimoin: ObservableObject {
             }
         }
     }
-
+    
     /// Ajouter la capacité d'épargne à l'investissement libre de type Assurance vie de meilleur rendement
     /// dont un des adultes est un des PP
     /// - Parameters:
@@ -219,28 +219,37 @@ final class Patrimoin: ObservableObject {
         print("Il n'y a plus de réceptacle pour receuillir les flux de trésorerie positifs")
     }
     
-    /// Retirer le montant d'un investissement libre: d'abord PEA ensuite Assurance vie puis autre
+    /// Calcule la valeur cumulée des FreeInvestments possédée par une personnne
     /// - Parameters:
-    ///   - patrimoine: du patrimoine
-    ///   - amount: découvert en fin d'année à combler = montant à désinvestir
-    ///   - lifeInsuranceRebate: franchise d'imposition sur les plus values
-    ///   - year: année en cours
-    /// - Throws: Si pas assez de capital -> CashFlowError.notEnoughCash(missingCash: amountRemainingToRemove)
-    /// - Returns: taxable Interests
-    func getCashFromInvestement(thisAmount amount   : Double, // swiftlint:disable:this cyclomatic_complexity
-                                atEndOf year        : Int,
-                                for adultsName      : [String],
-                                taxes               : inout [TaxeCategory: NamedValueTable],
-                                lifeInsuranceRebate : inout Double) throws -> Double {
-        var amountRemainingToRemove = amount
-        var totalTaxableInterests   = 0.0
-        
-        assets.freeInvests.items.sort(by: {$0.averageInterestRate < $1.averageInterestRate})
-        
+    ///   - name: nom de la pesonne
+    ///   - year: année d'évaluation
+    /// - Returns: valeur cumulée des FreeInvestments possédée
+    /// - On ne tient compte que des actifs détenus au moins en partie en PP
+    fileprivate func totalFreeInvestementsValue(ownedBy name : String,
+                                                atEndOf year : Int) -> Double {
+        assets.freeInvests.items.reduce(0) { result, freeInvest in
+            if freeInvest.ownership.isAFullOwner(ownerName: name) {
+                return result + freeInvest.ownedValue(by               : name,
+                                                      atEndOf          : year,
+                                                      evaluationMethod : .patrimoine)
+            } else {
+                return result
+            }
+        }
+    }
+    
+    // swiftlint:disable cyclomatic_complexity
+    // swiftlint:disable function_parameter_count
+    fileprivate func getCashFlowFromInvestement(_ name                    : String,
+                                                _ year                    : Int,
+                                                _ amountRemainingToRemove : inout Double,
+                                                _ totalTaxableInterests   : inout Double,
+                                                _ lifeInsuranceRebate     : inout Double,
+                                                _ taxes                   : inout [TaxeCategory: NamedValueTable]) {
         // PEA: retirer le montant d'un investissement libre: d'abord le PEA procurant le moins bon rendement
         for idx in 0..<assets.freeInvests.items.count
         where assets.freeInvests[idx].type == .pea
-            && (assets.freeInvests[idx].isFullyOwned(partlyBy: adultsName) || adultsName.isEmpty) {
+            && (name == "" || assets.freeInvests[idx].ownership.isAFullOwner(ownerName: name)) {
             // tant que l'on a pas retiré le montant souhaité
             // retirer le montant du PEA s'il y en avait assez à la fin de l'année dernière
             if amountRemainingToRemove > 0.0 && assets.freeInvests[idx].value(atEndOf: year-1) > 0.0 {
@@ -248,7 +257,7 @@ final class Patrimoin: ObservableObject {
                 amountRemainingToRemove -= removal.revenue
                 // IRPP: les plus values PEA ne sont pas imposables à l'IRPP
                 // Prélèvements sociaux: prélevés à la source sur le montant brut du retrait donc pas à payer dans le futur
-                if amountRemainingToRemove <= 0.0 { return totalTaxableInterests }
+                if amountRemainingToRemove <= 0.0 { break }
             }
         }
         
@@ -260,7 +269,7 @@ final class Patrimoin: ObservableObject {
                     // retirer le montant de l'Assurances vie s'il y en avait assez à la fin de l'année dernière
                     if amountRemainingToRemove > 0.0 &&
                         assets.freeInvests[idx].value(atEndOf: year-1) > 0.0
-                        && (assets.freeInvests[idx].isFullyOwned(partlyBy: adultsName) || adultsName.isEmpty) {
+                        && (name == "" || assets.freeInvests[idx].ownership.isAFullOwner(ownerName: name)) {
                         let removal = assets.freeInvests[idx].remove(netAmount: amountRemainingToRemove)
                         amountRemainingToRemove -= removal.revenue
                         // IRPP: part des produit de la liquidation inscrit en compte courant imposable à l'IRPP après déduction de ce qu'il reste de franchise
@@ -271,7 +280,7 @@ final class Patrimoin: ObservableObject {
                         // géré comme un revenu en report d'imposition (dette)
                         totalTaxableInterests += taxableInterests
                         // Prélèvements sociaux => prélevés à la source sur le montant brut du retrait donc pas à payer dans le futur
-                        if amountRemainingToRemove <= 0.0 { return totalTaxableInterests }
+                        if amountRemainingToRemove <= 0.0 { break }
                     }
                 default:
                     ()
@@ -281,7 +290,7 @@ final class Patrimoin: ObservableObject {
         // AUTRE: retirer le montant d'un investissement libre: d'abord celui procurant le moins bon rendement
         for idx in 0..<assets.freeInvests.items.count
         where assets.freeInvests[idx].type == .other
-            && (assets.freeInvests[idx].isFullyOwned(partlyBy: adultsName) || adultsName.isEmpty) {
+            && (name == "" || assets.freeInvests[idx].ownership.isAFullOwner(ownerName: name)) {
             // tant que l'on a pas retiré le montant souhaité
             // retirer le montant s'il y en avait assez à la fin de l'année dernière
             if amountRemainingToRemove > 0.0 && assets.freeInvests[idx].value(atEndOf: year-1) > 0.0 {
@@ -293,8 +302,66 @@ final class Patrimoin: ObservableObject {
                 taxes[.socialTaxes]?.namedValues.append((name : assets.freeInvests[idx].name,
                                                          value: removal.socialTaxes))
                 
-                if amountRemainingToRemove <= 0.0 { return totalTaxableInterests }
+                if amountRemainingToRemove <= 0.0 { break }
             }
+        }
+    }
+    // swiftlint:enable cyclomatic_complexity
+    // swiftlint:enable function_parameter_count
+
+    /// Retirer le montant d'un investissement libre: d'abord PEA ensuite Assurance vie puis autre
+    /// - Parameters:
+    ///   - patrimoine: du patrimoine
+    ///   - amount: découvert en fin d'année à combler = montant à désinvestir
+    ///   - lifeInsuranceRebate: franchise d'imposition sur les plus values
+    ///   - year: année en cours
+    /// - Throws: Si pas assez de capital -> CashFlowError.notEnoughCash(missingCash: amountRemainingToRemove)
+    /// - Returns: taxable Interests
+    func getCashFromInvestement(thisAmount amount   : Double,
+                                atEndOf year        : Int,
+                                for adultsName      : [String],
+                                taxes               : inout [TaxeCategory: NamedValueTable],
+                                lifeInsuranceRebate : inout Double) throws -> Double {
+        var amountRemainingToRemove = amount
+        var totalTaxableInterests   = 0.0
+        
+        // trier les adultes vivants par ordre de capital décroissant (en termes de FreeInvestement)
+        var sortedNames = [String]()
+        if adultsName.count > 1 {
+            sortedNames = adultsName.sorted {
+                totalFreeInvestementsValue(ownedBy: $0, atEndOf: year) >
+                    totalFreeInvestementsValue(ownedBy: $1, atEndOf: year)
+            }
+        } else {
+            sortedNames = adultsName
+        }
+        sortedNames.forEach { name in
+            print("nom: \(name)")
+            print("richesse: \(totalFreeInvestementsValue(ownedBy: name, atEndOf: year).rounded())")
+        }
+        
+        assets.freeInvests.items.sort(by: {$0.averageInterestRate < $1.averageInterestRate})
+        
+        // retirer le cash du capital de la personne la plus riche d'abord
+        for name in sortedNames {
+            getCashFlowFromInvestement(name,
+                                       year,
+                                       &amountRemainingToRemove,
+                                       &totalTaxableInterests,
+                                       &lifeInsuranceRebate,
+                                       &taxes)
+            if amountRemainingToRemove <= 0 { break }
+        }
+        
+        // Note: s'il n'y a plus d'adulte vivant on prend dans le premier actif qui vient
+        // ce sont les héritiers qui payent
+        if amountRemainingToRemove > 0.0 && adultsName.count == 0 {
+            getCashFlowFromInvestement("",
+                                       year,
+                                       &amountRemainingToRemove,
+                                       &totalTaxableInterests,
+                                       &lifeInsuranceRebate,
+                                       &taxes)
         }
         
         if amountRemainingToRemove > 0.0 {
