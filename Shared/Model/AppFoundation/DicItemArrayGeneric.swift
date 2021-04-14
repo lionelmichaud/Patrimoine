@@ -10,13 +10,26 @@ import Foundation
 
 // MARK: - Dictionnaire de [Category : Table d'Item Valuable and Namable]
 
-struct DictionaryOfItemArray <ItemCategory, ArrayOfItems: NameableValuableArray>
-where ItemCategory: PickableEnum, ItemCategory: Codable {
+struct DictionaryOfItemArray <ItemCategory, ArrayOfItems>: CustomStringConvertible
+where ItemCategory: PickableEnum,
+      ItemCategory: Codable,
+      ArrayOfItems: NameableValuableArray,
+      ArrayOfItems: CustomStringConvertible {
     
     // properties
     
     var perCategory = [ItemCategory: ArrayOfItems]()
     
+    var description: String {
+        var desc = ""
+        perCategory.sorted(by: \.key.displayString).forEach { cat, items in
+            desc += "- \(cat.description.uppercased()):\n"
+            desc += items.description
+            desc += "\n"
+        }
+        return desc
+    }
+
     // initialization
     
     /// Lire toutes les dépenses dans des fichiers au format JSON.

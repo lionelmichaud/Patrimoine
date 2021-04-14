@@ -42,6 +42,7 @@
 		7924F1AF25B3724D001CC252 /* RegimeGeneralTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7924F1AE25B3724D001CC252 /* RegimeGeneralTest.swift */; };
 		7924F1B525B37291001CC252 /* RegimeAgircTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7924F1B425B37291001CC252 /* RegimeAgircTest.swift */; };
 		7924F1B925B37316001CC252 /* PensionReversionTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7924F1B825B37316001CC252 /* PensionReversionTest.swift */; };
+		792E88822626098400964281 /* Family+Protocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = 792E88812626098400964281 /* Family+Protocols.swift */; };
 		792F38D125B093DB004BB7CD /* RateGrid.swift in Sources */ = {isa = PBXBuildFile; fileRef = 792F38D025B093DB004BB7CD /* RateGrid.swift */; };
 		792F38D525B0947C004BB7CD /* RealEstateCapitalGainTaxesModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 792F38D425B0947C004BB7CD /* RealEstateCapitalGainTaxesModel.swift */; };
 		792F38D925B094C4004BB7CD /* RealEstateCapitalGainTaxesModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 792F38D825B094C4004BB7CD /* RealEstateCapitalGainTaxesModelTests.swift */; };
@@ -391,6 +392,7 @@
 		7924F1AE25B3724D001CC252 /* RegimeGeneralTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegimeGeneralTest.swift; sourceTree = "<group>"; };
 		7924F1B425B37291001CC252 /* RegimeAgircTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegimeAgircTest.swift; sourceTree = "<group>"; };
 		7924F1B825B37316001CC252 /* PensionReversionTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PensionReversionTest.swift; sourceTree = "<group>"; };
+		792E88812626098400964281 /* Family+Protocols.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Family+Protocols.swift"; sourceTree = "<group>"; };
 		792F38D025B093DB004BB7CD /* RateGrid.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RateGrid.swift; sourceTree = "<group>"; };
 		792F38D425B0947C004BB7CD /* RealEstateCapitalGainTaxesModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealEstateCapitalGainTaxesModel.swift; sourceTree = "<group>"; };
 		792F38D825B094C4004BB7CD /* RealEstateCapitalGainTaxesModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealEstateCapitalGainTaxesModelTests.swift; sourceTree = "<group>"; };
@@ -1333,6 +1335,7 @@
 			isa = PBXGroup;
 			children = (
 				7994892A249E4FC200DAFF1E /* Family.swift */,
+				792E88812626098400964281 /* Family+Protocols.swift */,
 				7994892B249E4FC200DAFF1E /* Person.swift */,
 				79D84E2824A28E6300CBC78E /* Adult.swift */,
 				79DB52D125866B7F00BC6E84 /* Adult+Unemployement.swift */,
@@ -2040,6 +2043,7 @@
 				79DACB3A256BBFDE00DED381 /* KpiSectionView.swift in Sources */,
 				79948984249E4FC200DAFF1E /* Balance Sheet.swift in Sources */,
 				796135D225B21B5800C64230 /* FinancialRevenuTaxesModel.swift in Sources */,
+				792E88822626098400964281 /* Family+Protocols.swift in Sources */,
 				793BA8E92539FFF7003DCFA4 /* ModelEconomyView.swift in Sources */,
 				79E4C54726138DE300AD3CCE /* SimulationLogger.swift in Sources */,
 				79E3629B253A46AB00450BEE /* BetaRandomizerView.swift in Sources */,

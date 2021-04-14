@@ -11,16 +11,16 @@ import Foundation
 // MARK: -
 final class Child: Person {
     
-    // nested types
+    // MARK: - nested types
     
     private enum CodingKeys : String, CodingKey {
         case age_Of_University, age_Of_Independence
     }
     
-    // properties
+    // MARK: - properties
     
     @Published var ageOfUniversity: Int = 18
-    var dateOfUniversity: Date { // computed
+    var dateOfUniversity    : Date { // computed
         dateOfUniversityComp.date!
     }
     var dateOfUniversityComp: DateComponents { // computed
@@ -28,24 +28,29 @@ final class Child: Person {
     }
     
     @Published var ageOfIndependence: Int = 24
-    var dateOfIndependence: Date { // computed
+    var dateOfIndependence    : Date { // computed
         dateOfIndependenceComp.date!
     }
     var dateOfIndependenceComp: DateComponents { // computed
         DateComponents(calendar: Date.calendar, year: birthDate.year + ageOfIndependence, month: 09, day: 30)
     }
-    
+    override var datedLifeEvents: DatedLifeEvents {
+        var dic = super.datedLifeEvents
+        dic[.debutEtude]   = dateOfUniversity.year
+        dic[.independance] = dateOfIndependence.year
+        return dic
+    }
     override var description: String {
-        return super.description +
+        super.description +
         """
-        age at university:  \(ageOfUniversity) ans
-        date of university: \(mediumDateFormatter.string(from: dateOfUniversity))
-        age of independance:  \(ageOfIndependence) ans
-        date of independance: \(mediumDateFormatter.string(from: dateOfIndependence)) \n
+        - age at university:  \(ageOfUniversity) ans
+        - date of university: \(mediumDateFormatter.string(from: dateOfUniversity))
+        - age of independance:  \(ageOfIndependence) ans
+        - date of independance: \(mediumDateFormatter.string(from: dateOfIndependence)) \n
         """
     }
     
-    // initialization
+    // MARK: - initialization
     
     required init(from decoder: Decoder) throws {
         // Get our container for this subclass' coding keys
@@ -65,7 +70,7 @@ final class Child: Person {
         super.init(sexe: sexe, givenName: givenName, familyName: familyName, birthDate: birthDate, ageOfDeath: ageOfDeath)
     }
     
-    // methods
+    // MARK: - methods
     
     override func encode(to encoder: Encoder) throws {
         try super.encode(to: encoder)
@@ -118,13 +123,5 @@ final class Child: Person {
             case .liquidationPension:
                 return nil
         }
-    }
-    
-    override func print() {
-        super.print()
-        Swift.print("       age at university: ", ageOfUniversity, "years old")
-        Swift.print("       date of university:", mediumDateFormatter.string(from: dateOfUniversity))
-        Swift.print("       age of independance: ", ageOfIndependence, "years old")
-        Swift.print("       date of independance:", mediumDateFormatter.string(from: dateOfIndependence))
     }
 }

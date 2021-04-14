@@ -1,53 +1,6 @@
 import Foundation
 import TypePreservingCodingAdapter // https://github.com/IgorMuzyka/Type-Preserving-Coding-Adapter.git
 
-// MARK: - DI: Protocol de service de fourniture de l'age d'une personne
-
-protocol PersonAgeProvider {
-    func ageOf(_ name: String, _ year: Int) -> Int
-}
-
-// MARK: - DI: Protocol de service de fourniture de l'année d'un événement de vie d'une personne
-
-protocol PersonEventYearProvider {
-    func yearOf(lifeEvent : LifeEvent,
-                for name  : String) -> Int?
-    func yearOf(lifeEvent : LifeEvent,
-                for group : GroupOfPersons,
-                order     : SoonestLatest) -> Int?
-}
-
-// MARK: - DI: Protocol de service de fourniture de dénombrement dans la famille
-
-protocol MembersCountProvider {
-    var nbOfChildren: Int { get }
-    func nbOfAdultAlive(atEndOf year: Int) -> Int
-    func nbOfFiscalChildren(during year: Int) -> Int
-}
-
-// MARK: - DI: Protocol de service de fourniture de l'époux d'un adulte
-
-protocol AdultSpouseProvider {
-    func spouseOf(_ member: Adult) -> Adult?
-}
-
-// MARK: - DI: Protocol de service de fourniture de la liste des noms des membres de la famille
-
-protocol MembersNameProvider {
-    var membersName  : [String] { get }
-    var adultsName   : [String] { get }
-    var childrenName : [String] { get }
-}
-
-typealias AdultRelativesProvider = MembersCountProvider & AdultSpouseProvider
-
-// MARK: - DI: Protocol de service d'itération sur les membres du foyer fiscal dans la famille
-
-protocol FiscalHouseholdSumator {
-    func sum(atEndOf year : Int,
-             memberValue  : (String) -> Double) -> Double
-}
-
 // MARK: - Class Family: la Famille, ses membres, leurs actifs et leurs revenus
 
 /// la Famille, ses membres, leurs actifs et leurs revenus
@@ -99,6 +52,14 @@ final class Family: ObservableObject {
     }
     var children: [Person] {
         members.filter {$0 is Child}
+    }
+
+    var familyDatedLifeEvents: FamilyDatedLifeEvents {
+        var dic = FamilyDatedLifeEvents()
+        members.forEach { person in
+            dic[person.displayName] = person.datedLifeEvents
+        }
+        return dic
     }
 
     // MARK: - Initialization
@@ -347,46 +308,30 @@ final class Family: ObservableObject {
     }
     
     func print() {
-        Swift.print("FAMILLE:")
-        Swift.print("  number of adults in the family:", nbOfAdults)
-        Swift.print("  number of children in the family:", nbOfChildren)
-        Swift.print("  family members:")
-        for person in members {
-            person.print()
-        }
-        Swift.print("  family net income:    ", workNetIncome, "euro")
-        Swift.print("  family taxable income:", workTaxableIncome, "euro")
-        Swift.print("  family income tax quotient:", familyQuotient)
-        Swift.print("  family income taxes:", irpp, "euro")
-        // investissement périodiques
-        //        Swift.print("  Periodic investements: \(periodicInvests.count)")
-        //        for periodicInvestment in periodicInvests { periodicInvestment.print() }
-        //        // investissement libres
-        //        Swift.print("  Free investements: \(freeInvests.count)")
-        //        for freeInvestement in freeInvests { freeInvestement.print() }
-        //        // investissement biens immobiliers
-        //        Swift.print("  Real estate assets: \(realEstateAssets.count)")
-        //        for asset in realEstateAssets { asset.print() }
-        //        // investissement SCPI
-        //        Swift.print("  SCPI: \(scpis.count)")
-        //        for scpi in scpis { scpi.print() }
-        //        // SCI
-        //        sci.print()
-        //        // Emprunts
-        //        Swift.print("  Emprunts: \(loans.count)")
-        //        for loan in loans { loan.print() }
-        //        // Dettes
-        //        Swift.print("  Dettes: \(debts.count)")
-        //        for debt in debts { debt.print() }
-        //        // Dépenses
-        //        Swift.print("  Expenses: \(listOfexpenses.expenses.count)")
-        //        for expense in listOfexpenses.expenses { expense.print() }
     }
 }
 
 extension Family: CustomStringConvertible {
-    var description      : String {
-        return members.debugDescription + "\n"
+    var description: String {
+        var desc =
+        """
+        FAMILLE:
+        - Nombre d'adultes davarla famille: \(nbOfAdults)
+        - Nombre d'enfants dans la famille: \(nbOfChildren)
+        - family net income:     \(workNetIncome.€String)
+        - family taxable income: \(workTaxableIncome.€String)
+        - family income tax quotient: \(familyQuotient)
+        - family income taxes: \(irpp.€String)
+        - MEMBRES DE LA FAMILLE:
+        """
+        members.forEach { member in
+            desc += member.description.withPrefixedSplittedLines("  ")
+        }
+        desc += "\n"
+        desc += "- DEPENSES:\n"
+        desc += expenses.description.withPrefixedSplittedLines("  ")
+        
+        return desc
     }
 }
 

@@ -57,7 +57,7 @@ enum Seniority: Int, PickableEnum {
 }
 
 // MARK: - Person
-class Person : ObservableObject, Identifiable, CustomStringConvertible, Codable {
+class Person : ObservableObject, Identifiable, Codable, CustomStringConvertible {
     
     // MARK: - Nested types
 
@@ -128,16 +128,20 @@ class Person : ObservableObject, Identifiable, CustomStringConvertible, Codable 
     }
     var displayName           : String = ""
     var displayBirthDate      : String = ""
+    var datedLifeEvents       : DatedLifeEvents {
+        return [.deces:yearOfDeath]
+    }
     var description           : String {
         return """
-        NAME: \(displayName)
-        seniority: \(String(describing: type(of: self)))
-        sexe:      \(sexe)
-        birthdate: \(mediumDateFormatter.string(from: birthDate))
-        age:       \(ageComponents.description)
-        age of death:  \(ageOfDeath)
-        year of death: \(yearOfDeath)
         
+        NAME: \(displayName)
+        - seniority: \(String(describing: type(of: self)))
+        - sexe:      \(sexe)
+        - birthdate: \(mediumDateFormatter.string(from: birthDate))
+        - age:       \(ageComponents.description)
+        - age of death:  \(ageOfDeath)
+        - year of death: \(yearOfDeath)
+
         """
     }
     
@@ -225,7 +229,7 @@ class Person : ObservableObject, Identifiable, CustomStringConvertible, Codable 
                 return nil
         }
     }
-    
+        
     /// Réinitialiser les prioriétés aléatoires des membres
     func nextRandomProperties() {
         switch self.sexe {
@@ -237,14 +241,6 @@ class Person : ObservableObject, Identifiable, CustomStringConvertible, Codable 
         }
         // on ne peut mourire à un age < à celui que l'on a déjà
         ageOfDeath = max(ageOfDeath, age(atEndOf: Date.now.year))
-    }
-    
-    func print() {
-        Swift.print("    ", displayName, ":")
-        Swift.print("       birthdate:", mediumDateFormatter.string(from: birthDate))
-        Swift.print("       age:", ageComponents)
-        Swift.print("       age of death:", ageOfDeath)
-        Swift.print("       year of death:", yearOfDeath)
     }
 }
 

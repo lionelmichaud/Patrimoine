@@ -66,6 +66,30 @@ extension WorkIncomeType: PickableIdentifiableEnum {
                 return "Chiffre d'affaire"
         }
     }
+    
+    public var description: String {
+        switch self {
+            
+            case let .salary(brutSalary, taxableSalary, netSalary, fromDate, healthInsurance):
+                return
+                    """
+                    Salaire:
+                    - A partir du: \(fromDate.stringMediumDate)
+                    - Brut:      \(brutSalary.€String)
+                    - Net:       \(netSalary.€String)
+                    - Coût annuel mutuelle: \(healthInsurance.€String)
+                    - Imposable: \(taxableSalary.€String) (avant abattement)
+                    """
+                
+            case let .turnOver(BNC, incomeLossInsurance):
+                return
+                    """
+                    Chiffre d'affaire:
+                    - BNC: \(BNC.€String)
+                    - Coût annuel assurance perte de revenu: \(incomeLossInsurance.€String)
+                    """
+        }
+    }
 }
 
 extension WorkIncomeType: Codable {

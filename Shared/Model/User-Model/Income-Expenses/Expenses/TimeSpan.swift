@@ -312,7 +312,7 @@ extension TimeSpan: CustomStringConvertible {
                 return "A partir de \(from) (inclus)"
                 
             case .ending (let to):
-                return "Jusqu'en \(to.year ?? -1) (exclu) on event: \(String(describing: to.event))"
+                return "Jusqu'à \(to) (exclu)"
                 
             case .spanning (let from, let to):
                 return "De \(from) (inclus) à \(to) (exclu)"

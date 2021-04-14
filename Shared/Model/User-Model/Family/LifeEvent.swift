@@ -75,7 +75,7 @@ struct DateBoundary: Hashable, Codable {
 extension DateBoundary: CustomStringConvertible {
     var description: String {
         if let lifeEvent = self.event {
-            return lifeEvent.description
+            return "\(lifeEvent.description) de \(name ?? group?.description ?? "nil") en \(year ?? -1)"
         } else {
             return String(fixedYear)
         }
@@ -84,7 +84,7 @@ extension DateBoundary: CustomStringConvertible {
 
 // MARK: - Evénement de vie
 
-enum LifeEvent: String, PickableEnum, Codable, CustomStringConvertible {
+enum LifeEvent: String, PickableEnum, Codable {
     case debutEtude         = "Début des études supérieurs"
     case independance       = "Indépendance financière"
     case cessationActivite  = "Fin d'activité professionnelle"
@@ -96,10 +96,6 @@ enum LifeEvent: String, PickableEnum, Codable, CustomStringConvertible {
     
     var pickerString: String {
         return self.rawValue
-    }
-    
-    var description: String {
-        pickerString
     }
     
     // True si l'événement est spécifique des Adultes
@@ -128,9 +124,12 @@ enum LifeEvent: String, PickableEnum, Codable, CustomStringConvertible {
     }
 }
 
+typealias DatedLifeEvents = [LifeEvent:Int]
+typealias FamilyDatedLifeEvents = [String:DatedLifeEvents]
+
 // MARK: - Groupes de personnes
 
-enum GroupOfPersons: String, PickableEnum, Codable, CustomStringConvertible {
+enum GroupOfPersons: String, PickableEnum, Codable {
     case allAdults    = "Tous les Adultes"
     case allChildrens = "Tous les Enfants"
     case allPersons   = "Toutes les Personnes"
@@ -140,15 +139,11 @@ enum GroupOfPersons: String, PickableEnum, Codable, CustomStringConvertible {
     var pickerString: String {
         return self.rawValue
     }
-
-    var description: String {
-        pickerString
-    }
 }
 
 // MARK: - Date au plus tôt ou au plus tard
 
-enum SoonestLatest: String, PickableEnum, Codable, CustomStringConvertible {
+enum SoonestLatest: String, PickableEnum, Codable {
     case soonest = "Date au plus tôt"
     case latest  = "Date au plus tard"
     
@@ -156,9 +151,5 @@ enum SoonestLatest: String, PickableEnum, Codable, CustomStringConvertible {
     
     var pickerString: String {
         return self.rawValue
-    }
-
-    var description: String {
-        pickerString
     }
 }

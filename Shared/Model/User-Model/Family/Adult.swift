@@ -353,19 +353,26 @@ final class Adult: Person { // swiftlint:disable:this type_body_length
         return yearOfDeath - nbOfYearOfDependency
     } // computed
     
+    override var datedLifeEvents: DatedLifeEvents {
+        var dic = super.datedLifeEvents
+        dic[.cessationActivite]  = dateOfRetirement.year
+        dic[.liquidationPension] = dateOfPensionLiquid.year
+        dic[.dependence]         = yearOfDependency
+        return dic
+    }
     override var description: String {
         return super.description +
-            """
-        age of retirement:  \(ageOfRetirementComp)
-        date of retirement: \(dateOfRetirement.stringMediumDate)
-        age of AGIRC pension liquidation:  \(ageOfAgircPensionLiquidComp)
-        date of AGIRC pension liquidation: \(dateOfAgircPensionLiquid.stringMediumDate)
-        age of pension liquidation:  \(ageOfPensionLiquidComp)
-        date of pension liquidation: \(dateOfPensionLiquid.stringMediumDate)
-        number of children: \(nbOfChildBirth)
-        type de revenus: \(workIncome?.displayString ?? "aucun")
-        net income for living: \(workLivingIncome.€String)
-        taxable income: \(workTaxableIncome.€String) \n
+        """
+        - age of retirement:  \(ageOfRetirementComp)
+        - date of retirement: \(dateOfRetirement.stringMediumDate)
+        - age of AGIRC pension liquidation:  \(ageOfAgircPensionLiquidComp)
+        - date of AGIRC pension liquidation: \(dateOfAgircPensionLiquid.stringMediumDate)
+        - age of pension liquidation:  \(ageOfPensionLiquidComp)
+        - date of pension liquidation: \(dateOfPensionLiquid.stringMediumDate)
+        - number of children: \(nbOfChildBirth)
+        - taxable income: \(workTaxableIncome.€String)
+        - Revenu:\(workIncome?.description.withPrefixedSplittedLines("  ") ?? "aucun")
+          - Imposable: \(workLivingIncome.€String) (après abattement)\n
         """
     }
     
@@ -530,19 +537,5 @@ final class Adult: Person { // swiftlint:disable:this type_body_length
         
         // pas de dépendance avant l'âge de 65 ans
         nbOfYearOfDependency = min(nbOfYearOfDependency, zeroOrPositive(ageOfDeath - 65))
-    }
-
-    override func print() {
-        super.print()
-        Swift.print("       date of retirement:", dateOfRetirementComp)
-        Swift.print("       age of retirement:", ageOfRetirementComp)
-        Swift.print("       date of AGIRC pension liquidation:", dateOfAgircPensionLiquidComp)
-        Swift.print("       age of AGIRC pension liquidation:", ageOfAgircPensionLiquidComp)
-        Swift.print("       date of pension liquidation:", dateOfPensionLiquidComp)
-        Swift.print("       age of pension liquidation:", ageOfPensionLiquidComp)
-        Swift.print("       number of children:", nbOfChildBirth)
-        Swift.print("      ", workIncome ?? "none", "euro")
-        Swift.print("       net income for living:", workLivingIncome, "euro")
-        Swift.print("       taxable income:", workTaxableIncome, "euro")
     }
 }

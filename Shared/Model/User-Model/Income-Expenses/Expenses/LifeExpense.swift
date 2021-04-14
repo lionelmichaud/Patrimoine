@@ -35,6 +35,17 @@ struct ExpenseArray: NameableValuableArray {
     }
     
 }
+
+extension ExpenseArray: CustomStringConvertible {
+    var description: String {
+        var desc = ""
+        items.sorted().forEach { expense in
+            desc += "\(expense.description.withPrefixedSplittedLines("  "))\n"
+        }
+        return desc
+    }
+}
+
 //typealias ExpenseArray = ItemArray<LifeExpense>
 
 // MARK: - Dépense de la famille
