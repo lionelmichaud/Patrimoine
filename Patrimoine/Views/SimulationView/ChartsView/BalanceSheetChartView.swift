@@ -70,14 +70,16 @@ struct BalanceSheetDetailedChartView: View {
         """
         Evolution dans le temps des valeurs de l'ensemble des biens (actif et passif) détenus
         par l'ensemble des membres de la famille ou par un individu en particulier.
-
+        Evolution du solde net.
         Détail par catégorie d'actif / passif.
+
         Utiliser la loupe 🔍 pour filtrer les catégories d'actif / passif.
+        Utiliser le bouton 🔳 pour faire apparaître un second grahique présentant l'ordre chronologique des événemnts de vie de chaque membre de la famille
+        Utiliser le bouton 📷 pour placer une copie d'écran dans votre album photo.
 
         Lorsqu'un seul individu est sélectionné, les actifs sont évalués selon une méthode
         et selon un filtre définis dans les préférences ⚙️.
 
-        Evolution du solde net.
         """
 
     var body: some View {

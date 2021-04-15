@@ -61,6 +61,7 @@ struct CashFlowDetailedChartView: View {
     @EnvironmentObject var family     : Family
     @EnvironmentObject var simulation : Simulation
     @EnvironmentObject var uiState    : UIState
+    @State private var lifeEventChatIsPresented = false
     @State private var menuIsPresented = false
     let menuWidth: CGFloat = 200
     @State private var showInfoPopover = false
@@ -68,11 +69,12 @@ struct CashFlowDetailedChartView: View {
     let popOverMessage =
         """
         Evolution dans le temps des des flux de trésorerie annuels de l'ensemble des membres de la famille.
-
-        Détail par catégorie de dépense / revenus.
-        Utiliser la loupe 🔍 pour filtrer les catégories de dépense / revenus.
-
         Evolution du solde net.
+        Détail par catégorie de dépense / revenus.
+
+        Utiliser le bouton 🔍 pour filtrer les catégories de dépense / revenus.
+        Utiliser le bouton 🔳 pour faire apparaître un second grahique présentant l'ordre chronologique des événemnts de vie de chaque membre de la famille
+        Utiliser le bouton 📷 pour placer une copie d'écran dans votre album photo.
         """
 
     var body: some View {
@@ -93,7 +95,7 @@ struct CashFlowDetailedChartView: View {
                             }
                         }
                     }
-                    // graphique
+                    // graphique Cash-Flow
                     CashFlowStackedBarChartView(socialAccounts: self.$simulation.socialAccounts,
                                                 title         : self.simulation.title,
                                                 combination   : self.uiState.cfChartState.combination,
@@ -101,6 +103,11 @@ struct CashFlowDetailedChartView: View {
                                                 expenses      : family.expenses,
                                                 selectedExpenseCategory: self.uiState.cfChartState.selectedExpenseCategory)
                         .padding(.trailing, 4)
+                    // Graphique Evénement de Vie
+                    if lifeEventChatIsPresented {
+                        FamilyLifeEventChartView(endDate: 2054)
+                            .padding(.trailing, 4)
+                    }
                 }
                 .frame(width: geometry.size.width, height: geometry.size.height)
                 .offset(x: self.menuIsPresented ? self.menuWidth : 0)
@@ -126,6 +133,11 @@ struct CashFlowDetailedChartView: View {
                             Image(systemName: "magnifyingglass.circle.fill")
                         }
                        })//.capsuleButtonStyle()
+            }
+            // afficher/masquer le grpahique des événemnts de vie
+            ToolbarItem(placement: .automatic) {
+                Button(action: { withAnimation { lifeEventChatIsPresented.toggle() } },
+                       label : { Image(systemName: lifeEventChatIsPresented ? "rectangle" : "rectangle.split.1x2") })
             }
             // sauvergarder l'image dans l'album photo
             ToolbarItem(placement: .automatic) {
@@ -156,7 +168,7 @@ struct CashFlowLineChartView: UIViewRepresentable {
     static var titleStatic      : String = "image"
     static var uiView           : LineChartView?
     static var snapshotNb       : Int = 0
-
+    
     internal init(socialAccounts : Binding<SocialAccounts>, title: String) {
         CashFlowLineChartView.titleStatic = title
         self.title            = title
@@ -169,7 +181,7 @@ struct CashFlowLineChartView: UIViewRepresentable {
             #if DEBUG
             print("error: nothing to save")
             #endif
-           return
+            return
         }
         // construire l'image
         guard let image = CashFlowLineChartView.uiView!.getChartImage(transparent: false) else {
@@ -353,9 +365,10 @@ struct CashFlowStackedBarChartView: UIViewRepresentable {
         if itemSelectionList.onlyOneCategorySelected() {
             // il y a un seule catégorie de sélectionnée, afficher le détail
             if let categoryName = itemSelectionList.firstCategorySelected() {
-                aDataSet = socialAccounts.getCashFlowCategoryStackedBarChartDataSet(categoryName           : categoryName,
-                                                                                    expenses               : expenses,
-                                                                                    selectedExpenseCategory: selectedExpenseCategory)
+                aDataSet = socialAccounts.getCashFlowCategoryStackedBarChartDataSet(
+                    categoryName           : categoryName,
+                    expenses               : expenses,
+                    selectedExpenseCategory: selectedExpenseCategory)
             } else {
                 customLog.log(level: .error,
                               "CashFlowStackedBarChartView : aDataSet = nil => graphique vide")

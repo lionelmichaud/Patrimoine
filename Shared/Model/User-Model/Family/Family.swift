@@ -452,12 +452,18 @@ extension Family: AdultSpouseProvider {
 
 extension Family: MembersNameProvider {
     var membersName: [String] {
-        members.map { $0.displayName }
+        members
+            .sorted(by: \.birthDate)
+            .map { $0.displayName }
     }
     var adultsName: [String] {
-        adults.map { $0.displayName }
+        adults
+            .sorted(by: \.birthDate)
+            .map { $0.displayName }
     }
     var childrenName: [String] {
-        children.map { $0.displayName }
+        children
+            .sorted(by: \.birthDate)
+            .map { $0.displayName }
     }
 }

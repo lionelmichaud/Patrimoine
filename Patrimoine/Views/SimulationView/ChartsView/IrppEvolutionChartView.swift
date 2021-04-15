@@ -22,15 +22,16 @@ struct IrppEvolutionChartView: View {
     let popOverMessage =
         """
         Evolution dans le temps des taux d'imposition sur le revenu (IRPP).
-
         Evolution du revenu imposable à l'IRRP et du montant de l'IRPP.
+
+        Utiliser le bouton 📷 pour placer une copie d'écran dans votre album photo.
         """
 
     var body: some View {
         VStack {
-            IrppParamLineChartView(socialAccounts : $simulation.socialAccounts,
+            IrppEvolutionLineChartView(socialAccounts : $simulation.socialAccounts,
                                    title          : simulation.title)
-            IrppLineChartView(socialAccounts : $simulation.socialAccounts,
+            IrppTranchesLineChartView(socialAccounts : $simulation.socialAccounts,
                               title          : simulation.title)
         }
         .padding(.trailing, 4)
@@ -57,13 +58,13 @@ struct IrppEvolutionChartView: View {
     }
     
     func saveImages() {
-        IrppParamLineChartView.saveImage()
-        IrppLineChartView.saveImage()
+        IrppEvolutionLineChartView.saveImage()
+        IrppTranchesLineChartView.saveImage()
     }
 }
 
 /// Wrapper de CombinedChartView: EVOLUTION dans le temps des Taux d'imposition et du Quotient familial
-struct IrppParamLineChartView: UIViewRepresentable {
+struct IrppEvolutionLineChartView: UIViewRepresentable {
     @Binding var socialAccounts : SocialAccounts
     var title                   : String
     static var titleStatic      : String = "image"
@@ -71,21 +72,21 @@ struct IrppParamLineChartView: UIViewRepresentable {
     static var snapshotNb       : Int = 0
     
     internal init(socialAccounts : Binding<SocialAccounts>, title: String) {
-        IrppParamLineChartView.titleStatic = title
+        IrppEvolutionLineChartView.titleStatic = title
         self.title                         = title
         self._socialAccounts               = socialAccounts
     }
     
     /// Sauvegarde de l'image en fichier  et dans l'album photo au format .PNG
     static func saveImage() {
-        guard IrppParamLineChartView.uiView != nil else {
+        guard IrppEvolutionLineChartView.uiView != nil else {
             #if DEBUG
             print("error: nothing to save")
             #endif
             return
         }
         // construire l'image
-        guard let image = IrppParamLineChartView.uiView!.getChartImage(transparent: false) else {
+        guard let image = IrppEvolutionLineChartView.uiView!.getChartImage(transparent: false) else {
             #if DEBUG
             print("error: nothing to save")
             #endif
@@ -96,7 +97,7 @@ struct IrppParamLineChartView: UIViewRepresentable {
         UIImageWriteToSavedPhotosAlbum(image, nil, nil, nil)
         
         // sauvegarder l'image dans le répertoire documents/image
-        let fileName = "IRPP-Taux-" + String(IrppParamLineChartView.snapshotNb) + ".png"
+        let fileName = "IRPP-Taux-" + String(IrppEvolutionLineChartView.snapshotNb) + ".png"
         do {
             try Disk.save(image, to: .documents, as: AppSettings.imagePath(titleStatic) + fileName)
             // impression debug
@@ -112,7 +113,7 @@ struct IrppParamLineChartView: UIViewRepresentable {
                 Suggestions    : \(error.localizedRecoverySuggestion ?? "")
                 """)
         }
-        IrppParamLineChartView.snapshotNb += 1
+        IrppEvolutionLineChartView.snapshotNb += 1
     }
     
     func makeUIView(context: Context) -> CombinedChartView {
@@ -154,7 +155,7 @@ struct IrppParamLineChartView: UIViewRepresentable {
         chartView.animate(yAxisDuration: 0.5, easingOption: .linear)
         
         // mémoriser la référence de la vue pour sauvegarde d'image ultérieure
-        IrppParamLineChartView.uiView = chartView
+        IrppEvolutionLineChartView.uiView = chartView
         return chartView
     }
     
@@ -163,7 +164,7 @@ struct IrppParamLineChartView: UIViewRepresentable {
 }
 
 /// Wrapper de LineChartView: EVOLUTION dans le temps de l'IRPP
-struct IrppLineChartView: UIViewRepresentable {
+struct IrppTranchesLineChartView: UIViewRepresentable {
     @Binding var socialAccounts : SocialAccounts
     var title                   : String
     static var titleStatic      : String = "image"
@@ -171,21 +172,21 @@ struct IrppLineChartView: UIViewRepresentable {
     static var snapshotNb       : Int = 0
     
     internal init(socialAccounts : Binding<SocialAccounts>, title: String) {
-        IrppLineChartView.titleStatic = title
+        IrppTranchesLineChartView.titleStatic = title
         self.title                    = title
         self._socialAccounts          = socialAccounts
     }
     
     /// Sauvegarde de l'image en fichier  et dans l'album photo au format .PNG
     static func saveImage() {
-        guard IrppLineChartView.uiView != nil else {
+        guard IrppTranchesLineChartView.uiView != nil else {
             #if DEBUG
             print("error: nothing to save")
             #endif
             return
         }
         // construire l'image
-        guard let image = IrppLineChartView.uiView!.getChartImage(transparent: false) else {
+        guard let image = IrppTranchesLineChartView.uiView!.getChartImage(transparent: false) else {
             #if DEBUG
             print("error: nothing to save")
             #endif
@@ -196,7 +197,7 @@ struct IrppLineChartView: UIViewRepresentable {
         UIImageWriteToSavedPhotosAlbum(image, nil, nil, nil)
         
         // sauvegarder l'image dans le répertoire documents/image
-        let fileName = "IRPP-Evolution-" + String(IrppLineChartView.snapshotNb) + ".png"
+        let fileName = "IRPP-Evolution-" + String(IrppTranchesLineChartView.snapshotNb) + ".png"
         do {
             try Disk.save(image, to: .documents, as: AppSettings.imagePath(titleStatic) + fileName)
             // impression debug
@@ -212,7 +213,7 @@ struct IrppLineChartView: UIViewRepresentable {
                 Suggestions    : \(error.localizedRecoverySuggestion ?? "")
                 """)
         }
-        IrppLineChartView.snapshotNb += 1
+        IrppTranchesLineChartView.snapshotNb += 1
     }
     
     func makeUIView(context: Context) -> LineChartView {
@@ -237,7 +238,7 @@ struct IrppLineChartView: UIViewRepresentable {
         chartView.animate(yAxisDuration: 0.5, easingOption: .linear)
         
         // mémoriser la référence de la vue pour sauvegarde d'image ultérieure
-        IrppLineChartView.uiView = chartView
+        IrppTranchesLineChartView.uiView = chartView
         return chartView
     }
     

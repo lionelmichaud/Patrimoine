@@ -24,6 +24,8 @@ struct IrppSliceView: View {
     let popOverMessage =
         """
         Evolution du montant de l'IRPP dû dans chaque tranche du barême (avec et sans enfants).
+
+        Utiliser le bouton 📷 pour placer une copie d'écran dans votre album photo.
         """
 
     var body: some View {

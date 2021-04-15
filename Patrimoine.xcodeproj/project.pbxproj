@@ -82,6 +82,7 @@
 		794E2C5F25D6CD3D00F7BAFF /* PeriodicInvestement.json in Resources */ = {isa = PBXBuildFile; fileRef = 794E2C5E25D6CD3D00F7BAFF /* PeriodicInvestement.json */; };
 		794E2C6325D6CD7500F7BAFF /* PeriodicInvestmentTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 794E2C6225D6CD7500F7BAFF /* PeriodicInvestmentTests.swift */; };
 		7950B9572520D03F007EC0F8 /* StatisticsChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7950B9562520D03F007EC0F8 /* StatisticsChartView.swift */; };
+		79517FBD26275C9D0034E321 /* FamilyLifeEventChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79517FBC26275C9D0034E321 /* FamilyLifeEventChartView.swift */; };
 		7951A5082520F10E001ED840 /* SpecialFunctions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7951A5072520F10E001ED840 /* SpecialFunctions.swift */; };
 		7956C6252538FA0F00C92A28 /* ScenarioSummaryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7956C6242538FA0F00C92A28 /* ScenarioSummaryView.swift */; };
 		7956C6282538FA2900C92A28 /* ScenarioListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7956C6272538FA2900C92A28 /* ScenarioListView.swift */; };
@@ -434,6 +435,7 @@
 		794E2C5E25D6CD3D00F7BAFF /* PeriodicInvestement.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = PeriodicInvestement.json; sourceTree = "<group>"; };
 		794E2C6225D6CD7500F7BAFF /* PeriodicInvestmentTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeriodicInvestmentTests.swift; sourceTree = "<group>"; };
 		7950B9562520D03F007EC0F8 /* StatisticsChartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatisticsChartView.swift; sourceTree = "<group>"; };
+		79517FBC26275C9D0034E321 /* FamilyLifeEventChartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FamilyLifeEventChartView.swift; sourceTree = "<group>"; };
 		7951A5072520F10E001ED840 /* SpecialFunctions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpecialFunctions.swift; sourceTree = "<group>"; };
 		7956C6242538FA0F00C92A28 /* ScenarioSummaryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScenarioSummaryView.swift; sourceTree = "<group>"; };
 		7956C6272538FA2900C92A28 /* ScenarioListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScenarioListView.swift; sourceTree = "<group>"; };
@@ -1262,6 +1264,7 @@
 				79D3DD812568002100E914F5 /* IrppEvolutionChartView.swift */,
 				790115DB256955E20005B0F5 /* IrppSliceView.swift */,
 				7937A6CF257D8AC000ED645A /* isfEvolutionChartView.swift */,
+				79517FBC26275C9D0034E321 /* FamilyLifeEventChartView.swift */,
 			);
 			path = ChartsView;
 			sourceTree = "<group>";
@@ -2058,6 +2061,7 @@
 				7994895B249E4FC200DAFF1E /* AssetView.swift in Sources */,
 				79948961249E4FC200DAFF1E /* scpiDetailedView.swift in Sources */,
 				794248AE25CAA317004E3C7F /* Version.swift in Sources */,
+				79517FBD26275C9D0034E321 /* FamilyLifeEventChartView.swift in Sources */,
 				799489A0249E4FC200DAFF1E /* Extensions+Bundle-Codable.swift in Sources */,
 				799489A5249E4FC200DAFF1E /* Extensions+Int.swift in Sources */,
 				7994898E249E4FC200DAFF1E /* NameableValuableArray.swift in Sources */,

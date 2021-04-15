@@ -22,6 +22,8 @@ struct IsfEvolutionChartView: View {
     let popOverMessage =
         """
         Evolution dans le temps du montant de l'ISF dû.
+
+        Utiliser le bouton 📷 pour placer une copie d'écran dans votre album photo.
         """
 
     var body: some View {

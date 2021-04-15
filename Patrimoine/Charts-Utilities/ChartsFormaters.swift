@@ -290,7 +290,7 @@ public class LargeValueFormatter: NSObject, IValueFormatter, IAxisValueFormatter
     }
 }
 
-public class ExpenseCateroryValueFormatter: NSObject, IAxisValueFormatter {
+public class NamedValueFormatter: NSObject, IAxisValueFormatter {
 
     // libélés de l'axe X
     var names = [String]()
