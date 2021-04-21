@@ -68,8 +68,8 @@ extension BundleCodable {
          from file            : String?,
          dateDecodingStrategy : JSONDecoder.DateDecodingStrategy,
          keyDecodingStrategy  : JSONDecoder.KeyDecodingStrategy) {
-        let testBundle = Bundle(for: aClass)
-        self = testBundle.decode(Self.self,
+        let bundle = Bundle(for: aClass)
+        self = bundle.decode(Self.self,
                                  from                 : file ?? Self.defaultFileName,
                                  dateDecodingStrategy : dateDecodingStrategy,
                                  keyDecodingStrategy  : keyDecodingStrategy)
@@ -102,8 +102,8 @@ extension BundleCodable {
                       to file              : String?,
                       dateEncodingStrategy : JSONEncoder.DateEncodingStrategy,
                       keyEncodingStrategy  : JSONEncoder.KeyEncodingStrategy) {
-        let testBundle = Bundle(for: aClass)
-        testBundle.encode(self,
+        let bundle = Bundle(for: aClass)
+        bundle.encode(self,
                           to                   : file ?? Self.defaultFileName,
                           dateEncodingStrategy : dateEncodingStrategy,
                           keyEncodingStrategy  : keyEncodingStrategy)

@@ -10,13 +10,13 @@ import Foundation
 
 // MARK: - Type d'investissement
 
-enum InterestRateType {
+enum InterestRateKind {
     case contractualRate (fixedRate: Double)
     case marketRate (stockRatio: Double)
     
     // properties
     
-    static var allCases: [InterestRateType] {
+    static var allCases: [InterestRateKind] {
         return [.contractualRate(fixedRate: 0.0),
                 .marketRate(stockRatio: 0.0)]
     }
@@ -31,7 +31,7 @@ enum InterestRateType {
 
 // MARK: - Extensions
 
-extension InterestRateType: PickableIdentifiableEnum {
+extension InterestRateKind: PickableIdentifiableEnum {
     var id: Int {
         return self.rawValue
     }
@@ -48,7 +48,7 @@ extension InterestRateType: PickableIdentifiableEnum {
 
 }
 
-extension InterestRateType: CustomStringConvertible {
+extension InterestRateKind: CustomStringConvertible {
     var description: String {
         switch self {
             case .contractualRate(let fixedRate):
@@ -60,7 +60,7 @@ extension InterestRateType: CustomStringConvertible {
     }
 }
 
-extension InterestRateType: Codable {
+extension InterestRateKind: Codable {
     // coding keys
     private enum CodingKeys: String, CodingKey {
         case contractualRate_fixedRate, marketRate_stockRatio

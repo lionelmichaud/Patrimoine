@@ -12,7 +12,7 @@ import XCTest
 class InvestementTypeTests: XCTestCase {
 
     func test_description() throws {
-        var inv: InvestementType
+        var inv: InvestementKind
         
         inv = .pea
         print(inv)

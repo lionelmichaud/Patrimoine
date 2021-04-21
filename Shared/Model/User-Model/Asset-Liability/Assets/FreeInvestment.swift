@@ -15,12 +15,13 @@ enum FreeInvestementError: Error {
     case IlegalOperation
 }
 
-typealias FreeInvestmentArray = ItemArray<FreeInvestement>
+typealias FreeInvestmentArray = ArrayOfNameableValuable<FreeInvestement>
 
 // MARK: - Placement à versement et retrait variable et à taux fixe
 
 /// Placement à versement et retrait libres et à taux fixe
 /// Les intérêts sont capitalisés lors de l'appel à capitalize()
+// conformité à BundleCodable nécessaire pour les TU; sinon Codable suffit
 struct FreeInvestement: Identifiable, BundleCodable, FinancialEnvelop {
     
     // nested types
@@ -73,8 +74,9 @@ struct FreeInvestement: Identifiable, BundleCodable, FinancialEnvelop {
     private static func rates(in year : Int)
     -> (securedRate : Double,
         stockRate   : Double) {
-        FreeInvestement.economyModel.rates(in       : year,
-                                           withMode : simulationMode)
+        FreeInvestement.economyModel.rates(in                 : year,
+                                           withMode           : simulationMode,
+                                           simulateVolatility : UserSettings.shared.simulateVolatility)
     }
 
     // MARK: - Properties
@@ -86,8 +88,8 @@ struct FreeInvestement: Identifiable, BundleCodable, FinancialEnvelop {
     // attention: par défaut la méthode delegate pour ageOf = nil
     // c'est au créateur de l'objet (View ou autre objet du Model) de le faire
     var ownership            : Ownership = Ownership()
-    var type                 : InvestementType // type de l'investissement
-    var interestRateType     : InterestRateType // type de taux de rendement
+    var type                 : InvestementKind // type de l'investissement
+    var interestRateType     : InterestRateKind // type de taux de rendement
     var averageInterestRate  : Double {// % avant charges sociales si prélevées à la source annuellement [0, 100%]
         switch interestRateType {
             case .contractualRate(let fixedRate):
@@ -129,8 +131,8 @@ struct FreeInvestement: Identifiable, BundleCodable, FinancialEnvelop {
     init(year             : Int,
          name             : String,
          note             : String,
-         type             : InvestementType,
-         interestRateType : InterestRateType,
+         type             : InvestementKind,
+         interestRateType : InterestRateKind,
          initialValue     : Double = 0.0,
          initialInterest  : Double = 0.0) {
         self.name             = name

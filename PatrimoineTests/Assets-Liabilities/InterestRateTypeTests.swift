@@ -12,7 +12,7 @@ import XCTest
 class InterestRateTypeTests: XCTestCase {
 
     func test_description() throws {
-        var inv: InterestRateType
+        var inv: InterestRateKind
         
         inv = .contractualRate(fixedRate: 5.0)
         print(inv)

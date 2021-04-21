@@ -9,21 +9,21 @@
 import SwiftUI
 
 struct InterestRateTypeEditView : View {
-    @Binding var rateType         : InterestRateType
+    @Binding var rateType         : InterestRateKind
     @State private var typeIndex  : Int
     @State private var fixedRate  : Double
     @State private var stockRatio : Double
     
     var body: some View {
         VStack {
-            CaseWithAssociatedValuePicker<InterestRateType>(caseIndex: $typeIndex, label: "")
+            CaseWithAssociatedValuePicker<InterestRateKind>(caseIndex: $typeIndex, label: "")
                 .pickerStyle(SegmentedPickerStyle())
                 .onChange(of: typeIndex) { newValue in
                     switch newValue {
-                        case InterestRateType.contractualRate(fixedRate: 0).id:
+                        case InterestRateKind.contractualRate(fixedRate: 0).id:
                             self.rateType = .contractualRate(fixedRate: self.fixedRate)
                             
-                        case InterestRateType.marketRate(stockRatio: 0).id:
+                        case InterestRateKind.marketRate(stockRatio: 0).id:
                             self.rateType = .marketRate(stockRatio: self.stockRatio)
                             
                         default:
@@ -31,12 +31,12 @@ struct InterestRateTypeEditView : View {
                     }
                 }
             switch typeIndex {
-                case InterestRateType.contractualRate(fixedRate: 0).id:
+                case InterestRateKind.contractualRate(fixedRate: 0).id:
                     PercentEditView(label: "Taux fixe", percent: $fixedRate)
                         .onChange(of: fixedRate) { newValue in
                             self.rateType = .contractualRate(fixedRate: newValue)
                         }
-                case InterestRateType.marketRate(stockRatio: 0).id:
+                case InterestRateKind.marketRate(stockRatio: 0).id:
                     VStack(alignment: .leading) {
                         Text("Fraction en actions: \(Int(stockRatio)) %")
                         HStack {
@@ -56,7 +56,7 @@ struct InterestRateTypeEditView : View {
         }
     }
     
-    init(rateType: Binding<InterestRateType>) {
+    init(rateType: Binding<InterestRateKind>) {
         _rateType = rateType
         _typeIndex = State(initialValue: rateType.wrappedValue.id)
         switch rateType.wrappedValue {
@@ -73,7 +73,7 @@ struct InterestRateTypeEditView : View {
 
 struct InterestRateTypeEditView_Previews: PreviewProvider {
     static var previews: some View {
-        InterestRateTypeEditView(rateType: .constant(InterestRateType.contractualRate(fixedRate: 1.5)))
+        InterestRateTypeEditView(rateType: .constant(InterestRateKind.contractualRate(fixedRate: 1.5)))
             .previewLayout(PreviewLayout.sizeThatFits)
             .padding([.bottom, .top])
             .previewDisplayName("InterestRateTypeEditView")

@@ -290,12 +290,36 @@ public class LargeValueFormatter: NSObject, IValueFormatter, IAxisValueFormatter
     }
 }
 
-public class NamedValueFormatter: NSObject, IAxisValueFormatter {
+public class NamedValueFormatter: NSObject, IAxisValueFormatter, IValueFormatter {
 
     // libélés de l'axe X
     var names = [String]()
 
+    init(names: [String]) {
+        self.names = names
+        super.init()
+    }
+
+    override init() {
+        super.init()
+    }
+
     public func stringForValue(_ value: Double, axis: AxisBase?) -> String {
+        guard (names.startIndex...names.endIndex-1).contains(Int(value)) else {
+            return ""
+        }
+        return names[Int(value)]//.truncate(to: 20, addEllipsis: true)
+    }
+
+    /// - Parameters:
+    ///   - value:           The value to be formatted
+    ///   - dataSetIndex:    The index of the DataSet the entry in focus belongs to
+    ///   - viewPortHandler: provides information about the current chart state (scale, translation, ...)
+    /// - Returns:           The formatted label ready to be drawn
+    public func stringForValue(_ value         : Double,
+                               entry           : ChartDataEntry,
+                               dataSetIndex    : Int,
+                               viewPortHandler : ViewPortHandler?) -> String {
         return names[Int(value)]
     }
 }

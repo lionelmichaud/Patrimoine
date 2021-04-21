@@ -22,6 +22,18 @@ struct NamedValueTable: HasNamedValuedTable {
     var namedValues = NamedValueArray()
 }
 
+extension NamedValueTable: CustomStringConvertible {
+    var description: String {
+        """
+        Nom de la table: \(tableName)
+        Valeurs de la table:
+        
+        """
+            +
+            namedValues.description
+    }
+}
+
 // MARK: - Protocol de Table nommée de couples (nom, valeur)
 
 protocol HasNamedValuedTable {
@@ -54,8 +66,6 @@ protocol HasNamedValuedTable {
     /// - Parameter itemSelectionList: menu
     /// - Returns: valeur cumulée des éléments de la table si elle figure dans le menu
     func filtredTableValue(with itemSelectionList: ItemSelectionList) -> [Double]
-    
-    func print(level: Int)
 }
 
 extension HasNamedValuedTable {
@@ -86,18 +96,18 @@ extension HasNamedValuedTable {
     
     func filtredNames(with itemSelectionList: ItemSelectionList) -> [String] {
         namedValues
-            .filter({ itemSelectionList.selectionContains($0.name) })
+            .filter({ itemSelectionList.contains($0.name) })
             .map(\.name)
     }
     
     func filtredValues(with itemSelectionList: ItemSelectionList) -> [Double] {
         namedValues
-            .filter({ itemSelectionList.selectionContains($0.name) })
+            .filter({ itemSelectionList.contains($0.name) })
             .map(\.value)
     }
     
     func filtredTableName(with itemSelectionList: ItemSelectionList) -> [String] {
-        if itemSelectionList.selectionContains(tableName) {
+        if itemSelectionList.contains(tableName) {
             return [tableName]
         } else {
             return [String]()
@@ -105,17 +115,10 @@ extension HasNamedValuedTable {
     }
     
     func filtredTableValue(with itemSelectionList: ItemSelectionList) -> [Double] {
-        if itemSelectionList.selectionContains(tableName) {
+        if itemSelectionList.contains(tableName) {
             return [total]
         } else {
             return [Double]()
         }
     }
-    
-    func print(level: Int = 0) {
-        let h = String(repeating: StringCst.header, count: level)
-        Swift.print(h + tableName)
-        Swift.print(h + StringCst.header + "valeurs: ", namedValues, "total: ", total)
-    }
-
 }

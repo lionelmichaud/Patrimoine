@@ -6,11 +6,7 @@
 //  Copyright © 2020 Lionel MICHAUD. All rights reserved.
 //
 
-import os
 import Foundation
-import SwiftUI
-
-private let customLog = Logger(subsystem: "me.michaud.lionel.Patrimoine", category: "BasicStructs")
 
 // MARK: - Point(x, y)
 
@@ -53,10 +49,4 @@ enum SortingOrder {
                 self = .ascending
         }
     }
-}
-
-struct BrutNetTaxable {
-    var brut    : Double
-    var net     : Double
-    var taxable : Double
 }

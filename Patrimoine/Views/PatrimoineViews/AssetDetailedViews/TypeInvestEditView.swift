@@ -12,7 +12,7 @@ import SwiftUI
 
 struct TypeInvestEditView : View {
     @EnvironmentObject var family : Family
-    @Binding var investType       : InvestementType
+    @Binding var investType       : InvestementKind
     @State private var typeIndex  : Int
     @State private var isPeriodic : Bool
     @State private var clause     : LifeInsuranceClause
@@ -22,22 +22,22 @@ struct TypeInvestEditView : View {
 
     var body: some View {
         Group {
-            CaseWithAssociatedValuePicker<InvestementType>(caseIndex: $typeIndex, label: "")
+            CaseWithAssociatedValuePicker<InvestementKind>(caseIndex: $typeIndex, label: "")
                 .pickerStyle(SegmentedPickerStyle())
                 .onChange(of: typeIndex) { newValue in
                     switch newValue {
-                        case InvestementType.pea.id:
+                        case InvestementKind.pea.id:
                             self.investType = .pea
-                        case InvestementType.other.id:
+                        case InvestementKind.other.id:
                             self.investType = .other
-                        case InvestementType.lifeInsurance().id:
+                        case InvestementKind.lifeInsurance().id:
                             self.investType = .lifeInsurance(periodicSocialTaxes: self.isPeriodic,
                                                              clause             : self.clause)
                         default:
                             fatalError("InvestementType : Case out of bound")
                     }
                 }
-            if typeIndex == InvestementType.lifeInsurance().id {
+            if typeIndex == InvestementKind.lifeInsurance().id {
                 Toggle("Prélèvement sociaux annuels", isOn: $isPeriodic)
                     .onChange(of: isPeriodic) { newValue in
                         self.investType = .lifeInsurance(periodicSocialTaxes: newValue,
@@ -77,7 +77,7 @@ struct TypeInvestEditView : View {
         }
     }
     
-    init(investType: Binding<InvestementType>) {
+    init(investType: Binding<InvestementKind>) {
         self._investType = investType
         self._typeIndex  = State(initialValue: investType.wrappedValue.id)
         switch investType.wrappedValue {
@@ -181,7 +181,7 @@ struct RecipientGroupBox: View {
 struct TypeInvestEditView_Previews: PreviewProvider {
     static var previews: some View {
         Form {
-            TypeInvestEditView(investType: .constant(InvestementType.lifeInsurance()))
+            TypeInvestEditView(investType: .constant(InvestementKind.lifeInsurance()))
         }
     }
 }

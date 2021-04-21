@@ -60,8 +60,6 @@ protocol DictionaryOfNamedValueTable {
     /// Valeurs cumulées de chacune des catégories sélectionnées dans le menu
     /// - Parameter itemSelectionList: menu
     func summaryFiltredValues(with itemSelectionList: ItemSelectionList) -> [Double]
-    
-    func print(level: Int)
 }
 
 // implémntation par défaut
@@ -147,17 +145,5 @@ extension DictionaryOfNamedValueTable {
     
     func summaryFiltredValues(with itemSelectionList: ItemSelectionList) -> [Double] {
         summary.filtredValues(with : itemSelectionList)
-    }
-    
-    func print(level: Int = 0) {
-        let h = String(repeating: StringCst.header, count: level)
-        Swift.print(h + name + ":    ")
-        
-        for category in Category.allCases {
-            perCategory[category]?.print(level: level)
-        }
-        
-        // total des revenus
-        Swift.print(h + StringCst.header + "TOTAL:", total)
     }
 }

@@ -56,6 +56,34 @@ enum Seniority: Int, PickableEnum {
     }
 }
 
+struct PersonCoderPreservingType {
+    let adapter = TypePreservingCodingAdapter()
+    let encoder = JSONEncoder()
+    let decoder = JSONDecoder()
+    
+    init() {
+        self.encoder.outputFormatting     = .prettyPrinted
+        self.encoder.dateEncodingStrategy = .iso8601
+        self.encoder.keyEncodingStrategy  = .useDefaultKeys
+        
+        self.decoder.dateDecodingStrategy = .iso8601
+        self.decoder.keyDecodingStrategy  = .useDefaultKeys
+        
+        // inject it into encoder and decoder
+        self.encoder.userInfo[.typePreservingAdapter] = self.adapter
+        self.decoder.userInfo[.typePreservingAdapter] = self.adapter
+        
+        // register your types with adapter
+        self.adapter
+            .register(type: Person.self)
+            .register(alias: "personne", for: Person.self)
+            .register(type: Adult.self)
+            .register(alias: "adult", for: Adult.self)
+            .register(type: Child.self)
+            .register(alias: "enfant", for: Child.self)
+    }
+}
+
 // MARK: - Person
 class Person : ObservableObject, Identifiable, Codable, CustomStringConvertible {
     
@@ -65,37 +93,9 @@ class Person : ObservableObject, Identifiable, Codable, CustomStringConvertible 
         case sexe, name, birth_Date, age_Of_Death
     }
     
-    struct CoderPreservingType {
-        let adapter = TypePreservingCodingAdapter()
-        let encoder = JSONEncoder()
-        let decoder = JSONDecoder()
-        
-        init() {
-            self.encoder.outputFormatting     = .prettyPrinted
-            self.encoder.dateEncodingStrategy = .iso8601
-            self.encoder.keyEncodingStrategy  = .useDefaultKeys
-            
-            self.decoder.dateDecodingStrategy = .iso8601
-            self.decoder.keyDecodingStrategy  = .useDefaultKeys
-            
-            // inject it into encoder and decoder
-            self.encoder.userInfo[.typePreservingAdapter] = self.adapter
-            self.decoder.userInfo[.typePreservingAdapter] = self.adapter
-            
-            // register your types with adapter
-            self.adapter
-                .register(type: Person.self)
-                .register(alias: "personne", for: Person.self)
-                .register(type: Adult.self)
-                .register(alias: "adult", for: Adult.self)
-                .register(type: Child.self)
-                .register(alias: "enfant", for: Child.self)
-        }
-    }
-    
     // MARK: - Type properties
     
-    static let coder = CoderPreservingType()
+    static let coder = PersonCoderPreservingType()
     
     // MARK: - Properties
 
@@ -128,9 +128,6 @@ class Person : ObservableObject, Identifiable, Codable, CustomStringConvertible 
     }
     var displayName           : String = ""
     var displayBirthDate      : String = ""
-    var datedLifeEvents       : DatedLifeEvents {
-        return [.deces:yearOfDeath]
-    }
     var description           : String {
         return """
         
@@ -215,7 +212,7 @@ class Person : ObservableObject, Identifiable, Codable, CustomStringConvertible 
     /// True si la personne décède dans l'année spécifiée
     /// - Parameter year: année testée
     func isDeceased(during year: Int) -> Bool {
-        self is Adult && !self.isAlive(atEndOf: year) && self.isAlive(atEndOf: year-1)
+        !self.isAlive(atEndOf: year) && self.isAlive(atEndOf: year-1)
     }
     
     /// Année ou a lieu l'événement recherché

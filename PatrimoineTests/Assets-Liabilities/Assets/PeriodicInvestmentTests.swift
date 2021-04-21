@@ -13,7 +13,8 @@ class PeriodicInvestementTests: XCTestCase {
 
     struct EconomyModelProvider: EconomyModelProviderProtocol {
         func rates(in year: Int,
-                   withMode mode: SimulationModeEnum) -> (securedRate: Double, stockRate: Double) {
+                   withMode mode: SimulationModeEnum,
+                   simulateVolatility: Bool) -> (securedRate: Double, stockRate: Double) {
             (securedRate: Double(year) + 5.0, stockRate: Double(year) + 10.0)
         }
         
@@ -58,7 +59,9 @@ class PeriodicInvestementTests: XCTestCase {
             (0.75 * PeriodicInvestementTests.rates.stockRate + 0.25 * PeriodicInvestementTests.rates.securedRate)
             - PeriodicInvestementTests.inflation
         
-        PeriodicInvestementTests.rates2021 = PeriodicInvestementTests.economyModelProvider.rates(in: 2021, withMode: .deterministic)
+        PeriodicInvestementTests.rates2021 = PeriodicInvestementTests.economyModelProvider.rates(in: 2021,
+                                                                                                 withMode: .deterministic,
+                                                                                                 simulateVolatility: false)
         PeriodicInvestementTests.averageRate2021Theory =
             (0.75 * PeriodicInvestementTests.rates2021.stockRate + 0.25 * PeriodicInvestementTests.rates2021.securedRate)
             - PeriodicInvestementTests.inflation

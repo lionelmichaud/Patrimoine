@@ -84,14 +84,18 @@ extension BalanceSheetArray {
         // heading
         heading += "Taux Oblig; "
         // valeurs
-        let rowsSecuredRate = self.map { "\(Economy.model.rates(in: $0.year, withMode: mode).securedRate.percentString(digit: 1)); " }
+        let rowsSecuredRate = self.map {
+            "\(Economy.model.rates(in: $0.year, withMode: mode, simulateVolatility: UserSettings.shared.simulateVolatility).securedRate.percentString(digit: 1)); "
+        }
         rows = zip(rows, rowsSecuredRate).map(+)
         
         // taux des actions
         // heading
         heading += "Taux Action; "
         // valeurs
-        let rowsStockRate = self.map { "\(Economy.model.rates(in: $0.year, withMode: mode).stockRate.percentString(digit: 1)); " }
+        let rowsStockRate = self.map {
+            "\(Economy.model.rates(in: $0.year, withMode: mode, simulateVolatility: UserSettings.shared.simulateVolatility).stockRate.percentString(digit: 1)); "
+        }
         rows = zip(rows, rowsStockRate).map(+)
         
         // construire la partie Actifs du tableau
@@ -274,16 +278,5 @@ struct BalanceSheetLine {
                                        evaluationMethod: .patrimoine).rounded()
                     : 0
         }
-    }
-    
-    func print() {
-        Swift.print("YEAR:", year)
-        // actifs
-        assets[AppSettings.shared.allPersonsLabel]!.print(level: 1)
-        // passifs
-        liabilities[AppSettings.shared.allPersonsLabel]!.print(level: 1)
-        // net
-        Swift.print("Net: \(netAssets)")
-        Swift.print("-----------------------------------------")
     }
 }

@@ -12,7 +12,7 @@ import XCTest
 class FinancialEnvelopTests: XCTestCase {
 
     struct Envelop: FinancialEnvelop {
-        var type      : InvestementType = InvestementType.other
+        var type      : InvestementKind = InvestementKind.other
         var ownership : Ownership       = Ownership()
         var name      : String          = "Test"
         

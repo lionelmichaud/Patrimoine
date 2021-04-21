@@ -60,10 +60,10 @@ struct Ownership {
     }
     var isValid        : Bool {
         if isDismembered {
-            return (!bareOwners.isEmpty && bareOwners.isvalid) &&
-                (!usufructOwners.isEmpty && usufructOwners.isvalid)
+            return (bareOwners.isNotEmpty && bareOwners.isvalid) &&
+                (usufructOwners.isNotEmpty && usufructOwners.isvalid)
         } else {
-            return !fullOwners.isEmpty && fullOwners.isvalid
+            return fullOwners.isNotEmpty && fullOwners.isvalid
         }
     }
 
@@ -148,8 +148,8 @@ struct Ownership {
         if isDismembered {
             switch evaluationMethod {
                 case .ifi, .isf :
-                    // calcul de la part de pleine-propriété détenue
-                    if let owner = usufructOwners.owner(ownerName: ownerName) {
+                    // calcul de la part de pleine-propiété détenue
+                    if let owner = usufructOwners[ownerName] {
                         // on l'a trouvé parmis les usufruitiers => on prend la valeur en PP
                         return owner.ownedValue(from: totalValue)
                     } else {
@@ -176,13 +176,13 @@ struct Ownership {
                     }
 
                     // calcul de la part de nue-propriété détenue
-                    if let owner = bareOwners.owner(ownerName: ownerName) {
+                    if let owner = bareOwners[ownerName] {
                         // on a trouvé un nue-propriétaire
                         value += owner.ownedValue(from: bareValue)
                     }
                     
                     // calcul de la part d'usufuit détenue
-                    if let owner = usufructOwners.owner(ownerName: ownerName) {
+                    if let owner = usufructOwners[ownerName] {
                         // on a trouvé un usufruitier
                         // prorata détenu par l'usufruitier
                         let ownedValue = totalValue * owner.fraction / 100.0
@@ -198,7 +198,7 @@ struct Ownership {
 
         } else {
             // pleine propriété
-            if let owner = fullOwners.owner(ownerName: ownerName) {
+            if let owner = fullOwners[ownerName] {
                 return owner.ownedValue(from: totalValue)
             } else {
                 return 0.0
@@ -255,7 +255,7 @@ struct Ownership {
                 
                 // l'UF rejoint la nue-propriété (enfants seulement)
                 chidrenNames.forEach { childName in
-                    if let bareowner = bareOwners.owner(ownerName: childName) {
+                    if let bareowner = bareOwners[childName] {
                         usufructOwners.append(Owner(name: bareowner.name,
                                                     fraction: bareowner.fraction))
                     }

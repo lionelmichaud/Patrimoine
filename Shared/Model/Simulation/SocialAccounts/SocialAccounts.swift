@@ -288,15 +288,4 @@ struct SocialAccounts {
                                    withMode: mode)
         cashFlowArray.storeTableCSV(simulationTitle: simulationTitle)
     }
-    
-    // MARK: - Impression écran
-    func printBalanceSheetTable() {
-        Swift.print("================================================")
-        Swift.print(" BILAN")
-        Swift.print("================================================")
-        for line in balanceArray {
-            line.print()
-        }
-    }
-
 }

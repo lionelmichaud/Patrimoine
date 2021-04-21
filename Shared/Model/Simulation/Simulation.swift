@@ -169,9 +169,10 @@ final class Simulation: ObservableObject {
         // re-générer les propriétés aléatoires de la famille
         family.nextRandomProperties()
         // re-générer les propriétés aléatoires du modèle macro économique
-        dicoOfEconomyRandomVariables = try! Economy.model.nextRun(withMode  : mode,
-                                                                  firstYear : firstYear!,
-                                                                  lastYear  : lastYear!)
+        dicoOfEconomyRandomVariables = try! Economy.model.nextRun(withMode           : mode,
+                                                                  simulateVolatility : UserSettings.shared.simulateVolatility,
+                                                                  firstYear          : firstYear!,
+                                                                  lastYear           : lastYear!)
         // re-générer les propriétés aléatoires du modèle socio économique
         dicoOfSocioEconomyRandomVariables = SocioEconomy.model.next()
     }
@@ -297,10 +298,11 @@ final class Simulation: ObservableObject {
                                     message  : "Début : \(firstYear!)")
 
         // fixer tous les paramètres du run à rejouer
-        try! Economy.model.setRandomValue(to        : thisRun.dicoOfEconomyRandomVariables,
-                                          withMode  : mode,
-                                          firstYear : firstYear!,
-                                          lastYear  : lastYear!)
+        try! Economy.model.setRandomValue(to                 : thisRun.dicoOfEconomyRandomVariables,
+                                          withMode           : mode,
+                                          simulateVolatility : UserSettings.shared.simulateVolatility,
+                                          firstYear          : firstYear!,
+                                          lastYear           : lastYear!)
         SocioEconomy.model.setRandomValue(to: thisRun.dicoOfSocioEconomyRandomVariables)
         family.members.forEach { person in
             if let adult = person as? Adult {

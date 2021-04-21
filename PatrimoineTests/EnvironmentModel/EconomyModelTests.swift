@@ -26,11 +26,13 @@ class EconomyModelTests: XCTestCase {
         let model = Economy.Model()
         
         XCTAssertThrowsError(try model.nextRun(withMode: .random,
+                                               simulateVolatility: false,
                                                firstYear: 2030,
                                                lastYear: 2029)) { error in
             XCTAssertEqual(error as! Economy.ModelError, Economy.ModelError.outOfBounds)
         }
         XCTAssertThrowsError(try model.nextRun(withMode: .deterministic,
+                                               simulateVolatility: false,
                                                firstYear: 2030,
                                                lastYear: 2029)) { error in
             XCTAssertEqual(error as! Economy.ModelError, Economy.ModelError.outOfBounds)
@@ -42,12 +44,14 @@ class EconomyModelTests: XCTestCase {
         dico[.stockRate]  = 0.0
         XCTAssertThrowsError(try model.setRandomValue(to: dico,
                                                       withMode: .random,
+                                                      simulateVolatility: false,
                                                       firstYear: 2030,
                                                       lastYear: 2029)) { error in
             XCTAssertEqual(error as! Economy.ModelError, Economy.ModelError.outOfBounds)
         }
         XCTAssertThrowsError(try model.setRandomValue(to: dico,
                                                       withMode: .deterministic,
+                                                      simulateVolatility: false,
                                                       firstYear: 2030,
                                                       lastYear: 2029)) { error in
             XCTAssertEqual(error as! Economy.ModelError, Economy.ModelError.outOfBounds)
@@ -59,11 +63,20 @@ class EconomyModelTests: XCTestCase {
         let firstYear = 2020
         let lastYear = 2030
         
-        XCTAssertNoThrow(try model.nextRun(withMode: .random, firstYear: firstYear, lastYear: lastYear))
-        XCTAssertNoThrow(try model.nextRun(withMode: .deterministic, firstYear: firstYear, lastYear: lastYear))
+        XCTAssertNoThrow(try model.nextRun(withMode: .random,
+                                           simulateVolatility: false,
+                                           firstYear: firstYear,
+                                           lastYear: lastYear))
+        XCTAssertNoThrow(try model.nextRun(withMode: .deterministic,
+                                           simulateVolatility: false,
+                                           firstYear: firstYear,
+                                           lastYear: lastYear))
         
         // deterministe
-        var dico = try model.nextRun(withMode: .deterministic, firstYear: firstYear, lastYear: lastYear)
+        var dico = try model.nextRun(withMode: .deterministic,
+                                     simulateVolatility: false,
+                                     firstYear: firstYear,
+                                     lastYear: lastYear)
         XCTAssertNotNil(dico[.inflation])
         XCTAssertNotNil(dico[.securedRate])
         XCTAssertNotNil(dico[.stockRate])
@@ -72,9 +85,12 @@ class EconomyModelTests: XCTestCase {
         XCTAssertEqual(model.securedRateSamples.count, 0)
         XCTAssertEqual(model.stockRateSamples.count, 0)
         
-        // random
+        // random & simulateVolatility
         UserSettings.shared.simulateVolatility = true
-        dico = try model.nextRun(withMode: .random, firstYear: firstYear, lastYear: lastYear)
+        dico = try model.nextRun(withMode           : .random,
+                                 simulateVolatility : true,
+                                 firstYear          : firstYear,
+                                 lastYear           : lastYear)
         XCTAssertNotNil(dico[.inflation])
         XCTAssertNotNil(dico[.securedRate])
         XCTAssertNotNil(dico[.stockRate])
@@ -84,7 +100,10 @@ class EconomyModelTests: XCTestCase {
         XCTAssertEqual(model.stockRateSamples.count, lastYear - firstYear + 1)
         
         UserSettings.shared.simulateVolatility = false
-        dico = try model.nextRun(withMode: .random, firstYear: firstYear, lastYear: lastYear)
+        dico = try model.nextRun(withMode: .random,
+                                 simulateVolatility: false,
+                                 firstYear: firstYear,
+                                 lastYear: lastYear)
         XCTAssertNotNil(dico[.inflation])
         XCTAssertNotNil(dico[.securedRate])
         XCTAssertNotNil(dico[.stockRate])
@@ -105,20 +124,32 @@ class EconomyModelTests: XCTestCase {
 
         // deterministe
         UserSettings.shared.simulateVolatility = true
-        try model.setRandomValue(to: dico, withMode: .deterministic, firstYear: firstYear, lastYear: lastYear)
+        try model.setRandomValue(to: dico,
+                                 withMode: .deterministic,
+                                 simulateVolatility: false,
+                                 firstYear: firstYear,
+                                 lastYear: lastYear)
         XCTAssertEqual(model.firstYearSampled, firstYear)
         XCTAssertEqual(model.securedRateSamples.count, 0)
         XCTAssertEqual(model.stockRateSamples.count, 0)
         
-        // random
+        // random & simulateVolatility
         UserSettings.shared.simulateVolatility = true
-        try model.setRandomValue(to: dico, withMode: .random, firstYear: firstYear, lastYear: lastYear)
+        try model.setRandomValue(to: dico,
+                                 withMode: .random,
+                                 simulateVolatility: true,
+                                 firstYear: firstYear,
+                                 lastYear: lastYear)
         XCTAssertEqual(model.firstYearSampled, firstYear)
         XCTAssertEqual(model.securedRateSamples.count, lastYear - firstYear + 1)
         XCTAssertEqual(model.stockRateSamples.count, lastYear - firstYear + 1)
         
         UserSettings.shared.simulateVolatility = false
-        try model.setRandomValue(to: dico, withMode: .random, firstYear: firstYear, lastYear: lastYear)
+        try model.setRandomValue(to: dico,
+                                 withMode: .random,
+                                 simulateVolatility: false,
+                                 firstYear: firstYear,
+                                 lastYear: lastYear)
         XCTAssertEqual(model.firstYearSampled, firstYear)
         XCTAssertEqual(model.securedRateSamples.count, 0)
         XCTAssertEqual(model.stockRateSamples.count, 0)

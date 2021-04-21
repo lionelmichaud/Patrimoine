@@ -8,7 +8,7 @@
 
 import Foundation
 
-typealias LoanArray = ItemArray<Loan>
+typealias LoanArray = ArrayOfNameableValuable<Loan>
 
 // MARK: - Emprunt à remboursement constant, périodique, annuel et à taux fixe
 

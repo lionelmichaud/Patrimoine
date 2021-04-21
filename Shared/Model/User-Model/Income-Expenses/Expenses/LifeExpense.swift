@@ -10,7 +10,7 @@ import Foundation
 
 // MARK: - Tableau de Dépenses
 
-struct ExpenseArray: NameableValuableArray {
+struct LifeExpenseArray: NameableValuableArray {
     
     // MARK: - Properties
     
@@ -19,7 +19,7 @@ struct ExpenseArray: NameableValuableArray {
     // MARK: - Initializers
     
     init(fileNamePrefix: String = "") {
-        self = Bundle.main.decode(ExpenseArray.self,
+        self = Bundle.main.decode(LifeExpenseArray.self,
                                   from                 : fileNamePrefix + String(describing: Item.self) + ".json",
                                   dateDecodingStrategy : .iso8601,
                                   keyDecodingStrategy  : .useDefaultKeys)
@@ -28,7 +28,7 @@ struct ExpenseArray: NameableValuableArray {
     init(for aClass     : AnyClass,
          fileNamePrefix : String = "") {
         let testBundle = Bundle(for: aClass)
-        self = testBundle.decode(ExpenseArray.self,
+        self = testBundle.decode(LifeExpenseArray.self,
                                  from                 : fileNamePrefix + String(describing: Item.self) + ".json",
                                  dateDecodingStrategy : .iso8601,
                                  keyDecodingStrategy  : .useDefaultKeys)
@@ -36,7 +36,7 @@ struct ExpenseArray: NameableValuableArray {
     
 }
 
-extension ExpenseArray: CustomStringConvertible {
+extension LifeExpenseArray: CustomStringConvertible {
     var description: String {
         var desc = ""
         items.sorted().forEach { expense in

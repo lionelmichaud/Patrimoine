@@ -124,9 +124,6 @@ enum LifeEvent: String, PickableEnum, Codable {
     }
 }
 
-typealias DatedLifeEvents = [LifeEvent:Int]
-typealias FamilyDatedLifeEvents = [String:DatedLifeEvents]
-
 // MARK: - Groupes de personnes
 
 enum GroupOfPersons: String, PickableEnum, Codable {

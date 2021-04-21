@@ -20,7 +20,7 @@ struct AppVersion: Decodable {
 
     // MARK: - Static Methods
 
-    init() {
+    private init() {
         self = Bundle.main.decode(AppVersion.self,
                                   from                 : "AppVersion.json",
                                   dateDecodingStrategy : .iso8601,

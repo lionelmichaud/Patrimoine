@@ -10,16 +10,16 @@ import Foundation
 
 // MARK: - Dictionnaire de [Category : Table d'Item Valuable and Namable]
 
-struct DictionaryOfItemArray <ItemCategory, ArrayOfItems>: CustomStringConvertible
+struct DictionaryOfNameableValuableArray <ItemCategory, ArrayOfItems>: CustomStringConvertible
 where ItemCategory: PickableEnum,
       ItemCategory: Codable,
       ArrayOfItems: NameableValuableArray,
       ArrayOfItems: CustomStringConvertible {
-    
+
     // properties
-    
+
     var perCategory = [ItemCategory: ArrayOfItems]()
-    
+
     var description: String {
         var desc = ""
         perCategory.sorted(by: \.key.displayString).forEach { cat, items in
@@ -31,7 +31,7 @@ where ItemCategory: PickableEnum,
     }
 
     // initialization
-    
+
     /// Lire toutes les dépenses dans des fichiers au format JSON.
     /// Un fichier par catégorie de dépense.
     /// nom du fichier "Category_LifeExpense.json"
@@ -41,9 +41,9 @@ where ItemCategory: PickableEnum,
             perCategory[category] = ArrayOfItems(fileNamePrefix: category.pickerString + "_")
         }
     }
-    
+
     // methods
-    
+
     /// Enregistrer toutes les dépenses dans des fichiers au format JSON..
     /// Un fichier par catégorie de dépense.
     func storeToFile() {
@@ -52,7 +52,7 @@ where ItemCategory: PickableEnum,
             perCategory[category]?.storeItemsToFile()
         }
     }
-    
+
     /// Somme de toutes les dépenses, toutes catégories confondues
     /// - Parameter atEndOf: année de calcul
     /// - Returns: dépenses totales
@@ -63,7 +63,7 @@ where ItemCategory: PickableEnum,
         }
         return sum
     }
-    
+
     /// Liste complète à plat de toutes les dépenses valorisées, toutes catégories confondues
     /// - Parameter atEndOf: année de calcul
     /// - Returns: liste complète à plat de toutes les dépenses
@@ -74,7 +74,7 @@ where ItemCategory: PickableEnum,
         }
         return table
     }
-    
+
     /// Dictionnaire des dépenses valorisées  par catégorie
     /// - Parameter atEndOf: année de calcul
     /// - Returns: dictionnaire des dépenses par catégorie
@@ -87,7 +87,7 @@ where ItemCategory: PickableEnum,
         }
         return dico
     }
-    
+
     /// Liste des dépenses valorisées d'une catégorie donnée
     /// - Parameters:
     ///   - atEndOf: année de calcul

@@ -14,192 +14,102 @@ import Charts // https://github.com/danielgindi/Charts.git
 /// Wrapper de HorizontalBarChartView
 struct FamilyLifeEventChartView: UIViewRepresentable {
     @EnvironmentObject var family : Family
-    let endDate: Double
+    let endDate: Int
 
-    static let ColorsTable: [NSUIColor] = [UIColor(white: 1, alpha: 0), #colorLiteral(red: 0.9686274529, green: 0.78039217, blue: 0.3450980484, alpha: 1)]
-    
+    static let shape: [LifeEvent:ScatterChartDataSet.Shape] =
+        [.debutEtude         :.chevronUp,
+         .independance       :.chevronDown,
+         .cessationActivite  :.triangle,
+         .liquidationPension :.square,
+         .dependence         :.circle,
+         .deces              :.x]
+    static let colorsTable: [LifeEvent:NSUIColor] =
+        [.debutEtude         : #colorLiteral(red: 0.4745098054, green: 0.8392156959, blue: 0.9764705896, alpha: 1),
+         .independance       : #colorLiteral(red: 0.1764705926, green: 0.4980392158, blue: 0.7568627596, alpha: 1),
+         .cessationActivite  : #colorLiteral(red: 0.5843137503, green: 0.8235294223, blue: 0.4196078479, alpha: 1),
+         .liquidationPension : #colorLiteral(red: 0.2745098174, green: 0.4862745106, blue: 0.1411764771, alpha: 1),
+         .dependence         : #colorLiteral(red: 0.9529411793, green: 0.6862745285, blue: 0.1333333403, alpha: 1),
+         .deces              : #colorLiteral(red     : 1, green     : 0.1474981606, blue     : 0, alpha     : 1)]
+
     /// Créer le dataset du graphique
     /// - Returns: dataset
-    func getFamilyLifeEventDataSet(formatter    : NamedValueFormatter,
-                                   baloonMarker : ExpenseMarkerView) -> [BarChartDataSet] {
-        var dataSets = [BarChartDataSet]()
-        
-        let familyDatedLifeEvents = family.familyDatedLifeEvents
-        
-        // mettre à jour les noms des membres de la famille dans le formatteur de l'axe X (vertical ici)
-        formatter.names = family.membersName
+    func getFamilyLifeEventDataSet() -> [ScatterChartDataSet] {
+        var dataSets = [ScatterChartDataSet]()
+        let names    = family.membersName
 
-        // mettre à jour les valeurs des dépenses dans le formatteur de bulle d'info
-//        baloonMarker.amounts = namedValuedTimeFrameTable.map { (_, value, _, _, _) in
-//            value
-//        }
-//        baloonMarker.prop = namedValuedTimeFrameTable.map { (_, _, prop, _, _) in
-//            prop
-//        }
-        //        baloonMarker.firstYearDuration = namedValuedTimeFrameTable.map { (_, _, _, _, firstYearDuration) in
-        //            firstYearDuration
-        //        }
+        func i(_ name: String) -> Int {
+            names.firstIndex(of: name) ?? -2
+        }
+
+        func nameIndex(_ year            : Int,
+                       _ eventNamesYears : [(name : String, year : Int?)]) -> Double {
+            for element in eventNamesYears where element.year == year {
+                return i(element.name).double()
+            }
+            return -1
+        }
         
         // générer une série pour chaque événement de vie
         LifeEvent.allCases.forEach { event in // pour chaque type d'événement
-            // construire la série de points: date = f(nom)
-            var dataEntries = [BarChartDataEntry]()
-            for idx in formatter.names.startIndex..<formatter.names.endIndex { // pour chaque personne
-                let name = formatter.names[idx]
-                let date = familyDatedLifeEvents[name]?[event] ?? 0
-                dataEntries.append(BarChartDataEntry(x: idx.double(), y: date.double()))
+            // construire la série de points: rang(nom) = f(année)
+            var dataEntries = [ChartDataEntry]()
+            let eventNamesYears = family.members.map {
+                ($0.displayName, $0.yearOf(event: event))
+            }
+            for year in Date.now.year ... endDate {
+                dataEntries.append(ChartDataEntry(x: year.double(),
+                                                  y: nameIndex(year, eventNamesYears)))
             }
             // créer le DataSet
-            let dataSet = BarChartDataSet(entries: dataEntries, label: event.displayString)
-            dataSet.colors = [#colorLiteral(red        : 0.4666666687, green        : 0.7647058964, blue        : 0.2666666806, alpha        : 1)]
+            let dataSet = ScatterChartDataSet(entries: dataEntries, label: event.displayString)
+            dataSet.setColor(FamilyLifeEventChartView.colorsTable[event] ?? #colorLiteral(red: 1, green: 1, blue: 1, alpha: 1))
+            dataSet.setScatterShape(FamilyLifeEventChartView.shape[event] ?? .x)
             dataSet.drawIconsEnabled = false
             // ajouter les dataSet au dataSets
             dataSets.append(dataSet)
         }
         
-        //dataSet.colors           = ExpenseSummaryChartView.ColorsTable
+        //dataSet.colors = ExpenseSummaryChartView.ColorsTable
 
         return dataSets
     }
     
-    func drawExpenseDataChart() -> HorizontalBarChartView {
-        let chartView = HorizontalBarChartView()
-        
-        //: ### General
-        chartView.pinchZoomEnabled          = true
-        chartView.doubleTapToZoomEnabled    = true
-        chartView.dragEnabled               = true
-        chartView.drawGridBackgroundEnabled = true
-        chartView.gridBackgroundColor       = ChartThemes.LightChartColors.gridBackgroundColor
-        chartView.backgroundColor           = ChartThemes.DarkChartColors.backgroundColor
-        chartView.borderColor               = ChartThemes.DarkChartColors.borderColor
-        chartView.borderLineWidth           = 1.0
-        chartView.drawBordersEnabled        = false
-        chartView.drawValueAboveBarEnabled  = false
-        chartView.drawBarShadowEnabled      = false
-        chartView.fitBars                   = true
-        chartView.highlightFullBarEnabled   = false
-        //chartView.maxVisibleCount = 60
-        
-        //: ### xAxis value formatter
-        let xAxisValueFormatter = NamedValueFormatter()
-        
-        //: ### xAxis
-        let xAxis = chartView.xAxis
-        xAxis.drawAxisLineEnabled  = true
-        xAxis.labelPosition        = .bottom
-        xAxis.labelFont            = ChartThemes.ChartDefaults.smallLabelFont
-        xAxis.labelTextColor       = ChartThemes.DarkChartColors.labelTextColor
-        xAxis.granularityEnabled   = false
-        xAxis.granularity          = 1
-        xAxis.labelCount           = 200
-        xAxis.drawGridLinesEnabled = false
-        xAxis.drawAxisLineEnabled  = true
-        xAxis.valueFormatter       = xAxisValueFormatter
-        //xAxis.wordWrapEnabled      = true
-        //xAxis.wordWrapWidthPercent = 0.5
-        //xAxis.axisMinimum         = 0
-        
-        //: ### LeftAxis
-        let leftAxis = chartView.leftAxis
-        leftAxis.enabled              = true
-        leftAxis.drawAxisLineEnabled  = true
-        leftAxis.drawGridLinesEnabled = true
-        leftAxis.labelFont            = ChartThemes.ChartDefaults.smallLabelFont
-        leftAxis.labelTextColor       = ChartThemes.DarkChartColors.labelTextColor
-        leftAxis.granularityEnabled   = true // autoriser la réducion du nombre de label
-        leftAxis.granularity          = 1    // à utiliser sans dépasser .labelCount
-        leftAxis.labelCount           = 15   // nombre maxi
-        leftAxis.axisMinimum          = Date.now.year.double()
-        leftAxis.axisMaximum          = endDate
-        
-        //: ### RightAxis
-        let rightAxis = chartView.rightAxis
-        rightAxis.enabled              = false
-        rightAxis.drawAxisLineEnabled  = true
-        rightAxis.drawGridLinesEnabled = false
-        leftAxis.labelFont             = ChartThemes.ChartDefaults.smallLabelFont
-        leftAxis.labelTextColor        = ChartThemes.DarkChartColors.labelTextColor
-        rightAxis.granularityEnabled   = true // autoriser la réducion du nombre de label
-        rightAxis.granularity          = 1    // à utiliser sans dépasser .labelCount
-        rightAxis.labelCount           = 15   // nombre maxi
-        rightAxis.axisMinimum          = Date.now.year.double()
-        rightAxis.axisMaximum          = endDate
-        
-        //: ### Legend
-        let legend = chartView.legend
-        legend.enabled             = true
-        legend.font                = ChartThemes.ChartDefaults.smallLegendFont
-        legend.textColor           = ChartThemes.DarkChartColors.legendColor
-        legend.form                = .square
-        legend.formSize            = 8
-        legend.drawInside          = false
-        legend.horizontalAlignment = .left
-        legend.verticalAlignment   = .bottom
-        legend.orientation         = .horizontal
-        legend.xEntrySpace         = 4
-        
-        //: ## bulle d'info
-        let marker = ExpenseMarkerView(color              : ChartThemes.BallonColors.color,
-                                       font               : ChartThemes.ChartDefaults.baloonfont,
-                                       textColor          : ChartThemes.BallonColors.textColor,
-                                       insets             : UIEdgeInsets(top: 8, left: 8, bottom: 20, right: 8),
-                                       xAxisValueFormatter: chartView.xAxis.valueFormatter!,
-                                       yAxisValueFormatter: chartView.leftAxis.valueFormatter!)
-        marker.chartView = chartView
-        marker.minimumSize = CGSize(width: 80, height: 40)
-        chartView.marker = marker
-        
-        chartView.fitBars = true
-        
+    func drawExpenseDataChart() -> ScatterChartView {
+        let chartView = ScatterChartView(title               : "Evénements",
+                                         smallLegend         : true,
+                                         axisFormatterChoice : .name(names: family.membersName))
+
+        chartView.leftAxis.axisMinimum = -0.5
+        chartView.leftAxis.axisMaximum = family.members.count.double() - 0.5
+
         //: ### BarChartData
-        let dataSets = getFamilyLifeEventDataSet(formatter    : xAxisValueFormatter,
-                                                 baloonMarker : marker)
+        let dataSets = getFamilyLifeEventDataSet()
         
         // ajouter le dataset au graphique
-        let data = BarChartData(dataSets: dataSets)
+        let data = ScatterChartData(dataSets: dataSets)
         data.setValueTextColor(ChartThemes.LightChartColors.valueColor)
         data.setValueFont(ChartThemes.ChartDefaults.valueFont)
-        let groupSpace = 0.2
-        let barSpace = 0.1
-        let barWidth = 0.1
-        // (0.2 + 0.03) * 4 + 0.08 = 1.00 -> interval per "group"
 
-        data.barWidth = barWidth
-        data.groupBars(fromX: 0, groupSpace: groupSpace, barSpace: barSpace)
-        
         // ajouter le dataset au graphique
         chartView.data = data
         
         return chartView
     }
     
-    func makeUIView(context: Context) -> HorizontalBarChartView {
+    func makeUIView(context: Context) -> ScatterChartView {
         drawExpenseDataChart()
     }
     
-    func updateUIView(_ uiView: HorizontalBarChartView, context: Context) {
+    func updateUIView(_ uiView: ScatterChartView, context: Context) {
         uiView.clear()
         //: ### BarChartData
-        let dataSets = getFamilyLifeEventDataSet(formatter    : uiView.xAxis.valueFormatter as! NamedValueFormatter,
-                                                 baloonMarker : uiView.marker as! ExpenseMarkerView)
+        let dataSets = getFamilyLifeEventDataSet()
         
         // ajouter le dataset au graphique
-        let data = BarChartData(dataSets: dataSets)
+        let data = ScatterChartData(dataSets: dataSets)
         data.setValueTextColor(ChartThemes.LightChartColors.valueColor)
         data.setValueFont(ChartThemes.ChartDefaults.valueFont)
-        let groupSpace = 0.2
-        let barSpace = 0.1
-        let barWidth = 0.1
-        // (0.2 + 0.03) * 4 + 0.08 = 1.00 -> interval per "group"
-        
-        data.barWidth = barWidth
-        data.groupBars(fromX: -1, groupSpace: groupSpace, barSpace: barSpace)
 
-        // mettre à joure en fonction de la position du slider de plage de temps à afficher
-        uiView.leftAxis.axisMaximum  = endDate
-        uiView.rightAxis.axisMaximum = endDate
-        
         // ajouter le dataset au graphique
         uiView.data = data
         

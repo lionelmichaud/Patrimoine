@@ -8,7 +8,7 @@
 
 import Foundation
 
-typealias DebtArray = ItemArray<Debt>
+typealias DebtArray = ArrayOfNameableValuable<Debt>
 
 // MARK: - Stock de dette incrémentable ou diminuable
 /// stock de dette incrémentable ou diminuable

@@ -19,8 +19,9 @@ protocol InflationProviderProtocol {
 }
 
 protocol FinancialRatesProviderProtocol {
-    func rates(in year       : Int,
-               withMode mode : SimulationModeEnum)
+    func rates(in year            : Int,
+               withMode mode      : SimulationModeEnum,
+               simulateVolatility : Bool)
     -> (securedRate : Double,
         stockRate   : Double)
     
@@ -141,11 +142,12 @@ struct Economy {
         /// - Returns: Taux Oblig / Taux Action
         /// - Important: Les taux changent d'une année à l'autre seuelement en mode Monté-Carlo
         ///             et si la ‘volatilité‘ à été activée dans le fichier de conf
-        func rates(in year       : Int,
-                   withMode mode : SimulationModeEnum)
+        func rates(in year            : Int,
+                   withMode mode      : SimulationModeEnum,
+                   simulateVolatility : Bool)
         -> (securedRate : Double,
             stockRate   : Double) {
-            if mode == .random && UserSettings.shared.simulateVolatility {
+            if mode == .random && simulateVolatility {
                 // utiliser la séquence tirée aléatoirement au début du run par la fonction 'generateRandomSamples'
                 return (securedRate : securedRateSamples[year - firstYearSampled],
                         stockRate   : stockRateSamples[year - firstYearSampled])
@@ -174,9 +176,10 @@ struct Economy {
         ///   - lastYear: dernière année
         ///   - withMode: mode de simulation qui détermine quelle sera la valeure moyenne retenue
         /// - Note: comportement différent selon que la volatilité doit être prise en compte ou pas
-        private func generateRandomSamples(withMode  : SimulationModeEnum,
-                                           firstYear : Int,
-                                           lastYear  : Int) throws {
+        private func generateRandomSamples(withMode           : SimulationModeEnum,
+                                           simulateVolatility : Bool,
+                                           firstYear          : Int,
+                                           lastYear           : Int) throws {
             guard lastYear >= firstYear else {
                 customLog.log(level: .fault, "generateRandomSamples: lastYear < firstYear")
                 throw ModelError.outOfBounds
@@ -184,7 +187,7 @@ struct Economy {
             firstYearSampled        = firstYear
             securedRateSamples      = []
             stockRateSamples        = []
-            if withMode == .random && UserSettings.shared.simulateVolatility {
+            if withMode == .random && simulateVolatility {
                 for _ in firstYear...lastYear {
                     securedRateSamples.append(Random.default.normal.next(mu   : randomizers.securedRate.value(withMode: withMode),
                                                                          sigma: randomizers.securedVolatility))
@@ -206,9 +209,10 @@ struct Economy {
         ///   - lastYear: dernière année
         /// - Returns: dictionnaire des échantillon de valeurs moyennes pour le prochain Run
         /// - Note : Appeler avant de lancer un Run de simulation
-        func nextRun(withMode  : SimulationModeEnum,
-                     firstYear : Int,
-                     lastYear  : Int) throws -> DictionaryOfRandomVariable {
+        func nextRun(withMode           : SimulationModeEnum,
+                     simulateVolatility : Bool,
+                     firstYear          : Int,
+                     lastYear           : Int) throws -> DictionaryOfRandomVariable {
             guard lastYear >= firstYear else {
                 customLog.log(level: .fault, "nextRun: lastYear < firstYear")
                 throw ModelError.outOfBounds
@@ -216,9 +220,10 @@ struct Economy {
             // tirer au hazard une nouvelle valeure moyenne pour le prochain run
             let dico = randomizers.next()
             // à partir de la nouvelle valeure moyenne, tirer au hazard une valeur pour chaque année
-            try generateRandomSamples(withMode  : withMode,
-                                      firstYear : firstYear,
-                                      lastYear  : lastYear)
+            try generateRandomSamples(withMode           : withMode,
+                                      simulateVolatility : simulateVolatility,
+                                      firstYear          : firstYear,
+                                      lastYear           : lastYear)
             return dico
         }
 
@@ -228,16 +233,18 @@ struct Economy {
         ///   - firstYear: première année
         ///   - lastYear: dernière année
         /// - Note : Appeler avant de rejouer un Run de simulation
-        func setRandomValue(to values : DictionaryOfRandomVariable,
-                            withMode  : SimulationModeEnum,
-                            firstYear : Int,
-                            lastYear  : Int) throws {
+        func setRandomValue(to values          : DictionaryOfRandomVariable,
+                            withMode           : SimulationModeEnum,
+                            simulateVolatility : Bool,
+                            firstYear          : Int,
+                            lastYear           : Int) throws {
             // Définir une valeur pour chaque variable aléatoire avant un rejeu
             randomizers.setRandomValue(to: values)
             // à partir de la nouvelle valeure moyenne, tirer au hazard une valeur pour chaque année
-            try generateRandomSamples(withMode  : withMode,
-                                      firstYear : firstYear,
-                                      lastYear  : lastYear)
+            try generateRandomSamples(withMode           : withMode,
+                                      simulateVolatility : simulateVolatility,
+                                      firstYear          : firstYear,
+                                      lastYear           : lastYear)
         }
 
         func inflation(withMode simulationMode: SimulationModeEnum) -> Double {

@@ -8,12 +8,13 @@
 
 import Foundation
 
-typealias PeriodicInvestementArray = ItemArray<PeriodicInvestement>
+typealias PeriodicInvestementArray = ArrayOfNameableValuable<PeriodicInvestement>
 
 // MARK: - Placement à versements périodiques, fixes, annuels et à taux fixe
 
 /// Placement à versements périodiques, fixes, annuels et à taux fixe
 /// Tous les intérêts sont capitalisés
+// conformité à BundleCodable nécessaire pour les TU; sinon Codable suffit
 struct PeriodicInvestement: Identifiable, BundleCodable, FinancialEnvelop {
     
     // MARK: - Static Properties
@@ -56,8 +57,9 @@ struct PeriodicInvestement: Identifiable, BundleCodable, FinancialEnvelop {
     private static func rates(in year : Int)
     -> (securedRate : Double,
         stockRate   : Double) {
-        PeriodicInvestement.economyModel.rates(in       : year,
-                                               withMode : simulationMode)
+        PeriodicInvestement.economyModel.rates(in                 : year,
+                                               withMode           : simulationMode,
+                                               simulateVolatility : UserSettings.shared.simulateVolatility)
     }
     
     // MARK: - Properties
@@ -69,7 +71,7 @@ struct PeriodicInvestement: Identifiable, BundleCodable, FinancialEnvelop {
     // attention: par défaut la méthode delegate pour ageOf = nil
     // c'est au créateur de l'objet (View ou autre objet du Model) de le faire
     var ownership       : Ownership = Ownership()
-    var type            : InvestementType
+    var type            : InvestementKind
     var yearlyPayement  : Double = 0.0 // versements nets de frais
     var yearlyCost      : Double = 0.0 // Frais sur versements
     // Ouverture
@@ -77,7 +79,7 @@ struct PeriodicInvestement: Identifiable, BundleCodable, FinancialEnvelop {
     var initialValue    : Double = 0.0
     var initialInterest : Double = 0.0 // portion of interests included in the initialValue
     // rendement
-    var interestRateType       : InterestRateType // type de taux de rendement
+    var interestRateType       : InterestRateKind // type de taux de rendement
     var averageInterestRate    : Double {// % avant charges sociales si prélevées à la source annuellement
         switch interestRateType {
             case .contractualRate( let fixedRate):
@@ -111,10 +113,10 @@ struct PeriodicInvestement: Identifiable, BundleCodable, FinancialEnvelop {
     
     init(name             : String,
          note             : String,
-         type             : InvestementType,
+         type             : InvestementKind,
          firstYear        : Int,
          lastYear         : Int,
-         interestRateType : InterestRateType,
+         interestRateType : InterestRateKind,
          initialValue     : Double = 0.0,
          initialInterest  : Double = 0.0,
          yearlyPayement   : Double = 0.0,

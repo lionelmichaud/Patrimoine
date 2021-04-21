@@ -8,6 +8,12 @@
 
 import Foundation
 
+struct BrutNetTaxable {
+    var brut    : Double
+    var net     : Double
+    var taxable : Double
+}
+
 final class Adult: Person { // swiftlint:disable:this type_body_length
     
     // MARK: - nested types
@@ -353,13 +359,6 @@ final class Adult: Person { // swiftlint:disable:this type_body_length
         return yearOfDeath - nbOfYearOfDependency
     } // computed
     
-    override var datedLifeEvents: DatedLifeEvents {
-        var dic = super.datedLifeEvents
-        dic[.cessationActivite]  = dateOfRetirement.year
-        dic[.liquidationPension] = dateOfPensionLiquid.year
-        dic[.dependence]         = yearOfDependency
-        return dic
-    }
     override var description: String {
         return super.description +
         """

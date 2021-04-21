@@ -158,7 +158,7 @@ struct CashFlowLine {
                                                with patrimoine : Patrimoin) {
         // FIXME: - en fait il faudrait traiter les sucessions en séquences: calcul taxe => transmission puis calcul tax => transmission
         // identification des personnes décédées dans l'année
-        let decedents = family.deceasedPersons(during: year)
+        let decedents = family.deceasedAdults(during: year)
         
         // ajouter les droits de succession (légales et assurances vie) aux taxes
         var totalSuccessionTax   = 0.0

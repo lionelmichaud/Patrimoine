@@ -22,7 +22,7 @@ extension ItemSelectionList {
     ///   - name: nom de l'item recherché
     ///   - itemSelection: liste d'item
     /// - Returns: true si la liste d'items contient l'item sélectionné
-    func selectionContains(_ name: String) -> Bool {
+    func contains(_ name: String) -> Bool {
         self.contains(where: { item in
             (item.label == name && item.selected)
         })
@@ -42,7 +42,7 @@ extension ItemSelectionList {
     }
     
     /// Retourne vrai si aucune des catégories de ls liste n'est sélectionnées
-    func NoneCategorySelected() -> Bool {
+    func noneCategorySelected() -> Bool {
         let count = self.reduce(.zero, { result, element in result + (element.selected ? 1 : 0) })
         return count == 0
     }

@@ -10,7 +10,7 @@ import Foundation
 
 // MARK: - Dictionnaire de Dépenses par catégorie (un tableau de dépenses par catégorie)
 
-typealias LifeExpensesDic = DictionaryOfItemArray<LifeExpenseCategory, ExpenseArray>
+typealias LifeExpensesDic = DictionaryOfNameableValuableArray<LifeExpenseCategory, LifeExpenseArray>
 
 extension LifeExpensesDic {
     /// Retourne un tableau des noms des dépenses dans une catégorie donnée

@@ -43,18 +43,7 @@ struct SciCashFlowLine {
         }
         
         // MARK: - Methods
-        
-        func print(level: Int = 0) {
-            let h = String(repeating: StringCst.header, count: level)
-            Swift.print(h + "REVENUS SCI:    ")
-            // SCPIs dividendes
-            sciDividends.print(level: level+1)
-            // SCPIs ventes
-            scpiSale.print(level: level+1)
-            // total des revenus
-            Swift.print(h + StringCst.header + "TOTAL:", total)
-        }
-    }
+}
     
     // MARK: - Properties
     
@@ -148,16 +137,5 @@ struct SciCashFlowLine {
     
     func summaryFiltredValues(with itemSelectionList: ItemSelectionList) -> [Double] {
         summary.filtredValues(with : itemSelectionList)
-    }
-    
-    func print(level: Int = 0) {
-        let h = String(repeating: StringCst.header, count: level)
-        Swift.print(h + "SCI:    ")
-        // revenues
-        revenues.print(level: 1)
-        // IS de la SCI
-        Swift.print(h + StringCst.header + "IS:", IS)
-        // net cash flow
-        Swift.print(h + StringCst.header + "NET CASH FLOW:", netRevenues)
     }
 }

@@ -34,12 +34,6 @@ final class Child: Person {
     var dateOfIndependenceComp: DateComponents { // computed
         DateComponents(calendar: Date.calendar, year: birthDate.year + ageOfIndependence, month: 09, day: 30)
     }
-    override var datedLifeEvents: DatedLifeEvents {
-        var dic = super.datedLifeEvents
-        dic[.debutEtude]   = dateOfUniversity.year
-        dic[.independance] = dateOfIndependence.year
-        return dic
-    }
     override var description: String {
         super.description +
         """

@@ -10,13 +10,13 @@ import Foundation
 
 // MARK: - Type d'investissement
 
-enum InvestementType {
+enum InvestementKind {
     case lifeInsurance (periodicSocialTaxes: Bool = true,
                         clause: LifeInsuranceClause = LifeInsuranceClause())
     case pea
     case other
     
-    static var allCases: [InvestementType] {
+    static var allCases: [InvestementKind] {
         return [.lifeInsurance(), .pea, .other]
     }
     
@@ -30,7 +30,7 @@ enum InvestementType {
 
 // MARK: - Extensions
 
-extension InvestementType: CustomStringConvertible {
+extension InvestementKind: CustomStringConvertible {
     var description: String {
         switch self {
             case .lifeInsurance(let periodicSocialTaxes, let clause):
@@ -47,7 +47,7 @@ extension InvestementType: CustomStringConvertible {
     }
 }
 
-extension InvestementType: PickableIdentifiableEnum {
+extension InvestementKind: PickableIdentifiableEnum {
     var id: Int {
         return self.rawValue
     }
@@ -64,7 +64,7 @@ extension InvestementType: PickableIdentifiableEnum {
     }
 }
 
-extension InvestementType: Codable {
+extension InvestementKind: Codable {
     // coding keys
     private enum CodingKeys: String, CodingKey {
         case lifeInsurance_taxes, lifeInsurance_clause, PEA, other

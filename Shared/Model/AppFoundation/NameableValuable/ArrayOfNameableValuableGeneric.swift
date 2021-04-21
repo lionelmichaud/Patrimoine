@@ -10,7 +10,7 @@ import Foundation
 
 // MARK: - Table d'Item Generic Valuable and Nameable
 
-struct ItemArray<E>: Codable, Versionable where
+struct ArrayOfNameableValuable<E>: Codable, Versionable where
     E: Codable,
     E: Identifiable,
     E: CustomStringConvertible,
@@ -39,7 +39,7 @@ struct ItemArray<E>: Codable, Versionable where
     // MARK: - Initializers
     
     init(fileNamePrefix: String = "") {
-        self = Bundle.main.decode(ItemArray.self,
+        self = Bundle.main.decode(ArrayOfNameableValuable.self,
                                   from                 : fileNamePrefix + String(describing: E.self) + ".json",
                                   dateDecodingStrategy : .iso8601,
                                   keyDecodingStrategy  : .useDefaultKeys)
@@ -49,7 +49,7 @@ struct ItemArray<E>: Codable, Versionable where
     init(for aClass     : AnyClass,
          fileNamePrefix : String = "") {
         let testBundle = Bundle(for: aClass)
-        self = testBundle.decode(ItemArray.self,
+        self = testBundle.decode(ArrayOfNameableValuable.self,
                                  from                 : fileNamePrefix + String(describing: E.self) + ".json",
                                  dateDecodingStrategy : .iso8601,
                                  keyDecodingStrategy  : .useDefaultKeys)
@@ -115,7 +115,7 @@ struct ItemArray<E>: Codable, Versionable where
     }
 }
 
-extension ItemArray where E: Ownable {
+extension ArrayOfNameableValuable where E: Ownable {
     // MARK: - Initializers
     
     init(fileNamePrefix         : String = "",
@@ -175,7 +175,7 @@ extension ItemArray where E: Ownable {
     }
 }
 
-extension ItemArray: CustomStringConvertible {
+extension ArrayOfNameableValuable: CustomStringConvertible {
     var description: String {
         items.reduce("") { r, item in
             r + item.description + "\n\n"

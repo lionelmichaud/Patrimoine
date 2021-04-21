@@ -11,7 +11,7 @@ import Foundation
 // MARK: Protocol d'enveloppe financière
 
 protocol FinancialEnvelop: Ownable {
-    var type            : InvestementType { get set }
+    var type            : InvestementKind { get set }
     var isLifeInsurance : Bool { get }
     var clause          : LifeInsuranceClause? { get }
 }

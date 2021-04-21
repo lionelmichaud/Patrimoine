@@ -8,10 +8,10 @@
 
 import Foundation
 
-typealias RealEstateArray = ItemArray<RealEstateAsset>
+typealias RealEstateArray = ArrayOfNameableValuable<RealEstateAsset>
 
 // MARK: - Actif immobilier physique
-
+// conformité à BundleCodable nécessaire pour les TU; sinon Codable suffit
 struct RealEstateAsset: Identifiable, BundleCodable, Ownable {
     
     // MARK: - Static Properties

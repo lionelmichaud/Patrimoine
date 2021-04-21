@@ -68,14 +68,18 @@ extension Owners {
     
     // MARK: - Methods
     
+    subscript(ownerName: String) -> Owner? {
+        self.first(where: { ownerName == $0.name })
+    }
+
     static func == (lhs: Owners, rhs: Owners) -> Bool {
         for owner in lhs {
-            guard let found = rhs.owner(ownerName: owner.name) else { return false }
+            guard let found = rhs[owner.name] else { return false }
             if !found.fraction.isApproximatelyEqual(to: owner.fraction,
                                                     absoluteTolerance: 0.0001) { return false }
         }
         for owner in rhs {
-            guard let found = lhs.owner(ownerName: owner.name) else { return false }
+            guard let found = lhs[owner.name] else { return false }
             if !found.fraction.isApproximatelyEqual(to: owner.fraction,
                                                     absoluteTolerance: 0.0001) { return false }
         }
@@ -83,11 +87,7 @@ extension Owners {
     }
     
     func contains(ownerName: String) -> Bool {
-        owner(ownerName: ownerName) != nil
-    }
-    
-    func owner(ownerName: String) -> Owner? {
-        self.first(where: { ownerName == $0.name })
+        self[ownerName] != nil
     }
     
     func ownerIdx(ownerName: String) -> Int? {

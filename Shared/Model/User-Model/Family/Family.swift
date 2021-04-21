@@ -54,14 +54,6 @@ final class Family: ObservableObject {
         members.filter {$0 is Child}
     }
 
-    var familyDatedLifeEvents: FamilyDatedLifeEvents {
-        var dic = FamilyDatedLifeEvents()
-        members.forEach { person in
-            dic[person.displayName] = person.datedLifeEvents
-        }
-        return dic
-    }
-
     // MARK: - Initialization
 
     init() {
@@ -106,9 +98,9 @@ final class Family: ObservableObject {
     /// Retourne la liste des personnes décédées dans l'année
     /// - Parameter year: année où l'on recherche des décès
     /// - Returns: liste des personnes décédées dans l'année
-    func deceasedPersons(during year: Int) -> [Person] {
+    func deceasedAdults(during year: Int) -> [Person] {
         members.compactMap { member in
-            if member.isDeceased(during: year) {
+            if member is Adult && member.isDeceased(during: year) {
                 // un décès est survenu
                 return member
             } else {

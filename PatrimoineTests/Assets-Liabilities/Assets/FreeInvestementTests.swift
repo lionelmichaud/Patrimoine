@@ -13,7 +13,8 @@ class FreeInvestementTests: XCTestCase {
     
     struct EconomyModelProvider: EconomyModelProviderProtocol {
         func rates(in year: Int,
-                   withMode mode: SimulationModeEnum) -> (securedRate: Double, stockRate: Double) {
+                   withMode mode: SimulationModeEnum,
+                   simulateVolatility: Bool) -> (securedRate: Double, stockRate: Double) {
             (securedRate: Double(year) + 5.0, stockRate: Double(year) + 10.0)
         }
         
@@ -59,7 +60,9 @@ class FreeInvestementTests: XCTestCase {
             (0.75 * FreeInvestementTests.rates.stockRate + 0.25 * FreeInvestementTests.rates.securedRate)
             - FreeInvestementTests.inflation
         
-        FreeInvestementTests.rates2021 = FreeInvestementTests.economyModelProvider.rates(in: 2021, withMode: .deterministic)
+        FreeInvestementTests.rates2021 = FreeInvestementTests.economyModelProvider.rates(in: 2021,
+                                                                                         withMode: .deterministic,
+                                                                                         simulateVolatility: false)
         FreeInvestementTests.averageRate2021Theory =
             (0.75 * FreeInvestementTests.rates2021.stockRate + 0.25 * FreeInvestementTests.rates2021.securedRate)
             - FreeInvestementTests.inflation

@@ -11,9 +11,9 @@ import Foundation
 // MARK: - Protocol PickableEnum pour Picker d'un Enum
 
 protocol PickableEnum: CaseIterable, Hashable, CustomStringConvertible {
-    var pickerString: String { get }
-    var displayString: String { get }
-    var description: String { get }
+    var pickerString  : String { get }
+    var displayString : String { get }
+    var description   : String { get }
 }
 
 // implémntation par défaut

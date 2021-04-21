@@ -28,11 +28,6 @@ struct StringCst {
     static let header = "  "
 }
 
-struct RetirmentCst {
-    static let minAgepension = 62
-    static let maxAgepension = 67
-}
-
 struct ScenarioCst {
     static let minAgeUniversity   = 18
     static let minAgeIndependance = 24
