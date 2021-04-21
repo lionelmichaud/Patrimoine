@@ -62,10 +62,10 @@ struct CumulatedSuccessorsDisclosureGroup: View {
     var body: some View {
         DisclosureGroup(
             content: {
-                ForEach(successions.childrenSuccessorsInheritedNetValue.keys.sorted(), id:\.self) { name in
+                ForEach(successions.successorsInheritedNetValue.keys.sorted(), id:\.self) { name in
                     GroupBox(label: Text(name).font(.headline)) {
                         AmountView(label  : "Valeur héritée nette",
-                                   amount : successions.childrenSuccessorsInheritedNetValue[name]!)
+                                   amount : successions.successorsInheritedNetValue[name]!)
                             .foregroundColor(.secondary)
                             .padding(.top, 3)
                     }

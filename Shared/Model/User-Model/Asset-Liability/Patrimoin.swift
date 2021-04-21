@@ -11,6 +11,10 @@ import os
 
 private let customLog = Logger(subsystem: "me.michaud.lionel.Patrimoine", category: "Model.Patrimoin")
 
+enum CashFlowError: Error {
+    case notEnoughCash(missingCash: Double)
+}
+
 // MARK: - Patrimoine constitué d'un Actif et d'un Passif
 final class Patrimoin: ObservableObject {
     

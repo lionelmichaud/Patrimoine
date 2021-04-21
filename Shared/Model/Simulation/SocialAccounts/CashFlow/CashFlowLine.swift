@@ -4,10 +4,6 @@ import Disk
 
 private let customLog = Logger(subsystem: "me.michaud.lionel.Patrimoine", category: "Model.CashFlow")
 
-enum CashFlowError: Error {
-    case notEnoughCash(missingCash: Double)
-}
-
 // MARK: - Ligne de cash flow annuel
 
 struct CashFlowLine {

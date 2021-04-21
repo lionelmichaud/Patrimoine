@@ -21,8 +21,8 @@ struct Succession: Identifiable {
     // liste des héritages par héritier
     let inheritances : [Inheritance]
     
-    // dictionnaire des héritages net reçu par chaque enfant dans une succession
-    var childrenSuccessorsInheritedNetValue: [String: Double] {
+    // dictionnaire des héritages net reçu par chaque héritier dans une succession
+    var successorsInheritedNetValue: [String: Double] {
         inheritances.reduce(into: [:]) { counts, inheritance in
             counts[inheritance.person.displayName, default: 0] += inheritance.net
         }
@@ -39,11 +39,11 @@ struct Succession: Identifiable {
     }
 }
 extension Array where Element == Succession {
-    // dictionnaire des héritages net reçu par chaque enfant sur un ensemble de successions
-    var childrenSuccessorsInheritedNetValue: [String: Double] {
+    // dictionnaire des héritages net reçu par chaque héritier sur un ensemble de successions
+    var successorsInheritedNetValue: [String: Double] {
         var globalDico: [String: Double] = [:]
         self.forEach { succession in
-            let dico = succession.childrenSuccessorsInheritedNetValue
+            let dico = succession.successorsInheritedNetValue
             for name in dico.keys {
                 if globalDico[name] != nil {
                     globalDico[name]! += dico[name]!

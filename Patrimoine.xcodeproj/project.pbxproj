@@ -1390,7 +1390,6 @@
 				79948939249E4FC200DAFF1E /* Patrimoin.swift */,
 				79AB0BAD25A07EB300242DDA /* Patrimoin+Succession.swift */,
 				79785D5B257FAFDA00E8E35D /* FiscalHousehold.swift */,
-				79C7B201258D2783004B38E7 /* Succession.swift */,
 				7988807B258790230098E30C /* Ownership */,
 				7994893A249E4FC200DAFF1E /* Assets */,
 				79948936249E4FC200DAFF1E /* Liabilities */,
@@ -1572,6 +1571,7 @@
 				79948929249E4FC200DAFF1E /* Family */,
 				79948942249E4FC200DAFF1E /* Income-Expenses */,
 				79948934249E4FC200DAFF1E /* Asset-Liability */,
+				79EC47EA263087DC0006EE44 /* Succession */,
 			);
 			path = "User-Model";
 			sourceTree = "<group>";
@@ -1629,6 +1629,14 @@
 				79957F53253B0A8000001289 /* DiscreteRandomizerView.swift */,
 			);
 			path = RandomizerViews;
+			sourceTree = "<group>";
+		};
+		79EC47EA263087DC0006EE44 /* Succession */ = {
+			isa = PBXGroup;
+			children = (
+				79C7B201258D2783004B38E7 /* Succession.swift */,
+			);
+			path = Succession;
 			sourceTree = "<group>";
 		};
 		79EE48F125D0284C00FB8769 /* Ownership */ = {
