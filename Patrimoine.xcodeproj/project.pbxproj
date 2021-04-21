@@ -265,7 +265,6 @@
 		79AA94C324BA746400BD3FCD /* StepperView in Frameworks */ = {isa = PBXBuildFile; productRef = 79AA94C224BA746400BD3FCD /* StepperView */; };
 		79AA94C624BA7CC900BD3FCD /* PersonLifeLineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79AA94C524BA7CC900BD3FCD /* PersonLifeLineView.swift */; };
 		79AB0BAB25A075A200242DDA /* bell.wav in Resources */ = {isa = PBXBuildFile; fileRef = 79AB0BAA25A075A200242DDA /* bell.wav */; };
-		79AB0BAE25A07EB300242DDA /* Patrimoin+Succession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79AB0BAD25A07EB300242DDA /* Patrimoin+Succession.swift */; };
 		79AD6EFA251FB0C400490472 /* StatisticsProtocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79AD6EF9251FB0C400490472 /* StatisticsProtocols.swift */; };
 		79AE4AD225C8A032007810DF /* OwnershipTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79AE4AD125C8A032007810DF /* OwnershipTests.swift */; };
 		79AE4ADA25C8A10C007810DF /* OwnersTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79AE4AD925C8A10C007810DF /* OwnersTests.swift */; };
@@ -338,6 +337,10 @@
 		79E7588B250D5A3100153AB6 /* EconomyModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79E7588A250D5A3100153AB6 /* EconomyModel.swift */; };
 		79E78B5725C221840037006B /* LayoffCompensationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79E78B5625C221840037006B /* LayoffCompensationTests.swift */; };
 		79E78B5B25C2238B0037006B /* LayoffCompensationModel.json in Resources */ = {isa = PBXBuildFile; fileRef = 79E78B5A25C2238B0037006B /* LayoffCompensationModel.json */; };
+		79EC47F326308A240006EE44 /* NetCashFlowManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79EC47F226308A240006EE44 /* NetCashFlowManager.swift */; };
+		79EC48102630983F0006EE44 /* OwnershipManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79EC480F2630983F0006EE44 /* OwnershipManager.swift */; };
+		79EC4814263099F40006EE44 /* LegalSuccessionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79EC4813263099F40006EE44 /* LegalSuccessionManager.swift */; };
+		79EC481826309A100006EE44 /* LifeInsuranceSuccessionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79EC481726309A100006EE44 /* LifeInsuranceSuccessionManager.swift */; };
 		79ED5AE525A9E2FC00609DDA /* test_futurValue.xlsx in Resources */ = {isa = PBXBuildFile; fileRef = 79ED5AE425A9E2FC00609DDA /* test_futurValue.xlsx */; };
 		79EEEC6C256FF33B00778588 /* AppSettings.json in Resources */ = {isa = PBXBuildFile; fileRef = 79EEEC6B256FF33B00778588 /* AppSettings.json */; };
 		79EEEC752570141800778588 /* UserSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79EEEC742570141800778588 /* UserSettingsView.swift */; };
@@ -621,7 +624,6 @@
 		79A8083724A3C76200957B79 /* RetirementModelConfig.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = RetirementModelConfig.json; sourceTree = "<group>"; };
 		79AA94C524BA7CC900BD3FCD /* PersonLifeLineView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersonLifeLineView.swift; sourceTree = "<group>"; };
 		79AB0BAA25A075A200242DDA /* bell.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = bell.wav; sourceTree = "<group>"; };
-		79AB0BAD25A07EB300242DDA /* Patrimoin+Succession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Patrimoin+Succession.swift"; sourceTree = "<group>"; };
 		79AD6EF9251FB0C400490472 /* StatisticsProtocols.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatisticsProtocols.swift; sourceTree = "<group>"; };
 		79AE4AD125C8A032007810DF /* OwnershipTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OwnershipTests.swift; sourceTree = "<group>"; };
 		79AE4AD925C8A10C007810DF /* OwnersTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OwnersTests.swift; sourceTree = "<group>"; };
@@ -686,6 +688,10 @@
 		79E7588A250D5A3100153AB6 /* EconomyModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EconomyModel.swift; sourceTree = "<group>"; };
 		79E78B5625C221840037006B /* LayoffCompensationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LayoffCompensationTests.swift; sourceTree = "<group>"; };
 		79E78B5A25C2238B0037006B /* LayoffCompensationModel.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = LayoffCompensationModel.json; sourceTree = "<group>"; };
+		79EC47F226308A240006EE44 /* NetCashFlowManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetCashFlowManager.swift; sourceTree = "<group>"; };
+		79EC480F2630983F0006EE44 /* OwnershipManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OwnershipManager.swift; sourceTree = "<group>"; };
+		79EC4813263099F40006EE44 /* LegalSuccessionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LegalSuccessionManager.swift; sourceTree = "<group>"; };
+		79EC481726309A100006EE44 /* LifeInsuranceSuccessionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LifeInsuranceSuccessionManager.swift; sourceTree = "<group>"; };
 		79ED5AE425A9E2FC00609DDA /* test_futurValue.xlsx */ = {isa = PBXFileReference; lastKnownFileType = file; path = test_futurValue.xlsx; sourceTree = "<group>"; };
 		79EEEC6B256FF33B00778588 /* AppSettings.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = AppSettings.json; sourceTree = "<group>"; };
 		79EEEC742570141800778588 /* UserSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserSettingsView.swift; sourceTree = "<group>"; };
@@ -1037,6 +1043,10 @@
 				79C93D7A2616332400FC4CE0 /* CashFlowLine+manageSCPI.swift */,
 				79C93D802616336A00FC4CE0 /* CashFlowLine+managePeriodicInvest.swift */,
 				7907C28625E03891005499CC /* SciCashFlowLine.swift */,
+				79EC47F226308A240006EE44 /* NetCashFlowManager.swift */,
+				79EC480F2630983F0006EE44 /* OwnershipManager.swift */,
+				79EC4813263099F40006EE44 /* LegalSuccessionManager.swift */,
+				79EC481726309A100006EE44 /* LifeInsuranceSuccessionManager.swift */,
 			);
 			path = CashFlow;
 			sourceTree = "<group>";
@@ -1388,7 +1398,6 @@
 			isa = PBXGroup;
 			children = (
 				79948939249E4FC200DAFF1E /* Patrimoin.swift */,
-				79AB0BAD25A07EB300242DDA /* Patrimoin+Succession.swift */,
 				79785D5B257FAFDA00E8E35D /* FiscalHousehold.swift */,
 				7988807B258790230098E30C /* Ownership */,
 				7994893A249E4FC200DAFF1E /* Assets */,
@@ -2013,7 +2022,6 @@
 				7956C6282538FA2900C92A28 /* ScenarioListView.swift in Sources */,
 				79948970249E4FC200DAFF1E /* ExpenseSummaryView.swift in Sources */,
 				79948991249E4FC200DAFF1E /* Debt.swift in Sources */,
-				79AB0BAE25A07EB300242DDA /* Patrimoin+Succession.swift in Sources */,
 				7924F18D25B368FE001CC252 /* UnemploymentCompensation.swift in Sources */,
 				79E7588B250D5A3100153AB6 /* EconomyModel.swift in Sources */,
 				79CD02E124D066200055CEF5 /* PensionReversion.swift in Sources */,
@@ -2050,6 +2058,7 @@
 				79D84E2B24A28EBF00CBC78E /* Child.swift in Sources */,
 				7905A50424CEFB880049F4ED /* ValuedRevenues.swift in Sources */,
 				79CE57812588EF3C00C2E00C /* SuccessionsView.swift in Sources */,
+				79EC48102630983F0006EE44 /* OwnershipManager.swift in Sources */,
 				793D189725B2533C005D5A4E /* PickableEnum.swift in Sources */,
 				79948977249E4FC200DAFF1E /* SimulationView.swift in Sources */,
 				79948969249E4FC200DAFF1E /* MemberAddView.swift in Sources */,
@@ -2066,6 +2075,7 @@
 				7994899F249E4FC200DAFF1E /* WorkIncome.swift in Sources */,
 				79C6FC0D24BF9D0400D99594 /* UnemployementDetailView.swift in Sources */,
 				799489A3249E4FC200DAFF1E /* Extensions+URL.swift in Sources */,
+				79EC4814263099F40006EE44 /* LegalSuccessionManager.swift in Sources */,
 				7946510F25ADB0E100BC9F99 /* DemembrementModel.swift in Sources */,
 				7905A50624CF03060049F4ED /* RevenueCategory.swift in Sources */,
 				791A4ADA24B8B8210013A3F1 /* RetirementEditView.swift in Sources */,
@@ -2120,6 +2130,7 @@
 				7975E4E6252E20400036C1F5 /* HumanLifeModel.swift in Sources */,
 				7994896F249E4FC200DAFF1E /* ExpenseView.swift in Sources */,
 				794D701C25CF20140055E93C /* LifeInsuranceClause.swift in Sources */,
+				79EC481826309A100006EE44 /* LifeInsuranceSuccessionManager.swift in Sources */,
 				7940694724D33E62002FD72E /* SwiftUIconditional.swift in Sources */,
 				7946511325ADB11500BC9F99 /* LayOffTaxes.swift in Sources */,
 				7994898A249E4FC200DAFF1E /* Simulation.swift in Sources */,
@@ -2157,6 +2168,7 @@
 				79957F54253B0A8000001289 /* DiscreteRandomizerView.swift in Sources */,
 				799488C5249E4F9700DAFF1E /* UIState.swift in Sources */,
 				79EF511C255C932000B46303 /* Extensions+Binding.swift in Sources */,
+				79EC47F326308A240006EE44 /* NetCashFlowManager.swift in Sources */,
 				7946A48624D7116700B86BAD /* TaxeCategory.swift in Sources */,
 				79DB52C1258663B000BC6E84 /* ButtonStyles.swift in Sources */,
 				79EEEC752570141800778588 /* UserSettingsView.swift in Sources */,

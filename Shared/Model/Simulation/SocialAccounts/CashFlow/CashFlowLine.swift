@@ -165,19 +165,26 @@ struct CashFlowLine {
                                         logTopic: .lifeEvent,
                                         message: "Décès de \(decedent.displayName) en \(year)")
             // calculer les droits de successions légales
-            let succession = patrimoine.legalSuccession(of      : decedent,
-                                                        atEndOf : year)
+            let legalSuccessionManager = LegalSuccessionManager()
+            let succession = legalSuccessionManager.legalSuccession(in      : patrimoine,
+                                                                    of      : decedent,
+                                                                    atEndOf : year)
             successions.append(succession)
             totalSuccessionTax += succession.tax
             
             // calculer les droits de transmission assurances vies
-            let liSuccession = patrimoine.lifeInsuraceSuccession(of      : decedent,
-                                                                 atEndOf : year)
+            let lifeInsuranceSuccessionManager = LifeInsuranceSuccessionManager()
+            let liSuccession = lifeInsuranceSuccessionManager.lifeInsuraceSuccession(in : patrimoine,
+                                                                                     of : decedent,
+                                                                 atEndOf                : year)
             lifeInsSuccessions.append(liSuccession)
             totalLiSuccessionTax += liSuccession.tax
             
             // transférer les biens d'un défunt vers ses héritiers
-            patrimoine.transferOwnershipOf(decedent: decedent, atEndOf: year)
+            let ownershipManager = OwnershipManager()
+            ownershipManager.transferOwnershipOf(of       : patrimoine,
+                                                 decedent : decedent,
+                                                 atEndOf  : year)
         }
         taxes.perCategory[.succession]?.namedValues
             .append((name  : TaxeCategory.succession.rawValue,
@@ -226,26 +233,32 @@ struct CashFlowLine {
     fileprivate mutating func manageYearlyNetCashFlow(of patrimoine       : Patrimoin,
                                                       for adultsName      : [String],
                                                       lifeInsuranceRebate : inout Double) throws {
+        let netCashFlowManager = NetCashFlowManager()
+        
         if netCashFlowSalesExcluded > 0.0 {
             // capitaliser les intérêts des investissements libres
-            patrimoine.capitalizeFreeInvestments(atEndOf: year)
+            netCashFlowManager.capitalizeFreeInvestments(in      : patrimoine,
+                                                         atEndOf : year)
             // ajouter le cash flow net à un investissement libre de type Assurance vie
-            patrimoine.investNetCashFlow(amount : netCashFlowSalesExcluded,
-                                         for    : adultsName)
+            netCashFlowManager.investNetCashFlow(amount : netCashFlowSalesExcluded,
+                                                 in     : patrimoine,
+                                                 for    : adultsName)
             
         } else {
             // retirer le solde net d'un investissement libre: d'abord PEA ensuite Assurance vie
             // géré comme un revenu en report d'imposition (dette)
             let totalTaxableInterests =
-                try patrimoine.getCashFromInvestement(thisAmount          : -netCashFlowSalesExcluded,
-                                                      atEndOf             : year,
-                                                      for                 : adultsName,
-                                                      taxes               : &taxes.perCategory,
-                                                      lifeInsuranceRebate : &lifeInsuranceRebate)
+                try netCashFlowManager.getCashFromInvestement(thisAmount          : -netCashFlowSalesExcluded,
+                                                              in                  : patrimoine,
+                                                              atEndOf             : year,
+                                                              for                 : adultsName,
+                                                              taxes               : &taxes.perCategory,
+                                                              lifeInsuranceRebate : &lifeInsuranceRebate)
             taxableIrppRevenueDelayedToNextYear.increase(by: totalTaxableInterests.rounded())
             
             // capitaliser les intérêts des investissements libres
-            patrimoine.capitalizeFreeInvestments(atEndOf: year)
+            netCashFlowManager.capitalizeFreeInvestments(in      : patrimoine,
+                                                         atEndOf : year)
         }
     }
 }

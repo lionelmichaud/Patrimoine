@@ -253,12 +253,18 @@ private struct InheritanceSectionView: View {
     func inheritanceDisclosure(label        : String,
                                atEndOf year : Int,
                                decedent     : Adult) -> some View {
-        let succession = patrimoine.legalSuccession(of: decedent, atEndOf: year)
+        let legalSuccessionManager = LegalSuccessionManager()
+        let succession = legalSuccessionManager.legalSuccession(in      : patrimoine,
+                                                                of      : decedent,
+                                                                atEndOf : year)
+        let taxableInheritanceValue = legalSuccessionManager.taxableInheritanceValue(in: patrimoine,
+                                                                                     of: decedent,
+                                                                                     atEndOf: year)
         
         return DisclosureGroup(
             content: {
                 AmountView(label : "Masse successorale",
-                           amount: patrimoine.taxableInheritanceValue(of: decedent, atEndOf: year))
+                           amount: taxableInheritanceValue)
                 AmountView(label : "Droits de succession à payer par les héritiers",
                            amount: -succession.tax)
                 AmountView(label : "Succession nette laissée aux héritiers",

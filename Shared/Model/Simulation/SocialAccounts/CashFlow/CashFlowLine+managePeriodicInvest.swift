@@ -38,9 +38,11 @@ extension CashFlowLine {
             let ownedSaleValues = periodicInvestement.ownedValues(ofValue          : liquidatedValue.revenue,
                                                                   atEndOf          : year,
                                                                   evaluationMethod : .patrimoine)
-            patrimoine.investCapital(ownedCapitals : ownedSaleValues,
-                                     atEndOf       : year)
-            
+            let netCashFlowManager = NetCashFlowManager()
+            netCashFlowManager.investCapital(ownedCapitals : ownedSaleValues,
+                                             in            : patrimoine,
+                                             atEndOf       : year)
+
             // populate plus values taxables à l'IRPP
             switch periodicInvestement.type {
                 case .lifeInsurance:

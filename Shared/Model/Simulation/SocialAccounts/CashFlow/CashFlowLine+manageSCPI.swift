@@ -54,8 +54,11 @@ extension CashFlowLine {
             let ownedSaleValues = scpi.ownedValues(ofValue          : liquidatedValue.netRevenue,
                                                    atEndOf          : year,
                                                    evaluationMethod : .patrimoine)
-            patrimoine.investCapital(ownedCapitals : ownedSaleValues,
-                                     atEndOf       : year)
+            
+            let netCashFlowManager = NetCashFlowManager()
+            netCashFlowManager.investCapital(ownedCapitals : ownedSaleValues,
+                                             in            : patrimoine,
+                                             atEndOf       : year)
         }
     }
 }
