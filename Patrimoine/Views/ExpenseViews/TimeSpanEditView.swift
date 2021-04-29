@@ -68,7 +68,7 @@ struct TimeSpanViewModel: Equatable {
                 self.period = 1
         }
         switch timeSpan {
-            case .starting (let from),
+            case .starting(let from),
                  .periodic(let from, _, _),
                  .spanning(let from, _):
                 self.fromVM = DateBoundaryViewModel(from: from)
@@ -76,7 +76,7 @@ struct TimeSpanViewModel: Equatable {
                 self.fromVM = nil
         }
         switch timeSpan {
-            case .ending (let to),
+            case .ending(let to),
                  .periodic(_, _, let to),
                  .spanning(_, let to):
                 self.toVM = DateBoundaryViewModel(from: to)

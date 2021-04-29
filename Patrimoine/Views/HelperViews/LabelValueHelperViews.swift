@@ -86,7 +86,7 @@ struct AmountEditView: View {
                       text: textValueBinding)
                 //.textFieldStyle(RoundedBorderTextFieldStyle())
                 .frame(maxWidth: 88)
-                .keyboardType(.numbersAndPunctuation)
+                .numbersAndPunctuationKeyboardType()
                 .multilineTextAlignment(.trailing)
                 .onReceive(Just(textAmount)) { newValue in
                     // FIXME: ne filtre pas correctement
@@ -158,7 +158,7 @@ struct IntegerEditView: View {
                       text: textValueBinding)
                 //.textFieldStyle(RoundedBorderTextFieldStyle())
                 .frame(maxWidth: 88)
-                .keyboardType(.numbersAndPunctuation)
+                .numbersAndPunctuationKeyboardType()
                 .multilineTextAlignment(.trailing)
                 .onReceive(Just(textAmount)) { newValue in
                     // FIXME: ne filtre pas correctement
@@ -229,7 +229,7 @@ struct PercentEditView: View {
                       text: textValueBinding)
                 //.textFieldStyle(RoundedBorderTextFieldStyle())
                 .frame(maxWidth: 88)
-                .keyboardType(.decimalPad)
+                .decimalPadKeyboardType()
                 .multilineTextAlignment(.trailing)
                 .onReceive(Just(textPercent)) { newValue in
                     // filtrer les caractères non numériques

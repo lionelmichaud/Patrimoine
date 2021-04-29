@@ -25,11 +25,11 @@ enum AxisFormatterChoice {
         switch self {
             case .k€:
                 return Kilo€Formatter()
-            case .largeValue (let appendix, let minDigit):
+            case .largeValue(let appendix, let minDigit):
                 return LargeValueFormatter(appendix: appendix, min3digit: minDigit)
             case .percent:
                 return PercentFormatter()
-            case .name (let names):
+            case .name(let names):
                 return NamedValueFormatter(names: names)
             case .none:
                 return nil

@@ -98,18 +98,21 @@ struct ExpenseDetailedView: View {
         .textFieldStyle(RoundedBorderTextFieldStyle())
         .navigationTitle(Text("Dépense " + category.displayString))
         .navigationBarTitleDisplayMode(.inline)
-        .navigationBarItems(
-            leading: Button(
-                action : duplicate,
-                label  : { Text("Dupliquer") })
-                .capsuleButtonStyle()
-                .disabled((index == nil) || changeOccured()),
-            trailing: Button(
-                action : applyChanges,
-                label  : { Text("Sauver") })
-                .capsuleButtonStyle()
-                .disabled(!changeOccured())
-        )
+        .toolbar {
+            ToolbarItem(placement: .automatic) {
+                Button(
+                    action : duplicate,
+                    label  : { Image(systemName: "doc.on.doc.fill") })
+                    //.capsuleButtonStyle()
+                    .disabled((index == nil) || changeOccured())
+            }
+            ToolbarItem(placement: .automatic) {
+                Button(
+                    action : applyChanges,
+                    label  : { Image(systemName: "externaldrive.fill") })
+                    .disabled(!changeOccured())
+            }
+        }
         .alert(item: $alertItem, content: myAlert)
     }
     

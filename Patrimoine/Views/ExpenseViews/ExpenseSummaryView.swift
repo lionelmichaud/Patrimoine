@@ -73,8 +73,8 @@ struct ExpenseSummaryChartView: UIViewRepresentable {
     
     /// Créer le dataset du graphique
     /// - Returns: dataset
-    func getExpenseDataSet(formatter    : NamedValueFormatter,
-                           baloonMarker : ExpenseMarkerView) -> BarChartDataSet {
+    func getExpenseDataSet(formatter : NamedValueFormatter,
+                           marker    : IMarker?) -> BarChartDataSet {
         var dataEntries = [ChartDataEntry]()
         let dataSet : BarChartDataSet
         
@@ -90,16 +90,18 @@ struct ExpenseSummaryChartView: UIViewRepresentable {
         formatter.names = namedValuedTimeFrameTable.map { (name, _, _, _, _) in
             name
         }
-        
-        // mettre à jour les valeurs des dépenses dans le formatteur de bulle d'info
-        baloonMarker.amounts = namedValuedTimeFrameTable.map { (_, value, _, _, _) in
-            value
-        }
-        baloonMarker.prop = namedValuedTimeFrameTable.map { (_, _, prop, _, _) in
-            prop
-        }
-       baloonMarker.firstYearDuration = namedValuedTimeFrameTable.map { (_, _, _, _, firstYearDuration) in
-            firstYearDuration
+
+        if let baloonMarker = marker as? ExpenseMarkerView {
+            // mettre à jour les valeurs des dépenses dans le formatteur de bulle d'info
+            baloonMarker.amounts = namedValuedTimeFrameTable.map { (_, value, _, _, _) in
+                value
+            }
+            baloonMarker.prop = namedValuedTimeFrameTable.map { (_, _, prop, _, _) in
+                prop
+            }
+            baloonMarker.firstYearDuration = namedValuedTimeFrameTable.map { (_, _, _, _, firstYearDuration) in
+                firstYearDuration
+            }
         }
 
         // générer les 2 séries pour chaque dépense
@@ -116,9 +118,7 @@ struct ExpenseSummaryChartView: UIViewRepresentable {
         return dataSet
     }
     
-    func drawExpenseDataChart() -> HorizontalBarChartView {
-        let chartView = HorizontalBarChartView()
-        
+    func formatExpenseChartView(_ chartView: HorizontalBarChartView) {
         //: ### General
         chartView.pinchZoomEnabled          = true
         chartView.doubleTapToZoomEnabled    = true
@@ -193,6 +193,7 @@ struct ExpenseSummaryChartView: UIViewRepresentable {
         legend.orientation         = .horizontal
         legend.xEntrySpace         = 4
         
+        #if os(iOS) || os(tvOS)
         //: ## bulle d'info
         let marker = ExpenseMarkerView(color              : ChartThemes.BallonColors.color,
                                        font               : ChartThemes.ChartDefaults.baloonfont,
@@ -203,59 +204,50 @@ struct ExpenseSummaryChartView: UIViewRepresentable {
         marker.chartView = chartView
         marker.minimumSize = CGSize(width: 80, height: 40)
         chartView.marker = marker
+        #endif
 
         chartView.fitBars = true
-        
+    }
+
+    func updateChartView(_ chartView: HorizontalBarChartView) {
+        chartView.clear()
         //: ### BarChartData
-        let dataSet = getExpenseDataSet(formatter    : xAxisValueFormatter,
-                                        baloonMarker : marker)
-        
+        let dataSet = getExpenseDataSet(formatter : chartView.xAxis.valueFormatter as! NamedValueFormatter,
+                                        marker    : chartView.marker)
+
         // ajouter le dataset au graphique
         let data = BarChartData(dataSet: dataSet)
-        
-        data.setValueTextColor(ChartThemes.LightChartColors.valueColor)
-        data.setValueFont(ChartThemes.ChartDefaults.valueFont)
-        data.barWidth = 0.5
-        
-        chartView.data = data
-        //chartView.animate(xAxisDuration: 1.0)
-        
-        return chartView
-    }
-    
-    func makeUIView(context: Context) -> HorizontalBarChartView {
-        drawExpenseDataChart() 
-    }
-    
-    func updateUIView(_ uiView: HorizontalBarChartView, context: Context) {
-        uiView.clear()
-        //: ### BarChartData
-        let dataSet = getExpenseDataSet(formatter    : uiView.xAxis.valueFormatter as! NamedValueFormatter,
-                                        baloonMarker : uiView.marker as! ExpenseMarkerView)
-        
-        // ajouter le dataset au graphique
-        let data = BarChartData(dataSet: dataSet)
-        
+
         data.setValueTextColor(ChartThemes.LightChartColors.valueColor)
         data.setValueFont(ChartThemes.ChartDefaults.valueFont)
         data.barWidth = 0.5
 
         // mettre à joure en fonction de la position du slider de plage de temps à afficher
-        uiView.leftAxis.axisMaximum  = endDate
-        uiView.rightAxis.axisMaximum = endDate
-        
+        chartView.leftAxis.axisMaximum  = endDate
+        chartView.rightAxis.axisMaximum = endDate
+
         // mettre à joure en fonction de la position du slider de date d'évaluation
         let ll1 = ChartLimitLine(limit: evalDate+0.5, label: "date d'évaluation")
         ll1.lineWidth = 2
         ll1.lineDashLengths = [10, 10]
         ll1.labelPosition = .bottomRight
         ll1.valueFont = .systemFont(ofSize: 10)
-        uiView.leftAxis.removeAllLimitLines()
-        uiView.leftAxis.addLimitLine(ll1)
+        chartView.leftAxis.removeAllLimitLines()
+        chartView.leftAxis.addLimitLine(ll1)
 
-        uiView.data = data
-        uiView.data?.notifyDataChanged()
-        uiView.notifyDataSetChanged()
+        chartView.data = data
+        chartView.data?.notifyDataChanged()
+        chartView.notifyDataSetChanged()
+    }
+    
+    func makeUIView(context: Context) -> HorizontalBarChartView {
+        let chartView = HorizontalBarChartView()
+        formatExpenseChartView(chartView)
+        return chartView
+    }
+    
+    func updateUIView(_ uiView: HorizontalBarChartView, context: Context) {
+        updateChartView(uiView)
     }
 }
 

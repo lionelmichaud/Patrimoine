@@ -30,13 +30,15 @@ struct ExpenseView: View {
                 }
                 .defaultSideBarListStyle()
                 //.listStyle(GroupedListStyle())
-                .environment(\.horizontalSizeClass, .regular)
-                
+                //.environment(\.horizontalSizeClass, .regular)
             }
             .navigationTitle("Dépenses")
-            .navigationBarItems(
-                leading: EditButton())
-            
+            .toolbar {
+                ToolbarItem(placement: .automatic) {
+                    EditButton()
+                }
+            }
+
             // vue par défaut
             ExpenseSummaryView()
         }
@@ -53,7 +55,7 @@ struct ExpenseHeaderView: View {
                 NavigationLink(destination: ExpenseSummaryView()) {
                     Text("Résumé").fontWeight(.bold)
                 }
-                .isDetailLink(true)
+                .isiOSDetailLink(true)
             }
             Section {
                 HStack {
@@ -79,7 +81,6 @@ struct ExpenseListInCategory: View {
     @EnvironmentObject var uiState    : UIState
     let category: LifeExpenseCategory
     var expenses: LifeExpenseArray
-    //@State private var colapse = true
 
     var body: some View {
         Section {
@@ -112,7 +113,7 @@ struct ExpenseListInCategory: View {
                                             indentLevel : 3,
                                             header      : false)
                     }
-                    .isDetailLink(true)
+                    .isiOSDetailLink(true)
                 }
                 .onDelete(perform: removeItems)
                 .onMove(perform: move)

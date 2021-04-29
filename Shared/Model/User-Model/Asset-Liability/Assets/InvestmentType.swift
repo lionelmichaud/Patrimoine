@@ -106,7 +106,7 @@ extension InvestementKind: Codable {
         var container = encoder.container(keyedBy: CodingKeys.self)
         
         switch self {
-            case .lifeInsurance (let periodicSocialTaxes, let clause):
+            case .lifeInsurance(let periodicSocialTaxes, let clause):
                 try container.encode(periodicSocialTaxes, forKey: .lifeInsurance_taxes)
                 try container.encode(clause, forKey: .lifeInsurance_clause)
             case .pea:

@@ -148,13 +148,13 @@ extension WorkIncomeType: Codable {
         var container = encoder.container(keyedBy: CodingKeys.self)
         
         switch self {
-            case .salary (let brutSalary, let taxableSalary, let netSalary, let fromDate, let healthInsurance):
+            case .salary(let brutSalary, let taxableSalary, let netSalary, let fromDate, let healthInsurance):
                 try container.encode(brutSalary, forKey: .salary_brutSalary)
                 try container.encode(taxableSalary, forKey: .salary_taxableSalary)
                 try container.encode(netSalary, forKey: .salary_netSalary)
                 try container.encode(fromDate, forKey: .salary_fromDate)
                 try container.encode(healthInsurance, forKey: .salary_healthInsurance)
-            case .turnOver (let BNC, let incomeLossInsurance):
+            case .turnOver(let BNC, let incomeLossInsurance):
                 try container.encode(BNC, forKey: .turnOver_BNC)
                 try container.encode(incomeLossInsurance, forKey: .turnOver_incomeLossInsurance)
         }

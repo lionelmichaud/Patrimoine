@@ -29,11 +29,11 @@ enum TimeSpan: Hashable {
 
     static var allCases: [TimeSpan] {
         return [.permanent,
-                .periodic (from: DateBoundary.empty, period: 1, to: DateBoundary.empty),
-                .starting (from: DateBoundary.empty),
-                .ending   (to:   DateBoundary.empty),
-                .spanning (from: DateBoundary.empty, to: DateBoundary.empty),
-                .exceptional (inYear: 0)]
+                .periodic(from: DateBoundary.empty, period: 1, to: DateBoundary.empty),
+                .starting(from: DateBoundary.empty),
+                .ending(to:   DateBoundary.empty),
+                .spanning(from: DateBoundary.empty, to: DateBoundary.empty),
+                .exceptional(inYear: 0)]
     }
     
     // MARK: - Computed properties
@@ -64,7 +64,7 @@ enum TimeSpan: Hashable {
             case .permanent:
                 return true
             
-            case .periodic (let from, let period, let to):
+            case .periodic(let from, let period, let to):
                 guard to.year != nil && from.year != nil else {
                     customLog.log(level: .info, "contains: to.year = nil or from.year = nil")
                     return false
@@ -78,21 +78,21 @@ enum TimeSpan: Hashable {
                     return includesYear && (($0 - from.year!) % period == 0)
             }
             
-            case .starting (let from):
+            case .starting(let from):
                 guard from.year != nil else {
                     customLog.log(level: .info, "contains: from.year = nil")
                     return false
                 }
                 return from.year! <= year
             
-            case .ending (let to):
+            case .ending(let to):
                 guard to.year != nil else {
                     customLog.log(level: .info, "contains: to.year = nil")
                     return false
                 }
                 return year < to.year!
             
-            case .spanning (let from, let to):
+            case .spanning(let from, let to):
                 guard to.year != nil && from.year != nil else {
                     customLog.log(level: .info, "contains: to.year = nil or from.year = nil")
                     return false
@@ -244,19 +244,19 @@ extension TimeSpan: Codable {
         
         // decode .starting
         if let from = try? container.decode(DateBoundary.self, forKey: .starting_from) {
-            self = .starting (from: from)
+            self = .starting(from: from)
             return
         }
         
         // decode .ending
         if let to = try? container.decode(DateBoundary.self, forKey: .ending_to) {
-            self = .ending (to: to)
+            self = .ending(to: to)
             return
         }
         
         // decode .exceptional
         if let inYear = try? container.decode(Int.self, forKey: .exceptional_in) {
-            self = .exceptional (inYear: inYear)
+            self = .exceptional(inYear: inYear)
             return
         }
         
@@ -272,20 +272,20 @@ extension TimeSpan: Codable {
             case .permanent:
                 try container.encode(true, forKey: .permanent)
             
-            case .starting (let from):
+            case .starting(let from):
                 try container.encode(from, forKey: .starting_from)
             
-            case .ending (let to):
+            case .ending(let to):
                 try container.encode(to, forKey: .ending_to)
 
-            case .exceptional (let inYear):
+            case .exceptional(let inYear):
                 try container.encode(inYear, forKey: .exceptional_in)
             
-            case .spanning (let from, let to):
+            case .spanning(let from, let to):
                 try container.encode(from, forKey: .spanning_from)
                 try container.encode(to, forKey: .spanning_to)
             
-            case .periodic (let from, let period, let to):
+            case .periodic(let from, let period, let to):
                 try container.encode(from, forKey: .periodic_from)
                 try container.encode(to, forKey: .periodic_to)
                 try container.encode(period, forKey: .periodic_period)
@@ -300,7 +300,7 @@ extension TimeSpan: CustomStringConvertible {
         switch self {
             case .permanent:
                 return "Permanent"
-            case .periodic (let from, let period, let to):
+            case .periodic(let from, let period, let to):
                 return
                     """
                     Periodique:
@@ -308,13 +308,13 @@ extension TimeSpan: CustomStringConvertible {
                     - tous les \(period) ans
                     """
                 
-            case .starting (let from):
+            case .starting(let from):
                 return "A partir de \(from) (inclus)"
                 
-            case .ending (let to):
+            case .ending(let to):
                 return "Jusqu'à \(to) (exclu)"
                 
-            case .spanning (let from, let to):
+            case .spanning(let from, let to):
                 return "De \(from) (inclus) à \(to) (exclu)"
                 
             case .exceptional(let inYear):

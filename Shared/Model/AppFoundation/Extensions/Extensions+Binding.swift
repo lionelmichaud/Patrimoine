@@ -9,7 +9,7 @@
 import Foundation
 import SwiftUI
 
-extension Binding {
+public extension Binding {
     static func ?? (lhs: Binding<Value?>, rhs: Value) -> Binding<Value> {
         return Binding(get: { lhs.wrappedValue ?? rhs },
                        set: { lhs.wrappedValue = $0 })

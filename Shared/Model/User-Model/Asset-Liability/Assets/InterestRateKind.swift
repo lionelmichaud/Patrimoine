@@ -91,9 +91,9 @@ extension InterestRateKind: Codable {
         var container = encoder.container(keyedBy: CodingKeys.self)
         
         switch self {
-            case .contractualRate (let fixedRate):
+            case .contractualRate(let fixedRate):
                 try container.encode(fixedRate, forKey: .contractualRate_fixedRate)
-            case .marketRate (let stockRatio):
+            case .marketRate(let stockRatio):
                 try container.encode(stockRatio, forKey: .marketRate_stockRatio)
         }
     }

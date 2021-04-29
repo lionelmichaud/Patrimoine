@@ -10,42 +10,34 @@ import SwiftUI
 
 // MARK: - View UserSettingsView
 
-struct UserSettingsView: View {
+struct SettingsView: View {
     @State private var ownership        = UserSettings.shared.ownershipSelection
     @State private var evaluationMethod = UserSettings.shared.assetEvaluationMethod
-
-    var versionView: some View {
-        GroupBox {
-            Text(AppVersion.shared.appVersion.name ?? "?")
-                .font(.title)
-                .fontWeight(.heavy)
-                .frame(maxWidth: .infinity)
-            Text("Version: \(AppVersion.shared.appVersion.version ?? "?")")
-            if let date = AppVersion.shared.appVersion.date {
-                Text(date, style: Text.DateStyle.date)
-            }
-            Text(AppVersion.shared.appVersion.comment ?? "")
-                .multilineTextAlignment(.center)
-        }
-    }
     
     var body: some View {
         NavigationView {
             List {
-                NavigationLink("Simulation",
-                               destination: SimulationUserSettings())
-                    .isDetailLink(true)
+                NavigationLink(destination: AppVersionView()) {
+                    Label("Version", systemImage: "info.circle")
+                }
+                .isDetailLink(true)
                 
-                NavigationLink("Graphiques",
-                               destination: GraphicUserSettings(ownership        : $ownership,
-                                                                evaluationMethod : $evaluationMethod))
-                    .isDetailLink(true)
+                NavigationLink(destination: SimulationUserSettings()) {
+                    Label("Simulation", systemImage: "function")
+                }
+                .isDetailLink(true)
+                
+                NavigationLink(destination: GraphicUserSettings(ownership        : $ownership,
+                                                                evaluationMethod : $evaluationMethod)) {
+                    Label("Graphiques", systemImage: "chart.bar.xaxis")
+                }
+                .isDetailLink(true)
             }
             .listStyle(SidebarListStyle())
             .navigationTitle("Préférences")
             
             // default View
-            versionView
+            AppVersionView()
                 .padding()
         }
         .navigationViewStyle(DoubleColumnNavigationViewStyle())
@@ -117,7 +109,7 @@ struct SimulationUserSettings: View {
 struct UserSettingsView_Previews: PreviewProvider {
     static var previews: some View {
         Group {
-            UserSettingsView()
+            SettingsView()
         }
     }
 }

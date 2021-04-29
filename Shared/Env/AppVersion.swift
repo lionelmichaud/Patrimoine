@@ -8,7 +8,7 @@
 
 import Foundation
 
-struct AppVersion: Decodable {
+struct AppVersion: Decodable, Versionable {
 
     // MARK: - Singleton
 
@@ -16,7 +16,7 @@ struct AppVersion: Decodable {
 
     // MARK: - Properties
 
-    var appVersion: Version
+    var version: Version
 
     // MARK: - Static Methods
 
@@ -25,6 +25,20 @@ struct AppVersion: Decodable {
                                   from                 : "AppVersion.json",
                                   dateDecodingStrategy : .iso8601,
                                   keyDecodingStrategy  : .useDefaultKeys)
-        appVersion.initializeWithBundleValues()
+        version.initializeWithBundleValues()
+    }
+    
+    public var name: String? {
+        version.name
+    }
+    
+    public var theVersion : String? {
+        version.version
+    }
+    public var date    : Date? {
+        version.date
+    }
+    public var comment : String? {
+        version.comment
     }
 }

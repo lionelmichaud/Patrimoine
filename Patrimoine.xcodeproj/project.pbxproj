@@ -33,6 +33,7 @@
 		7913C19425D0616D00037731 /* InterestRateTypeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7913C19325D0616D00037731 /* InterestRateTypeTests.swift */; };
 		791A4ADA24B8B8210013A3F1 /* RetirementEditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 791A4AD924B8B8210013A3F1 /* RetirementEditView.swift */; };
 		791D70B0250E4DFB000A20D0 /* Extensions+Bundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 791D70AF250E4DFB000A20D0 /* Extensions+Bundle.swift */; };
+		791DF6FC26321BEF004D4896 /* LifeInsuranceSuccessionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 791DF6FB26321BEF004D4896 /* LifeInsuranceSuccessionManager.swift */; };
 		7922CFD92587A37D00CF8317 /* Ownership+TransferBareOwnership.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7922CFD82587A37D00CF8317 /* Ownership+TransferBareOwnership.swift */; };
 		7924F18825B368FA001CC252 /* LayoffCompensation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79FE3B2125B3670200D4C452 /* LayoffCompensation.swift */; };
 		7924F18D25B368FE001CC252 /* UnemploymentCompensation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79FE3B2725B3672400D4C452 /* UnemploymentCompensation.swift */; };
@@ -125,7 +126,6 @@
 		7975E4EA252E21B30036C1F5 /* HumanLifeModelConfig.json in Resources */ = {isa = PBXBuildFile; fileRef = 7975E4E9252E21B30036C1F5 /* HumanLifeModelConfig.json */; };
 		7975E4ED252E21D00036C1F5 /* SocioEconomyModelConfig.json in Resources */ = {isa = PBXBuildFile; fileRef = 7975E4EC252E21D00036C1F5 /* SocioEconomyModelConfig.json */; };
 		79777F9C259D3378008C84A3 /* RNGExtension in Frameworks */ = {isa = PBXBuildFile; productRef = 79777F9B259D3378008C84A3 /* RNGExtension */; };
-		79785D5C257FAFDA00E8E35D /* FiscalHousehold.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79785D5B257FAFDA00E8E35D /* FiscalHousehold.swift */; };
 		798006DF25B1FF1400980768 /* FiscalModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 798006DE25B1FF1400980768 /* FiscalModelTests.swift */; };
 		798006E325B2003300980768 /* HumanLifeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 798006E225B2003300980768 /* HumanLifeTests.swift */; };
 		798006E725B200E900980768 /* EconomyModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 798006E625B200E900980768 /* EconomyModelTests.swift */; };
@@ -136,6 +136,7 @@
 		7986A17125D49AD4007B132D /* SCPI.json in Resources */ = {isa = PBXBuildFile; fileRef = 7986A17025D49AD4007B132D /* SCPI.json */; };
 		7988807D258790550098E30C /* Ownership+TransferFullOwnership.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7988807C258790550098E30C /* Ownership+TransferFullOwnership.swift */; };
 		798C790325117231003BF2AA /* RandomGenerators.swift in Sources */ = {isa = PBXBuildFile; fileRef = 798C790225117231003BF2AA /* RandomGenerators.swift */; };
+		798DE8C92635DD1F00C0C3B5 /* AppVersionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 798DE8C82635DD1F00C0C3B5 /* AppVersionView.swift */; };
 		799488B0249E4F4600DAFF1E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 799488AF249E4F4600DAFF1E /* Assets.xcassets */; };
 		799488B3249E4F4600DAFF1E /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 799488B2249E4F4600DAFF1E /* Preview Assets.xcassets */; };
 		799488B6249E4F4600DAFF1E /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 799488B4249E4F4600DAFF1E /* LaunchScreen.storyboard */; };
@@ -340,10 +341,9 @@
 		79EC47F326308A240006EE44 /* NetCashFlowManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79EC47F226308A240006EE44 /* NetCashFlowManager.swift */; };
 		79EC48102630983F0006EE44 /* OwnershipManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79EC480F2630983F0006EE44 /* OwnershipManager.swift */; };
 		79EC4814263099F40006EE44 /* LegalSuccessionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79EC4813263099F40006EE44 /* LegalSuccessionManager.swift */; };
-		79EC481826309A100006EE44 /* LifeInsuranceSuccessionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79EC481726309A100006EE44 /* LifeInsuranceSuccessionManager.swift */; };
 		79ED5AE525A9E2FC00609DDA /* test_futurValue.xlsx in Resources */ = {isa = PBXBuildFile; fileRef = 79ED5AE425A9E2FC00609DDA /* test_futurValue.xlsx */; };
 		79EEEC6C256FF33B00778588 /* AppSettings.json in Resources */ = {isa = PBXBuildFile; fileRef = 79EEEC6B256FF33B00778588 /* AppSettings.json */; };
-		79EEEC752570141800778588 /* UserSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79EEEC742570141800778588 /* UserSettingsView.swift */; };
+		79EEEC752570141800778588 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79EEEC742570141800778588 /* SettingsView.swift */; };
 		79EF511C255C932000B46303 /* Extensions+Binding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79EF511B255C932000B46303 /* Extensions+Binding.swift */; };
 		79EFE2902582444D006E9E3F /* .swiftlint.yml in Resources */ = {isa = PBXBuildFile; fileRef = 79EFE28F2582444D006E9E3F /* .swiftlint.yml */; };
 		79F5359125CF063A00F2F7C9 /* OwnershipTransferTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79F5359025CF063A00F2F7C9 /* OwnershipTransferTests.swift */; };
@@ -395,6 +395,7 @@
 		7913C19325D0616D00037731 /* InterestRateTypeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InterestRateTypeTests.swift; sourceTree = "<group>"; };
 		791A4AD924B8B8210013A3F1 /* RetirementEditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RetirementEditView.swift; sourceTree = "<group>"; };
 		791D70AF250E4DFB000A20D0 /* Extensions+Bundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Extensions+Bundle.swift"; sourceTree = "<group>"; };
+		791DF6FB26321BEF004D4896 /* LifeInsuranceSuccessionManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LifeInsuranceSuccessionManager.swift; sourceTree = "<group>"; };
 		7922CFD82587A37D00CF8317 /* Ownership+TransferBareOwnership.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Ownership+TransferBareOwnership.swift"; sourceTree = "<group>"; };
 		7924F19A25B36F28001CC252 /* RegimeGeneralModel.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = RegimeGeneralModel.json; sourceTree = "<group>"; };
 		7924F19E25B36F48001CC252 /* RegimeAgircModel.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = RegimeAgircModel.json; sourceTree = "<group>"; };
@@ -484,7 +485,6 @@
 		7975E4E5252E20400036C1F5 /* HumanLifeModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HumanLifeModel.swift; sourceTree = "<group>"; };
 		7975E4E9252E21B30036C1F5 /* HumanLifeModelConfig.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = HumanLifeModelConfig.json; sourceTree = "<group>"; };
 		7975E4EC252E21D00036C1F5 /* SocioEconomyModelConfig.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = SocioEconomyModelConfig.json; sourceTree = "<group>"; };
-		79785D5B257FAFDA00E8E35D /* FiscalHousehold.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FiscalHousehold.swift; sourceTree = "<group>"; };
 		798006DE25B1FF1400980768 /* FiscalModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FiscalModelTests.swift; sourceTree = "<group>"; };
 		798006E225B2003300980768 /* HumanLifeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HumanLifeTests.swift; sourceTree = "<group>"; };
 		798006E625B200E900980768 /* EconomyModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EconomyModelTests.swift; sourceTree = "<group>"; };
@@ -497,6 +497,7 @@
 		7986A17025D49AD4007B132D /* SCPI.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = SCPI.json; sourceTree = "<group>"; };
 		7988807C258790550098E30C /* Ownership+TransferFullOwnership.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Ownership+TransferFullOwnership.swift"; sourceTree = "<group>"; };
 		798C790225117231003BF2AA /* RandomGenerators.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RandomGenerators.swift; sourceTree = "<group>"; };
+		798DE8C82635DD1F00C0C3B5 /* AppVersionView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppVersionView.swift; sourceTree = "<group>"; };
 		799488A6249E4F4600DAFF1E /* Patrimoine.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Patrimoine.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		799488AF249E4F4600DAFF1E /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		799488B2249E4F4600DAFF1E /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
@@ -691,10 +692,9 @@
 		79EC47F226308A240006EE44 /* NetCashFlowManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetCashFlowManager.swift; sourceTree = "<group>"; };
 		79EC480F2630983F0006EE44 /* OwnershipManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OwnershipManager.swift; sourceTree = "<group>"; };
 		79EC4813263099F40006EE44 /* LegalSuccessionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LegalSuccessionManager.swift; sourceTree = "<group>"; };
-		79EC481726309A100006EE44 /* LifeInsuranceSuccessionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LifeInsuranceSuccessionManager.swift; sourceTree = "<group>"; };
 		79ED5AE425A9E2FC00609DDA /* test_futurValue.xlsx */ = {isa = PBXFileReference; lastKnownFileType = file; path = test_futurValue.xlsx; sourceTree = "<group>"; };
 		79EEEC6B256FF33B00778588 /* AppSettings.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = AppSettings.json; sourceTree = "<group>"; };
-		79EEEC742570141800778588 /* UserSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserSettingsView.swift; sourceTree = "<group>"; };
+		79EEEC742570141800778588 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		79EF511B255C932000B46303 /* Extensions+Binding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Extensions+Binding.swift"; sourceTree = "<group>"; };
 		79EFE28F2582444D006E9E3F /* .swiftlint.yml */ = {isa = PBXFileReference; lastKnownFileType = text.yaml; path = .swiftlint.yml; sourceTree = "<group>"; };
 		79F5359025CF063A00F2F7C9 /* OwnershipTransferTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OwnershipTransferTests.swift; sourceTree = "<group>"; };
@@ -1044,9 +1044,7 @@
 				79C93D802616336A00FC4CE0 /* CashFlowLine+managePeriodicInvest.swift */,
 				7907C28625E03891005499CC /* SciCashFlowLine.swift */,
 				79EC47F226308A240006EE44 /* NetCashFlowManager.swift */,
-				79EC480F2630983F0006EE44 /* OwnershipManager.swift */,
-				79EC4813263099F40006EE44 /* LegalSuccessionManager.swift */,
-				79EC481726309A100006EE44 /* LifeInsuranceSuccessionManager.swift */,
+				791DF6FB26321BEF004D4896 /* LifeInsuranceSuccessionManager.swift */,
 			);
 			path = CashFlow;
 			sourceTree = "<group>";
@@ -1398,7 +1396,6 @@
 			isa = PBXGroup;
 			children = (
 				79948939249E4FC200DAFF1E /* Patrimoin.swift */,
-				79785D5B257FAFDA00E8E35D /* FiscalHousehold.swift */,
 				7988807B258790230098E30C /* Ownership */,
 				7994893A249E4FC200DAFF1E /* Assets */,
 				79948936249E4FC200DAFF1E /* Liabilities */,
@@ -1644,6 +1641,8 @@
 			isa = PBXGroup;
 			children = (
 				79C7B201258D2783004B38E7 /* Succession.swift */,
+				79EC480F2630983F0006EE44 /* OwnershipManager.swift */,
+				79EC4813263099F40006EE44 /* LegalSuccessionManager.swift */,
 			);
 			path = Succession;
 			sourceTree = "<group>";
@@ -1673,7 +1672,8 @@
 		79EEEC73257013F900778588 /* UserSettingsView */ = {
 			isa = PBXGroup;
 			children = (
-				79EEEC742570141800778588 /* UserSettingsView.swift */,
+				798DE8C82635DD1F00C0C3B5 /* AppVersionView.swift */,
+				79EEEC742570141800778588 /* SettingsView.swift */,
 			);
 			path = UserSettingsView;
 			sourceTree = "<group>";
@@ -2062,6 +2062,7 @@
 				793D189725B2533C005D5A4E /* PickableEnum.swift in Sources */,
 				79948977249E4FC200DAFF1E /* SimulationView.swift in Sources */,
 				79948969249E4FC200DAFF1E /* MemberAddView.swift in Sources */,
+				798DE8C92635DD1F00C0C3B5 /* AppVersionView.swift in Sources */,
 				79DB52CA2586675700BC6E84 /* MenuCollapsable.swift in Sources */,
 				7994896A249E4FC200DAFF1E /* MemberDetailView.swift in Sources */,
 				79BF6FB22574112800F19A81 /* OwnershipView.swift in Sources */,
@@ -2105,6 +2106,7 @@
 				79948999249E4FC200DAFF1E /* SCI.swift in Sources */,
 				79948981249E4FC200DAFF1E /* Constants.swift in Sources */,
 				79948986249E4FC200DAFF1E /* CashFlowLine.swift in Sources */,
+				791DF6FC26321BEF004D4896 /* LifeInsuranceSuccessionManager.swift in Sources */,
 				7994895B249E4FC200DAFF1E /* AssetView.swift in Sources */,
 				79948961249E4FC200DAFF1E /* scpiDetailedView.swift in Sources */,
 				794248AE25CAA317004E3C7F /* Version.swift in Sources */,
@@ -2130,7 +2132,6 @@
 				7975E4E6252E20400036C1F5 /* HumanLifeModel.swift in Sources */,
 				7994896F249E4FC200DAFF1E /* ExpenseView.swift in Sources */,
 				794D701C25CF20140055E93C /* LifeInsuranceClause.swift in Sources */,
-				79EC481826309A100006EE44 /* LifeInsuranceSuccessionManager.swift in Sources */,
 				7940694724D33E62002FD72E /* SwiftUIconditional.swift in Sources */,
 				7946511325ADB11500BC9F99 /* LayOffTaxes.swift in Sources */,
 				7994898A249E4FC200DAFF1E /* Simulation.swift in Sources */,
@@ -2146,7 +2147,6 @@
 				79CC729D24BC6B0D000302C5 /* UnemploymentModel.swift in Sources */,
 				790AECCD2533454C00CD1C76 /* ChildDetailView.swift in Sources */,
 				7994898C249E4FC200DAFF1E /* BasicStructs.swift in Sources */,
-				79785D5C257FAFDA00E8E35D /* FiscalHousehold.swift in Sources */,
 				7988807D258790550098E30C /* Ownership+TransferFullOwnership.swift in Sources */,
 				79D909D225CB180C00970DAF /* Owners.swift in Sources */,
 				79AA94C624BA7CC900BD3FCD /* PersonLifeLineView.swift in Sources */,
@@ -2171,7 +2171,7 @@
 				79EC47F326308A240006EE44 /* NetCashFlowManager.swift in Sources */,
 				7946A48624D7116700B86BAD /* TaxeCategory.swift in Sources */,
 				79DB52C1258663B000BC6E84 /* ButtonStyles.swift in Sources */,
-				79EEEC752570141800778588 /* UserSettingsView.swift in Sources */,
+				79EEEC752570141800778588 /* SettingsView.swift in Sources */,
 				7924F18825B368FA001CC252 /* LayoffCompensation.swift in Sources */,
 				7959744725C98F1500B9F9A2 /* DicOfNamedValueTable.swift in Sources */,
 				7994895E249E4FC200DAFF1E /* TypeInvestEditView.swift in Sources */,
@@ -2293,7 +2293,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 14.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.1;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -2350,7 +2350,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 14.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.1;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
@@ -2372,7 +2372,7 @@
 				DEVELOPMENT_TEAM = 8N9S268396;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = Patrimoine/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 14.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.1;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -2395,7 +2395,7 @@
 				DEVELOPMENT_TEAM = 8N9S268396;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = Patrimoine/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 14.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.1;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -2469,7 +2469,7 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/badrinathvm/StepperView.git";
 			requirement = {
-				kind = upToNextMajorVersion;
+				kind = upToNextMinorVersion;
 				minimumVersion = 1.5.2;
 			};
 		};

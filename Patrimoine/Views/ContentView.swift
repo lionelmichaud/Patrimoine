@@ -20,7 +20,7 @@ struct ContentView: View {
     var body: some View {
         TabView(selection: $uiState.selectedTab) {
             /// préférences
-            UserSettingsView()
+            SettingsView()
                 .tabItem { Label("Préférences", systemImage: "gear") }
                 .tag(UIState.Tab.userSettings)
             
@@ -46,7 +46,7 @@ struct ContentView: View {
 
             /// calcul et présentation des résultats de simulation
             SimulationView()
-                .tabItem { Label("Simulation", systemImage: "chart.bar.fill") }
+                .tabItem { Label("Simulation", systemImage: "function") }
                 .tag(UIState.Tab.simulation)
         }
     }
