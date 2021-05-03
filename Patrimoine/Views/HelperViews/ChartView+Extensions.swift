@@ -53,6 +53,7 @@ extension BarChartView {
         self.doubleTapToZoomEnabled    = true
         self.dragEnabled               = true
         self.drawGridBackgroundEnabled = true
+        self.gridBackgroundColor       = ChartThemes.DarkChartColors.gridBackgroundColor
         self.backgroundColor           = ChartThemes.DarkChartColors.backgroundColor
         self.borderColor               = ChartThemes.DarkChartColors.borderColor
         self.borderLineWidth           = 1.0
@@ -135,6 +136,7 @@ extension ScatterChartView {
         self.dragEnabled               = true
         self.setScaleEnabled(true)
         self.drawGridBackgroundEnabled = false
+        self.gridBackgroundColor       = ChartThemes.DarkChartColors.gridBackgroundColor
         self.backgroundColor           = ChartThemes.DarkChartColors.backgroundColor
         self.borderColor               = ChartThemes.DarkChartColors.borderColor
         self.borderLineWidth           = 1.0
@@ -223,6 +225,7 @@ extension LineChartView {
         self.dragEnabled               = true
         self.setScaleEnabled(true)
         self.drawGridBackgroundEnabled = false
+        self.gridBackgroundColor       = ChartThemes.DarkChartColors.gridBackgroundColor
         self.backgroundColor           = ChartThemes.DarkChartColors.backgroundColor
         self.borderColor               = ChartThemes.DarkChartColors.borderColor
         self.borderLineWidth           = 1.0
@@ -312,6 +315,7 @@ extension CombinedChartView {
         self.dragEnabled               = true
         self.setScaleEnabled(true)
         self.drawGridBackgroundEnabled = false
+        self.gridBackgroundColor       = ChartThemes.DarkChartColors.gridBackgroundColor
         self.backgroundColor           = ChartThemes.DarkChartColors.backgroundColor
         self.borderColor               = ChartThemes.DarkChartColors.borderColor
         self.borderLineWidth           = 1.0

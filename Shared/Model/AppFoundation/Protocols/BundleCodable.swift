@@ -15,8 +15,6 @@ protocol BundleCodable: Codable {
     static var defaultFileName : String { get set }
     
     /// Lit le modèle dans un fichier JSON du Bundle Main
-    init()
-    init(from file: String?)
     init(from file            : String?,
          dateDecodingStrategy : JSONDecoder.DateDecodingStrategy,
          keyDecodingStrategy  : JSONDecoder.KeyDecodingStrategy)
@@ -28,8 +26,6 @@ protocol BundleCodable: Codable {
          keyDecodingStrategy  : JSONDecoder.KeyDecodingStrategy)
     
     /// Encode l'objet dans un fichier stocké dans le Bundle Main de l'Application
-    func saveToBundle()
-    func saveToBundle(to file: String?)
     func saveToBundle(to file              : String?,
                       dateEncodingStrategy : JSONEncoder.DateEncodingStrategy,
                       keyEncodingStrategy  : JSONEncoder.KeyEncodingStrategy)
@@ -42,22 +38,9 @@ protocol BundleCodable: Codable {
 }
 
 extension BundleCodable {
-    init() {
-        self = Bundle.main.decode(Self.self,
-                                  from                 : Self.defaultFileName,
-                                  dateDecodingStrategy : .iso8601,
-                                  keyDecodingStrategy  : .useDefaultKeys)
-    }
-    init(from file: String?) {
-        self = Bundle.main.decode(Self.self,
-                                  from                 : file ?? Self.defaultFileName,
-                                  dateDecodingStrategy : .iso8601,
-                                  keyDecodingStrategy  : .useDefaultKeys)
-    }
-    
-    init(from file            : String?,
-         dateDecodingStrategy : JSONDecoder.DateDecodingStrategy,
-         keyDecodingStrategy  : JSONDecoder.KeyDecodingStrategy) {
+    init(from file            : String? = nil,
+         dateDecodingStrategy : JSONDecoder.DateDecodingStrategy = .iso8601,
+         keyDecodingStrategy  : JSONDecoder.KeyDecodingStrategy = .useDefaultKeys) {
         self = Bundle.main.decode(Self.self,
                                   from                 : file ?? Self.defaultFileName,
                                   dateDecodingStrategy : dateDecodingStrategy,
@@ -65,9 +48,9 @@ extension BundleCodable {
     }
     
     init(for aClass           : AnyClass,
-         from file            : String?,
-         dateDecodingStrategy : JSONDecoder.DateDecodingStrategy,
-         keyDecodingStrategy  : JSONDecoder.KeyDecodingStrategy) {
+         from file            : String? = nil,
+         dateDecodingStrategy : JSONDecoder.DateDecodingStrategy = .iso8601,
+         keyDecodingStrategy  : JSONDecoder.KeyDecodingStrategy = .useDefaultKeys) {
         let bundle = Bundle(for: aClass)
         self = bundle.decode(Self.self,
                                  from                 : file ?? Self.defaultFileName,
@@ -75,23 +58,9 @@ extension BundleCodable {
                                  keyDecodingStrategy  : keyDecodingStrategy)
     }
     
-    func saveToBundle() {
-        Bundle.main.encode(self,
-                           to                   : Self.defaultFileName,
-                           dateEncodingStrategy : .iso8601,
-                           keyEncodingStrategy  : .useDefaultKeys)
-    }
-    
-    func saveToBundle(to file: String?) {
-        Bundle.main.encode(self,
-                           to                   : file ?? Self.defaultFileName,
-                           dateEncodingStrategy : .iso8601,
-                           keyEncodingStrategy  : .useDefaultKeys)
-    }
-    
-    func saveToBundle(to file              : String?,
-                      dateEncodingStrategy : JSONEncoder.DateEncodingStrategy,
-                      keyEncodingStrategy  : JSONEncoder.KeyEncodingStrategy) {
+    func saveToBundle(to file              : String? = nil,
+                      dateEncodingStrategy : JSONEncoder.DateEncodingStrategy = .iso8601,
+                      keyEncodingStrategy  : JSONEncoder.KeyEncodingStrategy = .useDefaultKeys) {
         Bundle.main.encode(self,
                            to                   : file ?? Self.defaultFileName,
                            dateEncodingStrategy : dateEncodingStrategy,
@@ -99,9 +68,9 @@ extension BundleCodable {
     }
     
     func saveToBundle(for aClass           : AnyClass,
-                      to file              : String?,
-                      dateEncodingStrategy : JSONEncoder.DateEncodingStrategy,
-                      keyEncodingStrategy  : JSONEncoder.KeyEncodingStrategy) {
+                      to file              : String? = nil,
+                      dateEncodingStrategy : JSONEncoder.DateEncodingStrategy = .iso8601,
+                      keyEncodingStrategy  : JSONEncoder.KeyEncodingStrategy = .useDefaultKeys) {
         let bundle = Bundle(for: aClass)
         bundle.encode(self,
                           to                   : file ?? Self.defaultFileName,

@@ -78,14 +78,14 @@ class OwnersTests: XCTestCase {
     }
     
     func test_recuperer_owner() throws {
-        let foundOwner = try? XCTUnwrap(OwnersTests.owners.owner(ownerName: "Name 1"))
+        let foundOwner = try? XCTUnwrap(OwnersTests.owners["Name 1"])
         XCTAssertEqual(foundOwner, OwnersTests.owner1)
         let foundOwnerIdx = try? XCTUnwrap(OwnersTests.owners.ownerIdx(ownerName: "Name 1"))
         XCTAssertEqual(foundOwnerIdx, 0)
     }
     
     func test_recuperer_owner_inexistant() throws {
-        XCTAssertNil(OwnersTests.owners.owner(ownerName: "Inconnu"))
+        XCTAssertNil(OwnersTests.owners["Inconnu"])
         XCTAssertNil(OwnersTests.owners.ownerIdx(ownerName: "Inconnu"))
     }
 
@@ -112,8 +112,8 @@ class OwnersTests: XCTestCase {
         XCTAssert(owners.contains(OwnersTests.owner3))
         XCTAssert(owners.contains(OwnersTests.owner4))
 
-        let newOwner1 = try XCTUnwrap(owners.owner(ownerName: "New Owner 1"))
-        let newOwner2 = try XCTUnwrap(owners.owner(ownerName: "New Owner 2"))
+        let newOwner1 = try XCTUnwrap(owners["New Owner 1"])
+        let newOwner2 = try XCTUnwrap(owners["New Owner 2"])
         XCTAssertEqual(5.0, newOwner1.fraction)
         XCTAssertEqual(5.0, newOwner2.fraction)
     }
@@ -127,7 +127,7 @@ class OwnersTests: XCTestCase {
         var countAfter = owners.count
 
         XCTAssertEqual(countBefore, countAfter)
-        XCTAssertEqual(20 + 10, owners.owner(ownerName: "Name 2")!.fraction)
+        XCTAssertEqual(20 + 10, owners["Name 2"]!.fraction)
 
         owners.append(Owner(name: "Other name", fraction: 10))
         owners.groupShares()

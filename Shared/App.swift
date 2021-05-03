@@ -24,4 +24,8 @@ struct PatrimoineApp: App {
                   patrimoine : patrimoine,
                   simulation : simulation)
     }
+    
+    init() {
+        //Coordinator.init()
+    }
 }

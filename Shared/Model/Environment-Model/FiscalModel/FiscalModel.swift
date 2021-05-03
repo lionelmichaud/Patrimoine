@@ -53,6 +53,7 @@ struct Fiscal {
             } catch {
                 fatalError("Failed to initialize Fiscal.model.isf\n" + convertErrorToString(error))
             }
+            model.layOffTaxes.initialize(PASS: PASS)
             do {
                 try model.inheritanceDonation.initialize()
             } catch {
